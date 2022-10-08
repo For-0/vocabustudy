@@ -1,0 +1,46 @@
+header.mdc-top-app-bar.mdc-top-app-bar
+  .mdc-top-app-bar__row
+    section.mdc-top-app-bar__section.mdc-top-app-bar__section--align-start
+      if showBack
+        button.material-icons-round.mdc-top-app-bar__navigation-icon.mdc-icon-button(onclick="javascript:(() => {history.length > 1 ? history.back() : location.pathname='/';})();" style="padding: 0; margin-left: -15px;") arrow_back
+        a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal; padding: 0;' href='/#') Vocabustudy
+      else
+        a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal;' href='/#') Vocabustudy
+    unless omitAccount
+      section(role='toolbar')
+        a.material-icons-round.mdc-top-app-bar__action.mdc-icon-button(aria-describedby="tooltip-btn-browse" href="/#search") search
+        .mdc-tooltip#tooltip-btn-browse(role='tooltip' aria-hidden='true')
+          .mdc-tooltip__surface.mdc-tooltip__surface-animation(style="overflow-wrap: break-word;") Browse Sets
+        a.material-icons-round.mdc-top-app-bar__action.mdc-icon-button(aria-describedby="tooltip-btn-leaderboard" href="/#leaderboard") leaderboard
+        .mdc-tooltip#tooltip-btn-leaderboard(role='tooltip' aria-hidden='true')
+          .mdc-tooltip__surface.mdc-tooltip__surface-animation(style="overflow-wrap: break-word;") Leaderboard
+        a.material-icons-round.mdc-top-app-bar__action.mdc-icon-button(aria-describedby="tooltip-btn-support" href="https://forms.gle/Lzk4cYu8AVA2XX1A6" target="blank") help
+        .mdc-tooltip#tooltip-btn-support(role='tooltip' aria-hidden='true')
+          .mdc-tooltip__surface.mdc-tooltip__surface-animation(style="overflow-wrap: break-word;") Feedback/Bugs
+        span.mdc-menu-surface--anchor
+          button#btn-account-menu.material-icons-round.mdc-top-app-bar__action-item.mdc-icon-button(aria-describedby='tooltip-btn-account-menu' style="margin-top: 8px;") account_circle
+          .mdc-tooltip#tooltip-btn-account-menu(role='tooltip' aria-hidden='true')
+            .mdc-tooltip__surface.mdc-tooltip__surface-animation(style="overflow-wrap: break-word;") Account
+          #account-menu.mdc-menu.mdc-menu-surface(style="z-index: 10;")
+            ul.mdc-list(role="menu", aria-hidden="true", aria-orientation="vertical", tabindex="-1")
+              .loggedin(hidden)
+                li
+                  a.mdc-list-item(role="menuitem" href="/#account")
+                    span.mdc-list-item__ripple 
+                    span.mdc-list-item__text My Account
+                li
+                  a.mdc-list-item(role="menuitem" href="/#mysets")
+                    span.mdc-list-item__ripple 
+                    span.mdc-list-item__text My Sets
+                li.adminonly(hidden)
+                  a.mdc-list-item(role="menuitem" href="/#admin")
+                    span.mdc-list-item__ripple 
+                    span.mdc-list-item__text Admin Portal
+                li.mdc-list-divider(role="separator")
+                li.mdc-list-item#btn-logout(role="menuitem")
+                  span.mdc-list-item__ripple 
+                  span.mdc-list-item__text Log Out
+              li.loggedout(hidden)
+                a.mdc-list-item(role="menuitem" href="/#login")
+                  span.mdc-list-item__ripple 
+                  span.mdc-list-item__text Log In

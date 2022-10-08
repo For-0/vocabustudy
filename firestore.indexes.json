@@ -1,0 +1,94 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "meta_sets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "public",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "uid",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "meta_sets",
+      "fieldPath": "collections",
+      "indexes": [
+        {
+          "arrayConfig": "CONTAINS",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "meta_sets",
+      "fieldPath": "creator",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "meta_sets",
+      "fieldPath": "name",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "sets",
+      "fieldPath": "description",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "sets",
+      "fieldPath": "name",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "sets",
+      "fieldPath": "terms",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "social",
+      "fieldPath": "comment",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "social",
+      "fieldPath": "leaderboard",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "social",
+      "fieldPath": "like",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "social",
+      "fieldPath": "name",
+      "indexes": []
+    }
+  ]
+}

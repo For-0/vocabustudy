@@ -1,0 +1,100 @@
+- var scriptFile = "set-editor.js";
+- var showBack = true;
+- var title = "Set Editor";
+- var description = "Edit a set";
+doctype html
+html(lang="en")
+    include includes/head
+    body.mdc-typography
+        include includes/navbar
+        main.mdc-top-app-bar--fixed-adjust
+            div#home.page
+                h1 Edit Set
+                form
+                    label.mdc-text-field.mdc-text-field--outlined.field-name(style="width: 100%;")
+                        span.mdc-notched-outline
+                            span.mdc-notched-outline__leading
+                            span.mdc-notched-outline__notch
+                                span.mdc-floating-label Set Name
+                            span.mdc-notched-outline__trailing
+                        input.mdc-text-field__input(aria-label="Set Name" type="text" required)
+                    label.mdc-text-field.mdc-text-field--outlined.field-description(style="width: 100%; margin-top: 1rem;")
+                        span.mdc-notched-outline
+                            span.mdc-notched-outline__leading
+                            span.mdc-notched-outline__notch
+                                span.mdc-floating-label Set Description
+                            span.mdc-notched-outline__trailing
+                        input.mdc-text-field__input(aria-label="Set Description" type="text")
+                    div(style="margin-top: 1rem;")
+                        button#field-public.mdc-switch.mdc-switch--unselected(type="button" role="switch" aria-checked="false")
+                            .mdc-switch__track
+                            .mdc-switch__handle-track
+                                .mdc-switch__handle
+                                    .mdc-switch__shadow
+                                        .mdc-elevation-overlay
+                                    .mdc-switch__ripple
+                                    .mdc-switch__icons
+                                        svg.mdc-switch__icon.mdc-switch__icon--on(viewBox="0 0 24 24")
+                                            path(d="M19.69,5.23L8.96,15.96l-4.23-4.23L2.96,13.5l6,6L21.46,7L19.69,5.23z")
+                                        svg.mdc-switch__icon.mdc-switch__icon--off(viewBox="0 0 24 24")
+                                            path(d="M20 13H4v-2h16v2z")
+                        label(for="#field-public")  Public
+                    h2.mdc-typography--headline5 Vocabulary Words
+                        button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-add-term(type="button" style="margin-left: 1rem;")
+                            span.mdc-button__ripple
+                            i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
+                            span.mdc-button__label Add
+                        button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-import-terms(type="button" style="margin-left: 1rem;")
+                            span.mdc-button__ripple
+                            i.material-icons-round.mdc-button__icon(aria-hidden="true") upload_file
+                            span.mdc-button__label Import Terms
+                    .field-terms-edit
+                    h2.mdc-typography--headline5 Collections
+                    ul.mdc-list.field-collections(data-evolution="true" style="width: 50%; margin-bottom: 1rem;")
+                    button.mdc-button.mdc-button--raised.mdc-button--leading(type="submit" style="margin-right: 1rem;")
+                        span.mdc-button__ripple
+                        i.material-icons-round.mdc-button__icon(aria-hidden="true") save
+                        span.mdc-button__label Save
+                    button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-cancel(type="button")
+                        span.mdc-button__ripple
+                        i.material-icons-round.mdc-button__icon(aria-hidden="true") cancel
+                        span.mdc-button__label Cancel
+        include includes/footer
+        .mdc-dialog#dialog-import-terms
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Import Terms
+                    .mdc-dialog__content
+                        details
+                            summary Import from Quizlet 
+                            a(href="javascript: (function () {if (location.pathname.match(/^\\/\\d+\\/[\\w-]+\\/?$/)) navigator.clipboard.writeText([...document.querySelectorAll('.SetPageTerm-content')].map(e => [...e.querySelectorAll('.TermText')].map(i => i.innerText)).map(e => `${e[0]}  ${e[1]}`).join('\\n')).then(() => alert('Copied terms to clipboard! Paste this into \"Import Terms\" in Vocabustudy.')).catch(err => alert(`An error occurred: ${err.toString}`)); else alert('You must do this on a Quizlet set page');}())") Drag this url to the bookmarks bar
+                            | . Then, click the bookmark while on a Quizlet set page.
+                        details(style="margin-bottom: 1rem;")
+                            summary Import from Blooket
+                            label.mdc-text-field.mdc-text-field--outlined.field-import-blooket(style="width: 100%;")
+                                span.mdc-notched-outline
+                                    span.mdc-notched-outline__leading
+                                    span.mdc-notched-outline__notch
+                                        span.mdc-floating-label Blooket URL
+                                    span.mdc-notched-outline__trailing
+                                input.mdc-text-field__input(aria-label="Blooket URL" type="url" required aria-describedby="import-blooket-helper" aria-controls="import-blooket-helper")
+                            .mdc-text-field-helper-line
+                                .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#import-blooket-helper Enter a URL like https://dashboard.blooket.com/set/..... or https://play.blooket.com/play?hwId=.....
+                            button.mdc-button.mdc-button--outlined.btn-import-blooket(type="button" style="margin-top: 1rem;")
+                                span.mdc-button__ripple
+                                span.mdc-button__label Go
+                        label.mdc-text-field.mdc-text-field--outlined.mdc-text-field--textarea.mdc-text-field--no-label
+                            span.mdc-notched-outline
+                                span.mdc-notched-outline__leading
+                                span.mdc-notched-outline__trailing
+                            span.mdc-txt-field__resizer
+                                textarea.mdc-text-field__input(rows="8" cols="40" aria-label="Terms" aria-describedby="import-terms-helper" aria-controls="import-terms-helper" required)
+                        .mdc-text-field-helper-line
+                            .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#import-terms-helper Each term/definition pair should be on its own line. Separate terms and definitions with two spaces
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Cancel
+                        button.mdc-button.mdc-dialog__button.btn-submit(type="button")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK

@@ -1,0 +1,58 @@
+{
+  "name": "vocabustudy",
+  "version": "0.4.8",
+  "description": "A free tool for studying vocab",
+  "source": [
+    "src/index.pug",
+    "src/set-detail.pug",
+    "src/learn-results.pug",
+    "src/set-editor.pug",
+    "src/user-sets.pug",
+    "src/privacy-policy.pug",
+    "src/404.pug",
+    "src/google867623008d63d621.html"
+  ],
+  "browserslist": "> 20%, last 2 versions, not dead",
+  "scripts": {
+    "start": "parcel",
+    "build": "rmdir /Q /s dist && parcel build --no-source-maps",
+    "watch": "parcel watch --no-hmr",
+    "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import emulator-data --export-on-exit",
+    "clean": "rmdir /s dist && rmdir /s .parcel-cache",
+    "publish": "npm run build && firebase deploy --only hosting:vocabustudy",
+    "publish-nightly": "npm version patch && npm run build && firebase hosting:channel:deploy nightly --only vocabustudy",
+    "publish-major": "npm version major && npm run publish",
+    "publish-minor": "npm version minor && npm run publish",
+    "push-stable": "firebase hosting:clone vocabustudyonline:nightly vocabustudyonline:live"
+  },
+  "keywords": [],
+  "author": "Siddhant Kameswar",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@material/button": "14.0.0",
+    "@material/card": "14.0.0",
+    "@material/checkbox": "^14.0.0",
+    "@material/circular-progress": "^14.0.0",
+    "@material/dialog": "^14.0.0",
+    "@material/fab": "^14.0.0",
+    "@material/form-field": "^14.0.0",
+    "@material/icon-button": "14.0.0",
+    "@material/list": "^14.0.0",
+    "@material/menu": "^14.0.0",
+    "@material/radio": "14.0.0",
+    "@material/ripple": "^14.0.0",
+    "@material/snackbar": "^14.0.0",
+    "@material/switch": "^14.0.0",
+    "@material/textfield": "14.0.0",
+    "@material/theme": "^14.0.0",
+    "@material/tooltip": "^14.0.0",
+    "@material/top-app-bar": "14.0.0",
+    "firebase": "^9.9.4",
+    "firebaseui": "^6.0.1"
+  },
+  "devDependencies": {
+    "@parcel/transformer-pug": "^2.7.0",
+    "@parcel/transformer-sass": "^2.7.0",
+    "parcel": "^2.7.0"
+  }
+}

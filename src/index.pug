@@ -1,0 +1,285 @@
+- var scriptFile = "index.js";
+doctype html
+html(lang="en" style="overflow-x: hidden;")
+    include includes/head
+    body.mdc-typography
+        include includes/navbar
+        main.mdc-top-app-bar--fixed-adjust
+            .page#login
+                h1  
+                div
+                    div
+                        p.mdc-typography--headline4 Log In / Sign Up:
+                        p(style="margin: 0;") You must be at least 13 years of age to sign up.
+                        #firebaseui-auth-container
+                div
+                    p.mdc-typography--headline5 Create sets and make assignments with a 
+                        strong(style="display: block;") free account
+                        img(src="pencil.png" alt="")
+            .page#account
+                h1 My Account:
+                p Only your display name is public
+                .mdc-card 
+                    .mdc-card-wrapper__text-section
+                        .mdc-typography--headline5.fw-bold.field-name
+                        .supporting-text
+                            span.field-email
+                            span.field-email-verified.fw-bold(style="color: #b30000; opacity: 1;" hidden)  (Not Verified)
+                    .mdc-card-wrapper__text-section
+                        .supporting-text 
+                            strong Account Created: 
+                            span.field-created
+                    .mdc-card__actions
+                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-verify-email(hidden)
+                            .mdc-button__ripple
+                            span.mdc-button__label Verify Email
+                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-change-name
+                            .mdc-button__ripple
+                            span.mdc-button__label Change Display Name
+                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-change-password
+                            .mdc-button__ripple
+                            span.mdc-button__label Change Password
+                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-delete-account(style="color: #b30000;")
+                            .mdc-button__ripple
+                            span.mdc-button__label Delete Account
+            .page#mysets
+                h1 My Sets:
+                    a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new/edit/" style="float: right; color: white;")
+                        span.mdc-button__ripple
+                        i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
+                        span.mdc-button__label Create
+                .set-container(data-empty="You don't have any sets. Create one!")
+                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.mdc-button__ripple
+                    span.mdc-button__label Load More
+                h2.mdc-typography--headline5 My Custom Collections:
+                .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
+            .page#admin
+                h1 Admin Portal
+                button.mdc-button.mdc-button--raised.btn-get-all(style="display: block; margin-bottom: 1rem;")
+                    span.mdc-button__ripple
+                    span.mdc-button__label Load All Sets
+                .set-container(data-empty="No Sets")
+                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.mdc-button__ripple
+                    span.mdc-button__label Load More
+            .page#leaderboard
+                h1 Leaderboard
+                p Who has reported and the most bugs? You can report bugs by clicking the question icon at the top right
+                    span(style="display: block; opacity: 0.8; font-size: smaller;") You must be signed in to an RRISD google account to view the chart
+                <iframe width="600" height="371" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSDVcsIgEJ57f0916opNn8KO13FIplvBocKhFsbwHWkFN9BDXEmw1-EN-qgoQTeZ9BhzC0gkN3cdPPu/pubchart?oid=1011709932&amp;format=interactive"></iframe>
+                p Who can make the most public sets? Updated nightly
+                // TODO Clickable - view sets by creator?
+                ul.mdc-list(data-evolution="true")
+            .page#search
+                h1 Browse Sets:
+                details
+                    summary
+                        h2.mdc-typography--headline5(style="display: inline;") Featured Sets
+                    .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
+                h2.mdc-typography--headline5 Search:
+                p Most sets are created by CVMS students for CVMS students
+                div.field-search-container(style="width: 50%; display: inline-grid;")
+                    label.mdc-text-field.mdc-text-field--outlined.field-search
+                        span.mdc-notched-outline
+                            span.mdc-notched-outline__leading
+                            span.mdc-notched-outline__notch
+                                span.mdc-floating-label Search
+                            span.mdc-notched-outline__trailing
+                        input.mdc-text-field__input(aria-label="Search" type="text" aria-controls="field-search-helper" aria-describedby="field-search-helper")
+                    .mdc-text-field-helper-line
+                        .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words
+                button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-collections-menu(type="button" style="margin-left: 1rem;")
+                    span.mdc-button__ripple
+                    i.material-icons-round.mdc-button__icon(aria-hidden="true") filter_list
+                    span.mdc-button__label Filter by Collection
+                button.mdc-button.mdc-button--raised.mdc-button--leading.btn-search-go(type="button" style="margin-left: 1rem;")
+                    span.mdc-button__ripple
+                    i.material-icons-round.mdc-button__icon(aria-hidden="true") search
+                    span.mdc-button__label Go
+                .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above
+                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.mdc-button__ripple
+                    span.mdc-button__label Load More
+            .page#credits
+                h1 Credits
+                p.mdc-typography--headline5 Vocabustudy was fully created by Siddhant Kameswar
+                p However, it would not be possible without Omkar Patil and Nikhil Gupta. Throughout the development of Vocabustudy, they found (and still find!) bugs, requested features, and most of all, shared it with the outside world
+                p If you need help with Vocabustudy, contact one of them on the Discord server or fill out the feedback form (Question mark at the top right)
+                p Thank you to everybody who makes sets and keeps Vocabustudy popular (Mainly CVMS students)
+                h2.mdc-typography--headline4 Other Credits:
+                p Thank you to everbody who reports good bugs (Especially Michael Z.)
+                p Ruhan G. inadvertently suggested that I use Firebase for the backend
+            .page.realhome#home
+                div
+                    div
+                        div
+                            h1 Learn Vocabulary - Without Distractions
+                            ul 
+                                li 100% Free 
+                                li No Ads 
+                                li Feedback is Welcome
+                            h2.mdc-typography--headline6(style="text-align: center; margin: 0; margin-top: 1rem; font-weight: bold;") Created by Siddhant Kameswar
+                            p.mdc-typography--overline(style="margin-bottom: 0; text-align: center;") Vocabustudy - U Study Vocab
+                                br
+                                button.mdc-icon-button.btn-show-features
+                                    .mdc-icon-button__ripple
+                                    span.mdc-icon-button__focus-ring
+                                    i.material-icons-round keyboard_double_arrow_down
+                    div.home-features
+                        div
+                            h2 Features:
+                            ul.mdc-list 
+                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
+                                    span.mdc-list-item__start
+                                        i.material-icons-round tune
+                                    span.mdc-list-item__content 
+                                        span.mdc-list-item__primary-text Study Modes 
+                                        span.mdc-list-item__secondary-text Don't like flashcards? You can take a mock test, match terms, and more!
+                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
+                                    span.mdc-list-item__start
+                                        i.material-icons-round category
+                                    span.mdc-list-item__content
+                                        span.mdc-list-item__primary-text Collections
+                                        span.mdc-list-item__secondary-text Groups of vocab sets pertaining to each subject
+                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
+                                    span.mdc-list-item__start
+                                        i.material-icons-round rule
+                                    span.mdc-list-item__content 
+                                        span.mdc-list-item__primary-text Test Prep
+                                        span.mdc-list-item__secondary-text I know what tests are coming up
+                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon 
+                                    span.mdc-list-item__start
+                                        i.material-icons-round money_off
+                                    span.mdc-list-item__content
+                                        span.mdc-list-item__primary-text Fast, Free, and Simple
+                                        span.mdc-list-item__secondary-text Don't worry about ads
+                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
+                                    span.mdc-list-item__start
+                                        i.material-icons-round school
+                                    span.mdc-list-item__content
+                                        span.mdc-list-item__primary-text Assignments (Coming Soon)
+                                        span.mdc-list-item__secondary-text Assign sets to students and track completion
+                            div(style="text-align: center;")
+                                a.mdc-button.mdc-button--raised.mdc-button--leading(href="/#search" style="margin-right: 1rem;")
+                                    span.mdc-button__ripple
+                                    i.material-icons-round.mdc-button__icon(aria-hidden="true") search
+                                    span.mdc-button__label Browse Sets
+                                a.mdc-button.mdc-button--outlined.mdc-button--leading.btn-cancel(href="/#login")
+                                    span.mdc-button__ripple
+                                    i.material-icons-round.mdc-button__icon(aria-hidden="true") account_circle
+                                    span.mdc-button__label Sign Up
+        include includes/footer
+        aside.mdc-snackbar#snackbar-email-verification
+            .mdc-snackbar__surface(role="status" aria-relevant="additions")
+                .mdc-snackbar__label(aria-atomic="false") Verification email sent. Reload once you have verified your email
+        .mdc-dialog#modal-email-confirmation
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Verify Email Address
+                    .mdc-dialog__content
+                        p You will not be able to use your account if you do not verify your email address.
+                        p Press the button below to verify your email address
+                        p Note: If it does not work, contact Omkar Patil (Vocabustudy Admin #1) on Discord in order to get your email verified manually
+                        p You will get a much faster response if you contact "Vocabustudy Admin #1" than if you contact "Vocabustudy Admin"
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Not Now
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                            .mdc-button__ripple
+                            span.mdc-button__label Send Verification Email
+            .mdc-dialog__scrim
+        .mdc-dialog#modal-reauthenticate-password
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Re-Authenticate
+                    .mdc-dialog__content
+                        p To verify your identity, please sign in again:
+                        label.mdc-text-field.mdc-text-field--filled
+                            span.mdc-text-field__ripple
+                            span.mdc-floating-label Password
+                            input.mdc-text-field__input(type="password" required)
+                            span.mdc-line-ripple
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Cancel
+                        button.mdc-button.mdc-dialog__button(type="button")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK
+            .mdc-dialog__scrim
+        .mdc-dialog#modal-change-password
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Change Password
+                    .mdc-dialog__content
+                        label.mdc-text-field.mdc-text-field--filled(style="display: block; margin-bottom: 1rem;")
+                            span.mdc-text-field__ripple
+                            span.mdc-floating-label Password
+                            input.mdc-text-field__input(type="password" required minlength="6")
+                            span.mdc-line-ripple
+                        label.mdc-text-field.mdc-text-field--filled
+                            span.mdc-text-field__ripple
+                            span.mdc-floating-label Confirm Password
+                            input.mdc-text-field__input(type="password" required minlength="6")
+                            span.mdc-line-ripple
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Cancel
+                        button.mdc-button.mdc-dialog__button(type="button")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK
+        .mdc-dialog#modal-change-name
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Change Display Name
+                    .mdc-dialog__content
+                        label.mdc-text-field.mdc-text-field--filled
+                            span.mdc-text-field__ripple
+                            span.mdc-floating-label Display Name
+                            input.mdc-text-field__input(type="text" required)
+                            span.mdc-line-ripple
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Cancel
+                        button.mdc-button.mdc-dialog__button(type="button")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK
+            .mdc-dialog__scrim
+        .mdc-dialog#modal-delete-account
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    .mdc-dialog__content Are you sure you would like to delete your account? Your sets will not be deleted.
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Cancel
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK
+            .mdc-dialog__scrim
+        .mdc-dialog#modal-delete-set
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    .mdc-dialog__content Are you sure you would like to delete this set? This action cannot be undone.
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Cancel
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK
+            .mdc-dialog__scrim
+        .mdc-dialog#modal-filter-collection
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Filter by Collection:
+                    .mdc-dialog__content(style="overflow-y: scroll;")
+                        ul.mdc-list(data-evolution="true")
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK

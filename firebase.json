@@ -1,0 +1,54 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": [
+    {
+      "public": "dist",
+      "target": "vocabustudy",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/set/*/view/",
+          "destination": "/set-detail.html"
+        },
+        {
+          "source": "/set/*/edit/",
+          "destination": "/set-editor.html"
+        },
+        {
+          "source": "/user/*/",
+          "destination": "/user-sets.html"
+        },
+        {
+          "source": "/privacy/",
+          "destination": "/privacy-policy.html"
+        }
+      ],
+      "trailingSlash": true
+    },
+    {
+      "public": "rd",
+      "target": "rd"
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true
+    }
+  }
+}
