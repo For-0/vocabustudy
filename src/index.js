@@ -3,17 +3,20 @@ import { MDCRipple } from "@material/ripple/index";
 import { MDCSnackbar } from "@material/snackbar";
 import { MDCTextField } from "@material/textfield";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
-import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore/lite";
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize from "./general";
-import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries } from "./utils";
+import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
-const {db, auth, storage} = initialize(user => {
+const { db, auth, storage } = initialize(user => {
     if (user) {
         if (location.hash === "#login") location.hash = "#account";
-        else if (location.hash === "#mysets") showMySets();
+        else if (location.hash === "#mysets") {
+            showMySets();
+            showMyCollections();
+        }
         verifyAdmin();
         showAccountInfo(auth.currentUser);
         if (!user.emailVerified) {
@@ -59,7 +62,9 @@ const pages = {
     },
     mysets: {
         sets: document.querySelector('#mysets .set-container'),
-        btnCreateSet: document.querySelector("#mysets .btn-create-set")
+        collections: document.querySelector("#mysets .collection-container"),
+        btnCreateSet: document.querySelector("#mysets .btn-create-set"),
+        btnCreateCollection: document.querySelector("#mysets .btn-create-collection")
     },
     publicsets: {
         sets: document.querySelectorAll("#search .set-container"),
@@ -165,7 +170,7 @@ function showAccountInfo({ displayName, email, emailVerified, metadata: { creati
         auth.currentUser.reload().then(() => pages.account.created.innerText = toLocaleDate(auth.currentUser.metadata.creationTime));
 }
 
-async function showMySets(el=pages.mysets.sets, showAll=false) {
+async function showMySets(el = pages.mysets.sets, showAll = false) {
     el.textContent = "Loading sets...";
     let mQuery = showAll ? query(collection(db, "meta_sets")) : query(collection(db, "meta_sets"), where("uid", "==", auth.currentUser.uid));
     await paginateQueries([mQuery], el.nextElementSibling, docs => {
@@ -185,6 +190,49 @@ async function showMySets(el=pages.mysets.sets, showAll=false) {
     })
     el.textContent = "";
 }
+function registerCustomCollectionCard(docSnap) {
+    let els = createCustomCollectionCard(docSnap.data());
+    pages.mysets.collections.appendChild(els.card);
+    els.textFields.forEach(t => {
+        t.layout();
+        t.listen("change", () => els.buttons[1].disabled = false);
+    });
+    els.buttons[0].addEventListener("click", () => {
+        if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
+        let cEls = createTextFieldWithHelper("Set ID", "vocabustudyonline.web.app/set/<SET ID>/view/");
+        els.card.querySelector(".collection-sets").append(cEls.textField, cEls.helperLine);
+        cEls.obj.layout();
+        cEls.obj.listen("change", () => els.buttons[1].disabled = false);
+    });
+    els.buttons[1].addEventListener("click", async () => {
+        els.buttons[1].disabled = true;
+        els.card.querySelectorAll(".collection-sets > label").forEach(el => {
+            if (!el.querySelector("input").value) {
+                el.nextElementSibling.remove();
+                el.remove();
+            }
+        });
+        if ([...els.card.querySelectorAll(".collection-sets > label > input")].every(el => el.reportValidity())) {
+            let sets = [...els.card.querySelectorAll(".collection-sets > label input")].map(el => el.value);
+            await updateDoc(docSnap.ref, { sets });
+            els.card.querySelector(".mdc-card-wrapper__text-section > div:last-child").innerText = `${sets.length} sets`;
+        }
+    });
+    els.buttons[2].addEventListener("click", async () => {
+        pages.modals.deleteSet.open();
+        let modalResult = await (() => new Promise(resolve => pages.modals.deleteSet.listen("MDCDialog:closing", e => resolve(e.detail.action), { once: true })))();
+        if (modalResult === "accept") {
+            await deleteDoc(docSnap.ref);
+            els.card.remove();
+        }
+    });
+}
+async function showMyCollections() {
+    pages.mysets.collections.textContent = "Loading sets...";
+    let docs = await getDocs(query(collection(db, "collections"), where("uid", "==", auth.currentUser.uid)));
+    pages.mysets.collections.textContent = "";
+    docs.forEach(docSnap => registerCustomCollectionCard(docSnap));
+}
 async function search() {
     let searchTerm = pages.publicsets.searchInput.value;
     let selectedFilters = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el).slice(0, 10);
@@ -194,7 +242,7 @@ async function search() {
         words = getWords(searchTerm).slice(0, 10);
         queries.push(query(collection(db, "meta_sets"), where("public", "==", true), where("nameWords", "array-contains-any", words)));
     }
-    if (selectedFilters.length > 0) 
+    if (selectedFilters.length > 0)
         queries.push(query(collection(db, "meta_sets"), where("public", "==", true), where("collections", "array-contains-any", selectedFilters)));
     if (!searchTerm && selectedFilters.length <= 0)
         queries.push(query(collection(db, "meta_sets"), where("public", "==", true)));
@@ -205,7 +253,7 @@ async function search() {
             let relevance = 1;
             if (words.length > 0) relevance *= words.filter(val => data.nameWords.includes(val)).length / words.length;
             if (selectedFilters.length > 0) relevance *= selectedFilters.filter(val => data.collections.includes(val)).length / selectedFilters.length;
-            return {id: el.id, data, relevance};
+            return { id: el.id, data, relevance };
         });
         data.sort((a, b) => b.relevance - a.relevance);
         data.forEach(async docSnap => {
@@ -292,12 +340,20 @@ addEventListener("DOMContentLoaded", () => {
     pages.admin.btn.addEventListener("click", async () => {
         if (await verifyAdmin()) showMySets(pages.admin.sets, true);
     });
-    loadLeaderboard(storage).then(({c}) => {
-        for (let [i, {p, s}] of c.entries()) {
-            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], {tabindex: "-1"}, [
+    pages.mysets.btnCreateCollection.addEventListener("click", async () => {
+        let docRef = doc(collection(db, "collections"));
+        let name = prompt("Name your collection:");
+        if (!name) return;
+        await setDoc(docRef, {name, sets: [], uid: auth.currentUser.uid});
+        let docSnap = await getDoc(docRef);
+        registerCustomCollectionCard(docSnap);
+    });
+    loadLeaderboard(storage).then(({ c }) => {
+        for (let [i, { p, s }] of c.entries()) {
+            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], { tabindex: "-1" }, [
                 createElement('span', ['mdc-list-item__content'], {}, [
-                    createElement("span", ["mdc-list-item__primary-text"], {innerText: `#${i+1}: ${p}`}),
-                    createElement("span", ["mdc-list-item__secondary-text"], {innerText: `${s} Public Sets Created`})
+                    createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1}: ${p}` }),
+                    createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${s} Public Sets Created` })
                 ])
             ]));
             pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-divider"]));
@@ -309,6 +365,7 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.home.btnShowFeatures).unbounded = true;
     MDCRipple.attachTo(pages.account.btnChangeName);
     MDCRipple.attachTo(pages.mysets.btnCreateSet);
+    MDCRipple.attachTo(pages.mysets.btnCreateCollection);
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
     MDCRipple.attachTo(pages.admin.btn);
@@ -323,6 +380,7 @@ window.addEventListener("hashchange", () => {
             break;
         case "#mysets":
             showMySets();
+            showMyCollections();
             break;
         case "#admin":
             verifyAdmin();
