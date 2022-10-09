@@ -3,6 +3,7 @@ import { MDCCheckbox } from "@material/checkbox";
 import { MDCList } from "@material/list";
 import { MDCRipple } from "@material/ripple";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
+import { MDCTextField } from "@material/textfield";
 const checkboxBackground = '<svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24"><path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" /></svg><div class="mdc-checkbox__mixedmark"></div>';
 export function toLocaleDate(dateData) {
     switch (typeof dateData) {
@@ -191,6 +192,27 @@ async function parseCollections(collections, storage) {
     });
     return collectionNames.map(el => createElement("span", ["collection-label"], {innerText: el || "Unknown Collection"}));
 }
+export function createTextFieldWithHelper(innerText, helperText) {
+    let helperId = `_${crypto.randomUUID()}`;
+    let textField = createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
+        createElement("span", ["mdc-notched-outline"], {}, [
+            createElement("span", ["mdc-notched-outline__leading"]),
+            createElement("span", ["mdc-notched-outline__notch"], {}, [
+                createElement("span", ["mdc-floating-label"], {innerText})
+            ]),
+            createElement("span", ["mdc-notched-outline__trailing"]),
+        ]),
+        createElement("input", ["mdc-text-field__input"], {ariaLabel: innerText, type: "text", pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"})
+    ]);
+    textField.style.width = "100%";
+    textField.querySelector("input").setAttribute("aria-controls", helperId);
+    textField.querySelector("input").setAttribute("aria-describedby", helperId);
+    let helperLine = createElement("div", ["mdc-text-field-helper-line"], {}, [
+        createElement("div", ['mdc-text-field-helper-text'], {ariaHidden: true, innerText: helperText, id: helperId})
+    ]);
+    let textFieldC = new MDCTextField(textField);
+    return {textField, helperLine, obj: textFieldC}
+}
 
 export async function createSetCardOwner(set, id, storage) {
     let collectionLabels = await parseCollections(set.collections, storage);
@@ -253,6 +275,44 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     let cardEl = createElement("div", ["mdc-card"], {}, [primaryAction])
     MDCRipple.attachTo(primaryAction);
     return { card: cardEl, primaryAction };
+}
+export function createCustomCollectionCard(collection, id) {
+    let buttons = [
+        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/collection/${id}/`}, [
+            createElement('div', ["mdc-button__ripple"]),
+            createElement("div", ["mdc-button__label"], {innerText: "View"})
+        ]),
+        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {}, [
+            createElement('div', ["mdc-button__ripple"]),
+            createElement("div", ["mdc-button__label"], {innerText: "Add Set"})
+        ]),
+        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {disabled: true}, [
+            createElement('div', ["mdc-button__ripple"]),
+            createElement("div", ["mdc-button__label"], {innerText: "Save"})
+        ]),
+        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {}, [
+            createElement('div', ["mdc-button__ripple"]),
+            createElement("div", ["mdc-button__label"], {innerText: "Delete"})
+        ])
+    ];
+    /** @type {MDCTextField[]} */
+    let textFields = [];
+    let textEls = collection.sets.flatMap(setId => {
+        let {textField, helperLine, obj} = createTextFieldWithHelper("Set ID", "vocabustudyonline.web.app/set/<SET ID>/view/");
+        obj.value = setId;
+        textFields.push(obj);
+        return [textField, helperLine];
+    })
+    buttons.forEach(el => MDCRipple.attachTo(el));
+    let cardEl = createElement("div", ["mdc-card"], {}, [
+        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+            createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: collection.name }),
+            createElement("div", [], { innerText: `${collection.sets.length} sets` })
+        ]),
+        createElement("div", ["mdc-card-wrapper__text-section", "collection-sets"], {}, [...textEls]),
+        createElement("div", ["mdc-card__actions"], {}, buttons)
+    ]);
+    return { card: cardEl, buttons, textFields };
 }
 
 /**

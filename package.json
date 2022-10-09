@@ -9,6 +9,7 @@
     "src/set-editor.pug",
     "src/user-sets.pug",
     "src/privacy-policy.pug",
+    "src/custom-collections.pug",
     "src/404.pug",
     "src/google867623008d63d621.html"
   ],

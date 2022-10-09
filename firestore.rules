@@ -39,7 +39,7 @@ service cloud.firestore {
     match /collections/{collection_id} {
       allow read: if true;
       allow delete: if isCreator();
-      allow create: if request.resource.data.keys().hasAll(["name", "uid", "sets"]) && request.resource.data.keys.hasOnly(["name", "uid", "sets"]) && isNotImpersonating(true);
+      allow create: if request.resource.data.keys().hasAll(["name", "uid", "sets"]) && request.resource.data.keys().hasOnly(["name", "uid", "sets"]) && isNotImpersonating(true);
       allow update: if isCreator() && onlyUpdated(["name", "sets"]);
     }
   }

@@ -26,6 +26,10 @@
           "destination": "/user-sets.html"
         },
         {
+          "source": "/collection/*/",
+          "destination": "/custom-collections.html"
+        },
+        {
           "source": "/privacy/",
           "destination": "/privacy-policy.html"
         }
