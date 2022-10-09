@@ -30,6 +30,8 @@ const {db, auth, storage} = initialize(async user => {
         if (!isAdmin && currentSet.uid !== user.uid) location.pathname = location.protocol + "//" + location.host + "/#login";;
         document.title = `Edit ${currentSet.name} - Vocabustudy`;
         fields.setName.value = currentSet.name;
+        if (currentSet.description)
+            fields.setDescription.value = currentSet.description;
         fields.public.selected = currentSet.public;
         fields.terms.textContent = "";
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
