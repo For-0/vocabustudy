@@ -1,0 +1,15 @@
+- var scriptFile = "custom-collections.js";
+- var showBack = true;
+- var title = "Custom Collection";
+- var description = "View sets in this custom collection";
+doctype html
+html(lang="en")
+    include includes/head
+    body.mdc-typography
+        include includes/navbar
+        main.mdc-top-app-bar--fixed-adjust
+            div#home.page
+                h1 Custom Collection - 
+                    span.field-collection-name
+                .set-container(data-empty="This collection has no sets")
+        include includes/footer

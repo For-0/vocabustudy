@@ -276,8 +276,12 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     MDCRipple.attachTo(primaryAction);
     return { card: cardEl, primaryAction };
 }
-export function createCustomCollectionCard(collection) {
+export function createCustomCollectionCard(collection, id) {
     let buttons = [
+        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/collection/${id}/`}, [
+            createElement('div', ["mdc-button__ripple"]),
+            createElement("div", ["mdc-button__label"], {innerText: "View"})
+        ]),
         createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {}, [
             createElement('div', ["mdc-button__ripple"]),
             createElement("div", ["mdc-button__label"], {innerText: "Add Set"})

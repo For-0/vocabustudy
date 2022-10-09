@@ -191,21 +191,21 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
     el.textContent = "";
 }
 function registerCustomCollectionCard(docSnap) {
-    let els = createCustomCollectionCard(docSnap.data());
+    let els = createCustomCollectionCard(docSnap.data(), docSnap.id);
     pages.mysets.collections.appendChild(els.card);
     els.textFields.forEach(t => {
         t.layout();
         t.listen("change", () => els.buttons[1].disabled = false);
     });
-    els.buttons[0].addEventListener("click", () => {
+    els.buttons[1].addEventListener("click", () => {
         if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
         let cEls = createTextFieldWithHelper("Set ID", "vocabustudyonline.web.app/set/<SET ID>/view/");
         els.card.querySelector(".collection-sets").append(cEls.textField, cEls.helperLine);
         cEls.obj.layout();
-        cEls.obj.listen("change", () => els.buttons[1].disabled = false);
+        cEls.obj.listen("change", () => els.buttons[2].disabled = false);
     });
-    els.buttons[1].addEventListener("click", async () => {
-        els.buttons[1].disabled = true;
+    els.buttons[2].addEventListener("click", async () => {
+        els.buttons[2].disabled = true;
         els.card.querySelectorAll(".collection-sets > label").forEach(el => {
             if (!el.querySelector("input").value) {
                 el.nextElementSibling.remove();
@@ -218,7 +218,7 @@ function registerCustomCollectionCard(docSnap) {
             els.card.querySelector(".mdc-card-wrapper__text-section > div:last-child").innerText = `${sets.length} sets`;
         }
     });
-    els.buttons[2].addEventListener("click", async () => {
+    els.buttons[3].addEventListener("click", async () => {
         pages.modals.deleteSet.open();
         let modalResult = await (() => new Promise(resolve => pages.modals.deleteSet.listen("MDCDialog:closing", e => resolve(e.detail.action), { once: true })))();
         if (modalResult === "accept") {
