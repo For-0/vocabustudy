@@ -195,7 +195,7 @@ function registerCustomCollectionCard(docSnap) {
     pages.mysets.collections.appendChild(els.card);
     els.textFields.forEach(t => {
         t.layout();
-        t.listen("change", () => els.buttons[1].disabled = false);
+        t.listen("change", () => els.buttons[2].disabled = false);
     });
     els.buttons[1].addEventListener("click", () => {
         if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
@@ -342,11 +342,15 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.mysets.btnCreateCollection.addEventListener("click", async () => {
         let docRef = doc(collection(db, "collections"));
-        let name = prompt("Name your collection:");
-        if (!name) return;
-        await setDoc(docRef, {name, sets: [], uid: auth.currentUser.uid});
-        let docSnap = await getDoc(docRef);
-        registerCustomCollectionCard(docSnap);
+        pages.modals.changeName.open();
+        pages.modals.changeNameInput.value = "";
+        pages.modals.changeNameInput.valid = true;
+        let name = await (() => new Promise(resolve => pages.modals.changeName.listen("V:Result", e => resolve(e.detail.result), { once: true })))();
+        if (name !== null) {
+            await setDoc(docRef, {name, sets: [], uid: auth.currentUser.uid});
+            let docSnap = await getDoc(docRef);
+            registerCustomCollectionCard(docSnap);
+        }
     });
     loadLeaderboard(storage).then(({ c }) => {
         for (let [i, { p, s }] of c.entries()) {

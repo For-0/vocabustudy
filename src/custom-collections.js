@@ -20,8 +20,9 @@ addEventListener("DOMContentLoaded", async () => {
     if (!customCollection.exists()) return goBack();
     let collectionData = customCollection.data();
     fields.collectionName.innerText = collectionData.name;
-    let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", collectionData.sets)));
     fields.sets.innerText = "";
+    if (collectionData.sets.length < 1) return;
+    let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", collectionData.sets)));
     sets.forEach(async docSnap => {
         let els = await createSetCard(docSnap.data(), docSnap.id, storage);
         fields.sets.appendChild(els.card);
