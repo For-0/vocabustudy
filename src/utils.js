@@ -4,6 +4,14 @@ import { MDCList } from "@material/list";
 import { MDCRipple } from "@material/ripple";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
 import { MDCTextField } from "@material/textfield";
+import { matches } from '@material/dom/ponyfill';
+import { strings as MDCListStrings } from "@material/list/constants";
+MDCList.prototype.handleClickEvent = function (evt) {
+    var index = this.getListItemIndex(evt.target);
+    var target = evt.target;
+    var toggleCheckbox = !matches(target, MDCListStrings.CHECKBOX_RADIO_SELECTOR);
+    this.foundation.handleClick(index, !toggleCheckbox, evt); // FIXME MANUAL HACK material-components/material-components-web#7618
+};
 const checkboxBackground = '<svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24"><path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" /></svg><div class="mdc-checkbox__mixedmark"></div>';
 export function toLocaleDate(dateData) {
     switch (typeof dateData) {
