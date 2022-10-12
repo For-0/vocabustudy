@@ -114,6 +114,24 @@ $theme-color: #795548;
             color: lighten($theme-color, 10%);
         }
     }
+    footer, header {
+        &::after {
+            backdrop-filter: brightness(142%) saturate(99%);
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+        }
+        > div, > p {
+            z-index: 1;
+        }
+        background-color: darken($theme-color, 20%);
+    }
+    .page > h1:first-child::after {
+        filter: brightness(65%) saturate(110%);
+    }
 }
 @mixin scrollbar($thumb: #331011, $track: #6b473c) {
     scrollbar-color: $thumb $track;
