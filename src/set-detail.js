@@ -383,6 +383,9 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
+        get userMaxQuestions() {
+            return Math.max(parseInt(this.fieldMaxTerms.value), 0);
+        },
         questionInputs: {
             sa: [],
             mc: [],
@@ -479,7 +482,7 @@ const pages = {
             this.questionContainers[2].querySelectorAll(":scope > div").forEach(el => el.textContent = "");
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
             let groupTypes = this.checkboxes.map(el => el.checked);
-            let groups = makeRandomGroups(currentSet.terms.length, groupTypes.filter(el => el).length, Math.max(parseInt(this.fieldMaxTerms.value), 0));
+            let groups = makeRandomGroups(currentSet.terms.length, groupTypes.filter(el => el).length, this.userMaxQuestions);
             this.questionInputs = {sa: [], mc: [], tf: []};
             if (groupTypes[0]) {
                 let group = groups.shift();
@@ -535,10 +538,12 @@ const pages = {
             this.questionsFieldset.disabled = true;
             document.querySelectorAll(".test-matching-box.left").forEach(box => box.removeEventListener("click", this.leftMatchingBoxClickListener));
             document.querySelectorAll(".test-matching-box.right").forEach(box => box.removeEventListener("click", this.rightMatchingBoxClickListener));
+            let numCorrect = 0;
             for (let sa of this.questionInputs.sa) {
                 if (checkAnswers(sa.input.value, sa.answer)) {
                     sa.input.root.classList.add("correct");
                     sa.input.helperTextContent = "Correct!";
+                    numCorrect++;
                 } else {
                     sa.input.root.classList.add("incorrect");
                     sa.input.helperTextContent = `Incorrect -> ${sa.answer}`;
@@ -546,20 +551,24 @@ const pages = {
             }
             for (let mc of this.questionInputs.mc) {
                 let correctAnswer = mc.inputs[mc.answer];
+                numCorrect += correctAnswer.checked; // implicit cast
                 mc.inputs.find(el => el.checked).root.classList.toggle("incorrect", !correctAnswer.checked);
                 correctAnswer.root.classList.add("correct");
             }
-            for (let match of document.querySelectorAll(".matches-container > div"))
-                match.classList.add((match.dataset.fromCard === match.dataset.toCard) ? "correct" : "incorrect");
+            for (let match of document.querySelectorAll(".matches-container > div")) {
+                let isCorrect = match.dataset.fromCard === match.dataset.toCard;
+                numCorrect += isCorrect;
+                match.classList.add(isCorrect ? "correct" : "incorrect");
+            }
             for (let tf of this.questionInputs.tf) {
                 let selectedInput = tf.inputs.find(el => el.checked);
                 let correctAnswer = tf.inputs[tf.answer ? 0 : 1];
                 correctAnswer.root.classList.add("correct");
                 if (selectedInput !== correctAnswer) selectedInput.root.classList.add("incorrect");
+                else numCorrect++;
             }
-            let total = Math.min(currentSet.terms.length, 20);
-            let numIncorrect = this.questionsFieldset.querySelectorAll(".incorrect").length;
-            let percentCorrect = Math.round((total - numIncorrect) * 100 / total);
+            let total = Math.max(Math.min(currentSet.terms.length, this.userMaxQuestions), 1);
+            let percentCorrect = Math.round(numCorrect * 100 / total);
             this.btnCheck.disabled = true;
             this.btnCheck.classList.remove("mdc-ripple-upgraded--background-focused");
             this.btnCheck.querySelector(".mdc-button__label").innerText = `${percentCorrect}%`;
