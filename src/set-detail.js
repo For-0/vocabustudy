@@ -484,13 +484,13 @@ const pages = {
             let groupTypes = this.checkboxes.map(el => el.checked);
             let groups = makeRandomGroups(currentSet.terms.length, groupTypes.filter(el => el).length, this.userMaxQuestions);
             this.questionInputs = {sa: [], mc: [], tf: []};
-            if (groupTypes[0]) {
+            if (groupTypes[0] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.sa = group.map(el => ({ input: this.makeSAQuestion(currentSet.terms[el][this.questionType]), answer: currentSet.terms[el][this.answerType] }));
                 this.questionTypeHeaders[0].dataset.count = group.length;
             }
             
-            if (groupTypes[1]) {
+            if (groupTypes[1] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.mc = group.map(el => {
                     let choices = getRandomChoices(3, currentSet.terms.length, el);
@@ -499,16 +499,15 @@ const pages = {
                 this.questionTypeHeaders[1].dataset.count = group.length;
             }
             
-            if (groupTypes[2]) {
+            if (groupTypes[2] && groups[0]?.length) {
                 let group = groups.shift();
                 group.forEach(el => this.makeMTQuestion(currentSet.terms[el][this.questionType], currentSet.terms[el][this.answerType]));
                 this.randomizeMatchOptions();
                 this.questionTypeHeaders[2].dataset.count = group.length;
                 document.querySelectorAll(".test-matching-box").forEach(box => box.addEventListener("click", this.matchingBoxClickListener));
-                //document.querySelectorAll(".test-matching-box.right").forEach(box => box.addEventListener("click", this.rightMatchingBoxClickListener));
             }
             
-            if (groupTypes[3]) {
+            if (groupTypes[3] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.tf = group.map(el => {
                     let choiceIsCorrect = Math.random() < 0.5;
