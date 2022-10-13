@@ -96,6 +96,7 @@ const pages = {
 
 function showAuthUI() {
     if (auth.currentUser) return location.hash = "#account";
+    document.getElementById("firebaseui-css").disabled = false;
     authUI.reset();
     authUI.start("#firebaseui-auth-container", {
         signInOptions: [
