@@ -2,11 +2,11 @@ head
     meta(charset="UTF-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    meta(name="robots", content="noindex")
     title #{title || "Home"} - Vocabustudy
     script(src=`${scriptFile}`, type="module")
     meta(property="og:title" content=`${title || "Home"} - Vocabustudy`)
     meta(property="og:description" content=`${description || "Study vocab for free, without ads."}`)
+    meta(name="description" content=`${description || "Study vocab for free, without ads."}`)
     meta(property="og:type" content="website")
     meta(property="og:image" content="./og_banner.png")
     meta(property="og:site_name" content="Vocabustudy")
