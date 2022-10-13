@@ -229,7 +229,7 @@ function registerCustomCollectionCard(docSnap) {
     });
 }
 async function showMyCollections() {
-    pages.mysets.collections.textContent = "Loading sets...";
+    pages.mysets.collections.textContent = "Loading collections...";
     let docs = await getDocs(query(collection(db, "collections"), where("uid", "==", auth.currentUser.uid)));
     pages.mysets.collections.textContent = "";
     docs.forEach(docSnap => registerCustomCollectionCard(docSnap));
