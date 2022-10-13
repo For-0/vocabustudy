@@ -1,0 +1,29 @@
+@use "@material/theme" with (
+    $primary: $theme-color,
+    $on-primary: #fff,
+    $secondary: $theme-color,
+    $on-secondary: #fff
+);
+
+@use "@material/button/styles" as mdc-button;
+@use "@material/top-app-bar/_variables" with ($mobile-breakpoint: 10px);
+@use "@material/top-app-bar/mdc-top-app-bar";
+@use "@material/icon-button/mdc-icon-button";
+@use "@material/typography/mdc-typography";
+@use "@material/floating-label/mdc-floating-label";
+@use "@material/line-ripple/mdc-line-ripple";
+@use "@material/notched-outline/mdc-notched-outline";
+@use "@material/textfield/mdc-text-field";
+@use "@material/radio/styles" as mdc-radio;
+@use "@material/form-field/mdc-form-field";
+@use "@material/checkbox/mdc-checkbox";
+@use "@material/card/mdc-card";
+@use "@material/tooltip/styles" as mdc-tooltip;
+@use "@material/list/mdc-list";
+@use "@material/menu-surface/mdc-menu-surface";
+@use "@material/menu/mdc-menu";
+@use "@material/dialog/mdc-dialog";
+@use "@material/snackbar/mdc-snackbar";
+@use "@material/circular-progress/mdc-circular-progress";
+@use "@material/switch/styles" as mdc-switch;
+@use "@material/fab/mdc-fab";

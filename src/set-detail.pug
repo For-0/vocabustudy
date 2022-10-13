@@ -1,4 +1,5 @@
 - var scriptFile = "set-detail.js";
+- var styleFile = "set-detail.scss";
 - var showBack = true;
 - var title = "Set Detail";
 - var description = "Study a set, using one or more of our modes";
@@ -180,7 +181,7 @@ html(lang="en")
                     | Test - 
                     span
                 div
-                    div(style='width: 16%; overflow-x: auto;')
+                    div.custom-scrollbar(style='width: 16%; overflow-x: auto;')
                         p(style="margin: 0;")
                             strong Answer With:
                         div
@@ -258,7 +259,7 @@ html(lang="en")
                             span.mdc-button__ripple
                             i.material-icons.mdc-button__icon(aria-hidden='true') check_circle
                             span.mdc-button__label Check Answers
-                    fieldset
+                    fieldset.custom-scrollbar
                         h2.mdc-typography--headline4(data-count='0')  Short Answer Questions
                         div
                         h2.mdc-typography--headline4(data-count='0')  Multiple Choice Questions

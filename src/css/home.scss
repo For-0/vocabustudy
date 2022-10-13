@@ -1,0 +1,168 @@
+@import "styles.scss";
+.realhome {
+    background: url("../hero-background.svg") no-repeat center center;
+    background-size: 100% 100%;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 64px);
+    z-index: 2;
+    ul {
+        list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -5 24 24' width='20' fill='%23fff'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z'/%3E%3C/svg%3E");
+    }
+    > div {
+        color: white;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        position: relative;
+        > div {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            > div {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            &:first-child > div {
+                background-color: #ffffff1c;
+                padding: 3rem;
+                padding-bottom: 1rem;
+                border-radius: 20px;
+                @media (max-height: 430px) {
+                    transform: scale(0.8, 0.8);
+                }
+            }
+            &:last-child {
+                --mdc-theme-text-primary-on-background: white;
+                --mdc-theme-text-secondary-on-background: rgb(252, 227, 196);
+                --mdc-theme-text-icon-on-background: white;
+                --mdc-outlined-button-outline-color: #ffffff1f;
+                --mdc-outlined-button-label-text-color: white;
+                background: url("../features-background.svg") no-repeat center center;
+                background-size: auto;
+                h2 {
+                    text-align: center;
+                    margin: 0;
+                }
+                > div {
+                    max-width: 100%;
+                    @media (max-height: 500px) {
+                        transform: scale(0.8, 0.8);
+                    }
+                    @media (max-height: 400px) {
+                        transform: scale(0.6, 0.6);
+                    }
+                }
+                .mdc-list-item__secondary-text {
+                    white-space: normal;
+                }
+            }
+        }
+    }
+}
+
+#search { 
+    details {
+        cursor: pointer;
+        &:not([open]) > summary > h2::after {
+            content: " (Click to Expand)";
+        }
+        .set-container {
+            @media (min-width: 900px) {
+                flex-wrap: nowrap;
+            }
+        }
+    }
+    .set-container {
+        .mdc-card-wrapper__text-section:nth-last-child(2) {
+            margin-top: 4px;
+        }
+        .mdc-card__primary-action {
+            height: 100%;
+        }
+    }
+    @media (max-width: 730px) {
+        .field-search-container {
+            width: 100% !important;
+            margin-bottom: 1rem;
+            + .mdc-button--outlined {
+                margin-left: 0 !important;
+            }
+        }
+    }
+}
+#admin, #mysets {
+    .mdc-card-wrapper__text-section:nth-last-child(2) {
+        margin-top: 6px;
+        padding-bottom: 2px;
+    }
+}
+#login {
+    position: relative;
+    > div:nth-child(2) {
+        position: absolute;
+        top: 1rem;
+        left: -1rem;
+        width: calc(50% + 1rem);
+        height: calc(100%);
+        &::after {
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+            background: url("../hero-background.svg") no-repeat center center;
+            background-size: 100% 100%;
+            z-index: -1;
+            content: "";
+            position: absolute;
+        }
+        > div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            background-color: #ffffff1c;
+            padding: 2rem;
+            border-radius: 20px;
+        }
+    }
+    > div:last-child {
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        width: calc(50% + 1rem);
+        height: calc(100%);
+        &::after {
+            width: 100%;
+            height: 100%;
+            display: inline-block;
+            background: url("../login-background.svg") no-repeat center center;
+            background-size: 100% 100%;
+            z-index: -1;
+            content: "";
+            position: absolute;
+        }
+        p {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            background-color: #ffffff1c;
+            padding: 2rem;
+            padding-bottom: 0;
+            border-radius: 20px;
+            img {
+                width: 50%;
+                margin-top: 2rem;
+            }
+        }
+    }
+}
