@@ -1,16 +1,16 @@
-import { MDCSwitch } from "@material/switch";
-import { MDCTextField } from "@material/textfield";
-import { MDCRipple } from "@material/ripple"
+import { MDCDialog } from "@material/dialog/index";
+import { MDCRipple } from "@material/ripple/index";
+import { MDCSwitch } from "@material/switch/index";
+import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
-import initialize from "./general.js"
+import initialize from "./general.js";
 import { createElement, getBlooketSet, getWords, showCollections } from "./utils.js";
-import { MDCDialog } from "@material/dialog/component.js";
 
 const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w ]+)\/edit\/?/)[1] || (location.pathname = "/");
 let creator = null;
 const blooketDashboardRe = /https:\/\/dashboard\.blooket\.com\/set\/(\w+)\/?/;
 const blooketHwRe = /https:\/\/play\.blooket\.com\/play\?hwId=(\w+)/;
-const {db, auth, storage} = initialize(async user => {
+const {db, auth} = initialize(async user => {
     if (!user) location.href = location.protocol + "//" + location.host + "/#login";
     else if (setId === "new") {
         document.title = "New Set - Vocabustudy";
@@ -169,5 +169,5 @@ fields.btnImportBlooket.addEventListener("click", async () => {
             fields.fieldImportBlooket.value = "";
         }
     }
-})
-showCollections(fields.collections, storage);
+});
+showCollections(fields.collections);

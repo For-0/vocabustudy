@@ -346,7 +346,6 @@
                     pointer-events: all;
                     background-color: $theme-color;
                     color: white;
-                    @extend .mdc-typography--button;
                     line-height: unset;
                     overflow-wrap: break-word;
                     &.selected {

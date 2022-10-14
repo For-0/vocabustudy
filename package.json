@@ -13,7 +13,7 @@
     "src/404.pug",
     "src/google867623008d63d621.html"
   ],
-  "browserslist": "> 20%, last 2 versions, not dead",
+  "browserslist": "> 0.1% and last 2 versions and not dead",
   "scripts": {
     "start": "parcel",
     "build": "rmdir /Q /s dist && parcel build --no-source-maps",
@@ -52,6 +52,7 @@
     "firebaseui": "^6.0.1"
   },
   "devDependencies": {
+    "@parcel/reporter-bundle-analyzer": "^2.7.0",
     "@parcel/transformer-pug": "^2.7.0",
     "@parcel/transformer-sass": "^2.7.0",
     "parcel": "^2.7.0"
