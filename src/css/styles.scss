@@ -1,5 +1,4 @@
 $theme-color: #795548;
-@import "material-components.scss";
 
 @mixin theme-dark {
     background-color: #131313;
@@ -208,7 +207,11 @@ a:not([class]) {
         display: none;
     }
     > h1:first-child {
-        @extend .mdc-typography--headline4;
+        font-family: var(--mdc-typography-font-family);
+        font-size: 2.125rem;
+        line-height: 2.5rem;
+        font-weight: 400;
+        letter-spacing: .00735294em;
         padding-bottom: 1rem;
         position: sticky;
         color: white;

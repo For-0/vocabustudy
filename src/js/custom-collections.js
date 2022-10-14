@@ -4,7 +4,7 @@ import { createSetCard } from "./utils.js";
 
 const collectionId = decodeURIComponent(location.pathname).match(/\/collection\/([\w ]+)\/?/)[1] || goBack();
 
-const {db, storage} = initialize();
+const {db} = initialize();
 const fields = {
     collectionName: document.querySelector(".field-collection-name"),
     sets: document.querySelector(".set-container")
@@ -24,7 +24,7 @@ addEventListener("DOMContentLoaded", async () => {
     if (collectionData.sets.length < 1) return;
     let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", collectionData.sets)));
     sets.forEach(async docSnap => {
-        let els = await createSetCard(docSnap.data(), docSnap.id, storage);
+        let els = await createSetCard(docSnap.data(), docSnap.id);
         fields.sets.appendChild(els.card);
     });
 });

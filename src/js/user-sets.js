@@ -4,7 +4,7 @@ import { createSetCard, paginateQueries } from "./utils.js";
 
 const userId = decodeURIComponent(location.pathname).match(/\/user\/([\w ]+)\/?/)[1] || goBack();
 
-const {db, storage} = initialize();
+const {db} = initialize();
 const fields = {
     userName: document.querySelector(".field-user-name"),
     sets: document.querySelector(".set-container")
@@ -19,7 +19,7 @@ addEventListener("DOMContentLoaded", async () => {
     await paginateQueries([query(collection(db, "meta_sets"), where("public", "==", true), where("uid", "==", userId))], fields.sets.nextElementSibling, results => {
         results.forEach(async docSnap => {
             fields.userName.innerText = docSnap.get("creator");
-            let els = await createSetCard(docSnap.data(), docSnap.id, storage);
+            let els = await createSetCard(docSnap.data(), docSnap.id);
             fields.sets.appendChild(els.card);
         });
     });

@@ -1,7 +1,7 @@
-import { MDCDialog } from "@material/dialog";
+import { MDCDialog } from "@material/dialog/index";
 import { MDCRipple } from "@material/ripple/index";
-import { MDCSnackbar } from "@material/snackbar";
-import { MDCTextField } from "@material/textfield";
+import { MDCSnackbar } from "@material/snackbar/index";
+import { MDCTextField } from "@material/textfield/index";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
@@ -30,11 +30,10 @@ const { db, auth, storage } = initialize(user => {
     let featuredSets = JSON.parse(getValue(remoteConfig, "featuredSets").asString());
     pages.publicsets.sets[0].textContent = "";
     for (let set of featuredSets) {
-        let els = await createSetCard(set, set.id, storage);
+        let els = await createSetCard(set, set.id);
         pages.publicsets.sets[0].appendChild(els.card);
     }
 });
-const authUI = new firebaseui.auth.AuthUI(auth);
 const hashTitles = {
     "#login": "Log In",
     "#mysets": "My Sets",
@@ -93,12 +92,16 @@ const pages = {
         list: document.querySelector("#leaderboard .mdc-list")
     }
 };
-
-function showAuthUI() {
+window.authUI = new firebaseui.auth.AuthUI(auth);
+async function showAuthUI() {
     if (auth.currentUser) return location.hash = "#account";
     document.getElementById("firebaseui-css").disabled = false;
-    authUI.reset();
-    authUI.start("#firebaseui-auth-container", {
+    /*if (!window.firebaseui) {
+        window.firebaseui = (await import("npm:firebaseui/dist/firebaseui"))
+        window.authUI = new firebaseui.auth.AuthUI(auth);
+    }*/
+    window.authUI.reset();
+    window.authUI.start("#firebaseui-auth-container", {
         signInOptions: [
             {
                 provider: GoogleAuthProvider.PROVIDER_ID,
@@ -176,7 +179,7 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
     let mQuery = showAll ? query(collection(db, "meta_sets")) : query(collection(db, "meta_sets"), where("uid", "==", auth.currentUser.uid));
     await paginateQueries([mQuery], el.nextElementSibling, docs => {
         docs.forEach(async docSnap => {
-            let els = await createSetCardOwner(docSnap.data(), docSnap.id, storage);
+            let els = await createSetCardOwner(docSnap.data(), docSnap.id);
             el.appendChild(els.card);
             els.buttons[2].addEventListener("click", async () => {
                 pages.modals.deleteSet.open();
@@ -258,7 +261,7 @@ async function search() {
         });
         data.sort((a, b) => b.relevance - a.relevance);
         data.forEach(async docSnap => {
-            let els = await createSetCard(docSnap.data, docSnap.id, storage, docSnap.relevance);
+            let els = await createSetCard(docSnap.data, docSnap.id, docSnap.relevance);
             pages.publicsets.sets[1].appendChild(els.card);
         });
     }, [0, 0]);
@@ -353,17 +356,6 @@ addEventListener("DOMContentLoaded", () => {
             registerCustomCollectionCard(docSnap);
         }
     });
-    loadLeaderboard(storage).then(({ c }) => {
-        for (let [i, { p, s }] of c.entries()) {
-            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], { tabindex: "-1" }, [
-                createElement('span', ['mdc-list-item__content'], {}, [
-                    createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1}: ${p}` }),
-                    createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${s} Public Sets Created` })
-                ])
-            ]));
-            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-divider"]));
-        }
-    });
     MDCRipple.attachTo(pages.account.btnVerifyEmail);
     MDCRipple.attachTo(pages.account.btnChangePassword);
     MDCRipple.attachTo(pages.account.btnDeleteAccount);
@@ -374,7 +366,7 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
     MDCRipple.attachTo(pages.admin.btn);
-    showCollections(pages.modals.filterCollectionList, storage);
+    showCollections(pages.modals.filterCollectionList);
     if (location.hash === "#login") showAuthUI();
 });
 addEventListener("load", () => pages.publicsets.searchInput.value = "");
@@ -389,6 +381,19 @@ window.addEventListener("hashchange", () => {
             break;
         case "#admin":
             verifyAdmin();
+            break;
+        case "#leaderboard":
+            storage.then(s => loadLeaderboard(s)).then(({ c }) => {
+                for (let [i, { p, s }] of c.entries()) {
+                    pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], { tabindex: "-1" }, [
+                        createElement('span', ['mdc-list-item__content'], {}, [
+                            createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1}: ${p}` }),
+                            createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${s} Public Sets Created` })
+                        ])
+                    ]));
+                    pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-divider"]));
+                }
+            });
             break;
     };
     document.title = `${hashTitles[location.hash] || "Home"} - Vocabustudy`;

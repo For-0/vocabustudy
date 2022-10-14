@@ -1,11 +1,10 @@
-import { FirebaseStorage, ref, getDownloadURL } from "firebase/storage";
-import { MDCCheckbox } from "@material/checkbox";
-import { MDCList } from "@material/list";
-import { MDCRipple } from "@material/ripple";
-import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
-import { MDCTextField } from "@material/textfield";
+import { MDCCheckbox } from "@material/checkbox/index";
 import { matches } from '@material/dom/ponyfill';
 import { strings as MDCListStrings } from "@material/list/constants";
+import { MDCList } from "@material/list/index";
+import { MDCRipple } from "@material/ripple/index";
+import { MDCTextField } from "@material/textfield/index";
+import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
 MDCList.prototype.handleClickEvent = function (evt) {
     var index = this.getListItemIndex(evt.target);
     var target = evt.target;
@@ -45,32 +44,30 @@ export function getWords(string) {
     return alphaNum.split(" ").map(el => el.trim()).filter(el => el);
 }
 
-async function fetchStorageJson(storage, url) {
+async function fetchStorageJson({storage, getDownloadURL, ref}, url) {
     let pathRef = ref(storage, url);
     let downloadUrl = await getDownloadURL(pathRef);
     let res = await fetch(downloadUrl);
     return await res.json();
 }
 /**
- * Loads the collections, from cache if possible
- * @param {FirebaseStorage} storage The storage instance - will only be used if cache is not available/expired
+ * Loads the collections, from cache if possible otherwise from network
  * @returns {Promise<{c: (String|{n: String, s: String[], o: String[]?})[]}>}
  */
-export async function loadCollections(storage) {
+export async function loadCollections() {
     let possibleCachedItem = localStorage.getItem("collections_cache");
     let currentTime = Date.now();
     if (possibleCachedItem) {
         let cachedItem = JSON.parse(possibleCachedItem);
         if (cachedItem.expiration && cachedItem.data && cachedItem.expiration > currentTime) return cachedItem.data;
     }
-    let newCollections = await fetchStorageJson(storage, "collections.json");
+    let {default: newCollections} = await import("../collections.json");
     let newExpiration = currentTime + 604800000; // number of milliseconds in a week
     localStorage.setItem("collections_cache", JSON.stringify({ data: newCollections, expiration: newExpiration }));
     return newCollections;
 }
 /**
  * Loads the leaderboard, from cache if possible
- * @param {FirebaseStorage} storage The storage instance - will only be used if cache is not available/expired
  * @returns {Promise<{c: {p: String, s: String}[]}>}
  */
 export async function loadLeaderboard(storage) {
@@ -87,8 +84,8 @@ export async function loadLeaderboard(storage) {
     localStorage.setItem("leaderboard_cache", JSON.stringify({ data: newLeaderboard, expiration: Number(newExpiration) }));
     return newLeaderboard;
 }
-export async function showCollections(listEl, storage) {
-    let { c } = await loadCollections(storage);
+export async function showCollections(listEl) {
+    let { c } = await loadCollections();
     for (let [i, collection] of c.entries()) {
         if (typeof collection === "string") listEl.appendChild(createCollectionListItem(collection, i));
         else if (typeof collection === "object") {
@@ -182,8 +179,8 @@ export function getBlooketSet(setId, setType) {
         document.body.appendChild(el);
     });
 }
-async function parseCollections(collections, storage) {
-    let {c} = await loadCollections(storage);
+async function parseCollections(collections) {
+    let {c} = await loadCollections();
     let parsedCollections = collections.map(el => el.split(":").map(el => parseInt(el)));
     let collectionNames = parsedCollections.map(el => {
         try {
@@ -222,8 +219,8 @@ export function createTextFieldWithHelper(innerText, helperText) {
     return {textField, helperLine, obj: textFieldC}
 }
 
-export async function createSetCardOwner(set, id, storage) {
-    let collectionLabels = await parseCollections(set.collections, storage);
+export async function createSetCardOwner(set, id) {
+    let collectionLabels = await parseCollections(set.collections);
     let buttons = [
         createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/set/${id}/view/`}, [
             createElement('div', ["mdc-button__ripple"]),
@@ -264,8 +261,8 @@ export async function createSetCardOwner(set, id, storage) {
 * @param {float} relevance Relevance, from 0 to 1
 * @returns The card and primary action
 */
-export async function createSetCard({ name, creator, numTerms, collections, likes, uid }, id, storage, relevance=null) {
-    let collectionLabels = await parseCollections(collections, storage);
+export async function createSetCard({ name, creator, numTerms, collections, likes, uid }, id, relevance=null) {
+    let collectionLabels = await parseCollections(collections);
     let textEls = [];
     if (relevance) {
         textEls.push(createElement("a", [], { innerText: `Created by ${creator}`, href: `/user/${uid}/` }));

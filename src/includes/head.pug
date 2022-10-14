@@ -3,7 +3,7 @@ head
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title #{title || "Home"} - Vocabustudy
-    script(src=`js/${scriptFile}`, type="module")
+    script(src=`js/${scriptFile}` type="module")
     meta(property="og:title" content=`${title || "Home"} - Vocabustudy`)
     meta(property="og:description" content=`${description || "Study vocab for free, without ads."}`)
     meta(name="description" content=`${description || "Study vocab for free, without ads."}`)
@@ -11,6 +11,7 @@ head
     meta(property="og:image" content="./og_banner.png")
     meta(property="og:site_name" content="Vocabustudy")
     link(rel="stylesheet" href=`css/${styleFile || "styles.scss"}`)
+    link(rel="stylesheet" href="css/material-components.scss")
     link(rel="shortcut icon", href="favicon.ico", type="image/x-icon")
     link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons+Round|Material+Icons|Material+Icons+Outlined")
     link(rel="preconnect", href="https://fonts.googleapis.com")

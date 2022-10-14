@@ -1,10 +1,9 @@
-import { MDCMenu } from "@material/menu";
-import { MDCTooltip } from "@material/tooltip";
-import { MDCRipple } from "@material/ripple";
+import { MDCMenu } from "@material/menu/index";
+import { MDCTooltip } from "@material/tooltip/index";
+import { MDCRipple } from "@material/ripple/index";
 import { initializeApp } from "firebase/app";
-import { connectAuthEmulator, getAuth } from "firebase/auth";
+import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
-import { getStorage } from "firebase/storage";
 import { fetchAndActivate, getRemoteConfig } from "firebase/remote-config";
 
 function setLoginButtonsState(state, isAdmin) {
@@ -74,8 +73,11 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     showTheme(localStorage.getItem("theme"));
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth(app);
-    const storage = getStorage(app);
+    const auth = initializeAuth(app, {
+        persistence: browserLocalPersistence,
+        popupRedirectResolver: browserPopupRedirectResolver
+    });
+    auth.setPersistence(browserLocalPersistence);
     //const analytics = getAnalytics(app);
     const remoteConfig = getRemoteConfig(app);
     
@@ -115,5 +117,12 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         featuredSets: []
     };
     fetchAndActivate(remoteConfig).then(() => remoteConfigActivatedCallback(remoteConfig));
-    return {app, db, auth, storage, /*analytics*/};
+    return {app, db, auth, get storage() {
+        return (async () => {
+            const {getStorage, getDownloadURL, ref}  = await import("firebase/storage");
+            let storage = getStorage(app);
+            this.storage = () => Promise.resolve({storage, getDownloadURL, ref});
+            return {storage, getDownloadURL, ref};
+        })();
+    }};
 }
