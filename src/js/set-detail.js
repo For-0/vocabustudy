@@ -996,6 +996,7 @@ function createCommentCard({ name, comment, like }, id) {
         pages.setOverview.fieldComment.input.value = comment;
     } else {
         cardText.innerText = comment;
+        cardText.style.overflowWrap = "break-word";
         if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
     }
     return pages.setOverview.commentsContainer.appendChild(cardEl);
