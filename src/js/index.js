@@ -92,16 +92,12 @@ const pages = {
         list: document.querySelector("#leaderboard .mdc-list")
     }
 };
-window.authUI = new firebaseui.auth.AuthUI(auth);
+const authUI = new firebaseui.auth.AuthUI(auth);
 async function showAuthUI() {
     if (auth.currentUser) return location.hash = "#account";
     document.getElementById("firebaseui-css").disabled = false;
-    /*if (!window.firebaseui) {
-        window.firebaseui = (await import("npm:firebaseui/dist/firebaseui"))
-        window.authUI = new firebaseui.auth.AuthUI(auth);
-    }*/
-    window.authUI.reset();
-    window.authUI.start("#firebaseui-auth-container", {
+    authUI.reset();
+    authUI.start("#firebaseui-auth-container", {
         signInOptions: [
             {
                 provider: GoogleAuthProvider.PROVIDER_ID,
