@@ -1,14 +1,14 @@
-import { MDCFormField } from "@material/form-field";
-import { MDCRadio } from "@material/radio";
-import { MDCTextField } from "@material/textfield";
+import { MDCCheckbox } from "@material/checkbox/index";
+import { MDCCircularProgress } from "@material/circular-progress/index";
+import { MDCDialog } from "@material/dialog/index";
+import { MDCFormField } from "@material/form-field/index";
+import { MDCList } from "@material/list/index";
+import { MDCRadio } from "@material/radio/index";
 import { MDCRipple } from "@material/ripple/index";
-import { MDCCircularProgress } from "@material/circular-progress";
-import { MDCDialog } from "@material/dialog";
+import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
-import initialize from "./general.js"
+import initialize from "./general.js";
 import { createElement } from "./utils.js";
-import { MDCCheckbox } from "@material/checkbox/component.js";
-import { MDCList } from "@material/list/component.js";
 
 const {db, auth} = initialize(async user => {
     if (user) {
@@ -768,7 +768,7 @@ const pages = {
             this.generateCards();
         },
         makeDraggableCard(text, questionId) {
-            let card = createElement("div", ["mdc-card", "draggable-card"], {draggable:true}, [
+            let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], {draggable:true}, [
                 createElement("div", ["mdc-card-wrapper__text-section"])
             ]);
             applyStyling(text, card.firstElementChild);
