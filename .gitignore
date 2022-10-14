@@ -70,3 +70,4 @@ dist/
 emulator-data/
 rd/
 .vscode/
+parcel-bundle-reports/
