@@ -24,6 +24,7 @@ jobs:
       - name: Remove md
         run:
           RAW_BODY="${{ github.event.release.body }}"
+          
           RELEASE_BODY=$(echo $RAW_BODY | sed "s/## //g")
           echo "RELEASE_BODY=$RELEASE_BODY" >> $GITHUB_ENV
       - uses: fjogeleit/http-request-action@v1.11.1
@@ -31,4 +32,4 @@ jobs:
           url: ${{ secrets.CHANGELOG_WEBHOOK_URL }}
           method: "POST"
           customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"content": "${{ github.event.release.name }}\n\n${{ env.RELEASE_BODY }}", "components": [{"type": 2, "label": "Open Stable", "url": "https://vocabustudyonline/"}]}'
+          data: '{"content": "${{ github.event.release.name }}\n\n${{ env.RELEASE_BODY }}", "components": [{"type": 2, "style": 5, "label": "Open Stable", "url": "https://vocabustudyonline/"}]}'
