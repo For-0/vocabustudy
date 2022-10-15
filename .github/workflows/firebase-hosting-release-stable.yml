@@ -18,7 +18,7 @@ jobs:
           channelId: live
           projectId: vocab-u-study
           target: "vocabustudy"
-    publish_changelog:
+  publish_changelog:
     runs-on: ubuntu-latest
     steps:
       - name: Remove md
