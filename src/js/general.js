@@ -121,6 +121,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         return (async () => {
             const {getStorage, getDownloadURL, ref}  = await import("firebase/storage");
             let storage = getStorage(app);
+            delete this.storage;
             this.storage = () => Promise.resolve({storage, getDownloadURL, ref});
             return {storage, getDownloadURL, ref};
         })();
