@@ -31,4 +31,4 @@ jobs:
           url: ${{ secrets.CHANGELOG_WEBHOOK_URL }}
           method: "POST"
           customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"content": "${{ github.event.release.name }}\n\n${{ env.RELEASE_BODY }}", "components": [{"type": "2", "label": "Open Stable", "url": "https://vocabustudyonline/"}]}'
+          data: '{"content": "${{ github.event.release.name }}\n\n${{ env.RELEASE_BODY }}", "components": [{"type": 2, "label": "Open Stable", "url": "https://vocabustudyonline/"}]}'

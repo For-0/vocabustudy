@@ -31,4 +31,4 @@ jobs:
           url: ${{ secrets.CHANGELOG_WEBHOOK_URL }}
           method: "POST"
           customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"content": "${{ github.event.release.name }}\n\n${{ env.RELEASE_BODY }}\n**Please remember that this is a nightly release and there may still be bugs**", "components": [{"type": "2", "label": "Open Nightly", "url": "https://vocabustudyonline--nightly-q9kbiq6r.web.app/"}]}'
+          data: '{"content": "${{ github.event.release.name }}\n\n${{ env.RELEASE_BODY }}\n**Please remember that this is a nightly release and there may still be bugs**", "components": [{"type": 2, "label": "Open Nightly", "url": "https://vocabustudyonline--nightly-q9kbiq6r.web.app/"}]}'
