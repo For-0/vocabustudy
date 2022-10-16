@@ -184,6 +184,7 @@ async function parseCollections(collections) {
     let parsedCollections = collections.map(el => el.split(":").map(el => parseInt(el)));
     let collectionNames = parsedCollections.map(el => {
         try {
+            if (isNaN(el[0]) && el[1] == "0") return "Study Guide : Timeline";
             let collectionName = c[el[0]];
             if (typeof collectionName === "string") return collectionName;
             else {
@@ -197,8 +198,13 @@ async function parseCollections(collections) {
     });
     return collectionNames.map(el => createElement("span", ["collection-label"], {innerText: el || "Unknown Collection"}));
 }
-export function createTextFieldWithHelper(innerText, helperText) {
-    let helperId = `_${crypto.randomUUID()}`;
+/**
+ * Create a text field with an optional helper
+ * @param {String} innerText Label text
+ * @param {String?} helperText Helper text
+ * @returns {{textField: HTMLLabelElement, helperLine: HTMLDivElement?, obj: MDCTextField}}
+ */
+export function createTextFieldWithHelper(innerText, helperText=null, extraProperties={pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"}) {
     let textField = createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
         createElement("span", ["mdc-notched-outline"], {}, [
             createElement("span", ["mdc-notched-outline__leading"]),
@@ -207,14 +213,18 @@ export function createTextFieldWithHelper(innerText, helperText) {
             ]),
             createElement("span", ["mdc-notched-outline__trailing"]),
         ]),
-        createElement("input", ["mdc-text-field__input"], {ariaLabel: innerText, type: "text", pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"})
+        createElement("input", ["mdc-text-field__input"], {ariaLabel: innerText, type: "text", ...extraProperties})
     ]);
     textField.style.width = "100%";
-    textField.querySelector("input").setAttribute("aria-controls", helperId);
-    textField.querySelector("input").setAttribute("aria-describedby", helperId);
-    let helperLine = createElement("div", ["mdc-text-field-helper-line"], {}, [
-        createElement("div", ['mdc-text-field-helper-text'], {ariaHidden: true, innerText: helperText, id: helperId})
-    ]);
+    let helperLine = null;
+    if (helperText) {
+        let helperId = `_${crypto.randomUUID()}`;
+        textField.querySelector("input").setAttribute("aria-controls", helperId);
+        textField.querySelector("input").setAttribute("aria-describedby", helperId);
+        helperLine = createElement("div", ["mdc-text-field-helper-line"], {}, [
+            createElement("div", ['mdc-text-field-helper-text'], {ariaHidden: true, innerText: helperText, id: helperId})
+        ]);
+    }
     let textFieldC = new MDCTextField(textField);
     return {textField, helperLine, obj: textFieldC}
 }

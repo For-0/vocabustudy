@@ -17,6 +17,9 @@ $theme-color: #795548;
     --mdc-outlined-button-disabled-label-text-color: #ffffff1f;
     --mdc-protected-button-disabled-label-text-color: #ffffff61;
     --mdc-protected-button-disabled-container-color: #ffffff1f;
+    .mdc-card__action--icon {
+        color: var(--mdc-theme-text-icon-on-background);
+    }
     .mdc-card:not(.mdc-card--outlined) {
         box-shadow: 0 2px 1px -1px #5e5e5ecc, 0 1px 1px #5e5e5edb, 0 1px 3px #5e5e5ee0;
     }
@@ -101,6 +104,9 @@ $theme-color: #795548;
     }
     .page > h1:first-child::after {
         filter: brightness(65%) saturate(110%);
+    }
+    #home .field-terms-edit .btn-delete {
+        color: #b00020;
     }
 }
 .custom-scrollbar {

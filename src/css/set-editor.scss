@@ -31,8 +31,26 @@
             }
         }
     }
-    button {
+    .btn-delete {
         color: darkred;
+    }
+    .editor-term {
+        width: 100%;
+    }
+    .editor-timeline-piece {
+        width: calc(100% - 10px);
+        @media (min-width: 500px) {
+            width: calc(50% - 10px);
+        }
+        @media (min-width: 900px) {
+            width: calc(25% - 10px);
+        }
+        .mdc-text-field {
+            margin-bottom: 1rem;
+        }
+        p {
+            margin: 0;
+        }
     }
 }
 
@@ -42,4 +60,5 @@
     padding: 1rem 0;
     z-index: 1;
     background-color: var(--mdc-theme-surface, white);
+    margin: 0;
 }
