@@ -567,8 +567,7 @@ const pages = {
             for (let mc of this.questionInputs.mc) if (!mc.inputs[0].nativeControl.reportValidity()) return;
             for (let tf of this.questionInputs.tf) if (!tf.inputs[0].nativeControl.reportValidity()) return;
             this.questionsFieldset.disabled = true;
-            document.querySelectorAll(".test-matching-box.left").forEach(box => box.removeEventListener("click", this.leftMatchingBoxClickListener));
-            document.querySelectorAll(".test-matching-box.right").forEach(box => box.removeEventListener("click", this.rightMatchingBoxClickListener));
+            document.querySelectorAll(".test-matching-box").forEach(box => box.removeEventListener("click", this.matchingBoxClickListener));
             let numCorrect = 0;
             for (let sa of this.questionInputs.sa) {
                 if (checkAnswers(sa.input.value, sa.answer)) {
@@ -672,42 +671,6 @@ const pages = {
                     pages.test.currentMatchMode = 0;
                     break;
                 }
-            }
-        },
-        leftMatchingBoxClickListener(e) {
-            pages.test.questionContainers[2].classList.add("selecting");
-            let possibleMatch = document.querySelector(`.matches-container > div[data-from-card="${e.currentTarget.dataset.questionId}"]`);
-            if (possibleMatch) {
-                let rightEl = document.querySelector(`.test-matching-box.right.chosen[data-question-id="${possibleMatch.dataset.toCard}"]`);
-                rightEl?.classList.remove("chosen");
-                possibleMatch.remove();
-            }
-            for (let el of document.querySelectorAll(".test-matching-box.selected")) {
-                el.classList.remove("selected");
-                if (el === e.currentTarget) {
-                    pages.test.questionContainers[2].classList.remove("selecting");
-                    e.currentTarget.classList.remove("chosen");
-                    return;
-                }
-            };
-            e.currentTarget.classList.add("selected");
-            e.currentTarget.classList.remove("chosen");
-        },
-        rightMatchingBoxClickListener(e) {
-            let leftEl = document.querySelector(".test-matching-box.left.selected");
-            if (leftEl) {
-                pages.test.questionContainers[2].classList.remove("selecting");
-                let possibleMatch = document.querySelector(`.matches-container > div[data-to-card="${e.currentTarget.dataset.questionId}"]`);
-                if (possibleMatch) {
-                    let pLeftEl = document.querySelector(`.test-matching-box.left.chosen[data-question-id="${possibleMatch.dataset.fromCard}"]`);
-                    pLeftEl?.classList.remove("chosen");
-                    possibleMatch.remove();
-                }
-                document.querySelector(`.matches-container > div[data-to-card="${e.currentTarget.dataset.questionId}"]`)?.remove();
-                leftEl.classList.remove("selected");
-                pages.test.matchEls(leftEl, e.currentTarget);
-                leftEl.classList.add("chosen");
-                e.currentTarget.classList.add("chosen");
             }
         },
         init() {
