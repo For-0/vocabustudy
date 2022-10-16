@@ -46,7 +46,10 @@ const {db, auth} = initialize(async user => {
             fields.setDescription.value = currentSet.description;
         fields.public.selected = currentSet.public;
         fields.terms.textContent = "";
-        if(setType = Number(currentSetMeta.collections.includes("-:0"))) document.querySelector("h1").innerText = "Edit Study Guide";        
+        if(setType = Number(currentSetMeta.collections.includes("-:0"))) {
+            document.querySelector("h1").innerText = "Edit Study Guide";     
+            document.querySelector("h2").childNodes[0].textContent = "Timeline Items"
+        } else document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words"   
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
         for (let term of currentSet.terms) createTermInput(term);
         creator = (currentSet.uid === user.uid) ? user.displayName : currentSetMeta.creator;

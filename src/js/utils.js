@@ -61,7 +61,8 @@ export async function loadCollections() {
         let cachedItem = JSON.parse(possibleCachedItem);
         if (cachedItem.expiration && cachedItem.data && cachedItem.expiration > currentTime) return cachedItem.data;
     }
-    let {default: newCollections} = await import("../collections.json");
+    //let {default: newCollections} = await import("../collections.json").;
+    let newCollections = await import("../collections.json");
     let newExpiration = currentTime + 604800000; // number of milliseconds in a week
     localStorage.setItem("collections_cache", JSON.stringify({ data: newCollections, expiration: newExpiration }));
     return newCollections;
@@ -231,8 +232,9 @@ export function createTextFieldWithHelper(innerText, helperText=null, extraPrope
 
 export async function createSetCardOwner(set, id) {
     let collectionLabels = await parseCollections(set.collections);
+    let setType = set.collections.includes("-:0") ? "guide" : "set";
     let buttons = [
-        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/set/${id}/view/`}, [
+        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/${setType}/${id}/view/`}, [
             createElement('div', ["mdc-button__ripple"]),
             createElement("div", ["mdc-button__label"], {innerText: "View"})
         ]),
@@ -278,7 +280,8 @@ export async function createSetCard({ name, creator, numTerms, collections, like
         textEls.push(createElement("a", [], { innerText: `Created by ${creator}`, href: `/user/${uid}/` }));
         textEls.push(createElement("div", [], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
     } else textEls.push(createElement("div", [], { innerText: `Created by ${creator}` }));
-    let primaryAction = createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/set/${id}/view/` }, [
+    let setType = collections.includes("-:0") ? "guide" : "set";
+    let primaryAction = createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/${setType}/${id}/view/` }, [
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
             createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: name }),
             createElement("div", [], { innerText: `${numTerms} terms - ${likes || "0"} likes` })

@@ -56,6 +56,30 @@
         content: "Loading set...";
         font-size: larger;
     }
+    .timeline-piece {
+        width: calc(100% - 10px);
+        @media (min-width: 500px) {
+            width: calc(50% - 10px);
+        }
+        @media (min-width: 900px) {
+            width: calc(25% - 10px);
+        }
+        &::before {
+            border-bottom: 3px solid #795548;
+            width: calc(100% + 20px);
+            left: -10px;
+            top: 3px;
+            position: absolute;
+            content: "";
+            background-position-x: center;
+            background-repeat: no-repeat;
+            background-position-y: 11px;
+            background-size: 10%;
+            padding-top: 10%;
+            margin-top: -10%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23795548' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8'/%3E%3C/svg%3E");
+        }
+    }
 }
 
 #flashcards {

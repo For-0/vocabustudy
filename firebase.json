@@ -18,6 +18,10 @@
           "destination": "/set-detail.html"
         },
         {
+          "source": "/guide/*/view/",
+          "destination": "/set-detail.html"
+        },
+        {
           "source": "/set/*/edit/",
           "destination": "/set-editor.html"
         },

@@ -19,7 +19,7 @@ const {db, auth} = initialize(async user => {
     } else showLikeStatus(false);
 });
 
-const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w ]+)\/view\/?/)[1] || (location.pathname = "/");
+const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|guide)\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
@@ -109,8 +109,9 @@ const pages = {
             let cardInner = cardEl.appendChild(document.createElement("div"));
             let cardFront = cardInner.appendChild(document.createElement("div"));
             let cardBack = cardInner.appendChild(document.createElement("div"));
-            cardFront.appendChild(applyStyling(term, document.createElement("p")));
-            cardBack.appendChild(applyStyling(definition, document.createElement("p")));
+            cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
+            if (setType === "guide") cardBack.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+            else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
             return this.terms.appendChild(cardEl);
         },
         show() {
@@ -980,8 +981,11 @@ function createTermCard({ term, definition }) {
     let cardTitle = cardHeading.appendChild(document.createElement("div"));
     cardTitle.classList.add("mdc-typography--headline6");
     cardTitle.style.fontWeight = "600";
-    applyStyling(term, cardTitle);
-    applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
+    applyStyling(term.replace("\x00", " - "), cardTitle);
+    if (setType === "guide") {
+        cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+        cardEl.classList.add("timeline-piece")
+    } else applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
     return pages.setOverview.terms.appendChild(cardEl);
 }
 function createCommentCard({ name, comment, like }, id) {
@@ -1035,6 +1039,13 @@ addEventListener("DOMContentLoaded", async () => {
     pages.match.init();
     pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
+    if (setType === "guide") {
+        pages.setOverview.terms.style.justifyContent = "space-around";
+        document.querySelectorAll(".study-modes a:not([href='#flashcards'])").forEach(el => {
+            el.style.pointerEvents = "none";
+            el.style.opacity = 0.5;
+        }); // TODO other study modes
+    }
     try {
         let setSnap = await getDoc(setRef);
         currentSet = setSnap.data();
