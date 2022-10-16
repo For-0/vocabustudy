@@ -13,7 +13,6 @@ import { createElement } from "./utils.js";
 class AccentKeyboard extends HTMLElement {
     constructor() {
         super();
-        this.fieldset = this.appendChild(document.createElement("fieldset"));
     }
     get disabled() {
         return this.fieldset.disabled;
@@ -27,7 +26,12 @@ class AccentKeyboard extends HTMLElement {
      * @param {HTMLInputElement} input Input to append accent to
      */
     initialize(accents, input) {
-        for (let specialChar of accents) {
+        this.accents = accents;
+        this.input = input;
+        if (this.isConnected) this.showButtons();
+    }
+    showButtons() {
+        for (let specialChar of this.accents) {
             let btn = this.fieldset.appendChild(document.createElement("button"));
             btn.classList.add("mdc-button", "mdc-button--outlined");
             btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
@@ -35,16 +39,20 @@ class AccentKeyboard extends HTMLElement {
             btn.lastElementChild.innerText = specialChar;
             btn.addEventListener("mousedown", e => {
                 e.preventDefault();
-                if (document.activeElement === input) {
-                    let { selectionStart, selectionEnd } = input;
-                    input.setRangeText(specialChar, selectionStart, selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
+                if (document.activeElement === this.input) {
+                    let { selectionStart, selectionEnd } = this.input;
+                    this.input.setRangeText(specialChar, selectionStart, selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
                 }
-                else input.value += specialChar;
+                else this.input.value += specialChar;
             });
         }
     }
     clear() {
         this.fieldset.textContent = "";
+    }
+    connectedCallback() {
+        this.fieldset = this.appendChild(document.createElement("fieldset"));
+        if (this.accents) this.showButtons();
     }
 }
 customElements.define("accent-keyboard", AccentKeyboard);
@@ -443,6 +451,8 @@ const pages = {
                 createElement("input", ["mdc-text-field__input"], { "aria-label": "Answer", type: "text", "aria-controls": helperTextId, "aria-describedby": helperTextId }, [])
             ]));
             textFieldEl.style.marginBottom = "0";
+            let accentKeyboard = this.questionContainers[0].appendChild(document.createElement("accent-keyboard"));
+            accentKeyboard.initialize(currentSet.specials, textFieldEl.querySelector("input"))
             this.questionContainers[0].appendChild(createElement("div", ["mdc-text-field-helper-line"], {}, [
                 createElement("div", ["mdc-text-field-helper-text", "mdc-text-field-helper-text--persistent"], { id: helperTextId }, [])
             ])).style.marginBottom = "1rem";

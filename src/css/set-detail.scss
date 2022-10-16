@@ -281,6 +281,14 @@
             left: 16%;
             width: calc(84% - 1rem);
             overflow-x: hidden;
+            accent-keyboard {
+                display: none;
+            }
+            .mdc-text-field--focused + accent-keyboard {
+                display: block;
+                position: absolute;
+                margin-top: 2px;
+            }
         }
     }
 }
