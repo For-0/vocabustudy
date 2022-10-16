@@ -232,17 +232,6 @@
                 vertical-align: middle;
                 display: table-cell;
             }
-            > div:nth-last-child(2) > fieldset {
-                margin: 0;
-                margin-bottom: 8px;
-                --mdc-typography-button-text-transform: none;
-                padding: 0;
-                border: 0;
-                > button {
-                    margin-right: 8px;
-                    min-width: auto;
-                }
-            }
         }
     }
 }
@@ -490,4 +479,16 @@
     display: inline-block;
     text-align: center;
     margin-top: .3rem;
+}
+
+accent-keyboard > fieldset {
+    margin: 0;
+    margin-bottom: 8px;
+    --mdc-typography-button-text-transform: none;
+    padding: 0;
+    border: 0;
+    > button.mdc-button {
+        margin-right: 8px;
+        min-width: auto;
+    }
 }

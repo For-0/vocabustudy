@@ -10,6 +10,44 @@ import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "fireba
 import initialize from "./general.js";
 import { createElement } from "./utils.js";
 
+class AccentKeyboard extends HTMLElement {
+    constructor() {
+        super();
+        this.fieldset = this.appendChild(document.createElement("fieldset"));
+    }
+    get disabled() {
+        return this.fieldset.disabled;
+    }
+    set disabled(value) {
+        this.fieldset.disabled = value;
+    }
+    /**
+     * Intialize accent keyboard with list of accents
+     * @param {String[]} accents Accents to make buttons for
+     * @param {HTMLInputElement} input Input to append accent to
+     */
+    initialize(accents, input) {
+        for (let specialChar of accents) {
+            let btn = this.fieldset.appendChild(document.createElement("button"));
+            btn.classList.add("mdc-button", "mdc-button--outlined");
+            btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
+            btn.appendChild(document.createElement("span")).classList.add("mdc-button__label");
+            btn.lastElementChild.innerText = specialChar;
+            btn.addEventListener("mousedown", e => {
+                e.preventDefault();
+                if (document.activeElement === input) {
+                    let { selectionStart, selectionEnd } = input;
+                    input.setRangeText(specialChar, selectionStart, selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
+                }
+                else input.value += specialChar;
+            });
+        }
+    }
+    clear() {
+        this.fieldset.textContent = "";
+    }
+}
+customElements.define("accent-keyboard", AccentKeyboard);
 const {db, auth} = initialize(async user => {
     if (user) {
         socialRef = doc(setRef, "social", user.uid);
@@ -185,7 +223,7 @@ const pages = {
         setName: document.querySelector("#learn h1 > span"),
         question: document.querySelector("#learn > div > div:last-child p"),
         answerSA: new MDCTextField(document.querySelector("#learn .mdc-text-field")),
-        answerSABtns: document.querySelector("#learn > div > div:last-child > div:nth-last-child(2) > fieldset"),
+        answerSABtns: (/** @type {AccentKeyboard} */ (document.querySelector("#learn accent-keyboard"))),
         answerSACheck: MDCRipple.attachTo(document.querySelector("#learn .mdc-text-field + button")).root,
         answerMC: document.querySelector("#learn > div > div:last-child > fieldset"),
         msgCorrect: document.querySelector("#learn .answer-correct"),
@@ -210,15 +248,8 @@ const pages = {
             this.progressMC = 0;
             this.progressSA = 0;
             this.generateQuestion();
-            this.answerSABtns.innerHTML = "";
-            for (let specialChar of currentSet.specials) {
-                let btn = this.answerSABtns.appendChild(document.createElement("button"));
-                btn.classList.add("mdc-button", "mdc-button--outlined");
-                btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
-                btn.appendChild(document.createElement("span")).classList.add("mdc-button__label");
-                btn.lastElementChild.innerText = specialChar;
-                btn.addEventListener("mousedown", onSpecialCharBtnMousedown);
-            }
+            this.answerSABtns.clear();
+            this.answerSABtns.initialize(currentSet.specials, this.answerSA.root.querySelector("input"));
         },
         generateQuestion() {
             let mcQuestions = this.questionData.filter(el => el.mc > 0);
@@ -944,15 +975,6 @@ function checkAnswers(answer, correct) {
     let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = el.trim().replace(ignoredCharsRE, "").toUpperCase());
     return possibleCorrect.includes(cleanAnswer);
 }
-function onSpecialCharBtnMousedown(e) {
-    e.preventDefault();
-    let text = (e.target.nodeName === "SPAN") ? e.target.parentElement.innerText : e.target.innerText;
-    if (document.activeElement === pages.learn.answerSA.input) {
-        let { selectionStart, selectionEnd } = document.activeElement;
-        document.activeElement.setRangeText(text, document.activeElement.selectionStart, document.activeElement.selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
-    }
-    else pages.learn.answerSA.value += text;
-}
 function getOffset(el) {
     let rect = el.getBoundingClientRect();
     return {
@@ -1093,8 +1115,9 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
-    } catch {
-        location.replace("/404.html");
+    } catch (err) {
+        if (process.env.NODE_ENV !== "production") console.log(err);
+        else location.replace("/404.html");
     }
 });
 
