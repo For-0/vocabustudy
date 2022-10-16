@@ -22,9 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Remove md
-        run:
+        run: |
           RAW_BODY="${{ github.event.release.body }}"
-          
           RELEASE_BODY=$(echo $RAW_BODY | sed "s/## //g")
           echo "RELEASE_BODY=$RELEASE_BODY" >> $GITHUB_ENV
       - uses: fjogeleit/http-request-action@v1.11.1
