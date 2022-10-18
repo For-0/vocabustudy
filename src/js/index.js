@@ -212,6 +212,7 @@ function registerCustomCollectionCard(docSnap) {
                 el.remove();
             }
         });
+        [...els.card.querySelectorAll(".collection-sets > label")].filter((el, i, self) => (i !== self.findIndex(t => t.querySelector("input").value === el.querySelector("input").value)) && (el.nextElementSibling.remove() || el.remove()));
         if ([...els.card.querySelectorAll(".collection-sets > label > input")].every(el => el.reportValidity())) {
             let sets = [...els.card.querySelectorAll(".collection-sets > label input")].map(el => el.value);
             await updateDoc(docSnap.ref, { sets });
