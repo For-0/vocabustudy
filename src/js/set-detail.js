@@ -72,6 +72,7 @@ let socialRef = null;
 const accentsRE = /[^a-zA-Z0-9\s_\(\)'"\.\/\\,-]/ig;
 const boldRE = /\*([^\*]+)\*/g;
 const italicRE = /_([^_]+)_/g;
+const anchorRE = /(https?:\/\/[^ ]+)/g;
 const ignoredCharsRE = /[\*_\.]/g;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
@@ -912,7 +913,7 @@ function resizeTextToMaxHeight(textEl, maxHeight, minSize=1) {
 }
 function applyStyling(text, el) {
     el.innerText = text;
-    el.innerHTML = el.innerHTML.replace(boldRE, "<strong>$1</strong>").replace(italicRE, "<em>$1</em>");
+    el.innerHTML = el.innerHTML.replace(boldRE, "<strong>$1</strong>").replace(italicRE, "<em>$1</em>").replace(anchorRE, '<a href="$1" target="_blank" rel="noreferrer noopener nofollow">$1</a>');
     return el;
 }
 /**
@@ -1060,7 +1061,7 @@ addEventListener("DOMContentLoaded", async () => {
             else if (location.hash === "#learn") pages.learn.onKeyUp(e);
         });
         pages.setOverview.name.innerText = currentSet.name;
-        pages.setOverview.description.innerText = currentSet.description || "";
+        applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let term of currentSet.terms) createTermCard(term);
         navigate();
