@@ -118,6 +118,7 @@ export async function showCollections(listEl) {
     }
     let list = new MDCList(listEl);
     list.listElements.forEach(el => MDCRipple.attachTo(el));
+    return c;
 }
 /**
  * Creates a collection list item for putting in a multiselect list
@@ -180,8 +181,8 @@ export function getBlooketSet(setId, setType) {
         document.body.appendChild(el);
     });
 }
-async function parseCollections(collections) {
-    let {c} = await loadCollections();
+export async function parseCollections(collections, allCollections=null) {
+    let {c} = allCollections || await loadCollections();
     let parsedCollections = collections.map(el => el.split(":").map(el => parseInt(el)));
     let collectionNames = parsedCollections.map(el => {
         try {

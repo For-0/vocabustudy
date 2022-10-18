@@ -7,7 +7,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, 
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize from "./general";
-import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper } from "./utils";
+import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth, storage } = initialize(user => {
@@ -190,6 +190,19 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
     })
     el.textContent = "";
 }
+function showLeaderboard() {
+    storage.then(s => loadLeaderboard(s)).then(({ c }) => {
+        for (let [i, { p, s }] of c.entries()) {
+            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], { tabindex: "-1" }, [
+                createElement('span', ['mdc-list-item__content'], {}, [
+                    createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1}: ${p}` }),
+                    createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${s} Public Sets Created` })
+                ])
+            ]));
+            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-divider"]));
+        }
+    });
+}
 function registerCustomCollectionCard(docSnap) {
     let els = createCustomCollectionCard(docSnap.data(), docSnap.id);
     pages.mysets.collections.appendChild(els.card);
@@ -234,9 +247,26 @@ async function showMyCollections() {
     pages.mysets.collections.textContent = "";
     docs.forEach(docSnap => registerCustomCollectionCard(docSnap));
 }
+function loadPreviousSearch(collections) {
+    let previousSearch = JSON.parse(localStorage.getItem("previous_search"));
+    if (!previousSearch) return;
+    pages.publicsets.searchInput.value = previousSearch.search;
+    pages.modals.filterCollectionList.querySelectorAll("input").forEach(el => el.checked = previousSearch.collections.includes(el.value));
+    listPreviewCollections(previousSearch.collections, collections);
+}
+function saveSearch() {
+    let search = {search: pages.publicsets.searchInput.value, collections: [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el)};
+    localStorage.setItem("previous_search", JSON.stringify(search));
+    return search.collections;
+}
+async function listPreviewCollections(collections, allCollections=null) {
+    let collectionEls = await parseCollections(collections, (allCollections ? {c: allCollections} : null));
+    pages.publicsets.searchInput.helperText.root.querySelector(".list-collections").textContent = "";
+    pages.publicsets.searchInput.helperText.root.querySelector(".list-collections").append(...collectionEls)
+}
 async function search() {
     let searchTerm = pages.publicsets.searchInput.value;
-    let selectedFilters = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el).slice(0, 10);
+    let selectedFilters = saveSearch().slice(0, 10);
     let words = [];
     let queries = [];
     if (searchTerm) {
@@ -282,6 +312,10 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.modals.changeName.listen("MDCDialog:closing", e => {
         if (e.detail.action === "close") pages.modals.changeName.emit("V:Result", { result: null });
+    });
+    pages.modals.filterCollection.listen("MDCDialog:closing", () => {
+        let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
+        listPreviewCollections(collections);
     });
     pages.modals.reauthenticatePassword.root.querySelector("button:last-child").addEventListener("click", () => {
         pages.modals.reauthenticatePasswordInput.root.querySelector("input").setCustomValidity("");
@@ -363,10 +397,11 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
     MDCRipple.attachTo(pages.admin.btn);
-    showCollections(pages.modals.filterCollectionList);
+    showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();
+    else if (location.hash === "#leaderboard") showLeaderboard();
 });
-addEventListener("load", () => pages.publicsets.searchInput.value = "");
+addEventListener("load", () => pages.publicsets.searchInput.value = pages.publicsets.searchInput.root.querySelector("input").value);
 window.addEventListener("hashchange", () => {
     switch (location.hash) {
         case "#login":
@@ -380,17 +415,10 @@ window.addEventListener("hashchange", () => {
             verifyAdmin();
             break;
         case "#leaderboard":
-            storage.then(s => loadLeaderboard(s)).then(({ c }) => {
-                for (let [i, { p, s }] of c.entries()) {
-                    pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], { tabindex: "-1" }, [
-                        createElement('span', ['mdc-list-item__content'], {}, [
-                            createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1}: ${p}` }),
-                            createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${s} Public Sets Created` })
-                        ])
-                    ]));
-                    pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-divider"]));
-                }
-            });
+            showLeaderboard();
+            break;
+        case "#search":
+            loadPreviousSearch();
             break;
     };
     document.title = `${hashTitles[location.hash] || "Home"} - Vocabustudy`;

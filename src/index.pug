@@ -95,7 +95,8 @@ html(lang="en" style="overflow-x: hidden;")
                             span.mdc-notched-outline__trailing
                         input.mdc-text-field__input(aria-label="Search" type="text" aria-controls="field-search-helper" aria-describedby="field-search-helper")
                     .mdc-text-field-helper-line
-                        .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words
+                        .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
+                            span.list-collections
                 button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-collections-menu(type="button" style="margin-left: 1rem;")
                     span.mdc-button__ripple
                     i.material-icons-round.mdc-button__icon(aria-hidden="true") filter_list
@@ -285,6 +286,7 @@ html(lang="en" style="overflow-x: hidden;")
                 .mdc-dialog__surface(role="alertdialog" aria-modal="true")
                     h2.mdc-dialog__title Filter by Collection:
                     .mdc-dialog__content(style="overflow-y: scroll;")
+                        p(style="margin: 0") You can choose a maximum of 10 collections to filter by
                         ul.mdc-list(data-evolution="true")
                     .mdc-dialog__actions
                         button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
