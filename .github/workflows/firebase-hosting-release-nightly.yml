@@ -26,8 +26,12 @@ jobs:
           read -r -d '' RAW_BODY << EOM
           ${{ github.event.release.body }}
           EOM
+          echo 'Dumped body to env'
           echo 'RELEASE_BODY<<EOF' >> $GITHUB_ENV
-          echo "$RAW_BODY" | sed "s/## //g" >> $GITHUB_ENV
+          RELEASE_BODY=$(echo $RAW_BODY | sed 's/## //g')
+          echo 'Replaced string in body'
+          echo '$RELEASE_BODY' >> $GITHUB_ENV
+          echo 'Dumped body to file'
           echo 'EOF' >> $GITHUB_ENV
       - uses: fjogeleit/http-request-action@v1.11.1
         with:

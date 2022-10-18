@@ -27,7 +27,8 @@ jobs:
           ${{ github.event.release.body }}
           EOM
           echo 'RELEASE_BODY<<EOF' >> $GITHUB_ENV
-          echo "$RAW_BODY" | sed "s/## //g" >> $GITHUB_ENV
+          RELEASE_BODY=$(echo $RAW_BODY | sed 's/## //g')
+          echo '$RELEASE_BODY' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
       - uses: fjogeleit/http-request-action@v1.11.1
         with:
