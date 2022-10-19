@@ -1037,7 +1037,7 @@ addEventListener("DOMContentLoaded", async () => {
     pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
     if (setType === "guide") {
-        pages.setOverview.terms.style.justifyContent = "space-around";
+        pages.setOverview.terms.style.justifyContent = "left";
         document.querySelectorAll(".study-modes a:not([href='#flashcards'])").forEach(el => {
             el.style.pointerEvents = "none";
             el.style.opacity = 0.5;

@@ -22,9 +22,9 @@ const {db, auth} = initialize(async user => {
         fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
         setType = 0;
-    } else if (setId === "new-guide") {
-        document.title = "New Study Guide - Vocabustudy";
-        document.querySelector("h1").innerText = "New Study Guide";
+    } else if (setId === "new-timeline") {
+        document.title = "New Timeline - Vocabustudy";
+        document.querySelector("h1").innerText = "New Timeline";
         document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
         fields.terms.textContent = "";
         fields.public.selected = false;
@@ -47,7 +47,7 @@ const {db, auth} = initialize(async user => {
         fields.public.selected = currentSet.public;
         fields.terms.textContent = "";
         if(setType = Number(currentSetMeta.collections.includes("-:0"))) {
-            document.querySelector("h1").innerText = "Edit Study Guide";     
+            document.querySelector("h1").innerText = "Edit Timeline";     
             document.querySelector("h2").childNodes[0].textContent = "Timeline Items"
         } else document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words"   
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
@@ -55,6 +55,16 @@ const {db, auth} = initialize(async user => {
         creator = (currentSet.uid === user.uid) ? user.displayName : currentSetMeta.creator;
     }
 });
+const savingFunctions = {
+    0: el => {
+        let inputs = el.querySelectorAll("input");
+        return {term: inputs[0].value, definition: inputs[1].value};
+    },
+    1: el => {
+        let inputs = [...el.querySelectorAll("input")].map(el => el.value.trim());
+        return {term: `${inputs.shift()}\x00${inputs.shift()}`, definition: inputs.filter(el => el).join("\x00")};
+    }
+};
 const fields = {
     setName: new MDCTextField(document.querySelector(".field-name")),
     setDescription: new MDCTextField(document.querySelector(".field-description")),
@@ -160,13 +170,8 @@ fields.btnAddTerm.addEventListener("click", () => createTermInput({term: "", def
 fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
-    let terms = [...fields.terms.querySelectorAll(":scope > div")].map((setType === 0) ? el => {
-        let inputs = el.querySelectorAll("input");
-        return {term: inputs[0].value, definition: inputs[1].value};
-    } : el => {
-        let inputs = [...el.querySelectorAll("input")].map(el => el.value.trim());
-        return {term: `${inputs.shift()}\x00${inputs.shift()}`, definition: inputs.filter(el => el).join("\x00")};
-    });
+    let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
+    savingFunctions[0];
     if (terms.length < 4) return alert("You must have at least 4 terms in a set");
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
@@ -176,7 +181,7 @@ fields.formEdit.addEventListener("submit", async e => {
     let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
     if (setType === 1) collections.unshift("-:0");
     await auth.currentUser.reload();
-    if (setId === "new" || setId === "new-guide") {
+    if (setId === "new" || setId === "new-timeline" || setId === "new-guide") {
         let setRef = doc(collection(db, "sets"));
         let setMetaRef = doc(db, "meta_sets", setRef.id);
         batch.set(setMetaRef, {numTerms: terms.length, public: sPublic, name: setName, nameWords, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, collections});
