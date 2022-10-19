@@ -48,8 +48,10 @@
     "@material/theme": "^14.0.0",
     "@material/tooltip": "^14.0.0",
     "@material/top-app-bar": "14.0.0",
+    "dompurify": "^2.4.0",
     "firebase": "^9.9.4",
-    "firebaseui": "^6.0.1"
+    "firebaseui": "^6.0.1",
+    "marked": "^4.1.1"
   },
   "devDependencies": {
     "@parcel/reporter-bundle-analyzer": "^2.7.0",

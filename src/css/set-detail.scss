@@ -83,6 +83,10 @@
 }
 
 #flashcards {
+    img {
+        max-width: 25%;
+        max-height: 25%;
+    }
     > div:nth-child(2) {
         overflow: hidden;
         > div:last-child {
@@ -186,6 +190,10 @@
 }
 
 #learn {
+    img {
+        max-width: 25%;
+        max-height: 25%;
+    }
     .mdc-text-field + button {
         width: 9%;
         margin-left: 2%;
@@ -499,4 +507,11 @@ accent-keyboard > fieldset {
         margin-right: 8px;
         min-width: auto;
     }
+}
+img {
+    max-width: 50%;
+    max-height: 50%;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 2px;
 }

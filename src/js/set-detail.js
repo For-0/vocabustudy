@@ -9,6 +9,8 @@ import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement } from "./utils.js";
+import {sanitize} from "dompurify";
+import { marked } from "marked";
 
 class AccentKeyboard extends HTMLElement {
     constructor() {
@@ -912,8 +914,7 @@ function resizeTextToMaxHeight(textEl, maxHeight, minSize=1) {
     }
 }
 function applyStyling(text, el) {
-    el.innerText = text;
-    el.innerHTML = el.innerHTML.replace(boldRE, "<strong>$1</strong>").replace(italicRE, "<em>$1</em>").replace(anchorRE, '<a href="$1" target="_blank" rel="noreferrer noopener nofollow">$1</a>');
+    el.innerHTML = sanitize(marked.parseInline(text));
     return el;
 }
 /**
@@ -995,7 +996,7 @@ function createCommentCard({ name, comment, like }, id) {
         cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
         pages.setOverview.fieldComment.input.value = comment;
     } else {
-        cardText.innerText = comment;
+        cardText.innerHTML = sanitize(marked.parseInline(comment));
         cardText.style.overflowWrap = "break-word";
         if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
     }
