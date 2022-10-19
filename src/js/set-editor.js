@@ -31,6 +31,15 @@ const {db, auth} = initialize(async user => {
         fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
         setType = 1;
+    }  else if (setId === "new-guide") {
+        document.title = "New Study Guide - Vocabustudy";
+        document.querySelector("h1").innerText = "New Study Guide";
+        document.querySelector("h2").childNodes[0].textContent = "Guide Items";
+        fields.terms.textContent = "";
+        fields.public.selected = false;
+        fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
+        creator = user.displayName;
+        setType = 2;
     } else {
         let setSnap = await getDoc(doc(db, "sets", setId));
         let setMetaSnap = await getDoc(doc(db, "meta_sets", setId));
@@ -46,9 +55,12 @@ const {db, auth} = initialize(async user => {
             fields.setDescription.value = currentSet.description;
         fields.public.selected = currentSet.public;
         fields.terms.textContent = "";
-        if(setType = Number(currentSetMeta.collections.includes("-:0"))) {
+        if (setType = Number(currentSetMeta.collections.includes("-:0"))) {
             document.querySelector("h1").innerText = "Edit Timeline";     
             document.querySelector("h2").childNodes[0].textContent = "Timeline Items"
+        } else if (setType = Number(currentSetMeta.collections.includes("-:1"))) {
+            document.querySelector("h1").innerText = "Edit Study Guide";     
+            document.querySelector("h2").childNodes[0].textContent = "Guide Items"
         } else document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words"   
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
         for (let term of currentSet.terms) createTermInput(term);
@@ -63,6 +75,10 @@ const savingFunctions = {
     1: el => {
         let inputs = [...el.querySelectorAll("input")].map(el => el.value.trim());
         return {term: `${inputs.shift()}\x00${inputs.shift()}`, definition: inputs.filter(el => el).join("\x00")};
+    },
+    2: el => {
+        let inputs = [...el.querySelectorAll("input,textarea")].map(el => el.value.trim());
+        return {title: inputs[0], type: 0, body: inputs[1]};
     }
 };
 const fields = {
@@ -81,7 +97,7 @@ const fields = {
     fieldImportBlooket: new MDCTextField(document.querySelector(".field-import-blooket"))
 };
 let changesSaved = true;
-function createTermInput({term, definition}) {
+function createTermInput(term) {
     /** @type {HTMLDivElement?} */
     let termInput;
     if (setType === 0) {
@@ -115,14 +131,14 @@ function createTermInput({term, definition}) {
         let termField = new MDCTextField(termInput.children[0]);
         let definitionField = new MDCTextField(termInput.children[1]);
         MDCRipple.attachTo(termInput.children[2]).unbounded = true;
-        termField.value = term;
-        definitionField.value = definition;
+        termField.value = term.term;
+        definitionField.value = term.definition;
         termInput.children[2].addEventListener("click", () => termInput.remove());
     } else if (setType === 1) {
         let inputName = createTextFieldWithHelper("Event", null, {required: true});
         let inputDate = createTextFieldWithHelper("Date", null, {required: true});
-        let [name, date] = term.split("\x00");
-        let details = definition.split("\x00");
+        let [name, date] = term.term.split("\x00");
+        let details = term.definition.split("\x00");
         let detailInputs = details.map(el => {
             let detailInput = createTextFieldWithHelper("Detail", null, {});
             detailInput.obj.value = el;
@@ -157,6 +173,43 @@ function createTermInput({term, definition}) {
             if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
             else fields.terms.appendChild(termInput);
         });
+    } else if (setType === 2) {
+        let inputName = createTextFieldWithHelper("Title", null, {required: true});
+        let bodyInput = createElement("label", ["mdc-text-field", "mdc-text-field--outlined", "mdc-text-field--textarea", "mdc-text-field--no-label"], {}, [
+            createElement("span", ["mdc-notched-outline"], {}, [
+                createElement("span", ["mdc-notched-outline__leading"]),
+                createElement("span", ["mdc-notched-outline__trailing"])
+            ]),
+            createElement("span", ["mdc-text-field__resizer"], {}, [
+                createElement("textarea", ["mdc-text-field__input"], {rows: 8, cols: 40})
+            ])
+        ]);
+        let bodyInputObj = new MDCTextField(bodyInput);
+        termInput = createElement("div", ["mdc-card", "editor-study-piece"], {}, [
+            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+                inputName.textField
+            ]),
+            createElement("div", ["mdc-card-wrapper__text-section", "details-container"], {}, [
+                createElement("p", [], {innerText: "Item body:"}),
+                bodyInput
+            ]),
+            createElement("div", ["mdc-card__actions"], {}, [
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+            ])
+        ]);
+        inputName.obj.value = term.title || "";
+        bodyInputObj.value = term.body || "";
+        let actionButtons = [...termInput.querySelectorAll('.mdc-card__actions > button')].map(el => MDCRipple.attachTo(el).root);
+        actionButtons[0].addEventListener("click", () => {
+            if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
+        });
+        actionButtons[1].addEventListener("click", () => termInput.remove());
+        actionButtons[2].addEventListener("click", () => {
+            if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
+            else fields.terms.appendChild(termInput);
+        });
     }
     if (termInput) fields.terms.appendChild(termInput);
 }
@@ -171,8 +224,7 @@ fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
     let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
-    savingFunctions[0];
-    if (terms.length < 4) return alert("You must have at least 4 terms in a set");
+    if (terms.length < 4 && setType !== 2) return alert("You must have at least 4 terms in a set");
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
     let nameWords = getWords(setName);
@@ -180,6 +232,7 @@ fields.formEdit.addEventListener("submit", async e => {
     let batch = writeBatch(db);
     let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
     if (setType === 1) collections.unshift("-:0");
+    else if (setType === 2) collections.unshift("-:1");
     await auth.currentUser.reload();
     if (setId === "new" || setId === "new-timeline" || setId === "new-guide") {
         let setRef = doc(collection(db, "sets"));

@@ -67,14 +67,11 @@ const {db, auth} = initialize(async user => {
     } else showLikeStatus(false);
 });
 
-const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|guide)\/([\w ]+)\/view\/?/) || (location.pathname = "/");
+const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|timeline)\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
 const accentsRE = /[^a-zA-Z0-9\s_\(\)'"\.\/\\,-]/ig;
-const boldRE = /\*([^\*]+)\*/g;
-const italicRE = /_([^_]+)_/g;
-const anchorRE = /(https?:\/\/[^ ]+)/g;
 const ignoredCharsRE = /[\*_\.]/g;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
@@ -159,7 +156,7 @@ const pages = {
             let cardFront = cardInner.appendChild(document.createElement("div"));
             let cardBack = cardInner.appendChild(document.createElement("div"));
             cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
-            if (setType === "guide") cardBack.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+            if (setType === "timeline") cardBack.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
             else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
             return this.terms.appendChild(cardEl);
         },
@@ -979,7 +976,7 @@ function createTermCard({ term, definition }) {
     cardTitle.classList.add("mdc-typography--headline6");
     cardTitle.style.fontWeight = "600";
     applyStyling(term.replace("\x00", " - "), cardTitle);
-    if (setType === "guide") {
+    if (setType === "timeline") {
         cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
         cardEl.classList.add("timeline-piece")
     } else applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
@@ -1036,7 +1033,7 @@ addEventListener("DOMContentLoaded", async () => {
     pages.match.init();
     pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
-    if (setType === "guide") {
+    if (setType === "timeline") {
         pages.setOverview.terms.style.justifyContent = "left";
         document.querySelectorAll(".study-modes a:not([href='#flashcards'])").forEach(el => {
             el.style.pointerEvents = "none";

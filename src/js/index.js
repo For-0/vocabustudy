@@ -62,7 +62,6 @@ const pages = {
     mysets: {
         sets: document.querySelector('#mysets .set-container'),
         collections: document.querySelector("#mysets .collection-container"),
-        btnCreateSet: document.querySelector("#mysets .btn-create-set"),
         btnCreateCollection: document.querySelector("#mysets .btn-create-collection")
     },
     publicsets: {
@@ -392,7 +391,6 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.account.btnDeleteAccount);
     MDCRipple.attachTo(pages.home.btnShowFeatures).unbounded = true;
     MDCRipple.attachTo(pages.account.btnChangeName);
-    MDCRipple.attachTo(pages.mysets.btnCreateSet);
     MDCRipple.attachTo(pages.mysets.btnCreateCollection);
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);

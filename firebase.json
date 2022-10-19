@@ -22,6 +22,10 @@
           "destination": "/set-detail.html"
         },
         {
+          "source": "/guide/*/view/",
+          "destination": "/guide-detail.html"
+        },
+        {
           "source": "/set/*/edit/",
           "destination": "/set-editor.html"
         },

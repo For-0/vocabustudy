@@ -5,6 +5,7 @@
   "source": [
     "src/index.pug",
     "src/set-detail.pug",
+    "src/guide-detail.pug",
     "src/learn-results.pug",
     "src/set-editor.pug",
     "src/user-sets.pug",

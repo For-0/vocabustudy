@@ -1,0 +1,41 @@
+@import "styles.scss";
+.comments-container > .mdc-card {
+    max-width: 25%;
+    .mdc-typography--headline6 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+#home .field-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    float: left;
+    width: 85%;
+    &:empty::after {
+        content: "Loading set...";
+        font-size: larger;
+    }
+    .mdc-card {
+        width: 100%;
+    }
+}
+.likes-badge {
+    width: 100%;
+    color: darkgreen;
+    background-color: #90ee90;
+    border-radius: 5px;
+    padding: .3rem;
+    display: inline-block;
+    text-align: center;
+    margin-top: .3rem;
+}
+img {
+    max-width: 50%;
+    max-height: 50%;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 2px;
+}

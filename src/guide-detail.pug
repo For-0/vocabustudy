@@ -1,0 +1,37 @@
+- var styleFile = "guide-detail.scss";
+- var showBack = true;
+- var title = "Study Guide";
+- var description = "Learn more about this topic with a study guide";
+doctype html
+html(lang="en")
+    include includes/head
+    body.mdc-typography
+        include includes/navbar
+        main.mdc-top-app-bar--fixed-adjust
+            .page#home
+                h1
+                    span.field-name
+                    button.mdc-button.mdc-button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
+                        span.mdc-button__ripple
+                        i.material-icons-round.mdc-button__icon(aria-hidden="true") favorite_border
+                        span.mdc-button__label Like
+                    p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
+                        span.field-num-terms
+                        |  items
+                p.field-description
+                .field-terms
+                details(style="margin-top: 1rem; float: left; width: 100%;")
+                    summary
+                        h2.mdc-typography--headline6(style="display: inline;") Comments
+                    .comments-container.set-container(data-empty="No Comments. Post one!")
+                    .field-comment(hidden)
+                        label.mdc-text-field.mdc-text-field--filled
+                            span.mdc-text-field__ripple
+                            span.mdc-floating-label Comment
+                            input.mdc-text-field__input(type="text" required)
+                            span.mdc-line-ripple
+                        button.mdc-button.mdc-button--outlined(type="button" style="display: block;" disabled)
+                            span.mdc-button__ripple
+                            span.mdc-button__label Save
+        include includes/footer
+        script(src="js/guide-detail.js" type="module")

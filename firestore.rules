@@ -14,7 +14,7 @@ service cloud.firestore {
     	return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
     }
     function isBigEnough() {
-      return request.resource.data.terms.size() >= 4;
+      return request.resource.data.terms.size() >= 1;
     }
     function canAdminDelete() {
       return !request.auth.token.admin || resource.data.uid == request.auth.uid || request.auth.uid != "indXd3yqrqVZw07LCWHnTm69ZAg1";

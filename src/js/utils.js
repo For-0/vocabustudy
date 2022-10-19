@@ -186,7 +186,10 @@ export async function parseCollections(collections, allCollections=null) {
     let parsedCollections = collections.map(el => el.split(":").map(el => parseInt(el)));
     let collectionNames = parsedCollections.map(el => {
         try {
-            if (isNaN(el[0]) && el[1] == "0") return "Study Guide : Timeline";
+            if (isNaN(el[0])) {
+                if (el[1] == "0") return "Study Guide : Timeline";
+                else if (el[1] == "1") return "Study Guide : Notes";
+            }
             let collectionName = c[el[0]];
             if (typeof collectionName === "string") return collectionName;
             else {
@@ -233,7 +236,7 @@ export function createTextFieldWithHelper(innerText, helperText=null, extraPrope
 
 export async function createSetCardOwner(set, id) {
     let collectionLabels = await parseCollections(set.collections);
-    let setType = set.collections.includes("-:0") ? "guide" : "set";
+    let setType = set.collections.includes("-:0") ? "timeline" : (set.collections.includes("-:1") ? "guide" : "set");
     let buttons = [
         createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/${setType}/${id}/view/`}, [
             createElement('div', ["mdc-button__ripple"]),
@@ -281,7 +284,7 @@ export async function createSetCard({ name, creator, numTerms, collections, like
         textEls.push(createElement("a", [], { innerText: `Created by ${creator}`, href: `/user/${uid}/` }));
         textEls.push(createElement("div", [], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
     } else textEls.push(createElement("div", [], { innerText: `Created by ${creator}` }));
-    let setType = collections.includes("-:0") ? "guide" : "set";
+    let setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
     let primaryAction = createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/${setType}/${id}/view/` }, [
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
             createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: name }),
