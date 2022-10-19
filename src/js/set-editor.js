@@ -55,10 +55,12 @@ const {db, auth} = initialize(async user => {
             fields.setDescription.value = currentSet.description;
         fields.public.selected = currentSet.public;
         fields.terms.textContent = "";
-        if (setType = Number(currentSetMeta.collections.includes("-:0"))) {
+        if (currentSetMeta.collections.includes("-:0")) {
+            setType = 1;
             document.querySelector("h1").innerText = "Edit Timeline";     
             document.querySelector("h2").childNodes[0].textContent = "Timeline Items"
-        } else if (setType = Number(currentSetMeta.collections.includes("-:1"))) {
+        } else if (currentSetMeta.collections.includes("-:1")) {
+            setType = 2;
             document.querySelector("h1").innerText = "Edit Study Guide";     
             document.querySelector("h2").childNodes[0].textContent = "Guide Items"
         } else document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words"   
