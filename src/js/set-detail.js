@@ -11,6 +11,7 @@ import initialize from "./general.js";
 import { createElement } from "./utils.js";
 import {sanitize} from "dompurify";
 import { marked } from "marked";
+import { MDCIconButtonToggle } from "@material/icon-button";
 
 class AccentKeyboard extends HTMLElement {
     constructor() {
@@ -57,7 +58,29 @@ class AccentKeyboard extends HTMLElement {
         if (this.accents) this.showButtons();
     }
 }
+class StarButton extends HTMLButtonElement {
+    constructor() {
+        super();
+    }
+    initialValue = false
+    initialized = false
+    /** @type {MDCIconButtonToggle?} */
+    obj = null
+    connectedCallback() {
+        if (this.isConnected && !this.initialized) {
+            this.initialized = true;
+            this.classList.add("mdc-icon-button");
+            this.ariaPressed = this.initialValue;
+            this.appendChild(createElement("div", ["mdc-icon-button__ripple"]));
+            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], {innerText: "star"}));
+            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon"], {innerText: "star_border"}));
+            this.obj = new MDCIconButtonToggle(this);
+            this.obj.on = this.initialValue;
+        }
+    }
+}
 customElements.define("accent-keyboard", AccentKeyboard);
+customElements.define("star-button", StarButton, {extends: "button"});
 const {db, auth} = initialize(async user => {
     if (user) {
         socialRef = doc(setRef, "social", user.uid);
@@ -80,16 +103,19 @@ let currentMatchLeaderboard = null;
  */
 let currentSet = null;
 let specialCharCollator = new Intl.Collator().compare;
-const StarredTerms = {
+window.StarredTerms = {
+    getAllStarred() {
+        return JSON.parse(localStorage.getItem("starred_terms")) || {};
+    },
     /**
      * @returns {Number[]} Indexes of starred terms
      */
     getCurrentSet() {
-        return JSON.parse(localStorage.getItem("starred_terms"))[currentSet.id];
+        return this.getAllStarred()[setId] || [];
     },
     saveStarredList(starList) {
-        let orig = JSON.parse(localStorage.getItem("starred_terms"));
-        orig[currentSet.id] = starList;
+        let orig = this.getAllStarred();
+        orig[setId] = starList;
         localStorage.setItem("starred_terms", JSON.stringify(orig));
     },
     /**
@@ -99,18 +125,21 @@ const StarredTerms = {
     isStarred(termIndex) {
         return this.getCurrentSet().includes(termIndex);
     },
-    /**
-     * Toggle the star status on a term
-     * @param {number} termIndex The index of the term to toggle the star on
-     * @returns Whether the term is starred AFTER toggling
-     */
-    toggleStar(termIndex) {
+    setStar(termIndex, isStarred) {
         let starList = this.getCurrentSet();
         let possibleIndex = starList.indexOf(termIndex);
-        if (possibleIndex === -1) starList.push(termIndex);
-        else starList.splice(possibleIndex, 1);
+        if (isStarred && possibleIndex === -1) starList.push(termIndex);
+        else if (!isStarred && possibleIndex !== -1) starList.splice(possibleIndex, 1);
         this.saveStarredList(starList);
-        return possibleIndex === -1;
+    },
+    setStars(termIndexes, isStarred) {
+        let starList = this.getCurrentSet();
+        for (let termIndex of termIndexes) {
+            let possibleIndex = starList.indexOf(termIndex);
+            if (isStarred && possibleIndex === -1) starList.push(termIndex);
+            else if (!isStarred && possibleIndex !== -1) starList.splice(possibleIndex, 1);
+        }
+        this.saveStarredList(starList);
     }
 };
 const pages = {
@@ -182,7 +211,7 @@ const pages = {
                 this.btnFlip.click();
             }
         },
-        createFlashcard({ term, definition }) {
+        createFlashcard({ term, definition }, index) {
             let cardEl = document.createElement("div");
             let cardInner = cardEl.appendChild(document.createElement("div"));
             let cardFront = cardInner.appendChild(document.createElement("div"));
@@ -190,14 +219,18 @@ const pages = {
             cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
             if (setType === "timeline") cardBack.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
             else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
+            if (window.StarredTerms.isStarred(index)) {
+                cardEl.style.color = "goldenrod";
+                cardEl.firstElementChild.style.boxShadow = "0 0 4px #d7a21faa";
+            }
             return this.terms.appendChild(cardEl);
         },
         show() {
             this.numTerms = currentSet.terms.length;
             this.setName.innerText = currentSet.name;
             this.terms.textContent = "";
-            for (let term of currentSet.terms) this.createFlashcard(term);
-            this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards." });
+            for (let [i, term] of currentSet.terms.entries()) this.createFlashcard(term, i);
+            this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards." }, -1);
             this.index = 0;
             this.terms.children[0].querySelectorAll("p").forEach(el => {
                 el.style.fontSize = "100px";
@@ -354,6 +387,7 @@ const pages = {
             let height = this.question.clientHeight;
             applyStyling(term[this.questionType], this.question);
             resizeTextToMaxHeight(this.question, height);
+            this.question.style.color = (window.StarredTerms.isStarred(this.currentQuestionIndex)) ? "goldenrod" : "unset";
         },
         processMCResult(answer) {
             this.answerMC.disabled = true;
@@ -364,7 +398,7 @@ const pages = {
                 this.progressMC++;
             } else {
                 this.msgIncorrect.hidden = false;
-                this.questionData[this.currentQuestionIndex].mc++;
+                if (++this.questionData[this.currentQuestionIndex].mc > 4) window.StarredTerms.setStar(this.currentQuestionIndex, true);
                 this.questionData[this.currentQuestionIndex].fmc++;
                 this.progressMC--;
             }
@@ -383,7 +417,7 @@ const pages = {
                 this.progressSA++;
             } else {
                 this.msgIncorrect.hidden = false;
-                this.questionData[this.currentQuestionIndex].sa++;
+                if (++this.questionData[this.currentQuestionIndex].sa > 4) window.StarredTerms.setStar(this.currentQuestionIndex, true);
                 this.questionData[this.currentQuestionIndex].fsa++;
                 this.progressSA--;
             }
@@ -401,8 +435,7 @@ const pages = {
             this.generateQuestion();
         },
         showResults() {
-            let processedResults = this.questionData.filter(el => el.fmc > 0 || el.fsa > 0).map(el => [currentSet.terms[el.i].term, el.fmc, el.fsa]).sort((a, b) => (b[1] + b[2]) - (a[1] + a[2]));
-            processedResults.unshift(["Question", "Multiple Choice", "Short Answer"]);
+            let processedResults = this.questionData.filter(el => el.fmc > 0 || el.fsa > 0).map(el => [el.i, `${currentSet.terms[el.i].term} - ${currentSet.terms[el.i].definition}`, `You missed ${el.fmc} multiple choice question(s) and ${el.fsa} short answer.`]).sort((a, b) => (b[1] + b[2]) - (a[1] + a[2]));
             window.temp_learnResults = { setName: currentSet.name, results: processedResults };
             open("/learn-results.html", "learn-results-context", "popup,width=900,height=500");
         },
@@ -804,7 +837,7 @@ const pages = {
             this.setName.innerText = currentSet.name;
             this.generateCards();
         },
-        makeDraggableCard(text, questionId) {
+        makeDraggableCard(text, questionId, index) {
             let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], {draggable:true}, [
                 createElement("div", ["mdc-card-wrapper__text-section"])
             ]);
@@ -813,6 +846,7 @@ const pages = {
             card.addEventListener("dragstart", this.dragEvents.start);
             card.addEventListener("dragend", this.dragEvents.end);
             card.addEventListener("click", this.dragEvents.dragClick, true);
+            if (window.StarredTerms.isStarred(index)) card.style.backgroundColor = "goldenrod";
             return card;
         },
         makeDropzoneCard(text, questionId) {
@@ -839,13 +873,13 @@ const pages = {
                 included.forEach(num => {
                     let {term, definition} = currentSet.terms[num];
                     let id = `_${crypto.randomUUID()}`;
-                    leftCards.push(this.makeDraggableCard(term, id));
+                    leftCards.push(this.makeDraggableCard(term, id, num));
                     rightCards.push(this.makeDropzoneCard(definition, id));
                 }) :
                 included.forEach(num => {
                     let {term, definition} = currentSet.terms[num];
                     let id = `_${crypto.randomUUID()}`;
-                    leftCards.push(this.makeDraggableCard(definition, id));
+                    leftCards.push(this.makeDraggableCard(definition, id, num));
                     rightCards.push(this.makeDropzoneCard(term, id));
                 });
             shuffle(rightCards);
@@ -999,7 +1033,7 @@ function shuffle(arr) {
 // #endregion UTILITIES
 
 // #region CARD GENERATION
-function createTermCard({ term, definition }) {
+function createTermCard({ term, definition }, index) {
     let cardEl = document.createElement("div");
     cardEl.classList.add("mdc-card", "mdc-card--outlined");
     let cardHeading = cardEl.appendChild(document.createElement("div"));
@@ -1008,11 +1042,15 @@ function createTermCard({ term, definition }) {
     cardTitle.classList.add("mdc-typography--headline6");
     cardTitle.style.fontWeight = "600";
     applyStyling(term.replace("\x00", " - "), cardTitle);
+    let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", {is: "star-button"}))));
+    starButton.initialValue = window.StarredTerms.isStarred(index);
     if (setType === "timeline") {
         cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
         cardEl.classList.add("timeline-piece")
     } else applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
-    return pages.setOverview.terms.appendChild(cardEl);
+    pages.setOverview.terms.appendChild(cardEl);
+    starButton.obj.listen("MDCIconButtonToggle:change", e => window.StarredTerms.setStar(index, e.detail.isOn));
+    return cardEl;
 }
 function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
@@ -1100,7 +1138,7 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
-        for (let term of currentSet.terms) createTermCard(term);
+        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i);
         navigate();
         pages.setOverview.btnLike.addEventListener("click", async () =>  {
             if (!auth.currentUser) location.href = "/#login";

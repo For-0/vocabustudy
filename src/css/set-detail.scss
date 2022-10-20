@@ -74,6 +74,11 @@
         img {
             max-width: 100%;
         }
+        .mdc-icon-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
     }
     .timeline-piece {
         &::before {
