@@ -80,7 +80,39 @@ let currentMatchLeaderboard = null;
  */
 let currentSet = null;
 let specialCharCollator = new Intl.Collator().compare;
-
+const StarredTerms = {
+    /**
+     * @returns {Number[]} Indexes of starred terms
+     */
+    getCurrentSet() {
+        return JSON.parse(localStorage.getItem("starred_terms"))[currentSet.id];
+    },
+    saveStarredList(starList) {
+        let orig = JSON.parse(localStorage.getItem("starred_terms"));
+        orig[currentSet.id] = starList;
+        localStorage.setItem("starred_terms", JSON.stringify(orig));
+    },
+    /**
+     * Find out if a term in the current set is starred
+     * @param {Number} termIndex Index of the term
+     */
+    isStarred(termIndex) {
+        return this.getCurrentSet().includes(termIndex);
+    },
+    /**
+     * Toggle the star status on a term
+     * @param {number} termIndex The index of the term to toggle the star on
+     * @returns Whether the term is starred AFTER toggling
+     */
+    toggleStar(termIndex) {
+        let starList = this.getCurrentSet();
+        let possibleIndex = starList.indexOf(termIndex);
+        if (possibleIndex === -1) starList.push(termIndex);
+        else starList.splice(possibleIndex, 1);
+        this.saveStarredList(starList);
+        return possibleIndex === -1;
+    }
+};
 const pages = {
     setOverview: {
         el: document.getElementById("home"),
@@ -1057,6 +1089,13 @@ addEventListener("DOMContentLoaded", async () => {
         document.addEventListener("keyup", e => {
             if (location.hash === "#flashcards") pages.flashcards.onKeyUp(e);
             else if (location.hash === "#learn") pages.learn.onKeyUp(e);
+        });
+        document.addEventListener("click", async e => {
+            if (e.target.nodeName === "IMG") {
+                const {default: fscreen} = await import("fscreen");
+                if (fscreen.fullscreenElement === e.target) fscreen.exitFullscreen();
+                else fscreen.requestFullscreen(e.target);
+            }
         });
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
