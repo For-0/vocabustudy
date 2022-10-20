@@ -280,7 +280,7 @@ export async function createSetCardOwner(set, id) {
 export async function createSetCard({ name, creator, numTerms, collections, likes, uid }, id, relevance=null) {
     let collectionLabels = await parseCollections(collections);
     let textEls = [];
-    if (relevance) {
+    if (relevance !== null) {
         textEls.push(createElement("a", [], { innerText: `Created by ${creator}`, href: `/user/${uid}/` }));
         textEls.push(createElement("div", [], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
     } else textEls.push(createElement("div", [], { innerText: `Created by ${creator}` }));
@@ -349,14 +349,14 @@ export function createCustomCollectionCard(collection, id) {
  * @param {resultsAvailableCallback} onResults Callback to execute when results are available
  * @param {import("firebase/firestore/lite").DocumentSnapshot[] | number[]} startAfterN Document to start after
  */
-export async function paginateQueries(queries, btnMore, onResults, startAfterN = [0]) {
-    let querySnapshots = await Promise.all(queries.map((el, i) => getDocs(startAfterN[i] ? query(el, orderBy(documentId()), startAfter(startAfterN[i]), limit(10)): query(el, orderBy(documentId()), limit(10)))));
+export async function paginateQueries(queries, btnMore, onResults, startAfterN = [0], orderByField=[documentId()]) {
+    let querySnapshots = await Promise.all(queries.map((el, i) => getDocs(startAfterN[i] ? query(el, orderBy(...orderByField), startAfter(startAfterN[i]), limit(10)): query(el, orderBy(...orderByField), limit(10)))));
     onResults(querySnapshots.flatMap(el => el.docs));
     btnMore.hidden = true;
     btnMore.onclick = () => {};
     let nextQueries = querySnapshots.map((el, i) => ({snap: el, origQ: queries[i]})).filter(el => el.snap.size >= 10);
     if (nextQueries.length) {
         btnMore.hidden = false;
-        btnMore.onclick = () => paginateQueries(nextQueries.map(el => el.origQ), btnMore, onResults, nextQueries.map(el => el.snap.docs[el.snap.size - 1]));
+        btnMore.onclick = () => paginateQueries(nextQueries.map(el => el.origQ), btnMore, onResults, nextQueries.map(el => el.snap.docs[el.snap.size - 1]), orderByField);
     }
 }

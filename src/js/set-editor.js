@@ -239,7 +239,7 @@ fields.formEdit.addEventListener("submit", async e => {
     if (setId === "new" || setId === "new-timeline" || setId === "new-guide") {
         let setRef = doc(collection(db, "sets"));
         let setMetaRef = doc(db, "meta_sets", setRef.id);
-        batch.set(setMetaRef, {numTerms: terms.length, public: sPublic, name: setName, nameWords, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, collections});
+        batch.set(setMetaRef, {numTerms: terms.length, public: sPublic, name: setName, nameWords, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, collections, likes: 0});
         batch.set(setRef, {terms, public: sPublic, name: setName, uid: auth.currentUser.uid, description});
     } else {
         let setRef = doc(db, "sets", setId);

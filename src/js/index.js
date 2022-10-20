@@ -172,6 +172,7 @@ function showAccountInfo({ displayName, email, emailVerified, metadata: { creati
 async function showMySets(el = pages.mysets.sets, showAll = false) {
     el.textContent = "Loading sets...";
     let mQuery = showAll ? query(collection(db, "meta_sets")) : query(collection(db, "meta_sets"), where("uid", "==", auth.currentUser.uid));
+    let extraParams = showAll ? [] : [[0], ["likes", "desc"]];
     await paginateQueries([mQuery], el.nextElementSibling, docs => {
         docs.forEach(async docSnap => {
             let els = await createSetCardOwner(docSnap.data(), docSnap.id);
@@ -186,7 +187,7 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
                 }
             })
         });
-    })
+    }, ...extraParams)
     el.textContent = "";
 }
 function showLeaderboard() {
@@ -284,13 +285,13 @@ async function search() {
             if (words.length > 0) relevance *= words.filter(val => data.nameWords.includes(val)).length / words.length;
             if (selectedFilters.length > 0) relevance *= selectedFilters.filter(val => data.collections.includes(val)).length / selectedFilters.length;
             return { id: el.id, data, relevance };
-        });
+        }).filter(el => el.relevance);
         data.sort((a, b) => b.relevance - a.relevance);
         data.forEach(async docSnap => {
             let els = await createSetCard(docSnap.data, docSnap.id, docSnap.relevance);
             pages.publicsets.sets[1].appendChild(els.card);
         });
-    }, [0, 0]);
+    }, [0, 0], ["likes", "desc"]);
     pages.publicsets.sets[1].textContent = "";
 }
 async function verifyAdmin() {

@@ -22,6 +22,6 @@ addEventListener("DOMContentLoaded", async () => {
             let els = await createSetCard(docSnap.data(), docSnap.id);
             fields.sets.appendChild(els.card);
         });
-    });
+    }, [0], ["likes", "desc"]);
     fields.sets.innerText = "";
 });
