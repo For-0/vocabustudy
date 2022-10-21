@@ -60,7 +60,7 @@ function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
     let cardEl = createElement("div", ["mdc-card"]);
     let cardHeading = cardEl.appendChild(createElement("div", ["mdc-card-wrapper__text-section"]));
-    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {innerText: name}));
+    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], {innerText: name, href: `/user/${id}/`})]));
     cardTitle.style.fontWeight = "600";
     let cardText = cardHeading.appendChild(document.createElement("div"));
     if (isMyComment) {
