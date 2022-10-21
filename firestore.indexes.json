@@ -5,12 +5,80 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "collections",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "public",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "likes",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "meta_sets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "nameWords",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "public",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "likes",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "meta_sets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "public",
           "order": "ASCENDING"
         },
         {
           "fieldPath": "uid",
           "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "meta_sets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "public",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "likes",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "meta_sets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "uid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "likes",
+          "order": "DESCENDING"
         }
       ]
     }
@@ -57,7 +125,7 @@
       "indexes": [
         {
           "order": "ASCENDING",
-          "queryScope": "COLLECTION_GROUP"
+          "queryScope": "COLLECTION"
         }
       ]
     },
@@ -67,7 +135,7 @@
       "indexes": [
         {
           "order": "ASCENDING",
-          "queryScope": "COLLECTION_GROUP"
+          "queryScope": "COLLECTION"
         }
       ]
     },

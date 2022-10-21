@@ -34,7 +34,7 @@ service cloud.firestore {
       allow read: if isPublic() || isCreator();
       allow delete: if isCreator() && canAdminDelete();
       allow update: if isCreator() && onlyUpdated(["name", "nameWords", "public", "numTerms", "creator", "collections"]) && isNotImpersonating(false);
-      allow create: if request.resource.data.keys().hasAll(["creator", "nameWords", "name", "public", "uid", "numTerms", "collections"]) && request.resource.data.keys().hasOnly(["numTerms", "nameWords", "creator", "name", "public", "uid", "collections"]) && isNotImpersonating(false);
+      allow create: if request.resource.data.keys().hasAll(["creator", "nameWords", "name", "public", "uid", "numTerms", "collections"]) && request.resource.data.keys().hasOnly(["numTerms", "nameWords", "creator", "name", "public", "uid", "collections", "likes"]) && request.resource.data.likes == 0 && isNotImpersonating(false);
     }
     match /collections/{collection_id} {
       allow read: if true;
