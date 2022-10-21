@@ -166,3 +166,15 @@
         }
     }
 }
+.change-hue-container {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 20;
+    &:hover {
+        opacity: 1;
+    }
+}

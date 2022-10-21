@@ -4,6 +4,11 @@ html(lang="en" style="overflow-x: hidden;")
     include includes/head
     body.mdc-typography
         include includes/navbar
+        .change-hue-container
+            button.mdc-icon-button.btn-change-hue
+                .mdc-icon-button__ripple
+                span.mdc-icon-button__focus-ring
+                i.material-icons-round palette
         main.mdc-top-app-bar--fixed-adjust
             .page#login
                 h1  
@@ -294,6 +299,24 @@ html(lang="en" style="overflow-x: hidden;")
                         ul.mdc-list(data-evolution="true")
                     .mdc-dialog__actions
                         button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                            .mdc-button__ripple
+                            span.mdc-button__label OK
+        .mdc-dialog#modal-change-hue
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Change Theme
+                    .mdc-dialog__content
+                        p Set Hue:
+                        .mdc-slider
+                            input.mdc-slider__input(type="range" min="0" max="360" value="0" aria-label="Select Value" name="volume")
+                            .mdc-slider__track
+                                .mdc-slider__track--inactive
+                                .mdc-slider__track--active
+                                    .mdc-slider__track--active_fill
+                            .mdc-slider__thumb
+                                .mdc-slider__thumb-knob
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
                             .mdc-button__ripple
                             span.mdc-button__label OK
         script(src="js/index.js" type="module")

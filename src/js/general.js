@@ -52,6 +52,9 @@ function showTheme(theme) {
             break;
     }
 }
+function setHue(hue) {
+    if (parseInt(hue) > 0) document.documentElement.style.filter = `hue-rotate(${hue}deg)`;
+}
 
 /**
  * Callback for when the auth state changes
@@ -71,6 +74,7 @@ function showTheme(theme) {
  */
 export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = () => {}) {
     showTheme(localStorage.getItem("theme"));
+    setHue(localStorage.getItem("theme_hue"));
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = initializeAuth(app, {

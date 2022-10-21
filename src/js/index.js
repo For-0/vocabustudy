@@ -1,5 +1,6 @@
 import { MDCDialog } from "@material/dialog/index";
 import { MDCRipple } from "@material/ripple/index";
+import { MDCSlider } from "@material/slider";
 import { MDCSnackbar } from "@material/snackbar/index";
 import { MDCTextField } from "@material/textfield/index";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
@@ -81,7 +82,9 @@ const pages = {
         changeName: new MDCDialog(document.getElementById("modal-change-name")),
         changeNameInput: new MDCTextField(document.querySelector("#modal-change-name .mdc-text-field")),
         filterCollection: new MDCDialog(document.getElementById("modal-filter-collection")),
-        filterCollectionList: document.querySelector("#modal-filter-collection .mdc-list")
+        filterCollectionList: document.querySelector("#modal-filter-collection .mdc-list"),
+        changeHue: new MDCDialog(document.getElementById("modal-change-hue")),
+        changeHueInput: new MDCSlider(document.querySelector("#modal-change-hue .mdc-slider"))
     },
     admin: {
         btn: document.querySelector("#admin .btn-get-all"),
@@ -348,6 +351,12 @@ addEventListener("DOMContentLoaded", () => {
             pages.modals.changeName.close("success");
         }
     });
+    pages.modals.changeHue.listen("MDCDialog:opened", () => setTimeout(() => pages.modals.changeHueInput.layout(), 100));
+    pages.modals.changeHueInput.listen("MDCSlider:change", () => {
+        localStorage.setItem("theme_hue", pages.modals.changeHueInput.getValue());
+        document.documentElement.style.filter = `hue-rotate(${pages.modals.changeHueInput.getValue()}deg)`;
+        console.log(pages.modals.changeHueInput)
+    });
     pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : pages.modals.emailVerification.open());
     pages.account.btnChangePassword.addEventListener("click", async () => {
         let result = await reauthenticateUser();
@@ -396,6 +405,7 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
     MDCRipple.attachTo(pages.admin.btn);
+    MDCRipple.attachTo(document.querySelector(".btn-change-hue")).listen("click", () => pages.modals.changeHue.open());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();
     else if (location.hash === "#leaderboard") showLeaderboard();
