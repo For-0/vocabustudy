@@ -523,10 +523,12 @@ const pages = {
             this.generateQuestions();
         },
         makeSAQuestion(question) {
+            let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let helperTextId = `_${crypto.randomUUID()}`;
-            let questionEl = applyStyling(question, this.questionContainers[0].appendChild(createElement("p", ["mdc-typography--body1"])));
+            let questionEl = applyStyling(question[this.questionType], this.questionContainers[0].appendChild(createElement("p", ["mdc-typography--body1"])));
             questionEl.style.margin = "0";
             questionEl.style.marginBottom = "4px";
+            if (isStarred) questionEl.style.color = "goldenrod";
             let textFieldEl = this.questionContainers[0].appendChild(createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
                 createElement("span", ["mdc-notched-outline"], {}, [
                     createElement("span", ["mdc-notched-outline__leading"], {}, []),
@@ -547,7 +549,8 @@ const pages = {
             textField.required = true;
             return textField;
         },
-        makeMCQuestion(question, answers, container = 1) {
+        makeMCQuestion(question, answers, container = 1, customQuestion = null) {
+            let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let radioName = `_${crypto.randomUUID()}`;
             let answerRadios = answers.map((answer, i) => {
                 let el = createElement("div", [], {}, [
@@ -570,15 +573,18 @@ const pages = {
                 createElement("h3", ["mdc-typography--headline5"], {}, []),
                 ...answerRadios
             ]));
-            applyStyling(question, questionContainer.querySelector("h3"));
+            if (isStarred) questionContainer.querySelector("h3").style.color = "goldenrod";
+            applyStyling(customQuestion || question[this.questionType], questionContainer.querySelector("h3"));
             questionContainer.firstElementChild.style.marginBottom = "0";
             return answerRadios.map(formField => MDCFormField.attachTo(formField).input = new MDCRadio(formField.querySelector(".mdc-radio")));
         },
-        makeMTQuestion(question, answer) {
+        makeMTQuestion(question) {
+            let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let questionUUID = crypto.randomUUID();
-            let div1 = applyStyling(question, this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left"], {}, [])));
+            let div1 = applyStyling(question[this.questionType], this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left"], {}, [])));
             div1.dataset.questionId = questionUUID;
-            let div2 = applyStyling(answer, this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right"], {}, [])));
+            if (isStarred) div1.style.color = "goldenrod";
+            let div2 = applyStyling(question[this.answerType], this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right"], {}, [])));
             div2.dataset.questionId = questionUUID;
         },
         matchEls(div1, div2) {
@@ -616,7 +622,7 @@ const pages = {
             this.questionInputs = {sa: [], mc: [], tf: []};
             if (groupTypes[0] && groups[0]?.length) {
                 let group = groups.shift();
-                this.questionInputs.sa = group.map(el => ({ input: this.makeSAQuestion(terms[el][this.questionType]), answer: terms[el][this.answerType] }));
+                this.questionInputs.sa = group.map(el => ({ input: this.makeSAQuestion(terms[el]), answer: terms[el][this.answerType] }));
                 this.questionTypeHeaders[0].dataset.count = group.length;
             }
             
@@ -624,14 +630,14 @@ const pages = {
                 let group = groups.shift();
                 this.questionInputs.mc = group.map(el => {
                     let choices = getRandomChoices(3, terms.length, el);
-                    return ({ inputs: this.makeMCQuestion(terms[el][this.questionType], choices.map(choice => terms[choice][this.answerType])), answer: choices.indexOf(el) });
+                    return ({ inputs: this.makeMCQuestion(terms[el], choices.map(choice => terms[choice][this.answerType])), answer: choices.indexOf(el) });
                 });
                 this.questionTypeHeaders[1].dataset.count = group.length;
             }
             
             if (groupTypes[2] && groups[0]?.length) {
                 let group = groups.shift();
-                group.forEach(el => this.makeMTQuestion(terms[el][this.questionType], terms[el][this.answerType]));
+                group.forEach(el => this.makeMTQuestion(terms[el]));
                 this.randomizeMatchOptions();
                 this.questionTypeHeaders[2].dataset.count = group.length;
                 document.querySelectorAll(".test-matching-box").forEach(box => box.addEventListener("click", this.matchingBoxClickListener));
@@ -648,7 +654,7 @@ const pages = {
                         else answer = newAnswer;
                     }
                     let question = `${terms[el][this.questionType]} = ${answer}`;
-                    return ({ inputs: this.makeMCQuestion(question, ["True", "False"], 3), answer: choiceIsCorrect });
+                    return ({ inputs: this.makeMCQuestion(terms[el], ["True", "False"], 3, question), answer: choiceIsCorrect });
                 });
                 this.questionTypeHeaders[3].dataset.count = group.length;
             }
