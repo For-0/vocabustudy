@@ -67,7 +67,6 @@ node_modules/
 
 .parcel-cache/
 dist/
-emulator-data/
 rd/
 .vscode/
 parcel-bundle-reports/
