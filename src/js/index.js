@@ -69,6 +69,7 @@ const pages = {
         sets: document.querySelectorAll("#search .set-container"),
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
+        btnClearFilters: document.querySelector("#search .btn-clear-filters"),
         searchInput: new MDCTextField(document.querySelector("#search .field-search"))
     },
     modals: {
@@ -380,6 +381,10 @@ addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") search();
     })
     pages.publicsets.btnCollectionsMenu.addEventListener("click", () => pages.modals.filterCollection.open());
+    pages.publicsets.btnClearFilters.addEventListener("click", () => {
+        pages.modals.filterCollectionList.querySelectorAll("input:checked").forEach(el => el.checked = false);
+        listPreviewCollections([]);
+    });
     pages.home.btnShowFeatures.addEventListener("click", () => document.querySelector(".home-features").scrollIntoView({ behavior: "smooth" }));
     pages.admin.btn.addEventListener("click", async () => {
         if (await verifyAdmin()) showMySets(pages.admin.sets, true);
@@ -403,6 +408,7 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.account.btnChangeName);
     MDCRipple.attachTo(pages.mysets.btnCreateCollection);
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
+    MDCRipple.attachTo(pages.publicsets.btnClearFilters);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
     MDCRipple.attachTo(pages.admin.btn);
     MDCRipple.attachTo(document.querySelector(".btn-change-hue")).listen("click", () => pages.modals.changeHue.open());
