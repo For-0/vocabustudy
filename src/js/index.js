@@ -70,7 +70,8 @@ const pages = {
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
         btnClearFilters: document.querySelector("#search .btn-clear-filters"),
-        searchInput: new MDCTextField(document.querySelector("#search .field-search"))
+        searchInput: new MDCTextField(document.querySelector("#search .field-search")),
+        snackbarMaxCollections: new MDCSnackbar(document.getElementById("snackbar-max-collections"))
     },
     modals: {
         emailVerification: new MDCDialog(document.getElementById("modal-email-confirmation")),
@@ -319,6 +320,7 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.modals.filterCollection.listen("MDCDialog:closing", () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
+        if (collections.length > 10) pages.publicsets.snackbarMaxCollections.open();
         listPreviewCollections(collections);
     });
     pages.modals.reauthenticatePassword.root.querySelector("button:last-child").addEventListener("click", () => {
