@@ -38,6 +38,16 @@ html(lang="en")
                                         .mdc-radio__inner-circle
                                     .mdc-radio__ripple
                                 label(for='radio-flashcards-answer-definition') Definition
+                        div
+                            .mdc-form-field.check-starred
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-flashcard-starred")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-flashcard-starred") Only Starred
                     div
                 div
                     button#btn-previous-flashcard.mdc-button.mdc-button--icon-leading.mdc-button--outlined
@@ -78,6 +88,16 @@ html(lang="en")
                                         .mdc-radio__inner-circle
                                     .mdc-radio__ripple
                                 label(for='radio-learn-answer-definition') Definition
+                        div
+                            .mdc-form-field.check-starred
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-learn-starred")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-learn-starred") Only Starred
                         p(style='margin-bottom: 0;')
                             strong Progress:
                         em(style='padding: 0;')
@@ -245,6 +265,16 @@ html(lang="en")
                                         .mdc-checkbox__mixedmark
                                     .mdc-checkbox__ripple
                                 label(for="check-test-question-tf") True/False
+                        div
+                            .mdc-form-field.check-starred
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-starred")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-test-starred") Only Starred
                         label.mdc-text-field.mdc-text-field--filled.field-max-terms(style="width: 100%; margin-bottom: 4px;")
                             span.mdc-text-field__ripple
                             span.mdc-floating-label Max Terms
@@ -298,6 +328,16 @@ html(lang="en")
                                         .mdc-radio__inner-circle
                                     .mdc-radio__ripple
                                 label(for='radio-match-answer-definition') Definition
+                        div
+                            .mdc-form-field.check-starred
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-match-starred")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-match-starred") Only Starred
                         p(style="margin: 0;") Time: 
                             span.field-time 0.0
                             | s
