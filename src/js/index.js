@@ -316,7 +316,7 @@ async function showLikedSets() {
                 let els = await createSetCard(docSnap.data(), docSnap.id);
                 pages.savedSets.likedSets.appendChild(els.card);
             });
-        }, [0], ["like", "desc"])
+        })
         pages.savedSets.likedSets.textContent = "";
     }
 }
