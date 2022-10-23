@@ -1,4 +1,6 @@
 header.mdc-top-app-bar.mdc-top-app-bar
+  // Um, the z indices are weird here.
+  // 9 z-index is somehow above 10 z-index?
   .mdc-top-app-bar__row
     section.mdc-top-app-bar__section.mdc-top-app-bar__section--align-start
       if showBack
@@ -7,6 +9,7 @@ header.mdc-top-app-bar.mdc-top-app-bar
       else
         a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal;' href='/#') Vocabustudy
     unless omitAccount
+      // a Goal that I have is to get linear z indexes - 1, 2, 3, 4, 5, etc
       section(role='toolbar')
         a.material-icons-round.mdc-top-app-bar__action.mdc-icon-button(aria-describedby="tooltip-btn-browse" href="/#search") search
         .mdc-tooltip#tooltip-btn-browse(role='tooltip' aria-hidden='true')
@@ -23,7 +26,12 @@ header.mdc-top-app-bar.mdc-top-app-bar
             .mdc-tooltip__surface.mdc-tooltip__surface-animation(style="overflow-wrap: break-word;") Account
           #account-menu.mdc-menu.mdc-menu-surface(style="z-index: 10;")
             ul.mdc-list(role="menu", aria-hidden="true", aria-orientation="vertical", tabindex="-1")
+              li
+                a.mdc-list-item(role="menuitem" href="/#saved-sets")
+                  span.mdc-list-item__ripple 
+                  span.mdc-list-item__text Saved Sets
               .loggedin(hidden)
+                // 5 pages!
                 li
                   a.mdc-list-item(role="menuitem" href="/#account")
                     span.mdc-list-item__ripple 

@@ -956,7 +956,7 @@ const pages = {
                     if (possibleExisting.time > time) possibleExisting.time = time;
                     else time = possibleExisting.time;
                 } else currentMatchLeaderboard.push({name: auth.currentUser.displayName, uid: auth.currentUser.uid, time});
-                await setDoc(socialRef, {leaderboard: time, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, {leaderboard: time, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
             }
             let actualLeaderboard = [...currentMatchLeaderboard];
             if (this.onlyStarred) actualLeaderboard.push({name: "Play a full round to save!", time});
@@ -1194,7 +1194,7 @@ addEventListener("DOMContentLoaded", async () => {
             if (!auth.currentUser) location.href = "/#login";
             else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
-                await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
                 showLikeStatus(!currentLikeStatus);
             }
         });
@@ -1210,7 +1210,7 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.fieldComment.input.listen("change", () => pages.setOverview.fieldComment.button.disabled = false);
         pages.setOverview.fieldComment.button.addEventListener("click", async () => {
             if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
-                await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });

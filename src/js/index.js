@@ -4,7 +4,7 @@ import { MDCSlider } from "@material/slider";
 import { MDCSnackbar } from "@material/snackbar/index";
 import { MDCTextField } from "@material/textfield/index";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
+import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize from "./general";
@@ -14,6 +14,7 @@ const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth, storage } = initialize(user => {
     if (user) {
         if (location.hash === "#login") location.hash = "#account";
+        else if (location.hash === "#saved-sets") showLikedSets();
         else if (location.hash === "#mysets") {
             showMySets();
             showMyCollections();
@@ -38,6 +39,7 @@ const { db, auth, storage } = initialize(user => {
 const hashTitles = {
     "#login": "Log In",
     "#mysets": "My Sets",
+    "#saved-sets": "Saved Sets",
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
     "#login": "Log In",
@@ -72,6 +74,9 @@ const pages = {
         btnClearFilters: document.querySelector("#search .btn-clear-filters"),
         searchInput: new MDCTextField(document.querySelector("#search .field-search")),
         snackbarMaxCollections: new MDCSnackbar(document.getElementById("snackbar-max-collections"))
+    },
+    savedSets: {
+        likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
         emailVerification: new MDCDialog(document.getElementById("modal-email-confirmation")),
@@ -299,6 +304,22 @@ async function search() {
     }, [0, 0], ["likes", "desc"]);
     pages.publicsets.sets[1].textContent = "";
 }
+async function showLikedSets() {
+    if (auth.currentUser) {
+        pages.savedSets.likedSets.textContent = "Loading sets...";
+        let mQuery = query(collectionGroup(db, "social"), where("uid", "==", auth.currentUser.uid), where("like", "==", true));
+        await paginateQueries([mQuery], pages.savedSets.likedSets.nextElementSibling, async docs => {
+            let setIds = docs.map(el => el.ref.parent.parent.id);
+            if (setIds.length < 1) return;
+            let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", setIds), where("public", "==", true)));
+            sets.forEach(async docSnap => {
+                let els = await createSetCard(docSnap.data(), docSnap.id);
+                pages.savedSets.likedSets.appendChild(els.card);
+            });
+        }, [0], ["like", "desc"])
+        pages.savedSets.likedSets.textContent = "";
+    }
+}
 async function verifyAdmin() {
     let token = await auth.currentUser.getIdTokenResult();
     if (!token.claims.admin && location.hash === "#admin") location.hash = "#";
@@ -427,6 +448,9 @@ window.addEventListener("hashchange", () => {
         case "#mysets":
             showMySets();
             showMyCollections();
+            break;
+        case "#saved-sets":
+            showLikedSets();
             break;
         case "#admin":
             verifyAdmin();
