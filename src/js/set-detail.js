@@ -1191,8 +1191,10 @@ addEventListener("DOMContentLoaded", async () => {
         for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i);
         navigate();
         pages.setOverview.btnLike.addEventListener("click", async () =>  {
-            if (!auth.currentUser) location.href = "/#login";
-            else if (socialRef) {
+            if (!auth.currentUser) {
+                localStorage.setItem("redirect_after_login", location.href);
+                location.href = "/#login";
+            } else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
                 await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
                 showLikeStatus(!currentLikeStatus);
@@ -1215,8 +1217,10 @@ addEventListener("DOMContentLoaded", async () => {
             }
         });
     } catch (err) {
-        if (process.env.NODE_ENV !== "production") console.log(err);
-        else location.replace("/404.html");
+        localStorage.setItem("redirect_after_login", location.href);
+        if (auth.currentUser) await auth.signOut();
+        location.href = "/#login";
+        return;
     }
 });
 

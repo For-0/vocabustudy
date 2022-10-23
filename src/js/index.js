@@ -11,10 +11,11 @@ import initialize from "./general";
 import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
-const { db, auth, storage } = initialize(user => {
+const { db, auth, storage } = initialize(async user => {
     if (user) {
-        if (location.hash === "#login") location.hash = "#account";
-        else if (location.hash === "#saved-sets") showLikedSets();
+        if (location.hash === "#login") {
+            await showAuthUI();
+        } else if (location.hash === "#saved-sets") showLikedSets();
         else if (location.hash === "#mysets") {
             showMySets();
             showMyCollections();
@@ -25,7 +26,10 @@ const { db, auth, storage } = initialize(user => {
             pages.modals.emailVerification.open();
         }
     } else {
-        if (restrictedUrls.includes(location.hash)) location.hash = "#home";
+        if (restrictedUrls.includes(location.hash)) {
+            localStorage.setItem("redirect_after_login", location.href);
+            location.hash = "#login";
+        }
         showAccountInfo({ photoURL: "", displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
     }
 }, async remoteConfig => {
@@ -103,7 +107,8 @@ const pages = {
 };
 const authUI = new firebaseui.auth.AuthUI(auth);
 async function showAuthUI() {
-    if (auth.currentUser) return location.hash = "#account";
+    if (auth.currentUser) 
+        return location.hash = "#account";
     document.getElementById("firebaseui-css").disabled = false;
     authUI.reset();
     authUI.start("#firebaseui-auth-container", {
@@ -121,7 +126,9 @@ async function showAuthUI() {
         ],
         callbacks: {
             signInSuccessWithAuthResult: (_authResult, _redirectUrl) => {
-
+                let afterLogin = localStorage.getItem("redirect_after_login");
+                localStorage.removeItem("redirect_after_login");
+                location.href = afterLogin || "#account";
                 return false;
             },
             uiShown: () => console.log("[FirebaseUI] Auth UI Loaded")
@@ -441,6 +448,11 @@ addEventListener("DOMContentLoaded", () => {
 });
 addEventListener("load", () => pages.publicsets.searchInput.value = pages.publicsets.searchInput.root.querySelector("input").value);
 window.addEventListener("hashchange", () => {
+    if (!auth.currentUser && restrictedUrls.includes(location.hash)) {
+        localStorage.setItem("redirect_after_login", location.href);
+        location.hash = "#login";
+        return;
+    }
     switch (location.hash) {
         case "#login":
             showAuthUI();

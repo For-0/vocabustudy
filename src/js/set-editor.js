@@ -12,7 +12,10 @@ let creator = null;
 const blooketDashboardRe = /https:\/\/dashboard\.blooket\.com\/set\/(\w+)\/?/;
 const blooketHwRe = /https:\/\/play\.blooket\.com\/play\?hwId=(\w+)/;
 const {db, auth} = initialize(async user => {
-    if (!user) location.href = location.protocol + "//" + location.host + "/#login";
+    if (!user) {
+        localStorage.setItem("redirect_after_login", location.href);
+        location.href = "/#login";
+    }
     else if (setId === "new") {
         document.title = "New Set - Vocabustudy";
         document.querySelector("h1").innerText = "New Set";
@@ -43,12 +46,16 @@ const {db, auth} = initialize(async user => {
     } else {
         let setSnap = await getDoc(doc(db, "sets", setId));
         let setMetaSnap = await getDoc(doc(db, "meta_sets", setId));
-        if (!setSnap.exists() || !setMetaSnap.exists()) location.href = "/";
+        if (!setSnap.exists() || !setMetaSnap.exists()) location.href = "/404.html";
         let userIdToken = await user.getIdTokenResult();
         let isAdmin = userIdToken.claims.admin;
         const currentSet = setSnap.data();
         const currentSetMeta = setMetaSnap.data();
-        if (!isAdmin && currentSet.uid !== user.uid) location.pathname = location.protocol + "//" + location.host + "/#login";;
+        if (!isAdmin && currentSet.uid !== user.uid) {
+            localStorage.setItem("redirect_after_login", location.href);
+            await auth.signOut();
+            location.href = "/#login";
+        }
         document.title = `Edit ${currentSet.name} - Vocabustudy`;
         fields.setName.value = currentSet.name;
         if (currentSet.description)
