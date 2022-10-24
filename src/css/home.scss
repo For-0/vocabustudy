@@ -24,29 +24,23 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
             > div.home-page-intro {
                 margin-left: auto;
                 margin-right: auto;
                 .ff {
-                    position: relative;
-                    left: 0%;
-                    top: 0%;
                     font-size: 50px;
                 }
                 .lv {
-                    position: relative;
-                    left: 0%;
-                    top: 0%;
                     font-size: 50px;
                 }
-                .hookintro {
+                ul {
                     position: relative;
-                    left: 0%;
-                    top: 0%;
-                    word-break: break-all;
-                    //margin-left: 500px;
-                    //padding-right: 5px;
-                    //margin-left: 5px;
+                    float: right;
+                    font-size: 25px;
+                    padding-right: 2rem;
+                    padding-top: 4rem;
                 }
             }
             > div.home-features-div {
@@ -126,6 +120,9 @@
         margin-top: 6px;
         padding-bottom: 2px;
     }
+}
+#credits ul > li {
+    margin-bottom: 1rem;
 }
 #login {
     position: relative;
