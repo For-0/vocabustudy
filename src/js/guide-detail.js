@@ -47,14 +47,16 @@ function showLikeStatus(likeStatus) {
     }
 }
 
-function createItem({ title, body }) {
-    let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-            createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + title))}),
-            createElement("div", [], {innerHTML: sanitize(marked.parse(body))})
-        ])
-    ]);
-    return pages.setOverview.terms.appendChild(cardEl);
+function createItem(item) {
+    if (item.type === 0) {
+        let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
+            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title))}),
+                createElement("div", [], {innerHTML: sanitize(marked.parse(item.body))})
+            ])
+        ]);
+        return pages.setOverview.terms.appendChild(cardEl);
+    }
 }
 function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
@@ -81,7 +83,7 @@ addEventListener("DOMContentLoaded", async () => {
         let setSnap = await getDoc(setRef);
         currentSet = setSnap.data();
         document.title = `${currentSet.name} - Vocabustudy`;
-        currentSet.terms.forEach(term => {
+        currentSet.terms.filter(el => el.type === 0).forEach(term => {
             term.title = term.title.replace(/[\u2018\u2019]/g, "'");
             term.body = term.body.replace(/[\u2018\u2019]/g, "'");
         });
@@ -92,8 +94,10 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let term of currentSet.terms) createItem(term);
         pages.setOverview.btnLike.addEventListener("click", async () =>  {
-            if (!auth.currentUser) location.href = "/#login";
-            else if (socialRef) {
+            if (!auth.currentUser) {
+                localStorage.setItem("redirect_after_login", location.href);
+                location.href = "/#login";
+            } else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
                 await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName}, {merge: true});
                 showLikeStatus(!currentLikeStatus);
@@ -116,8 +120,10 @@ addEventListener("DOMContentLoaded", async () => {
             }
         });
     } catch (err) {
-        if (process.env.NODE_ENV !== "production") console.log(err);
-        else location.replace("/404.html");
+        localStorage.setItem("redirect_after_login", location.href);
+        if (auth.currentUser) await auth.signOut();
+        location.href = "/#login";
+        return;
     }
 });
 

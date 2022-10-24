@@ -16,16 +16,18 @@ unless omitAccount
 footer(style="position: relative;")
   p
     span Vocabustudy #{process.env.npm_package_version} | &copy; 2022 For Zero Applications. All Rights Reserved.
-      a(href="/#credits") Credits
+      a.a(href="/#credits") Credits
     span Version #{process.env.npm_package_version} - 
-      a(href="/#credits") Credits
+      a.a(href="/#credits") Credits
   div
     div
-      a(href="/privacy/" class="a") Privacy Policy
+      a.a(href="/privacy/") Privacy Policy
       |  | 
-      a(href="https://discord.gg/UrRs7Bbr6d" target="_blank" class="a") Discord
+      a.a(href="https://discord.gg/UrRs7Bbr6d" target="_blank") Discord
       |  | 
-      a(href="https://forms.gle/Lzk4cYu8AVA2XX1A6" target="_blank" class="a") Feedback
+      a.a(href="https://forms.gle/Lzk4cYu8AVA2XX1A6" target="_blank") Feedback
+      |  | 
+      a.a(href="/#donate") Donate
     div(style="transform-origin: right; transform: scale(0.8);")
       a.mdc-icon-button(href="/privacy/" title="Privacy")
         .mdc-icon-button__ripple
@@ -36,3 +38,6 @@ footer(style="position: relative;")
       a.mdc-icon-button(href="https://forms.gle/Lzk4cYu8AVA2XX1A6" target="_blank" title="Feedback/Bugs")
         .mdc-icon-button__ripple
         i.material-icons-round help
+      a.mdc-icon-button(href="/#donate" title="Donate")
+        .mdc-icon-button__ripple
+        i.material-icons-round paid

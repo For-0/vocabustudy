@@ -4,16 +4,18 @@ import { MDCSlider } from "@material/slider";
 import { MDCSnackbar } from "@material/snackbar/index";
 import { MDCTextField } from "@material/textfield/index";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
+import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize from "./general";
 import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
-const { db, auth, storage } = initialize(user => {
+const { db, auth, storage } = initialize(async user => {
     if (user) {
-        if (location.hash === "#login") location.hash = "#account";
+        if (location.hash === "#login") {
+            await showAuthUI();
+        } else if (location.hash === "#saved-sets") showLikedSets();
         else if (location.hash === "#mysets") {
             showMySets();
             showMyCollections();
@@ -24,7 +26,10 @@ const { db, auth, storage } = initialize(user => {
             pages.modals.emailVerification.open();
         }
     } else {
-        if (restrictedUrls.includes(location.hash)) location.hash = "#home";
+        if (restrictedUrls.includes(location.hash)) {
+            localStorage.setItem("redirect_after_login", location.href);
+            location.hash = "#login";
+        }
         showAccountInfo({ photoURL: "", displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
     }
 }, async remoteConfig => {
@@ -38,6 +43,7 @@ const { db, auth, storage } = initialize(user => {
 const hashTitles = {
     "#login": "Log In",
     "#mysets": "My Sets",
+    "#saved-sets": "Saved Sets",
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
     "#login": "Log In",
@@ -69,7 +75,12 @@ const pages = {
         sets: document.querySelectorAll("#search .set-container"),
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
-        searchInput: new MDCTextField(document.querySelector("#search .field-search"))
+        btnClearFilters: document.querySelector("#search .btn-clear-filters"),
+        searchInput: new MDCTextField(document.querySelector("#search .field-search")),
+        snackbarMaxCollections: new MDCSnackbar(document.getElementById("snackbar-max-collections"))
+    },
+    savedSets: {
+        likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
         emailVerification: new MDCDialog(document.getElementById("modal-email-confirmation")),
@@ -96,7 +107,8 @@ const pages = {
 };
 const authUI = new firebaseui.auth.AuthUI(auth);
 async function showAuthUI() {
-    if (auth.currentUser) return location.hash = "#account";
+    if (auth.currentUser) 
+        return location.hash = "#account";
     document.getElementById("firebaseui-css").disabled = false;
     authUI.reset();
     authUI.start("#firebaseui-auth-container", {
@@ -114,7 +126,9 @@ async function showAuthUI() {
         ],
         callbacks: {
             signInSuccessWithAuthResult: (_authResult, _redirectUrl) => {
-
+                let afterLogin = localStorage.getItem("redirect_after_login");
+                localStorage.removeItem("redirect_after_login");
+                location.href = afterLogin || "#account";
                 return false;
             },
             uiShown: () => console.log("[FirebaseUI] Auth UI Loaded")
@@ -297,6 +311,22 @@ async function search() {
     }, [0, 0], ["likes", "desc"]);
     pages.publicsets.sets[1].textContent = "";
 }
+async function showLikedSets() {
+    if (auth.currentUser) {
+        pages.savedSets.likedSets.textContent = "Loading sets...";
+        let mQuery = query(collectionGroup(db, "social"), where("uid", "==", auth.currentUser.uid), where("like", "==", true));
+        await paginateQueries([mQuery], pages.savedSets.likedSets.nextElementSibling, async docs => {
+            let setIds = docs.map(el => el.ref.parent.parent.id);
+            if (setIds.length < 1) return;
+            let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", setIds), where("public", "==", true)));
+            sets.forEach(async docSnap => {
+                let els = await createSetCard(docSnap.data(), docSnap.id);
+                pages.savedSets.likedSets.appendChild(els.card);
+            });
+        })
+        pages.savedSets.likedSets.textContent = "";
+    }
+}
 async function verifyAdmin() {
     let token = await auth.currentUser.getIdTokenResult();
     if (!token.claims.admin && location.hash === "#admin") location.hash = "#";
@@ -318,6 +348,7 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.modals.filterCollection.listen("MDCDialog:closing", () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
+        if (collections.length > 10) pages.publicsets.snackbarMaxCollections.open();
         listPreviewCollections(collections);
     });
     pages.modals.reauthenticatePassword.root.querySelector("button:last-child").addEventListener("click", () => {
@@ -380,6 +411,10 @@ addEventListener("DOMContentLoaded", () => {
         if (e.key === "Enter") search();
     })
     pages.publicsets.btnCollectionsMenu.addEventListener("click", () => pages.modals.filterCollection.open());
+    pages.publicsets.btnClearFilters.addEventListener("click", () => {
+        pages.modals.filterCollectionList.querySelectorAll("input:checked").forEach(el => el.checked = false);
+        listPreviewCollections([]);
+    });
     pages.home.btnShowFeatures.addEventListener("click", () => document.querySelector(".home-features").scrollIntoView({ behavior: "smooth" }));
     pages.admin.btn.addEventListener("click", async () => {
         if (await verifyAdmin()) showMySets(pages.admin.sets, true);
@@ -403,6 +438,7 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(pages.account.btnChangeName);
     MDCRipple.attachTo(pages.mysets.btnCreateCollection);
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
+    MDCRipple.attachTo(pages.publicsets.btnClearFilters);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
     MDCRipple.attachTo(pages.admin.btn);
     MDCRipple.attachTo(document.querySelector(".btn-change-hue")).listen("click", () => pages.modals.changeHue.open());
@@ -412,6 +448,11 @@ addEventListener("DOMContentLoaded", () => {
 });
 addEventListener("load", () => pages.publicsets.searchInput.value = pages.publicsets.searchInput.root.querySelector("input").value);
 window.addEventListener("hashchange", () => {
+    if (!auth.currentUser && restrictedUrls.includes(location.hash)) {
+        localStorage.setItem("redirect_after_login", location.href);
+        location.hash = "#login";
+        return;
+    }
     switch (location.hash) {
         case "#login":
             showAuthUI();
@@ -419,6 +460,9 @@ window.addEventListener("hashchange", () => {
         case "#mysets":
             showMySets();
             showMyCollections();
+            break;
+        case "#saved-sets":
+            showLikedSets();
             break;
         case "#admin":
             verifyAdmin();

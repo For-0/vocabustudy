@@ -107,6 +107,10 @@ window.StarredTerms = {
     getAllStarred() {
         return JSON.parse(localStorage.getItem("starred_terms")) || {};
     },
+    getStarredTermList() {
+        let starredIndices = this.getCurrentSet();
+        return currentSet.terms.filter((_, i) => starredIndices.includes(i));
+    },
     /**
      * @returns {Number[]} Indexes of starred terms
      */
@@ -203,6 +207,8 @@ const pages = {
         btnNext: document.getElementById("btn-next-flashcard"),
         btnFlip: document.getElementById("btn-flip-flashcard"),
         radioBtns: document.querySelectorAll("#flashcards .answer-with"),
+        /** @type {MDCCheckbox} */
+        checkOnlyStarred: document.querySelector("#flashcards .check-starred"),
         onKeyUp(e) {
             if (e.key === "ArrowRight") this.btnNext.click();
             else if (e.key === "ArrowLeft") this.btnPrevious.click();
@@ -226,10 +232,12 @@ const pages = {
             return this.terms.appendChild(cardEl);
         },
         show() {
-            this.numTerms = currentSet.terms.length;
+            let terms = currentSet.terms;
+            if (this.checkOnlyStarred.checked) terms = window.StarredTerms.getStarredTermList();
+            this.numTerms = terms.length;
             this.setName.innerText = currentSet.name;
             this.terms.textContent = "";
-            for (let [i, term] of currentSet.terms.entries()) this.createFlashcard(term, i);
+            for (let [i, term] of terms.entries()) this.createFlashcard(term, i);
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards." }, -1);
             this.index = 0;
             this.terms.children[0].querySelectorAll("p").forEach(el => {
@@ -242,6 +250,8 @@ const pages = {
             this.radioBtns = [...this.radioBtns].map(el =>
                 MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
             );
+            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
+            this.checkOnlyStarred.listen("change", () => this.show());
             this.btnPrevious.addEventListener("click", () => {
                 this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
                 this.prevCard();
@@ -293,6 +303,8 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
+        /** @type {MDCCheckbox} */
+        checkOnlyStarred: document.querySelector("#learn .check-starred"),
         setName: document.querySelector("#learn h1 > span"),
         question: document.querySelector("#learn > div > div:last-child p"),
         answerSA: new MDCTextField(document.querySelector("#learn .mdc-text-field")),
@@ -314,10 +326,11 @@ const pages = {
             else if (!this.answerMC.hidden && !this.answerMC.disabled) this.answerMC.elements[parseInt(e.key) - 1]?.click();
         },
         show() {
-            this.questionData = currentSet.terms.map((el, i) => ({ i, mc: 1, fmc: 0, sa: 1, fsa: 0 }));
+            this.questionData = currentSet.terms.map((_, i) => ({ i, mc: 1, fmc: 0, sa: 1, fsa: 0 }));
+            if (this.checkOnlyStarred.checked && window.StarredTerms.getCurrentSet().length) this.questionData = this.questionData.filter(({ i }) => window.StarredTerms.isStarred(i));
             this.setName.innerText = currentSet.name;
             this.msgDone.hidden = true;
-            this.numTerms = currentSet.terms.length;
+            this.numTerms = this.questionData.length;
             this.progressMC = 0;
             this.progressSA = 0;
             this.generateQuestion();
@@ -331,7 +344,7 @@ const pages = {
                 let question = mcQuestions[Math.floor(Math.random() * mcQuestions.length)];
                 this.currentQuestionIndex = this.questionData.indexOf(question);
                 let term = currentSet.terms[question.i];
-                let answers = getRandomChoices(3, this.questionData.length, question.i);
+                let answers = getRandomChoices(3, currentSet.terms.length, question.i);
                 this.showQuestion(term, answers);
             } else if (saQuestions.length > 0) {
                 let question = saQuestions[Math.floor(Math.random() * saQuestions.length)];
@@ -365,7 +378,7 @@ const pages = {
                 this.answerMC.disabled = false;
                 answers.forEach((answer, i) => {
                     let btn = this.answerMC.elements[i];
-                    let ansTerm = currentSet.terms[this.questionData[answer].i];
+                    let ansTerm = currentSet.terms[answer];
                     applyStyling(ansTerm[this.answerType], btn.querySelector(".mdc-button__label"));
                     resizeButtonText(btn);
                     btn.dataset.answerindex = answer;
@@ -387,14 +400,14 @@ const pages = {
             let height = this.question.clientHeight;
             applyStyling(term[this.questionType], this.question);
             resizeTextToMaxHeight(this.question, height);
-            this.question.style.color = (window.StarredTerms.isStarred(this.currentQuestionIndex)) ? "goldenrod" : "unset";
+            this.question.style.color = (window.StarredTerms.isStarred(this.questionData[this.currentQuestionIndex].i)) ? "goldenrod" : "unset";
         },
         processMCResult(answer) {
             this.answerMC.disabled = true;
             this.msgIdle.hidden = true;
-            if (answer === this.currentQuestionIndex) {
+            if (answer === this.questionData[this.currentQuestionIndex].i) {
                 this.msgCorrect.hidden = false;
-                this.questionData[answer].mc--;
+                this.questionData[this.currentQuestionIndex].mc--;
                 this.progressMC++;
             } else {
                 this.msgIncorrect.hidden = false;
@@ -452,6 +465,8 @@ const pages = {
                 btn.addEventListener("click", () => this.processMCResult(parseInt(btn.dataset.answerindex)));
                 MDCRipple.attachTo(btn);
             }
+            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
+            this.checkOnlyStarred.listen("change", () => this.show());
             this.msgCorrect.addEventListener("click", () => this.generateQuestion());
             this.msgIncorrect.addEventListener("click", () => this.generateQuestion());
             this.answerSACheck.addEventListener("click", () => this.processSAResult());
@@ -480,6 +495,8 @@ const pages = {
         questionContainers: document.querySelectorAll("#test > div > fieldset > div"),
         questionsFieldset: document.querySelector("#test > div > fieldset"),
         currentMatchMode: 0,
+        /** @type {MDCCheckbox} */
+        checkOnlyStarred: document.querySelector("#test .check-starred"),
         /** @type {MDCTextField} */
         fieldMaxTerms: document.querySelector("#test .field-max-terms"),
         get questionType() {
@@ -491,6 +508,11 @@ const pages = {
         get userMaxQuestions() {
             return Math.max(parseInt(this.fieldMaxTerms.value), 0);
         },
+        get termList() {
+            let terms = currentSet.terms;
+            if (this.checkOnlyStarred.checked && window.StarredTerms.getStarredTermList().length >= 4) terms = window.StarredTerms.getStarredTermList();
+            return terms;
+        },
         questionInputs: {
             sa: [],
             mc: [],
@@ -501,10 +523,12 @@ const pages = {
             this.generateQuestions();
         },
         makeSAQuestion(question) {
+            let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let helperTextId = `_${crypto.randomUUID()}`;
-            let questionEl = applyStyling(question, this.questionContainers[0].appendChild(createElement("p", ["mdc-typography--body1"])));
+            let questionEl = applyStyling(question[this.questionType], this.questionContainers[0].appendChild(createElement("p", ["mdc-typography--body1"])));
             questionEl.style.margin = "0";
             questionEl.style.marginBottom = "4px";
+            if (isStarred) questionEl.style.color = "goldenrod";
             let textFieldEl = this.questionContainers[0].appendChild(createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
                 createElement("span", ["mdc-notched-outline"], {}, [
                     createElement("span", ["mdc-notched-outline__leading"], {}, []),
@@ -525,7 +549,8 @@ const pages = {
             textField.required = true;
             return textField;
         },
-        makeMCQuestion(question, answers, container = 1) {
+        makeMCQuestion(question, answers, container = 1, customQuestion = null) {
+            let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let radioName = `_${crypto.randomUUID()}`;
             let answerRadios = answers.map((answer, i) => {
                 let el = createElement("div", [], {}, [
@@ -548,15 +573,18 @@ const pages = {
                 createElement("h3", ["mdc-typography--headline5"], {}, []),
                 ...answerRadios
             ]));
-            applyStyling(question, questionContainer.querySelector("h3"));
+            if (isStarred) questionContainer.querySelector("h3").style.color = "goldenrod";
+            applyStyling(customQuestion || question[this.questionType], questionContainer.querySelector("h3"));
             questionContainer.firstElementChild.style.marginBottom = "0";
             return answerRadios.map(formField => MDCFormField.attachTo(formField).input = new MDCRadio(formField.querySelector(".mdc-radio")));
         },
-        makeMTQuestion(question, answer) {
+        makeMTQuestion(question) {
+            let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let questionUUID = crypto.randomUUID();
-            let div1 = applyStyling(question, this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left"], {}, [])));
+            let div1 = applyStyling(question[this.questionType], this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left"], {}, [])));
             div1.dataset.questionId = questionUUID;
-            let div2 = applyStyling(answer, this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right"], {}, [])));
+            if (isStarred) div1.style.color = "goldenrod";
+            let div2 = applyStyling(question[this.answerType], this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right"], {}, [])));
             div2.dataset.questionId = questionUUID;
         },
         matchEls(div1, div2) {
@@ -589,26 +617,27 @@ const pages = {
             this.questionContainers[2].querySelectorAll(":scope > div").forEach(el => el.textContent = "");
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
             let groupTypes = this.checkboxes.map(el => el.checked);
-            let groups = makeRandomGroups(currentSet.terms.length, groupTypes.filter(el => el).length, this.userMaxQuestions);
+            let terms = this.termList;
+            let groups = makeRandomGroups(terms.length, groupTypes.filter(el => el).length, this.userMaxQuestions);
             this.questionInputs = {sa: [], mc: [], tf: []};
             if (groupTypes[0] && groups[0]?.length) {
                 let group = groups.shift();
-                this.questionInputs.sa = group.map(el => ({ input: this.makeSAQuestion(currentSet.terms[el][this.questionType]), answer: currentSet.terms[el][this.answerType] }));
+                this.questionInputs.sa = group.map(el => ({ input: this.makeSAQuestion(terms[el]), answer: terms[el][this.answerType] }));
                 this.questionTypeHeaders[0].dataset.count = group.length;
             }
             
             if (groupTypes[1] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.mc = group.map(el => {
-                    let choices = getRandomChoices(3, currentSet.terms.length, el);
-                    return ({ inputs: this.makeMCQuestion(currentSet.terms[el][this.questionType], choices.map(choice => currentSet.terms[choice][this.answerType])), answer: choices.indexOf(el) });
+                    let choices = getRandomChoices(3, terms.length, el);
+                    return ({ inputs: this.makeMCQuestion(terms[el], choices.map(choice => terms[choice][this.answerType])), answer: choices.indexOf(el) });
                 });
                 this.questionTypeHeaders[1].dataset.count = group.length;
             }
             
             if (groupTypes[2] && groups[0]?.length) {
                 let group = groups.shift();
-                group.forEach(el => this.makeMTQuestion(currentSet.terms[el][this.questionType], currentSet.terms[el][this.answerType]));
+                group.forEach(el => this.makeMTQuestion(terms[el]));
                 this.randomizeMatchOptions();
                 this.questionTypeHeaders[2].dataset.count = group.length;
                 document.querySelectorAll(".test-matching-box").forEach(box => box.addEventListener("click", this.matchingBoxClickListener));
@@ -618,14 +647,14 @@ const pages = {
                 let group = groups.shift();
                 this.questionInputs.tf = group.map(el => {
                     let choiceIsCorrect = Math.random() < 0.5;
-                    let answer = currentSet.terms[el][this.answerType];
+                    let answer = terms[el][this.answerType];
                     if (!choiceIsCorrect) {
-                        let newAnswer = currentSet.terms[Math.floor(Math.random() * currentSet.terms.length)][this.answerType];
+                        let newAnswer = terms[Math.floor(Math.random() * terms.length)][this.answerType];
                         if (newAnswer === answer) choiceIsCorrect = true;
                         else answer = newAnswer;
                     }
-                    let question = `${currentSet.terms[el][this.questionType]} = ${answer}`;
-                    return ({ inputs: this.makeMCQuestion(question, ["True", "False"], 3), answer: choiceIsCorrect });
+                    let question = `${terms[el][this.questionType]} = ${answer}`;
+                    return ({ inputs: this.makeMCQuestion(terms[el], ["True", "False"], 3, question), answer: choiceIsCorrect });
                 });
                 this.questionTypeHeaders[3].dataset.count = group.length;
             }
@@ -672,7 +701,7 @@ const pages = {
                 if (selectedInput !== correctAnswer) selectedInput.root.classList.add("incorrect");
                 else numCorrect++;
             }
-            let total = Math.max(Math.min(currentSet.terms.length, this.userMaxQuestions), 1);
+            let total = Math.max(Math.min(this.termList.length, this.userMaxQuestions), 1);
             let percentCorrect = Math.round(numCorrect * 100 / total);
             this.btnCheck.disabled = true;
             this.btnCheck.classList.remove("mdc-ripple-upgraded--background-focused");
@@ -756,6 +785,7 @@ const pages = {
             this.checkboxes = [...this.checkboxes].map(el =>
                 MDCFormField.attachTo(el).input = new MDCCheckbox(el.querySelector(".mdc-checkbox"))
             );
+            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
             this.fieldMaxTerms = new MDCTextField(this.fieldMaxTerms);
             this.fieldMaxTerms.value = "20";
             this.checkboxes.forEach(el => el.checked = true);
@@ -778,6 +808,10 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
+        /** @type {MDCCheckbox} */
+        checkOnlyStarred: document.querySelector("#match .check-starred"),
+        onlyStarred: false,
+        interval: null,
         dragEvents: {
             currentDragged: null,
             set currentClickDragged(el) {
@@ -846,7 +880,7 @@ const pages = {
             card.addEventListener("dragstart", this.dragEvents.start);
             card.addEventListener("dragend", this.dragEvents.end);
             card.addEventListener("click", this.dragEvents.dragClick, true);
-            if (window.StarredTerms.isStarred(index)) card.style.backgroundColor = "goldenrod";
+            if (this.onlyStarred || window.StarredTerms.isStarred(index)) card.style.backgroundColor = "goldenrod";
             return card;
         },
         makeDropzoneCard(text, questionId) {
@@ -865,19 +899,24 @@ const pages = {
         },
         generateCards() {
             for (let el of this.termsContainer.children) el.textContent = "";
-            let included = getRandomChoices(10, currentSet.terms.length, null, true)
+            let terms = currentSet.terms;
+            if (this.checkOnlyStarred.checked) {
+                terms = StarredTerms.getStarredTermList();
+                this.onlyStarred = true;
+            } else this.onlyStarred = false;
+            let included = getRandomChoices(10, terms.length, null, true)
             this.startTime = Date.now();
             let leftCards = [];
             let rightCards = [];
             (this.questionType === "term") ? 
                 included.forEach(num => {
-                    let {term, definition} = currentSet.terms[num];
+                    let {term, definition} = terms[num];
                     let id = `_${crypto.randomUUID()}`;
                     leftCards.push(this.makeDraggableCard(term, id, num));
                     rightCards.push(this.makeDropzoneCard(definition, id));
                 }) :
                 included.forEach(num => {
-                    let {term, definition} = currentSet.terms[num];
+                    let {term, definition} = terms[num];
                     let id = `_${crypto.randomUUID()}`;
                     leftCards.push(this.makeDraggableCard(definition, id, num));
                     rightCards.push(this.makeDropzoneCard(term, id));
@@ -887,6 +926,7 @@ const pages = {
             this.termsContainer.children[1].append(...rightCards);
             leftCards.forEach(el => resizeTextToMaxHeight(el, 100, 10));
             rightCards.forEach(el => resizeTextToMaxHeight(el, 100, 10));
+            this.setTimer();
         },
         async checkAnswers() {
             for (let child of this.termsContainer.querySelectorAll(".dropzone-card")) {
@@ -896,6 +936,7 @@ const pages = {
                     if (id !== dropzone.children[0]?.dataset?.questionId) return;
                 } 
             }
+            this.clearTimer();
             let totalTime = (Date.now() - this.startTime) / 1000;
             await this.showLeaderboard(totalTime);
             this.completedDialog.root.querySelector(".field-time-taken").innerText = totalTime.toFixed(2);
@@ -909,13 +950,17 @@ const pages = {
                     return {name: doc.name, time: doc.leaderboard, uid: el.id};
                 });
             }
-            if (auth.currentUser && socialRef) {
+            if (!this.onlyStarred && auth.currentUser && socialRef) {
                 let possibleExisting = currentMatchLeaderboard.find(el => el.uid === auth.currentUser.uid);
-                if (possibleExisting) possibleExisting.time = time; else currentMatchLeaderboard.push({name: auth.currentUser.displayName, uid: auth.currentUser.uid, time});
-                await setDoc(socialRef, {leaderboard: time, name: auth.currentUser.displayName}, {merge: true});
+                if (possibleExisting) {
+                    if (possibleExisting.time > time) possibleExisting.time = time;
+                    else time = possibleExisting.time;
+                } else currentMatchLeaderboard.push({name: auth.currentUser.displayName, uid: auth.currentUser.uid, time});
+                await setDoc(socialRef, {leaderboard: time, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
             }
             let actualLeaderboard = [...currentMatchLeaderboard];
-            if (!auth.currentUser) actualLeaderboard.push({name: "Sign in to save!", time});
+            if (this.onlyStarred) actualLeaderboard.push({name: "Play a full round to save!", time});
+            else if (!auth.currentUser) actualLeaderboard.push({name: "Sign in to save!", time});
             actualLeaderboard.sort((a, b) => a.time - b.time);
             this.completedDialogList.root.textContent = "";
             for (let [i, item] of actualLeaderboard.entries()) {
@@ -927,7 +972,17 @@ const pages = {
                 ]));
             }
             this.completedDialogList.layout();
-
+        },
+        setTimer() {
+            this.interval = setInterval(() => {
+                if (location.hash === "#match" && !this.completedDialog.isOpen) {
+                    let time = ((Date.now() - this.startTime) / 1000).toFixed(1);
+                    this.fieldTime.innerText = time;
+                }
+            }, 100);
+        },
+        clearTimer() {
+            clearInterval(this.interval);
         },
         init() {
             document.querySelectorAll("#test .mdc-button").forEach(el => MDCRipple.attachTo(el));
@@ -939,12 +994,7 @@ const pages = {
                 if (e.detail.action === "accept") this.generateCards();
                 else history.back();
             });
-            setInterval(() => {
-                if (location.hash === "#match" && !this.completedDialog.isOpen) {
-                    let time = ((Date.now() - this.startTime) / 1000).toFixed(1);
-                    this.fieldTime.innerText = time;
-                }
-            }, 100);
+            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
         }
     }
 };
@@ -1141,10 +1191,12 @@ addEventListener("DOMContentLoaded", async () => {
         for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i);
         navigate();
         pages.setOverview.btnLike.addEventListener("click", async () =>  {
-            if (!auth.currentUser) location.href = "/#login";
-            else if (socialRef) {
+            if (!auth.currentUser) {
+                localStorage.setItem("redirect_after_login", location.href);
+                location.href = "/#login";
+            } else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
-                await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
                 showLikeStatus(!currentLikeStatus);
             }
         });
@@ -1160,13 +1212,15 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.fieldComment.input.listen("change", () => pages.setOverview.fieldComment.button.disabled = false);
         pages.setOverview.fieldComment.button.addEventListener("click", async () => {
             if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
-                await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
     } catch (err) {
-        if (process.env.NODE_ENV !== "production") console.log(err);
-        else location.replace("/404.html");
+        localStorage.setItem("redirect_after_login", location.href);
+        if (auth.currentUser) await auth.signOut();
+        location.href = "/#login";
+        return;
     }
 });
 

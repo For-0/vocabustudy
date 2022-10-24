@@ -27,7 +27,7 @@ service cloud.firestore {
       match /social/{uid} {
         allow list, get: if true;
         allow delete: if uid == request.auth.uid;
-        allow create, update: if uid == request.auth.uid && request.resource.data.keys().hasOnly(["name", "comment", "like", "leaderboard"]) && request.resource.data.name == request.auth.token.name;
+        allow create, update: if uid == request.auth.uid && request.resource.data.keys().hasOnly(["name", "comment", "like", "leaderboard", "uid"]) && request.auth.uid == request.resource.data.uid && request.resource.data.name == request.auth.token.name;
       }
     }
     match /meta_sets/{set_id} {
@@ -41,6 +41,9 @@ service cloud.firestore {
       allow delete: if isCreator();
       allow create: if request.resource.data.keys().hasAll(["name", "uid", "sets"]) && request.resource.data.keys().hasOnly(["name", "uid", "sets"]) && isNotImpersonating(true);
       allow update: if isCreator() && onlyUpdated(["name", "sets"]);
+    }
+    match /{path=**}/social/{uid} {
+      allow list: if request.auth != null && request.auth.token.email_verified && request.auth.uid == resource.data.uid;
     }
   }
 }
