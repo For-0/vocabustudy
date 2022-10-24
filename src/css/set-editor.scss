@@ -52,6 +52,30 @@
             margin: 0;
         }
     }
+    .editor-study-piece {
+        width: calc(100% - 10px);
+        @media (min-width: 500px) {
+            width: calc(75% - 10px);
+        }
+        @media (min-width: 900px) {
+            width: calc(50% - 10px);
+        }
+        .mdc-text-field {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+        p {
+            margin-top: 0;
+        }
+        quiz-question {
+            display: block;
+            border-bottom: 1px solid #0000009a;
+            padding-top: 1rem;
+            &:last-of-type {
+                border-bottom: none;
+            }
+        }
+    }
 }
 
 #home > form > h2:first-of-type {

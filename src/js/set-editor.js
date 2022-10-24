@@ -6,6 +6,51 @@ import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
 
+class QuizQuestion extends HTMLElement {
+    constructor() {
+        super();
+    }
+    /**
+     * Initialize the quiz question and create the elements if connected
+     * @param {{question: string, answers: String[], type: 0|1}} question The initial data for the quiz question
+     */
+    initialize(question) {
+        this.initialQuestion = question;
+        if (this.isConnected) this.showQuestion();
+    }
+    get question() {
+        let answers = [...this.querySelectorAll(".answer-input input")].map(el => el.value.trim()).filter(el => el);
+        if (answers.length < 1) answers = ["True", "False"];
+        return {
+            question: this.questionInput.value,
+            answers,
+            type: 0
+        }
+    }
+    createAnswerInput(answer) {
+        let input = createTextFieldWithHelper("Answer", null, {}).obj;
+        input.value = answer;
+        this.appendChild(input.root);
+        input.root.classList.add("answer-input");
+        input.listen("input", () => {
+            if (input.root.nextElementSibling?.nodeName !== "LABEL") this.createAnswerInput("");
+            else if (input.value === "" && input.root.nextElementSibling?.nodeName === "LABEL" && input.root.nextElementSibling.querySelector("input").value === "") input.root.nextElementSibling.remove();
+        });
+        return input;
+    }
+    showQuestion() {
+        this.questionInput = createTextFieldWithHelper("Question", null, {required: true}).obj;
+        this.questionInput.value = this.initialQuestion.question;
+        this.appendChild(this.questionInput.root);
+        this.initialQuestion.answers.map(el => this.createAnswerInput(el));
+    }
+    connectedCallback() {
+        this.textContent = "";
+        if (this.initialQuestion) this.showQuestion();
+    }
+}
+customElements.define("quiz-question", QuizQuestion);
+
 const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w- ]+)\/edit\/?/)[1] || (location.pathname = "/");
 let setType = 0;
 let creator = null;
@@ -15,34 +60,36 @@ const {db, auth} = initialize(async user => {
     if (!user) {
         localStorage.setItem("redirect_after_login", location.href);
         location.href = "/#login";
-    }
-    else if (setId === "new") {
-        document.title = "New Set - Vocabustudy";
-        document.querySelector("h1").innerText = "New Set";
-        document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+    } else if (setId.match(/^new(-\w+)?$/)) {
+        switch(setId) {
+            case "new":
+                document.title = "New Set - Vocabustudy";
+                document.querySelector("h1").innerText = "New Set";
+                document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+                setType = 0;
+                fields.btnAddQuiz.hidden = true;
+                break;
+            case "new-timeline":
+                document.title = "New Timeline - Vocabustudy";
+                document.querySelector("h1").innerText = "New Timeline";
+                document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
+                fields.btnAddQuiz.hidden = true;
+                setType = 1;
+                break;
+            case "new-guide":
+                document.title = "New Guide - Vocabustudy";
+                document.querySelector("h1").innerText = "New Study Guide";
+                document.querySelector("h2").childNodes[0].textContent = "Guide Items";
+                setType = 2;
+                fields.btnAddQuiz.hidden = true;
+                break;
+            default:
+                goBack();
+        }
         fields.terms.textContent = "";
         fields.public.selected = false;
         fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
-        setType = 0;
-    } else if (setId === "new-timeline") {
-        document.title = "New Timeline - Vocabustudy";
-        document.querySelector("h1").innerText = "New Timeline";
-        document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
-        fields.terms.textContent = "";
-        fields.public.selected = false;
-        fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
-        creator = user.displayName;
-        setType = 1;
-    }  else if (setId === "new-guide") {
-        document.title = "New Study Guide - Vocabustudy";
-        document.querySelector("h1").innerText = "New Study Guide";
-        document.querySelector("h2").childNodes[0].textContent = "Guide Items";
-        fields.terms.textContent = "";
-        fields.public.selected = false;
-        fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
-        creator = user.displayName;
-        setType = 2;
     } else {
         let setSnap = await getDoc(doc(db, "sets", setId));
         let setMetaSnap = await getDoc(doc(db, "meta_sets", setId));
@@ -65,12 +112,19 @@ const {db, auth} = initialize(async user => {
         if (currentSetMeta.collections.includes("-:0")) {
             setType = 1;
             document.querySelector("h1").innerText = "Edit Timeline";     
-            document.querySelector("h2").childNodes[0].textContent = "Timeline Items"
+            document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
+            fields.btnAddQuiz.hidden = true;
         } else if (currentSetMeta.collections.includes("-:1")) {
             setType = 2;
             document.querySelector("h1").innerText = "Edit Study Guide";     
             document.querySelector("h2").childNodes[0].textContent = "Guide Items"
-        } else document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words"   
+            fields.btnAddQuiz.hidden = false;
+        } else {
+            setType = 0;
+            document.querySelector("h1").innerText = "Edit Set";
+            document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+            fields.btnAddQuiz.hidden = true;
+        }
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
         for (let term of currentSet.terms) createTermInput(term);
         creator = (currentSet.uid === user.uid) ? user.displayName : currentSetMeta.creator;
@@ -86,8 +140,15 @@ const savingFunctions = {
         return {term: `${inputs.shift()}\x00${inputs.shift()}`, definition: inputs.filter(el => el).join("\x00")};
     },
     2: el => {
-        let inputs = [...el.querySelectorAll("input,textarea")].map(el => el.value.trim());
-        return {title: inputs[0], type: 0, body: inputs[1]};
+        switch(el.dataset.type) {
+            case "0":
+                let inputs = [...el.querySelectorAll("input,textarea")].map(el => el.value.trim());
+                return {title: inputs[0], type: 0, body: inputs[1]};
+            case "1":
+                let title = el.querySelector("input").value.trim();
+                let questions = [...el.querySelectorAll("quiz-question")].map(el => el.question);
+                return {title, type: 1, questions};
+        }
     }
 };
 const fields = {
@@ -97,6 +158,7 @@ const fields = {
     terms: document.querySelector(".field-terms-edit"),
     btnCancel: document.querySelector(".btn-cancel"),
     btnAddTerm: document.querySelector(".btn-add-term"),
+    btnAddQuiz: document.querySelector(".btn-add-quiz"),
     btnImportTerms: document.querySelector(".btn-import-terms"),
     formEdit: document.querySelector("form"),
     importDialog: new MDCDialog(document.querySelector("#dialog-import-terms")),
@@ -184,38 +246,51 @@ function createTermInput(term) {
         });
     } else if (setType === 2) {
         let inputName = createTextFieldWithHelper("Title", null, {required: true});
-        let bodyInput = createElement("label", ["mdc-text-field", "mdc-text-field--outlined", "mdc-text-field--textarea", "mdc-text-field--no-label"], {}, [
-            createElement("span", ["mdc-notched-outline"], {}, [
-                createElement("span", ["mdc-notched-outline__leading"]),
-                createElement("span", ["mdc-notched-outline__trailing"])
-            ]),
-            createElement("span", ["mdc-text-field__resizer"], {}, [
-                createElement("textarea", ["mdc-text-field__input"], {rows: 8, cols: 40})
-            ])
-        ]);
-        let bodyInputObj = new MDCTextField(bodyInput);
+        /** @type {HTMLElement} */
+        let bodyInput;
+        let buttons = [
+            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
+            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
+            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+        ];
+        if (term.type === 0) {
+            bodyInput = createElement("label", ["mdc-text-field", "mdc-text-field--outlined", "mdc-text-field--textarea", "mdc-text-field--no-label"], {}, [
+                createElement("span", ["mdc-notched-outline"], {}, [
+                    createElement("span", ["mdc-notched-outline__leading"]),
+                    createElement("span", ["mdc-notched-outline__trailing"])
+                ]),
+                createElement("span", ["mdc-text-field__resizer"], {}, [
+                    createElement("textarea", ["mdc-text-field__input"], {rows: 8, cols: 40})
+                ])
+            ]);
+            let bodyInputObj = new MDCTextField(bodyInput);
+            bodyInputObj.value = term.body || "";
+        } else if (term.type === 1) {
+            bodyInput = createElement("div", ["questions-container"], {}, [
+                ...term.questions.map(el => createElement("quiz-question", [], {initialQuestion: el})),
+                createElement("p", [], {innerText: "The first option is always the correct answer"})
+            ]);
+            buttons.splice(1, 0, createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Add Question", type: "button", innerText: "add"}));
+            buttons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [""], type: 0}}), bodyInput.lastElementChild));
+        } else return;
         termInput = createElement("div", ["mdc-card", "editor-study-piece"], {}, [
             createElement("div", ["mdc-card-wrapper__text-section"], {}, [
                 inputName.textField
             ]),
             createElement("div", ["mdc-card-wrapper__text-section", "details-container"], {}, [
-                createElement("p", [], {innerText: "Item body:"}),
+                createElement("p", [], {innerText: (term.type === 1) ? "Quiz Questions:" : "Item body:"}),
                 bodyInput
             ]),
-            createElement("div", ["mdc-card__actions"], {}, [
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
-            ])
+            createElement("div", ["mdc-card__actions"], {}, buttons)
         ]);
+        termInput.dataset.type = term.type;
         inputName.obj.value = term.title || "";
-        bodyInputObj.value = term.body || "";
         let actionButtons = [...termInput.querySelectorAll('.mdc-card__actions > button')].map(el => MDCRipple.attachTo(el).root);
         actionButtons[0].addEventListener("click", () => {
             if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
         });
-        actionButtons[1].addEventListener("click", () => termInput.remove());
-        actionButtons[2].addEventListener("click", () => {
+        actionButtons[1 + term.type].addEventListener("click", () => termInput.remove());
+        actionButtons[2 + term.type].addEventListener("click", () => {
             if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
             else fields.terms.appendChild(termInput);
         });
@@ -228,7 +303,8 @@ function goBack() {
     history.length > 1 ? history.back() : location.href = location.protocol + "//" + location.host + "/#mysets";
 }
 fields.btnCancel.addEventListener("click", goBack);
-fields.btnAddTerm.addEventListener("click", () => createTermInput({term: "", definition: ""}));
+fields.btnAddTerm.addEventListener("click", () => createTermInput({term: "", definition: "", type: 0}));
+fields.btnAddQuiz.addEventListener("click", () => createTermInput({title: "", questions: [{question: "", answers: [""], type: 0}], type: 1}));
 fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();

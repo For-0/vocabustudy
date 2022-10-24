@@ -47,14 +47,16 @@ function showLikeStatus(likeStatus) {
     }
 }
 
-function createItem({ title, body }) {
-    let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-            createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + title))}),
-            createElement("div", [], {innerHTML: sanitize(marked.parse(body))})
-        ])
-    ]);
-    return pages.setOverview.terms.appendChild(cardEl);
+function createItem(item) {
+    if (item.type === 0) {
+        let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
+            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title))}),
+                createElement("div", [], {innerHTML: sanitize(marked.parse(item.body))})
+            ])
+        ]);
+        return pages.setOverview.terms.appendChild(cardEl);
+    }
 }
 function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
@@ -81,7 +83,7 @@ addEventListener("DOMContentLoaded", async () => {
         let setSnap = await getDoc(setRef);
         currentSet = setSnap.data();
         document.title = `${currentSet.name} - Vocabustudy`;
-        currentSet.terms.forEach(term => {
+        currentSet.terms.filter(el => el.type === 0).forEach(term => {
             term.title = term.title.replace(/[\u2018\u2019]/g, "'");
             term.body = term.body.replace(/[\u2018\u2019]/g, "'");
         });
