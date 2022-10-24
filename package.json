@@ -1,6 +1,6 @@
 {
   "name": "vocabustudy",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A free tool for studying vocab",
   "source": [
     "src/index.pug",
