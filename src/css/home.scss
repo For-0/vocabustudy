@@ -24,15 +24,32 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
             > div {
                 margin-left: auto;
                 margin-right: auto;
             }
             &:first-child > div {
                 background-color: #ffffff1c;
-                padding: 3rem;
+                padding: 2rem;
                 padding-bottom: 1rem;
                 border-radius: 20px;
+                > p {
+                    text-align: center;
+                }
+                > div {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    h2 {
+                        font-weight: bold;
+                    }
+                    ul {
+                        font-size: 1.25rem;
+                        min-width: 25%;
+                    }
+                }
                 @media (max-height: 430px) {
                     transform: scale(0.8, 0.8);
                 }
@@ -66,7 +83,7 @@
     }
 }
 
-#search { 
+#search {
     details {
         cursor: pointer;
         &:not([open]) > summary > h2::after {
@@ -101,6 +118,9 @@
         margin-top: 6px;
         padding-bottom: 2px;
     }
+}
+#credits ul > li {
+    margin-bottom: 1rem;
 }
 #login {
     position: relative;

@@ -69,4 +69,6 @@ node_modules/
 dist/
 rd/
 .vscode/
+.idea/
+.log/
 parcel-bundle-reports/
