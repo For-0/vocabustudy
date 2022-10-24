@@ -24,7 +24,32 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            > div {
+            > div.home-page-intro {
+                margin-left: auto;
+                margin-right: auto;
+                .ff {
+                    position: relative;
+                    left: 0%;
+                    top: 0%;
+                    font-size: 50px;
+                }
+                .lv {
+                    position: relative;
+                    left: 0%;
+                    top: 0%;
+                    font-size: 50px;
+                }
+                .hookintro {
+                    position: relative;
+                    left: 0%;
+                    top: 0%;
+                    word-break: break-all;
+                    //margin-left: 500px;
+                    //padding-right: 5px;
+                    //margin-left: 5px;
+                }
+            }
+            > div.home-features-div {
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -66,7 +91,7 @@
     }
 }
 
-#search { 
+#search {
     details {
         cursor: pointer;
         &:not([open]) > summary > h2::after {
