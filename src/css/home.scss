@@ -26,32 +26,30 @@
             justify-content: center;
             margin-left: auto;
             margin-right: auto;
-            > div.home-page-intro {
-                margin-left: auto;
-                margin-right: auto;
-                .ff {
-                    font-size: 50px;
-                }
-                .lv {
-                    font-size: 50px;
-                }
-                ul {
-                    position: relative;
-                    float: right;
-                    font-size: 25px;
-                    padding-right: 2rem;
-                    padding-top: 4rem;
-                }
-            }
-            > div.home-features-div {
+            > div {
                 margin-left: auto;
                 margin-right: auto;
             }
             &:first-child > div {
                 background-color: #ffffff1c;
-                padding: 3rem;
+                padding: 2rem;
                 padding-bottom: 1rem;
                 border-radius: 20px;
+                > p {
+                    text-align: center;
+                }
+                > div {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    h2 {
+                        font-weight: bold;
+                    }
+                    ul {
+                        font-size: 1.25rem;
+                        min-width: 25%;
+                    }
+                }
                 @media (max-height: 430px) {
                     transform: scale(0.8, 0.8);
                 }
