@@ -39,3 +39,32 @@ img {
     border: 1px solid gray;
     padding: 2px;
 }
+quiz-question {
+    &.correct {
+        .mdc-text-field :is(.mdc-notched-outline__leading, .mdc-notched-outline__notch, .mdc-notched-outline__trailing) {
+            border-color: currentColor !important;
+            color: green !important;
+        }
+        .mdc-radio+label {
+            color: green !important;
+        }
+        .mdc-radio :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
+            border-color: green !important;
+        }
+        .mdc-text-field .mdc-floating-label {
+            color: inherit;
+        }
+    }
+    &.incorrect {
+        .mdc-text-field :is(.mdc-notched-outline__leading, .mdc-notched-outline__notch, .mdc-notched-outline__trailing) {
+            border-color: currentColor !important;
+            color: red !important;
+        }
+        .mdc-radio+label {
+            color: red !important;
+        }
+        .mdc-radio :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
+            border-color: red !important;
+        }        
+    }
+}

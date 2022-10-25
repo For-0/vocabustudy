@@ -1,10 +1,77 @@
 import { MDCRipple } from "@material/ripple/index";
 import { MDCTextField } from "@material/textfield/index";
+import {MDCFormField} from "@material/form-field/index";
+import {MDCRadio} from "@material/radio/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement } from "./utils.js";
+import { createElement, createTextFieldWithHelper } from "./utils.js";
 import {sanitize} from "dompurify";
 import { marked } from "marked";
+
+class QuizQuestion extends HTMLElement {
+    constructor() {
+        super();
+        this.questionId = `_${crypto.randomUUID()}`;
+    }
+    /**
+     * Initialize the quiz question and create the elements if connected
+     * @param {{question: string, answers: String[], type: 0|1}} question The initial data for the quiz question
+     */
+    initialize(question) {
+        this.question = question;
+        if (this.isConnected) this.showQuestion();
+    }
+    reportValidity() {
+        if (this.question.type == 0) return this.radios[0].root.querySelector("input").reportValidity();
+        else if (this.question.type == 1) return this.input.valid = this.input.valid;
+    }
+    get correct() {
+        if (this.question.type == 0) return this.correctOption.checked;
+        else if (this.question.type == 1) return this.question.answers.some(el => checkAnswers(el, this.input.value));
+    }
+    createMCInput(answer) {
+        let optionId = `_${crypto.randomUUID()}`;
+        let radioButton = this.appendChild(createElement("div", [], {}, [
+            createElement("div", ["mdc-form-field"], {}, [
+                createElement("div", ["mdc-radio", "mdc-radio__touch"], {}, [
+                    createElement("input", ["mdc-radio__native-control"], {
+                        type: "radio",
+                        name: this.questionId,
+                        id: optionId,
+                        required: true
+                    }),
+                    createElement("div", ["mdc-radio__background"], {}, [
+                        createElement("div", ["mdc-radio__outer-circle"]),
+                        createElement("div", ["mdc-radio__inner-circle"])
+                    ])
+                ]),
+                createElement("label", [], {innerText: sanitize(marked.parseInline(answer)), htmlFor: optionId})
+            ])
+        ]));
+        return MDCFormField.attachTo(radioButton.firstElementChild).input = new MDCRadio(radioButton.firstElementChild.firstElementChild);
+    }
+    createSAInput() {
+        let input = createTextFieldWithHelper("Answer", null, {required: true}).obj;
+        this.appendChild(input.root);
+        return input;
+    }
+    showQuestion() {
+        this.appendChild(createElement("p", [], {innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`))}));
+        if (this.question.type == 0) {
+            let shuffledOptions = [...this.question.answers];
+            shuffle(shuffledOptions);
+            let correctIndex = shuffledOptions.indexOf(this.question.answers[0]);
+            this.radios = shuffledOptions.map(option => this.createMCInput(option));
+            this.correctOption = this.radios[correctIndex];
+        } else if (this.question.type == 1)
+            this.input = this.createSAInput();
+    }
+    connectedCallback() {
+        this.textContent = "";
+        if (this.question) this.showQuestion();
+    }
+}
+window.customElements.define("quiz-question", QuizQuestion);
 
 const {db, auth} = initialize(async user => {
     if (user) {
@@ -14,7 +81,7 @@ const {db, auth} = initialize(async user => {
         showLikeStatus(userLikes);
     } else showLikeStatus(false);
 });
-
+const ignoredCharsRE = /[\*_\.]/g;
 const [, setId] = decodeURIComponent(location.pathname).match(/\/guide\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
@@ -47,6 +114,12 @@ function showLikeStatus(likeStatus) {
     }
 }
 
+function checkAnswers(answer, correct) {
+    let cleanAnswer = answer.trim().replace(ignoredCharsRE, "").toUpperCase();
+    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = el.trim().replace(ignoredCharsRE, "").toUpperCase());
+    return possibleCorrect.includes(cleanAnswer);
+}
+
 function createItem(item) {
     if (item.type === 0) {
         let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
@@ -55,6 +128,27 @@ function createItem(item) {
                 createElement("div", [], {innerHTML: sanitize(marked.parse(item.body))})
             ])
         ]);
+        return pages.setOverview.terms.appendChild(cardEl);
+    } else if (item.type === 1) {
+        let questionEls = item.questions.map(question => createElement("quiz-question", [], {question}));
+        let btnCheck = createElement("div", [], {}, [createElement("button", ["mdc-button", "mdc-button--raised"], {}, [
+            createElement("span", ["mdc-button__ripple"]),
+            createElement("span", ["mdc-button__label"], {innerText: "Check"})
+        ])]);
+        let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
+            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title))}),
+                createElement("div", [], {}, [...questionEls, btnCheck])
+            ])
+        ]);
+        MDCRipple.attachTo(btnCheck.firstElementChild);
+        btnCheck.addEventListener("click", () => {
+            if (questionEls.every(el => el.reportValidity())) {
+                questionEls.forEach(el => el.classList.add(el.correct ? "correct" : "incorrect"));
+                let numCorrect = cardEl.querySelectorAll(".correct").length;
+                alert(`You got ${numCorrect} out of ${questionEls.length} correct!`);
+            }
+        })
         return pages.setOverview.terms.appendChild(cardEl);
     }
 }
@@ -74,6 +168,15 @@ function createCommentCard({ name, comment, like }, id) {
         if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
     }
     return pages.setOverview.commentsContainer.appendChild(cardEl);
+}
+function shuffle(arr) {
+    let currentIndex = arr.length, randomIndex;
+    while (currentIndex > 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+        console.log(randomIndex);
+    }
 }
 
 addEventListener("DOMContentLoaded", async () => {
