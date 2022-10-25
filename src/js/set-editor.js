@@ -1,5 +1,7 @@
 import { MDCDialog } from "@material/dialog/index";
 import { MDCRipple } from "@material/ripple/index";
+import { MDCFormField } from "@material/form-field/index";
+import { MDCRadio } from "@material/radio/index";
 import { MDCSwitch } from "@material/switch/index";
 import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
@@ -24,13 +26,14 @@ class QuizQuestion extends HTMLElement {
         return {
             question: this.questionInput.value,
             answers,
-            type: 0
+            type: parseInt(this.querySelector("input[type=radio]:checked").value)
         }
     }
     createAnswerInput(answer) {
         let input = createTextFieldWithHelper("Answer", null, {}).obj;
         input.value = answer;
         this.appendChild(input.root);
+        input.layout();
         input.root.classList.add("answer-input");
         input.listen("input", () => {
             if (input.root.nextElementSibling?.nodeName !== "LABEL") this.createAnswerInput("");
@@ -40,8 +43,45 @@ class QuizQuestion extends HTMLElement {
     }
     showQuestion() {
         this.questionInput = createTextFieldWithHelper("Question", null, {required: true}).obj;
+        this.questionInput.root.style.width = "90%";
         this.questionInput.value = this.initialQuestion.question;
         this.appendChild(this.questionInput.root);
+        this.deleteButton = createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
+            createElement("div", ["mdc-icon-button__ripple"]),
+            createElement("i", ["material-icons-round"], {innerText: "delete"})
+        ]);
+        this.appendChild(this.deleteButton);
+        MDCRipple.attachTo(this.deleteButton).unbounded = true;
+        this.deleteButton.addEventListener("click", () => this.remove());
+        let questionId = `_${crypto.randomUUID()}`;
+        let answerTypes = createElement("div", [], {}, [
+            createElement("div", ["mdc-form-field"], {}, [
+                createElement("div", ["mdc-radio", "mdc-radio--touch"], {}, [
+                    createElement("input", ["mdc-radio__native-control"], {type: "radio", value: "0", name: questionId, id: `${questionId}-0`}),
+                    createElement("div", ["mdc-radio__background"], {}, [
+                        createElement("div", ["mdc-radio__outer-circle"]),
+                        createElement("div", ["mdc-radio__inner-circle"])
+                    ]),
+                    createElement("div", ["mdc-radio__ripple"])
+                ]),
+                createElement("label", [], {innerText: "Multiple Choice", htmlFor: `${questionId}-0`})
+            ]),
+            createElement("div", ["mdc-form-field"], {}, [
+                createElement("div", ["mdc-radio", "mdc-radio--touch"], {}, [
+                    createElement("input", ["mdc-radio__native-control"], {type: "radio", value: "1", name: questionId, id: `${questionId}-1`}),
+                    createElement("div", ["mdc-radio__background"], {}, [
+                        createElement("div", ["mdc-radio__outer-circle"]),
+                        createElement("div", ["mdc-radio__inner-circle"])
+                    ]),
+                    createElement("div", ["mdc-radio__ripple"])
+                ]),
+                createElement("label", [], {innerText: "Short Answer", htmlFor: `${questionId}-1`})
+            ])
+        ]);
+        let radioObjs = [...answerTypes.querySelectorAll(".mdc-form-field")].map(el => MDCFormField.attachTo(el).input = new MDCRadio(el.firstElementChild));
+        radioObjs[this.initialQuestion.type].checked = true;
+        this.appendChild(answerTypes);
+        this.initialQuestion.answers.push("");
         this.initialQuestion.answers.map(el => this.createAnswerInput(el));
     }
     connectedCallback() {
@@ -268,10 +308,10 @@ function createTermInput(term) {
         } else if (term.type === 1) {
             bodyInput = createElement("div", ["questions-container"], {}, [
                 ...term.questions.map(el => createElement("quiz-question", [], {initialQuestion: el})),
-                createElement("p", [], {innerText: "The first option is always the correct answer"})
+                createElement("p", [], {innerText: "MC: First is correct, SA: All are correct"})
             ]);
             buttons.splice(1, 0, createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Add Question", type: "button", innerText: "add"}));
-            buttons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [""], type: 0}}), bodyInput.lastElementChild));
+            buttons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [], type: 0}}), bodyInput.lastElementChild));
         } else return;
         termInput = createElement("div", ["mdc-card", "editor-study-piece"], {}, [
             createElement("div", ["mdc-card-wrapper__text-section"], {}, [
@@ -304,7 +344,7 @@ function goBack() {
 }
 fields.btnCancel.addEventListener("click", goBack);
 fields.btnAddTerm.addEventListener("click", () => createTermInput({term: "", definition: "", type: 0}));
-fields.btnAddQuiz.addEventListener("click", () => createTermInput({title: "", questions: [{question: "", answers: [""], type: 0}], type: 1}));
+fields.btnAddQuiz.addEventListener("click", () => createTermInput({title: "", questions: [{question: "", answers: [], type: 0}], type: 1}));
 fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();

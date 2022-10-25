@@ -74,6 +74,16 @@
             &:last-of-type {
                 border-bottom: none;
             }
+            .btn-delete {
+                float: right;
+                width: 10%;
+            }
+            > label:first-of-type {
+                margin-bottom: 0;
+            }
+            > div {
+                margin-bottom: 1rem;
+            }
         }
     }
 }
