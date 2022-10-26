@@ -1,1 +1,86 @@
-{"c":[{"n":"Math","s":["Elementary School","6th Grade","7th Grade","8th Grade / Prealgebra","Algebra 1","Geometry","Algebra 2","Precalculus","Trigonometry","Calculus","Multivariable Calculus","Statistics"]},{"n":"Language Arts","s":["Newsmedia"]},{"n":"Fine Arts","s":["Art","Orchestra","Theater","Choir","Instrument Specific","Band","Dance"]},{"n":"Social Studies","s":["US History","Texas History","World History","Cultural","Government","Economics"]},{"n":"LOTE","s":["Spanish","Chinese","German","French"],"o":["1A","1B","2","3","4","5","6"]},{"n":"Science","s":["Elementary School","6th Grade","7th Grade","8th Grade","Biology","Physics","Chemistry","Geography"]},"Computer Science","BIM"]}
+{
+    "c": [
+        {
+            "n": "Math",
+            "s": [
+                "Elementary School",
+                "6th Grade",
+                "7th Grade",
+                "8th Grade / Prealgebra",
+                "Algebra 1",
+                "Geometry",
+                "Algebra 2",
+                "Precalculus",
+                "Trigonometry",
+                "Calculus",
+                "Multivariable Calculus",
+                "Statistics"
+            ]
+        },
+        {
+            "n": "Language Arts",
+            "s": [
+                "Newsmedia"
+            ]
+        },
+        {
+            "n": "Fine Arts",
+            "s": [
+                "Art",
+                "Orchestra",
+                "Theater",
+                "Choir",
+                "Instrument Specific",
+                "Band",
+                "Dance"
+            ]
+        },
+        {
+            "n": "Social Studies",
+            "s": [
+                "US History",
+                "Texas History",
+                "World History",
+                "Cultural",
+                "Government",
+                "Economics"
+            ]
+        },
+        {
+            "n": "LOTE",
+            "s": [
+                "Spanish",
+                "Chinese",
+                "German",
+                "French"
+            ],
+            "o": [
+                "1A",
+                "1B",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+            ]
+        },
+        {
+            "n": "Science",
+            "s": [
+                "Elementary School",
+                "6th Grade",
+                "7th Grade",
+                "8th Grade",
+                "9th/Biology",
+                "10th/Chemistry",
+                "11th/Physics",
+                "12th/Anatomy",
+                "IB Biology",
+                "IB Chemistry",
+                "Geography"
+            ]
+        },
+        "Computer Science",
+        "BIM"
+    ]
+}
