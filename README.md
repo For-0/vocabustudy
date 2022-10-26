@@ -8,3 +8,7 @@ Vocabustudy is a free tool for studying vocab
 - 100% Free
 - Creating an Account is Optional
 - Feedback is Welcome (contribute!)
+
+## What is Nightly?
+
+Vocabustudy's nightly build includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or [here.](https://www.vocabustudyonline.web.app/)
