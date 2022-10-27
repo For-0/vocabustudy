@@ -1,2 +1,0 @@
-- name: Deploy Firebase project
-  uses: chr1gu/deploy-firebase@v0.0.5-1
