@@ -44,12 +44,6 @@ export function getWords(string) {
     return alphaNum.split(" ").map(el => el.trim()).filter(el => el);
 }
 
-async function fetchStorageJson({storage, getDownloadURL, ref}, url) {
-    let pathRef = ref(storage, url);
-    let downloadUrl = await getDownloadURL(pathRef);
-    let res = await fetch(downloadUrl);
-    return await res.json();
-}
 /**
  * Loads the collections, from cache if possible otherwise from network
  * @returns {Promise<{c: (String|{n: String, s: String[], o: String[]?})[]}>}
@@ -66,24 +60,6 @@ export async function loadCollections() {
     let newExpiration = currentTime + 604800000; // number of milliseconds in a week
     localStorage.setItem("collections_cache", JSON.stringify({ data: newCollections, expiration: newExpiration }));
     return newCollections;
-}
-/**
- * Loads the leaderboard, from cache if possible
- * @returns {Promise<{c: {p: String, s: String}[]}>}
- */
-export async function loadLeaderboard(storage) {
-    let possibleCachedItem = localStorage.getItem("leaderboard_cache");
-    let currentTime = Date.now();
-    if (possibleCachedItem) {
-        let cachedItem = JSON.parse(possibleCachedItem);
-        if (cachedItem.expiration && cachedItem.data && cachedItem.expiration > currentTime) return cachedItem.data;
-    }
-    let newLeaderboard = await fetchStorageJson(storage, "leaderboard.json");
-    let newExpiration = new Date(currentTime);
-    newExpiration.setHours(23);
-    newExpiration.setMinutes(59);
-    localStorage.setItem("leaderboard_cache", JSON.stringify({ data: newLeaderboard, expiration: Number(newExpiration) }));
-    return newLeaderboard;
 }
 export async function showCollections(listEl) {
     let { c } = await loadCollections();

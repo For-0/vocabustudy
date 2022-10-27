@@ -17,7 +17,6 @@ const navbar = {
     btnLogout: document.getElementById("btn-logout"),
     tooltipAccountMenu: document.getElementById("tooltip-btn-account-menu"),
     tooltipBtnBrowse: document.getElementById("tooltip-btn-browse"),
-    tooltipBtnLeaderboard: document.getElementById("tooltip-btn-leaderboard"),
     tooltipBtnHelp: document.getElementById("tooltip-btn-support")
 };
 const fabs = {
@@ -92,7 +91,6 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     addEventListener("DOMContentLoaded", () => {
         MDCTooltip.attachTo(navbar.tooltipAccountMenu);
         MDCTooltip.attachTo(navbar.tooltipBtnBrowse);
-        MDCTooltip.attachTo(navbar.tooltipBtnLeaderboard);
         MDCTooltip.attachTo(navbar.tooltipBtnHelp);
         MDCRipple.attachTo(fabs.theme);
         fabs.themeOptions.forEach((el, i) => {
@@ -121,13 +119,5 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         featuredSets: []
     };
     fetchAndActivate(remoteConfig).then(() => remoteConfigActivatedCallback(remoteConfig));
-    return {app, db, auth, get storage() {
-        return (async () => {
-            const {getStorage, getDownloadURL, ref}  = await import("firebase/storage");
-            let storage = getStorage(app);
-            delete this.storage;
-            this.storage = () => Promise.resolve({storage, getDownloadURL, ref});
-            return {storage, getDownloadURL, ref};
-        })();
-    }};
+    return {app, db, auth};
 }

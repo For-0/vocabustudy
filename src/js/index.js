@@ -8,10 +8,10 @@ import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDoc
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize from "./general";
-import { createElement, getWords, createSetCard, createSetCardOwner, loadLeaderboard, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
+import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
-const { db, auth, storage } = initialize(async user => {
+const { db, auth } = initialize(async user => {
     if (user) {
         if (location.hash === "#login") {
             await showAuthUI();
@@ -47,8 +47,7 @@ const hashTitles = {
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
     "#login": "Log In",
-    "#account": "My Account",
-    "#leaderboard": "Leaderboard"
+    "#account": "My Account"
 };
 const pages = {
     home: {
@@ -100,9 +99,6 @@ const pages = {
     admin: {
         btn: document.querySelector("#admin .btn-get-all"),
         sets: document.querySelector('#admin .set-container'),
-    },
-    leaderboard: {
-        list: document.querySelector("#leaderboard .mdc-list")
     }
 };
 const authUI = new firebaseui.auth.AuthUI(auth);
@@ -206,19 +202,6 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
         });
     }, ...extraParams)
     el.textContent = "";
-}
-function showLeaderboard() {
-    storage.then(s => loadLeaderboard(s)).then(({ c }) => {
-        for (let [i, { p, s }] of c.entries()) {
-            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-item", 'mdc-list-item--non-interactive', "mdc-list-item--with-two-lines"], { tabindex: "-1" }, [
-                createElement('span', ['mdc-list-item__content'], {}, [
-                    createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1}: ${p}` }),
-                    createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${s} Public Sets Created` })
-                ])
-            ]));
-            pages.leaderboard.list.appendChild(createElement("li", ["mdc-list-divider"]));
-        }
-    });
 }
 function registerCustomCollectionCard(docSnap) {
     let els = createCustomCollectionCard(docSnap.data(), docSnap.id);
@@ -444,7 +427,6 @@ addEventListener("DOMContentLoaded", () => {
     MDCRipple.attachTo(document.querySelector(".btn-change-hue")).listen("click", () => pages.modals.changeHue.open());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();
-    else if (location.hash === "#leaderboard") showLeaderboard();
 });
 addEventListener("load", () => pages.publicsets.searchInput.value = pages.publicsets.searchInput.root.querySelector("input").value);
 window.addEventListener("hashchange", () => {
@@ -466,9 +448,6 @@ window.addEventListener("hashchange", () => {
             break;
         case "#admin":
             verifyAdmin();
-            break;
-        case "#leaderboard":
-            showLeaderboard();
             break;
         case "#search":
             loadPreviousSearch();
