@@ -10,7 +10,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.16.0
-          cache: "npm"
       - run: npm ci && npx parcel build --no-source-maps
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
