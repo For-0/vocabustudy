@@ -45,7 +45,7 @@ class QuizQuestion extends HTMLElement {
                         createElement("div", ["mdc-radio__inner-circle"])
                     ])
                 ]),
-                createElement("label", [], {innerText: sanitize(marked.parseInline(answer)), htmlFor: optionId})
+                createElement("label", [], {innerText: sanitize(marked.parseInline(answer), {FORBID_ATTR: ["style"]}), htmlFor: optionId})
             ])
         ]));
         return MDCFormField.attachTo(radioButton.firstElementChild).input = new MDCRadio(radioButton.firstElementChild.firstElementChild);
@@ -56,7 +56,7 @@ class QuizQuestion extends HTMLElement {
         return input;
     }
     showQuestion() {
-        this.appendChild(createElement("p", [], {innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`))}));
+        this.appendChild(createElement("p", [], {innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`), {FORBID_ATTR: ["style"]})}));
         if (this.question.type == 0) {
             let shuffledOptions = [...this.question.answers];
             shuffle(shuffledOptions);
@@ -124,8 +124,8 @@ function createItem(item) {
     if (item.type === 0) {
         let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
             createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title))}),
-                createElement("div", [], {innerHTML: sanitize(marked.parse(item.body))})
+                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title), {FORBID_ATTR: ["style"]})}),
+                createElement("div", [], {innerHTML: sanitize(marked.parse(item.body), {FORBID_ATTR: ["style"]})})
             ])
         ]);
         return pages.setOverview.terms.appendChild(cardEl);
@@ -137,7 +137,7 @@ function createItem(item) {
         ])]);
         let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
             createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title))}),
+                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title), {FORBID_ATTR: ["style"]})}),
                 createElement("div", [], {}, [...questionEls, btnCheck])
             ])
         ]);
@@ -163,7 +163,7 @@ function createCommentCard({ name, comment, like }, id) {
         cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
         pages.setOverview.fieldComment.input.value = comment;
     } else {
-        cardText.innerHTML = sanitize(marked.parseInline(comment));
+        cardText.innerHTML = sanitize(marked.parseInline(comment), {FORBID_ATTR: ["style"]});
         cardText.style.overflowWrap = "break-word";
         if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
     }
@@ -193,7 +193,7 @@ addEventListener("DOMContentLoaded", async () => {
 
         // MDC Instantiation and Events
         pages.setOverview.name.innerText = currentSet.name;
-        pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""))
+        pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""), {FORBID_ATTR: ["style"]})
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let term of currentSet.terms) createItem(term);
         pages.setOverview.btnLike.addEventListener("click", async () =>  {

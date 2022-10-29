@@ -1027,7 +1027,7 @@ function resizeTextToMaxHeight(textEl, maxHeight, minSize=1) {
     }
 }
 function applyStyling(text, el) {
-    el.innerHTML = sanitize(marked.parseInline(text));
+    el.innerHTML = sanitize(marked.parseInline(text), {FORBID_ATTR: ["style"]});
     return el;
 }
 /**
@@ -1113,7 +1113,7 @@ function createCommentCard({ name, comment, like }, id) {
         cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
         pages.setOverview.fieldComment.input.value = comment;
     } else {
-        cardText.innerHTML = sanitize(marked.parseInline(comment));
+        cardText.innerHTML = sanitize(marked.parseInline(comment), {FORBID_ATTR: ["style"]});
         cardText.style.overflowWrap = "break-word";
         if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
     }
