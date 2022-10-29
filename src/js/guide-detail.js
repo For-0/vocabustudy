@@ -101,6 +101,7 @@ const pages = {
         btnLike: document.querySelector("#home .btn-like"),
         commentsContainer: document.querySelector(".comments-container"),
         fieldComment: document.querySelector("#home .field-comment"),
+        snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved"))
     }
 };
 
@@ -208,8 +209,7 @@ addEventListener("DOMContentLoaded", async () => {
         });
         pages.setOverview.commentsContainer.parentElement.addEventListener("toggle", async () => { // TODO modularize
             let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
-            if (comments.size) comments.forEach(comment => createCommentCard(comment.data(), comment.id));
-            else pages.setOverview.commentsContainer.innerText = "No Comments. Post one!";
+            comments.forEach(comment => createCommentCard(comment.data(), comment.id));
             if (auth.currentUser && !pages.setOverview.commentsContainer.querySelector(".mdc-text-field")) {
                 createCommentCard({name: auth.currentUser.displayName, comment: ""}, auth.currentUser.uid);
                 pages.setOverview.fieldComment.input.valid = true;
@@ -219,6 +219,7 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.fieldComment.button.addEventListener("click", async () => {
             if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
                 await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName}, {merge: true});
+                pages.setOverview.snackbarCommentSaved.open();
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });

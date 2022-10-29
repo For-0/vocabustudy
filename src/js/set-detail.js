@@ -6,6 +6,7 @@ import { MDCList } from "@material/list/index";
 import { MDCRadio } from "@material/radio/index";
 import { MDCRipple } from "@material/ripple/index";
 import { MDCTextField } from "@material/textfield/index";
+import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement } from "./utils.js";
@@ -156,6 +157,7 @@ const pages = {
         btnLike: document.querySelector("#home .btn-like"),
         commentsContainer: document.querySelector(".comments-container"),
         fieldComment: document.querySelector("#home .field-comment"),
+        snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved"))
     },
     flashcards: {
         el: document.getElementById("flashcards"),
@@ -1202,8 +1204,7 @@ addEventListener("DOMContentLoaded", async () => {
         });
         pages.setOverview.commentsContainer.parentElement.addEventListener("toggle", async () => {
             let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
-            if (comments.size) comments.forEach(comment => createCommentCard(comment.data(), comment.id));
-            else pages.setOverview.commentsContainer.innerText = "No Comments. Post one!";
+            comments.forEach(comment => createCommentCard(comment.data(), comment.id));
             if (auth.currentUser && !pages.setOverview.commentsContainer.querySelector(".mdc-text-field")) {
                 createCommentCard({name: auth.currentUser.displayName, comment: ""}, auth.currentUser.uid);
                 pages.setOverview.fieldComment.input.valid = true;
@@ -1213,6 +1214,7 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.fieldComment.button.addEventListener("click", async () => {
             if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
                 await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
+                pages.setOverview.snackbarCommentSaved.open();
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });

@@ -404,6 +404,9 @@ html(lang="en")
                             span.mdc-button__ripple
                             span.mdc-button__label Save
         include includes/footer
+        aside.mdc-snackbar#snackbar-comment-saved
+            .mdc-snackbar__surface(role="status" aria-relevant="additions")
+                .mdc-snackbar__label(aria-atomic="false") Comment saved!
         .mdc-dialog#modal-match-done
             .mdc-dialog__container
                 .mdc-dialog__surface(role="alertdialog" aria-modal="true")
