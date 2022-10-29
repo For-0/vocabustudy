@@ -163,7 +163,9 @@ main>div,
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-
+    > .mdc-card {
+        max-width: 100%;
+    }
     &:empty::after {
         content: attr(data-empty);
         font-style: italic;
