@@ -210,7 +210,7 @@ export function createTextFieldWithHelper(innerText, helperText=null, extraPrope
     return {textField, helperLine, obj: textFieldC}
 }
 
-export async function createSetCardOwner(set, id) {
+export async function createSetCardOwner(set, id, linkCreator=false) {
     let collectionLabels = await parseCollections(set.collections);
     let setType = set.collections.includes("-:0") ? "timeline" : (set.collections.includes("-:1") ? "guide" : "set");
     let buttons = [
@@ -229,10 +229,12 @@ export async function createSetCardOwner(set, id) {
     ];
     buttons.forEach(el => MDCRipple.attachTo(el));
     let likeText = set.public ? ` - ${set.likes || "0"} likes` : "";
+    let creatorLink = linkCreator ? createElement("a", [], {href: `/user/${set.uid}/`, innerText: `Created by ${set.creator}`}) : createElement("div", [], {innerText: `Created by ${set.creator}`});
     let cardEl = createElement("div", ["mdc-card"], {}, [
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
             createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: set.name }),
-            createElement("div", [], { innerText: `${set.numTerms} terms${likeText}\nCreated by ${set.creator}` })
+            createElement("div", [], { innerText: `${set.numTerms} terms${likeText}` }),
+            creatorLink
         ]),
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
             createElement("div", [], { innerText: `Visibility: ${set.public ? "Public" : "Private"}` })

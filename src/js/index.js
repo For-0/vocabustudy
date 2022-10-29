@@ -188,7 +188,7 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
     let extraParams = showAll ? [] : [[0], ["likes", "desc"]];
     await paginateQueries([mQuery], el.nextElementSibling, docs => {
         docs.forEach(async docSnap => {
-            let els = await createSetCardOwner(docSnap.data(), docSnap.id);
+            let els = await createSetCardOwner(docSnap.data(), docSnap.id, showAll);
             el.appendChild(els.card);
             els.buttons[2].addEventListener("click", async () => {
                 pages.modals.deleteSet.open();
