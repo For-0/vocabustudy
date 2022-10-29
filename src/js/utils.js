@@ -232,7 +232,8 @@ export async function createSetCardOwner(set, id) {
     let cardEl = createElement("div", ["mdc-card"], {}, [
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
             createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: set.name }),
-            createElement("div", [], { innerText: `${set.numTerms} terms${likeText}\nCreated by ${set.creator}` })
+            createElement("div", [], { innerText: `${set.numTerms} terms${likeText}\n` })
+        textEls.push(createElement("a", [], { innerText: `Created by ${creator}`, href: `/user/${uid}/` }));
         ]),
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
             createElement("div", [], { innerText: `Visibility: ${set.public ? "Public" : "Private"}` })
