@@ -931,11 +931,14 @@ const pages = {
             this.setTimer();
         },
         async checkAnswers() {
+            this.termsContainer.querySelectorAll(".dropzone-card").forEach(el => el.style.border = (el.querySelector("div:last-child").children[0] && el.querySelector("div:last-child").children[0].dataset.questionId !== el.dataset.questionId) ? "1px solid red" : "none");
             for (let child of this.termsContainer.querySelectorAll(".dropzone-card")) {
                 let id = child.dataset.questionId;
                 let dropzone = child.querySelector("div:last-child");
                 if (id && dropzone) {
-                    if (id !== dropzone.children[0]?.dataset?.questionId) return;
+                    if (id !== dropzone.children[0]?.dataset?.questionId) {
+                        return;
+                    }
                 } 
             }
             this.clearTimer();
