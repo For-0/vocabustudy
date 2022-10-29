@@ -5,7 +5,6 @@ import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
 import { fetchAndActivate, getRemoteConfig } from "firebase/remote-config";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 function setLoginButtonsState(state, isAdmin) {
     document.querySelectorAll(".loggedin").forEach(el => el.hidden = !state);
@@ -88,10 +87,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") {
         connectAuthEmulator(auth, "http://localhost:9099", {disableWarnings: true});
         connectFirestoreEmulator(db, "localhost", 8080);
-    } else initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider("6Lcpk8EiAAAAAHaH9O5R4Av3GLEKH0wZ_f-x4ucH"),
-        isTokenAutoRefreshEnabled: true
-    });
+    }
     addEventListener("DOMContentLoaded", () => {
         MDCTooltip.attachTo(navbar.tooltipAccountMenu);
         MDCTooltip.attachTo(navbar.tooltipBtnBrowse);
