@@ -4,7 +4,7 @@ header.mdc-top-app-bar.mdc-top-app-bar
   .mdc-top-app-bar__row
     section.mdc-top-app-bar__section.mdc-top-app-bar__section--align-start
       if showBack
-        button.material-icons-round.mdc-top-app-bar__navigation-icon.mdc-icon-button(onclick="javascript:(() => {document.referrer.includes('vocabustudy') ? history.back() : location.pathname='/#search';})();" style="padding: 0; margin-left: -15px;") arrow_back
+        button.material-icons-round.mdc-top-app-bar__navigation-icon.mdc-icon-button(onclick="javascript:(() => {document.referrer.includes('vocabustudy') ? history.back() : location.href='/#search';})();" style="padding: 0; margin-left: -15px;") arrow_back
         a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal; padding: 0;' href='/#') Vocabustudy
       else
         a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal;' href='/#') Vocabustudy
