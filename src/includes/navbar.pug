@@ -30,10 +30,6 @@ header.mdc-top-app-bar.mdc-top-app-bar
               .loggedin(hidden)
                 // 5 pages!
                 li
-                  a.mdc-list-item(role="menuitem" href="/#account")
-                    span.mdc-list-item__ripple 
-                    span.mdc-list-item__text My Account
-                li
                   a.mdc-list-item(role="menuitem" href="/#mysets")
                     span.mdc-list-item__ripple 
                     span.mdc-list-item__text My Sets
@@ -42,6 +38,10 @@ header.mdc-top-app-bar.mdc-top-app-bar
                     span.mdc-list-item__ripple 
                     span.mdc-list-item__text Admin Portal
                 li.mdc-list-divider(role="separator")
+                li
+                  a.mdc-list-item(role="menuitem" href="/#account")
+                    span.mdc-list-item__ripple
+                    span.mdc-list-item__text My Account
                 li.mdc-list-item#btn-logout(role="menuitem")
                   span.mdc-list-item__ripple 
                   span.mdc-list-item__text Log Out
