@@ -542,11 +542,11 @@ const pages = {
                 createElement("input", ["mdc-text-field__input"], { "aria-label": "Answer", type: "text", "aria-controls": helperTextId, "aria-describedby": helperTextId }, [])
             ]));
             textFieldEl.style.marginBottom = "0";
-            let accentKeyboard = this.questionContainers[0].appendChild(document.createElement("accent-keyboard"));
-            accentKeyboard.initialize(currentSet.specials, textFieldEl.querySelector("input"))
             this.questionContainers[0].appendChild(createElement("div", ["mdc-text-field-helper-line"], {}, [
                 createElement("div", ["mdc-text-field-helper-text", "mdc-text-field-helper-text--persistent"], { id: helperTextId }, [])
             ])).style.marginBottom = "1rem";
+            let accentKeyboard = this.questionContainers[0].appendChild(document.createElement("accent-keyboard"));
+            accentKeyboard.initialize(currentSet.specials, textFieldEl.querySelector("input"))
             let textField = new MDCTextField(textFieldEl);
             textField.required = true;
             return textField;
