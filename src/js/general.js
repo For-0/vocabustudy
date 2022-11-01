@@ -51,8 +51,11 @@ function showTheme(theme) {
             break;
     }
 }
-function setHue(hue) {
-    if (parseInt(hue) > 0) document.documentElement.style.filter = `hue-rotate(${hue}deg)`;
+export function setHue(hue) {
+    if (parseInt(hue) > 0) {
+        document.documentElement.style.setProperty("--hue-rotated", hue)
+        document.documentElement.style.filter = `hue-rotate(calc(var(--hue-rotated) * 1deg))`;
+    }
 }
 
 /**

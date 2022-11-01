@@ -1,11 +1,12 @@
 import { MDCRipple } from "@material/ripple/index";
 import { MDCTextField } from "@material/textfield/index";
-import {MDCFormField} from "@material/form-field/index";
-import {MDCRadio} from "@material/radio/index";
+import { MDCFormField } from "@material/form-field/index";
+import { MDCRadio } from "@material/radio/index";
+import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper } from "./utils.js";
-import {sanitize} from "dompurify";
+import { sanitize } from "dompurify";
 import { marked } from "marked";
 
 class QuizQuestion extends HTMLElement {
@@ -45,18 +46,18 @@ class QuizQuestion extends HTMLElement {
                         createElement("div", ["mdc-radio__inner-circle"])
                     ])
                 ]),
-                createElement("label", [], {innerText: sanitize(marked.parseInline(answer), {FORBID_ATTR: ["style"]}), htmlFor: optionId})
+                createElement("label", [], { innerText: sanitize(marked.parseInline(answer), sanitizerOpts), htmlFor: optionId })
             ])
         ]));
         return MDCFormField.attachTo(radioButton.firstElementChild).input = new MDCRadio(radioButton.firstElementChild.firstElementChild);
     }
     createSAInput() {
-        let input = createTextFieldWithHelper("Answer", null, {required: true}).obj;
+        let input = createTextFieldWithHelper("Answer", null, { required: true }).obj;
         this.appendChild(input.root);
         return input;
     }
     showQuestion() {
-        this.appendChild(createElement("p", [], {innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`), {FORBID_ATTR: ["style"]})}));
+        this.appendChild(createElement("p", [], { innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`), sanitizerOpts) }));
         if (this.question.type == 0) {
             let shuffledOptions = [...this.question.answers];
             shuffle(shuffledOptions);
@@ -73,7 +74,7 @@ class QuizQuestion extends HTMLElement {
 }
 window.customElements.define("quiz-question", QuizQuestion);
 
-const {db, auth} = initialize(async user => {
+const { db, auth } = initialize(async user => {
     if (user) {
         socialRef = doc(setRef, "social", user.uid);
         let socialDoc = await getDoc(socialRef);
@@ -84,6 +85,8 @@ const {db, auth} = initialize(async user => {
 const ignoredCharsRE = /[\*_\.]/g;
 const [, setId] = decodeURIComponent(location.pathname).match(/\/guide\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
+/** @type {DOMPurify.Config} */
+const sanitizerOpts = { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] };
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
 /**
@@ -125,20 +128,20 @@ function createItem(item) {
     if (item.type === 0) {
         let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
             createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title), {FORBID_ATTR: ["style"]})}),
-                createElement("div", [], {innerHTML: sanitize(marked.parse(item.body), {FORBID_ATTR: ["style"]})})
+                createElement("div", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
+                createElement("div", [], { innerHTML: sanitize(marked.parse(item.body), sanitizerOpts) })
             ])
         ]);
         return pages.setOverview.terms.appendChild(cardEl);
     } else if (item.type === 1) {
-        let questionEls = item.questions.map(question => createElement("quiz-question", [], {question}));
+        let questionEls = item.questions.map(question => createElement("quiz-question", [], { question }));
         let btnCheck = createElement("div", [], {}, [createElement("button", ["mdc-button", "mdc-button--raised"], {}, [
             createElement("span", ["mdc-button__ripple"]),
-            createElement("span", ["mdc-button__label"], {innerText: "Check"})
+            createElement("span", ["mdc-button__label"], { innerText: "Check" })
         ])]);
         let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
             createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                createElement("div", ["mdc-typography--headline6"], {innerHTML: sanitize(marked.parse("# " + item.title), {FORBID_ATTR: ["style"]})}),
+                createElement("div", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
                 createElement("div", [], {}, [...questionEls, btnCheck])
             ])
         ]);
@@ -157,16 +160,16 @@ function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
     let cardEl = createElement("div", ["mdc-card"]);
     let cardHeading = cardEl.appendChild(createElement("div", ["mdc-card-wrapper__text-section"]));
-    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], {innerText: name, href: `/user/${id}/`})]));
+    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], { innerText: name, href: `/user/${id}/` })]));
     cardTitle.style.fontWeight = "600";
     let cardText = cardHeading.appendChild(document.createElement("div"));
     if (isMyComment) {
         cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
         pages.setOverview.fieldComment.input.value = comment;
     } else {
-        cardText.innerHTML = sanitize(marked.parseInline(comment), {FORBID_ATTR: ["style"]});
+        cardText.innerHTML = sanitize(marked.parseInline(comment), sanitizerOpts);
         cardText.style.overflowWrap = "break-word";
-        if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
+        if (like) cardText.appendChild(createElement("span", ["likes-badge"], { innerText: `${name} likes this set` }));
     }
     return pages.setOverview.commentsContainer.appendChild(cardEl);
 }
@@ -194,16 +197,16 @@ addEventListener("DOMContentLoaded", async () => {
 
         // MDC Instantiation and Events
         pages.setOverview.name.innerText = currentSet.name;
-        pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""), {FORBID_ATTR: ["style"]})
+        pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""), sanitizerOpts)
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let term of currentSet.terms) createItem(term);
-        pages.setOverview.btnLike.addEventListener("click", async () =>  {
+        pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
                 localStorage.setItem("redirect_after_login", location.href);
                 location.href = "/#login";
             } else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
-                await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }
         });
@@ -211,14 +214,14 @@ addEventListener("DOMContentLoaded", async () => {
             let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
             comments.forEach(comment => createCommentCard(comment.data(), comment.id));
             if (auth.currentUser && !pages.setOverview.commentsContainer.querySelector(".mdc-text-field")) {
-                createCommentCard({name: auth.currentUser.displayName, comment: ""}, auth.currentUser.uid);
+                createCommentCard({ name: auth.currentUser.displayName, comment: "" }, auth.currentUser.uid);
                 pages.setOverview.fieldComment.input.valid = true;
             }
-        }, {once: true});
+        }, { once: true });
         pages.setOverview.fieldComment.input.listen("change", () => pages.setOverview.fieldComment.button.disabled = false);
         pages.setOverview.fieldComment.button.addEventListener("click", async () => {
             if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
-                await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName}, {merge: true});
+                await setDoc(socialRef, { comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName }, { merge: true });
                 pages.setOverview.snackbarCommentSaved.open();
                 pages.setOverview.fieldComment.button.disabled = true;
             }

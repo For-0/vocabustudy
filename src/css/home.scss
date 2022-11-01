@@ -199,3 +199,6 @@
         opacity: 1;
     }
 }
+.firebaseui-idp-icon {
+    filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg))
+}

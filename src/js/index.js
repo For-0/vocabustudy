@@ -7,7 +7,7 @@ import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCr
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
-import initialize from "./general";
+import initialize, { setHue } from "./general";
 import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
@@ -368,7 +368,7 @@ addEventListener("DOMContentLoaded", () => {
     pages.modals.changeHue.listen("MDCDialog:opened", () => setTimeout(() => pages.modals.changeHueInput.layout(), 100));
     pages.modals.changeHueInput.listen("MDCSlider:change", () => {
         localStorage.setItem("theme_hue", pages.modals.changeHueInput.getValue());
-        document.documentElement.style.filter = `hue-rotate(${pages.modals.changeHueInput.getValue()}deg)`;
+        setHue(pages.modals.changeHueInput.getValue());
         console.log(pages.modals.changeHueInput)
     });
     pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : pages.modals.emailVerification.open());

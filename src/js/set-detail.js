@@ -10,7 +10,7 @@ import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement } from "./utils.js";
-import {sanitize} from "dompurify";
+import { sanitize } from "dompurify";
 import { marked } from "marked";
 import { MDCIconButtonToggle } from "@material/icon-button";
 
@@ -73,16 +73,16 @@ class StarButton extends HTMLButtonElement {
             this.classList.add("mdc-icon-button");
             this.ariaPressed = this.initialValue;
             this.appendChild(createElement("div", ["mdc-icon-button__ripple"]));
-            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], {innerText: "star"}));
-            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon"], {innerText: "star_border"}));
+            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], { innerText: "star" }));
+            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon"], { innerText: "star_border" }));
             this.obj = new MDCIconButtonToggle(this);
             this.obj.on = this.initialValue;
         }
     }
 }
 customElements.define("accent-keyboard", AccentKeyboard);
-customElements.define("star-button", StarButton, {extends: "button"});
-const {db, auth} = initialize(async user => {
+customElements.define("star-button", StarButton, { extends: "button" });
+const { db, auth } = initialize(async user => {
     if (user) {
         socialRef = doc(setRef, "social", user.uid);
         let socialDoc = await getDoc(socialRef);
@@ -95,6 +95,8 @@ const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|t
 const setRef = doc(db, "sets", setId);
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
+/** @type {DOMPurify.Config} */
+const sanitizerOpts = { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] };
 const accentsRE = /[^a-zA-Z0-9\s_\(\)'"\.\/\\,-]/ig;
 const ignoredCharsRE = /[\*_\.]/g;
 /** @type {{name: String, time: number, uid: String}[]?} */
@@ -397,7 +399,7 @@ const pages = {
                 this.answerSA.valid = true;
                 this.answerSA.focus();
             }
-            
+
             this.question.innerText = "";
             let height = this.question.clientHeight;
             applyStyling(term[this.questionType], this.question);
@@ -621,13 +623,13 @@ const pages = {
             let groupTypes = this.checkboxes.map(el => el.checked);
             let terms = this.termList;
             let groups = makeRandomGroups(terms.length, groupTypes.filter(el => el).length, this.userMaxQuestions);
-            this.questionInputs = {sa: [], mc: [], tf: []};
+            this.questionInputs = { sa: [], mc: [], tf: [] };
             if (groupTypes[0] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.sa = group.map(el => ({ input: this.makeSAQuestion(terms[el]), answer: terms[el][this.answerType] }));
                 this.questionTypeHeaders[0].dataset.count = group.length;
             }
-            
+
             if (groupTypes[1] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.mc = group.map(el => {
@@ -636,7 +638,7 @@ const pages = {
                 });
                 this.questionTypeHeaders[1].dataset.count = group.length;
             }
-            
+
             if (groupTypes[2] && groups[0]?.length) {
                 let group = groups.shift();
                 group.forEach(el => this.makeMTQuestion(terms[el]));
@@ -644,7 +646,7 @@ const pages = {
                 this.questionTypeHeaders[2].dataset.count = group.length;
                 document.querySelectorAll(".test-matching-box").forEach(box => box.addEventListener("click", this.matchingBoxClickListener));
             }
-            
+
             if (groupTypes[3] && groups[0]?.length) {
                 let group = groups.shift();
                 this.questionInputs.tf = group.map(el => {
@@ -761,7 +763,7 @@ const pages = {
                         direction = "from";
                         otherDirection = "to";
                         el = rightEl;
-                    } else return;   
+                    } else return;
                     pages.test.questionContainers[2].classList.remove("selecting");
                     let possibleMatch = document.querySelector(`.matches-container > div[data-${direction}-card="${e.currentTarget.dataset.questionId}"]`);
                     if (possibleMatch) {
@@ -874,7 +876,7 @@ const pages = {
             this.generateCards();
         },
         makeDraggableCard(text, questionId, index) {
-            let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], {draggable:true}, [
+            let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], { draggable: true }, [
                 createElement("div", ["mdc-card-wrapper__text-section"])
             ]);
             applyStyling(text, card.firstElementChild);
@@ -910,15 +912,15 @@ const pages = {
             this.startTime = Date.now();
             let leftCards = [];
             let rightCards = [];
-            (this.questionType === "term") ? 
+            (this.questionType === "term") ?
                 included.forEach(num => {
-                    let {term, definition} = terms[num];
+                    let { term, definition } = terms[num];
                     let id = `_${crypto.randomUUID()}`;
                     leftCards.push(this.makeDraggableCard(term, id, num));
                     rightCards.push(this.makeDropzoneCard(definition, id));
                 }) :
                 included.forEach(num => {
-                    let {term, definition} = terms[num];
+                    let { term, definition } = terms[num];
                     let id = `_${crypto.randomUUID()}`;
                     leftCards.push(this.makeDraggableCard(definition, id, num));
                     rightCards.push(this.makeDropzoneCard(term, id));
@@ -939,7 +941,7 @@ const pages = {
                     if (id !== dropzone.children[0]?.dataset?.questionId) {
                         return;
                     }
-                } 
+                }
             }
             this.clearTimer();
             let totalTime = (Date.now() - this.startTime) / 1000;
@@ -952,7 +954,7 @@ const pages = {
                 let l = await getDocs(query(collection(setRef, "social"), orderBy("leaderboard")));
                 currentMatchLeaderboard = l.docs.map(el => {
                     let doc = el.data();
-                    return {name: doc.name, time: doc.leaderboard, uid: el.id};
+                    return { name: doc.name, time: doc.leaderboard, uid: el.id };
                 });
             }
             if (!this.onlyStarred && auth.currentUser && socialRef) {
@@ -960,19 +962,19 @@ const pages = {
                 if (possibleExisting) {
                     if (possibleExisting.time > time) possibleExisting.time = time;
                     else time = possibleExisting.time;
-                } else currentMatchLeaderboard.push({name: auth.currentUser.displayName, uid: auth.currentUser.uid, time});
-                await setDoc(socialRef, {leaderboard: time, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
+                } else currentMatchLeaderboard.push({ name: auth.currentUser.displayName, uid: auth.currentUser.uid, time });
+                await setDoc(socialRef, { leaderboard: time, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
             }
             let actualLeaderboard = [...currentMatchLeaderboard];
-            if (this.onlyStarred) actualLeaderboard.push({name: "Play a full round to save!", time});
-            else if (!auth.currentUser) actualLeaderboard.push({name: "Sign in to save!", time});
+            if (this.onlyStarred) actualLeaderboard.push({ name: "Play a full round to save!", time });
+            else if (!auth.currentUser) actualLeaderboard.push({ name: "Sign in to save!", time });
             actualLeaderboard.sort((a, b) => a.time - b.time);
             this.completedDialogList.root.textContent = "";
             for (let [i, item] of actualLeaderboard.entries()) {
                 this.completedDialogList.root.appendChild(createElement("li", ["mdc-list", "mdc-list-item--non-interactive", "mdc-list-item--with-two-lines"], {}, [
                     createElement("span", ["mdc-list-item__content"], {}, [
-                        createElement("span", ["mdc-list-item__primary-text"], {innerText: `#${i+1} ${item.name}`}),
-                        createElement("span", ["mdc-list-item__secondary-text"], {innerText: `${item.time.toFixed(2)}s`})
+                        createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1} ${item.name}` }),
+                        createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${item.time.toFixed(2)}s` })
                     ])
                 ]));
             }
@@ -1020,19 +1022,19 @@ function resizeButtonText(button, minSize = 1) {
         overflow = button.scrollHeight > button.getBoundingClientRect().height;
     }
 }
-function resizeTextToMaxHeight(textEl, maxHeight, minSize=1) {
+function resizeTextToMaxHeight(textEl, maxHeight, minSize = 1) {
     textEl.style.fontSize = "";
     let i = 0;
     let initialSize = parseInt(getComputedStyle(textEl).fontSize);
     let currentHeight = null;
-    while(i < 100 && currentHeight !== textEl.clientHeight && textEl.clientHeight > maxHeight && initialSize > minSize) {
+    while (i < 100 && currentHeight !== textEl.clientHeight && textEl.clientHeight > maxHeight && initialSize > minSize) {
         currentHeight = textEl.clientHeight;
         textEl.style.fontSize = `${Math.max(initialSize -= 2, minSize)}px`;
         i++;
     }
 }
 function applyStyling(text, el) {
-    el.innerHTML = sanitize(marked.parseInline(text), {FORBID_ATTR: ["style"]});
+    el.innerHTML = sanitize(marked.parseInline(text), setId === "ZEAuZPbTS5JlB1goITO5" ? {} : sanitizerOpts);
     return el;
 }
 /**
@@ -1043,7 +1045,7 @@ function applyStyling(text, el) {
  * @param {boolean} canBeSmaller If the length of the outputted list can be smaller if max is not big enough
  * @returns {number[]}
  */
-function getRandomChoices(num, max, numToInclude, canBeSmaller=false) {
+function getRandomChoices(num, max, numToInclude, canBeSmaller = false) {
     let nums = [];
     if (canBeSmaller) num = Math.min(num, max);
     if (num > max - ((numToInclude === null) ? 0 : 1)) return nums;
@@ -1097,7 +1099,7 @@ function createTermCard({ term, definition }, index) {
     cardTitle.classList.add("mdc-typography--headline6");
     cardTitle.style.fontWeight = "600";
     applyStyling(term.replace("\x00", " - "), cardTitle);
-    let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", {is: "star-button"}))));
+    let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", { is: "star-button" }))));
     starButton.initialValue = window.StarredTerms.isStarred(index);
     if (setType === "timeline") {
         cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
@@ -1111,16 +1113,16 @@ function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
     let cardEl = createElement("div", ["mdc-card"]);
     let cardHeading = cardEl.appendChild(createElement("div", ["mdc-card-wrapper__text-section"]));
-    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], {innerText: name, href: `/user/${id}/`})]));
+    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], { innerText: name, href: `/user/${id}/` })]));
     cardTitle.style.fontWeight = "600";
     let cardText = cardHeading.appendChild(document.createElement("div"));
     if (isMyComment) {
         cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
         pages.setOverview.fieldComment.input.value = comment;
     } else {
-        cardText.innerHTML = sanitize(marked.parseInline(comment), {FORBID_ATTR: ["style"]});
+        cardText.innerHTML = sanitize(marked.parseInline(comment), { FORBID_ATTR: ["style"] });
         cardText.style.overflowWrap = "break-word";
-        if (like) cardText.appendChild(createElement("span", ["likes-badge"], {innerText: `${name} likes this set`}));
+        if (like) cardText.appendChild(createElement("span", ["likes-badge"], { innerText: `${name} likes this set` }));
     }
     return pages.setOverview.commentsContainer.appendChild(cardEl);
 }
@@ -1185,7 +1187,7 @@ addEventListener("DOMContentLoaded", async () => {
         });
         document.addEventListener("click", async e => {
             if (e.target.nodeName === "IMG") {
-                const {default: fscreen} = await import("fscreen");
+                const { default: fscreen } = await import("fscreen");
                 if (fscreen.fullscreenElement === e.target) fscreen.exitFullscreen();
                 else fscreen.requestFullscreen(e.target);
             }
@@ -1195,13 +1197,13 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i);
         navigate();
-        pages.setOverview.btnLike.addEventListener("click", async () =>  {
+        pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
                 localStorage.setItem("redirect_after_login", location.href);
                 location.href = "/#login";
             } else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
-                await setDoc(socialRef, {like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
+                await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }
         });
@@ -1209,14 +1211,14 @@ addEventListener("DOMContentLoaded", async () => {
             let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
             comments.forEach(comment => createCommentCard(comment.data(), comment.id));
             if (auth.currentUser && !pages.setOverview.commentsContainer.querySelector(".mdc-text-field")) {
-                createCommentCard({name: auth.currentUser.displayName, comment: ""}, auth.currentUser.uid);
+                createCommentCard({ name: auth.currentUser.displayName, comment: "" }, auth.currentUser.uid);
                 pages.setOverview.fieldComment.input.valid = true;
             }
-        }, {once: true});
+        }, { once: true });
         pages.setOverview.fieldComment.input.listen("change", () => pages.setOverview.fieldComment.button.disabled = false);
         pages.setOverview.fieldComment.button.addEventListener("click", async () => {
             if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
-                await setDoc(socialRef, {comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid}, {merge: true});
+                await setDoc(socialRef, { comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 pages.setOverview.snackbarCommentSaved.open();
                 pages.setOverview.fieldComment.button.disabled = true;
             }
