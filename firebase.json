@@ -12,6 +12,7 @@
         "**/.*",
         "**/node_modules/**"
       ],
+      "appAssociation": "AUTO",
       "rewrites": [
         {
           "source": "/set/*/view/",
@@ -40,7 +41,8 @@
         {
           "source": "/privacy/",
           "destination": "/privacy-policy.html"
-        }
+        },
+        { "source": "/go/**", "dynamicLinks": true }
       ],
       "trailingSlash": true
     },
