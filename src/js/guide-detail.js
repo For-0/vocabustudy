@@ -188,6 +188,7 @@ addEventListener("DOMContentLoaded", async () => {
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
     try {
         let setSnap = await getDoc(setRef);
+        if (!setSnap.exists()) return location.href = "/404";
         currentSet = setSnap.data();
         document.title = `${currentSet.name} - Vocabustudy`;
         currentSet.terms.filter(el => el.type === 0).forEach(term => {

@@ -1169,6 +1169,7 @@ addEventListener("DOMContentLoaded", async () => {
     }
     try {
         let setSnap = await getDoc(setRef);
+        if (!setSnap.exists()) return location.href = "/404";
         currentSet = setSnap.data();
         document.title = `${currentSet.name} - Vocabustudy`;
         currentSet.terms.forEach(term => {

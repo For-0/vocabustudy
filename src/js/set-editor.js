@@ -133,7 +133,7 @@ const {db, auth} = initialize(async user => {
     } else {
         let setSnap = await getDoc(doc(db, "sets", setId));
         let setMetaSnap = await getDoc(doc(db, "meta_sets", setId));
-        if (!setSnap.exists() || !setMetaSnap.exists()) location.href = "/404.html";
+        if (!setSnap.exists() || !setMetaSnap.exists()) return location.href = "/404";
         let userIdToken = await user.getIdTokenResult();
         let isAdmin = userIdToken.claims.admin;
         const currentSet = setSnap.data();
