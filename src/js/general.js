@@ -55,7 +55,7 @@ export function setHue(hue) {
     if (parseInt(hue) > 0) {
         document.documentElement.style.setProperty("--hue-rotated", hue)
         document.documentElement.style.filter = `hue-rotate(calc(var(--hue-rotated) * 1deg))`;
-    }
+    } else document.documentElement.style.filter = "none";
 }
 
 /**

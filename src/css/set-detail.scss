@@ -42,7 +42,9 @@
         }
     }
 }
-
+.field-description {
+    word-break: break-word;
+}
 .comments-container > .mdc-card {
     max-width: 25%;
     .mdc-typography--headline6 {
