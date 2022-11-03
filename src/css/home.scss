@@ -114,6 +114,20 @@
         }
     }
 }
+@supports selector(has) {
+    main:not(:has(.page:not(#home):target)) ~ footer {
+        z-index: 20;
+        opacity: 0;
+        &:hover {
+            opacity: 1;
+            background-color: transparent;
+            &::after {
+                display: none;
+            }
+        }
+    }
+}
+
 #admin, #mysets {
     .mdc-card-wrapper__text-section:nth-last-child(2) {
         margin-top: 6px;
