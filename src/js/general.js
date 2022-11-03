@@ -117,6 +117,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         fabs.themeContainer.classList.toggle("show")
     }, true);
     document.addEventListener("click", () => fabs.themeContainer.classList.remove("show"));
+    document.querySelector("#account-menu .loggedout a").addEventListener("click", () => localStorage.removeItem("redirect_after_login"))
     remoteConfig.settings.minimumFetchIntervalMillis = 172800000; //-> two days
     remoteConfig.defaultConfig = {
         featuredSets: []

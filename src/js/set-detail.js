@@ -512,11 +512,6 @@ const pages = {
         get userMaxQuestions() {
             return Math.max(parseInt(this.fieldMaxTerms.value), 0);
         },
-        get termList() {
-            let terms = currentSet.terms;
-            if (this.checkOnlyStarred.checked && window.StarredTerms.getStarredTermList().length >= 4) terms = window.StarredTerms.getStarredTermList();
-            return terms;
-        },
         questionInputs: {
             sa: [],
             mc: [],
@@ -621,8 +616,11 @@ const pages = {
             this.questionContainers[2].querySelectorAll(":scope > div").forEach(el => el.textContent = "");
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
             let groupTypes = this.checkboxes.map(el => el.checked);
-            let terms = this.termList;
-            let groups = makeRandomGroups(terms.length, groupTypes.filter(el => el).length, this.userMaxQuestions);
+            let terms = currentSet.terms;
+            this.termList = terms;
+            let numGroups = groupTypes.filter(el => el).length;
+            if (this.checkOnlyStarred.checked && window.StarredTerms.getStarredTermList().length >= numGroups) terms = window.StarredTerms.getStarredTermList();
+            let groups = makeRandomGroups(terms.length, numGroups, this.userMaxQuestions);
             this.questionInputs = { sa: [], mc: [], tf: [] };
             if (groupTypes[0] && groups[0]?.length) {
                 let group = groups.shift();

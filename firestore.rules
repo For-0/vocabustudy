@@ -20,7 +20,7 @@ service cloud.firestore {
       return !request.auth.token.admin || resource.data.uid == request.auth.uid || request.auth.uid != "indXd3yqrqVZw07LCWHnTm69ZAg1";
     }
     match /sets/{set_id} {
-      allow read: if !resource || isPublic() || isCreator();
+      allow read: if resource == null || isPublic() || isCreator();
       allow delete: if isCreator() && canAdminDelete();
       allow update: if isCreator() && onlyUpdated(["name", "public", "terms", "description"]) && isBigEnough();
       allow create: if request.resource.data.keys().hasAll(["name", "public", "uid", "terms"]) && request.resource.data.keys().hasOnly(["name", "public", "uid", "terms", "description"]) && isNotImpersonating(true) && isBigEnough();
@@ -31,7 +31,7 @@ service cloud.firestore {
       }
     }
     match /meta_sets/{set_id} {
-      allow read: if !resource || isPublic() || isCreator();
+      allow read: if resource == null || isPublic() || isCreator();
       allow delete: if isCreator() && canAdminDelete();
       allow update: if isCreator() && onlyUpdated(["name", "nameWords", "public", "numTerms", "creator", "collections"]) && isNotImpersonating(false);
       allow create: if request.resource.data.keys().hasAll(["creator", "nameWords", "name", "public", "uid", "numTerms", "collections"]) && request.resource.data.keys().hasOnly(["numTerms", "nameWords", "creator", "name", "public", "uid", "collections", "likes"]) && request.resource.data.likes == 0 && isNotImpersonating(false);
