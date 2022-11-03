@@ -352,7 +352,7 @@ fields.formEdit.addEventListener("submit", async e => {
     if (terms.length < 4 && setType !== 2) return alert("You must have at least 4 terms in a set");
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
-    let nameWords = getWords(setName);
+    let nameWords = getWords(setName.normalize("NFD").replace(/\p{Diacritic}/gu, ""));
     let sPublic = fields.public.selected;
     let batch = writeBatch(db);
     let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
