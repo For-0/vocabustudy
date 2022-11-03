@@ -1223,10 +1223,12 @@ addEventListener("DOMContentLoaded", async () => {
             }
         });
     } catch (err) {
-        localStorage.setItem("redirect_after_login", location.href);
-        if (auth.currentUser) await auth.signOut();
-        location.href = "/#login";
-        return;
+        if (err.message.includes("Forbidden")) {
+            localStorage.setItem("redirect_after_login", location.href);
+            if (auth.currentUser) await auth.signOut();
+            location.href = "/#login";
+            return;
+        } else window.sentryCaptureException?.call(globalThis, err);
     }
 });
 

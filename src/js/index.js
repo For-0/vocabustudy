@@ -309,6 +309,7 @@ async function showLikedSets() {
         })
         pages.savedSets.likedSets.textContent = "";
     }
+    blah();
 }
 async function verifyAdmin() {
     let token = await auth.currentUser.getIdTokenResult();

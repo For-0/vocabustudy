@@ -109,6 +109,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         navbar.btnLogout.addEventListener("click", () => auth.signOut());
     });
     auth.onAuthStateChanged(async user => {
+        window.sentrySetUser?.call(window, user);
         if (user) setLoginButtonsState(true, (await user.getIdTokenResult()).claims.admin); else setLoginButtonsState(false, false);
         authStateChangedCallback(user);
     });
