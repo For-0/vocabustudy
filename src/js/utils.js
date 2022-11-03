@@ -237,7 +237,9 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
             creatorLink
         ]),
         createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-            createElement("div", [], { innerText: `Visibility: ${set.public ? "Public" : "Private"}` })
+            createElement("div", [], { innerText: "Visibility: " }, [
+                createElement("span", [`bg-${set.public ? "green" : "yellow"}`], {innerText: set.public ? "Public" : "Private"})
+            ])
         ]),
         createElement("div", ["mdc-card-wrapper__text-section"], {}, collectionLabels),
         createElement("div", ["mdc-card__actions"], {}, buttons)
