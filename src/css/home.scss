@@ -83,7 +83,11 @@
         }
     }
 }
-
+#account {
+    div {
+        margin: auto;
+    }
+}
 #search {
     details {
         cursor: pointer;
@@ -213,6 +217,6 @@
         opacity: 1;
     }
 }
-.firebaseui-idp-icon {
+.firebaseui-idp-icon, .nohuechange {
     filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg))
 }
