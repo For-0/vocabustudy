@@ -48,10 +48,10 @@ quiz-question {
             border-color: currentColor !important;
             color: green !important;
         }
-        .mdc-radio+label {
+        .mdc-radio.option-correct +label {
             color: green !important;
         }
-        .mdc-radio :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
+        .mdc-radio.option-correct :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
             border-color: green !important;
         }
         .mdc-text-field .mdc-floating-label {
@@ -63,11 +63,20 @@ quiz-question {
             border-color: currentColor !important;
             color: red !important;
         }
-        .mdc-radio+label {
+        .mdc-text-field .mdc-floating-label {
+            color: inherit;
+        }
+        .mdc-radio:has(input:checked) +label {
             color: red !important;
         }
-        .mdc-radio :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
+        .mdc-radio input:checked + div :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
             border-color: red !important;
-        }        
+        }    
+        .mdc-radio.option-correct +label {
+            color: green !important;
+        }
+        .mdc-radio.option-correct :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
+            border-color: green !important;
+        }    
     }
 }

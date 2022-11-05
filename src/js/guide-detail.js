@@ -30,6 +30,13 @@ class QuizQuestion extends HTMLElement {
         if (this.question.type == 0) return this.correctOption.checked;
         else if (this.question.type == 1) return this.question.answers.some(el => checkAnswers(el, this.input.value));
     }
+    /**
+     * @param {boolean} value
+     */
+    set disabled(value) {
+        if (this.question.type == 0) this.radios.forEach(el => el.disabled = value);
+        else if (this.question.type == 1) this.input.disabled = value;
+    }
     createMCInput(answer) {
         let optionId = `_${crypto.randomUUID()}`;
         let radioButton = this.appendChild(createElement("div", [], {}, [
@@ -139,18 +146,29 @@ function createItem(item) {
             createElement("span", ["mdc-button__ripple"]),
             createElement("span", ["mdc-button__label"], { innerText: "Check" })
         ])]);
-        let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
-            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                createElement("div", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
-                createElement("div", [], {}, [...questionEls, btnCheck])
-            ])
+        btnCheck.style.marginTop = "1rem";
+        let cardEl = createElement("div", ["guide-item"], {}, [
+            createElement("h2", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
+            createElement("div", [], {}, [...questionEls, btnCheck])
         ]);
         MDCRipple.attachTo(btnCheck.firstElementChild);
         btnCheck.addEventListener("click", () => {
-            if (questionEls.every(el => el.reportValidity())) {
-                questionEls.forEach(el => el.classList.add(el.correct ? "correct" : "incorrect"));
-                let numCorrect = cardEl.querySelectorAll(".correct").length;
-                alert(`You got ${numCorrect} out of ${questionEls.length} correct!`);
+            if (btnCheck.querySelector(".mdc-button__label").innerText === "CHECK") {
+                if (questionEls.every(el => el.reportValidity())) {
+                    questionEls.forEach(el => {
+                        el.classList.add(el.correct ? "correct" : "incorrect");
+                        el.correctOption?.root.classList.add("option-correct");
+                        el.disabled = true;
+                    });
+                    let numCorrect = cardEl.querySelectorAll(".correct").length;
+                    btnCheck.querySelector(".mdc-button__label").innerText = `${(numCorrect/questionEls.length).toFixed(2) * 100}% - Restart`;
+                }
+            } else {
+                btnCheck.querySelector(".mdc-button__label").innerText = "Check";
+                questionEls.forEach(el => {
+                    el.classList.remove("correct", "incorrect");
+                    el.connectedCallback()
+                });
             }
         })
         return pages.setOverview.terms.appendChild(cardEl);
@@ -179,7 +197,6 @@ function shuffle(arr) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
         [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
-        console.log(randomIndex);
     }
 }
 

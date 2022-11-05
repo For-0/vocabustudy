@@ -369,7 +369,6 @@ addEventListener("DOMContentLoaded", () => {
     pages.modals.changeHueInput.listen("MDCSlider:change", () => {
         localStorage.setItem("theme_hue", pages.modals.changeHueInput.getValue());
         setHue(pages.modals.changeHueInput.getValue());
-        console.log(pages.modals.changeHueInput)
     });
     pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : pages.modals.emailVerification.open());
     pages.account.btnChangePassword.addEventListener("click", async () => {
