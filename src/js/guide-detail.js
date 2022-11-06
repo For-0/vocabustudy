@@ -28,7 +28,12 @@ class QuizQuestion extends HTMLElement {
     }
     get correct() {
         if (this.question.type == 0) return this.correctOption.checked;
-        else if (this.question.type == 1) return this.question.answers.some(el => checkAnswers(el, this.input.value));
+        else if (this.question.type == 1) {
+            let isCorrect = this.question.answers.some(el => checkAnswers(el, this.input.value));
+            this.input.helperText.root.innerText = isCorrect ? "Correct!" : `Incorrect -> ${this.question.answers[0]}`;
+            this.input.helperText.root.parentElement.hidden = false;
+            return isCorrect;
+        }
     }
     /**
      * @param {boolean} value
@@ -59,9 +64,12 @@ class QuizQuestion extends HTMLElement {
         return MDCFormField.attachTo(radioButton.firstElementChild).input = new MDCRadio(radioButton.firstElementChild.firstElementChild);
     }
     createSAInput() {
-        let input = createTextFieldWithHelper("Answer", null, { required: true }).obj;
-        this.appendChild(input.root);
-        return input;
+        let input = createTextFieldWithHelper("Answer", "howdy", { required: true });
+        input.helperLine.querySelector(".mdc-text-field-helper-text").classList.add("mdc-text-field-helper-text--persistent");
+        this.append(input.textField, input.helperLine);
+        input.obj.initialize();
+        input.helperLine.hidden = true;
+        return input.obj;
     }
     showQuestion() {
         this.appendChild(createElement("p", [], { innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`), sanitizerOpts) }));
@@ -108,6 +116,7 @@ const pages = {
         description: document.querySelector("#home .field-description"),
         numTerms: document.querySelector("#home .field-num-terms"),
         terms: document.querySelector("#home .field-terms"),
+        termNav: document.querySelector("#home .field-term-navigation"),
         btnLike: document.querySelector("#home .btn-like"),
         commentsContainer: document.querySelector(".comments-container"),
         fieldComment: document.querySelector("#home .field-comment"),
@@ -131,13 +140,27 @@ function checkAnswers(answer, correct) {
     return possibleCorrect.includes(cleanAnswer);
 }
 
-function createItem(item) {
+function createItem(item, index) {
+    let itemId = `item-${index}`;
+    let navBtn = pages.setOverview.termNav.appendChild(createElement("a", ["mdc-button", "mdc-button--outlined"], {href: `#${itemId}`}, [
+        createElement("span", ["mdc-button__ripple"]),
+        createElement("span", ["mdc-button__label"], { innerText: item.title })
+    ]));
+    let navRipple = MDCRipple.attachTo(navBtn);
+    navBtn.addEventListener("click", () => {
+        pages.setOverview.termNav.querySelectorAll(".mdc-button--raised").forEach(el => {
+            el.classList.remove("mdc-button--raised", "mdc-button--unelevated");
+            el.classList.add("mdc-button--outlined");
+        });
+        navBtn.classList.add("mdc-button--raised", "mdc-button--unelevated");
+        navBtn.classList.remove("mdc-button--outlined");
+        navRipple.layout();
+    });
+    if (index === 0) navBtn.click();
     if (item.type === 0) {
-        let cardEl = createElement("div", ["mdc-card", "mdc-card--outlined"], {}, [
-            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                createElement("div", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
-                createElement("div", [], { innerHTML: sanitize(marked.parse(item.body), sanitizerOpts) })
-            ])
+        let cardEl = createElement("div", ["guide-item"], {id: itemId}, [
+            createElement("h2", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
+            createElement("div", [], { innerHTML: sanitize(marked.parse(item.body), sanitizerOpts) })
         ]);
         return pages.setOverview.terms.appendChild(cardEl);
     } else if (item.type === 1) {
@@ -147,12 +170,12 @@ function createItem(item) {
             createElement("span", ["mdc-button__label"], { innerText: "Check" })
         ])]);
         btnCheck.style.marginTop = "1rem";
-        let cardEl = createElement("div", ["guide-item"], {}, [
+        let cardEl = createElement("div", ["guide-item"], {id: itemId}, [
             createElement("h2", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
             createElement("div", [], {}, [...questionEls, btnCheck])
         ]);
         MDCRipple.attachTo(btnCheck.firstElementChild);
-        btnCheck.addEventListener("click", () => {
+        btnCheck.firstElementChild.addEventListener("click", () => {
             if (btnCheck.querySelector(".mdc-button__label").innerText === "CHECK") {
                 if (questionEls.every(el => el.reportValidity())) {
                     questionEls.forEach(el => {
@@ -217,7 +240,7 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.name.innerText = currentSet.name;
         pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""), sanitizerOpts)
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
-        for (let term of currentSet.terms) createItem(term);
+        for (let [i, term] of currentSet.terms.entries()) createItem(term, i);
         pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
                 localStorage.setItem("redirect_after_login", location.href);
@@ -244,6 +267,7 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
+        setTimeout(() => document.documentElement.scrollTo(0, 0), 100);
     } catch (err) {
         if (err.message.includes("Forbidden")) {
             localStorage.setItem("redirect_after_login", location.href);
@@ -254,4 +278,4 @@ addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-addEventListener("hashchange", () => navigate());
+addEventListener("hashchange", () => document.documentElement.scrollTo(0, 0));

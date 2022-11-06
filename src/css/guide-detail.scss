@@ -7,23 +7,28 @@
     }
 }
 
-#home .field-terms {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: space-between;
-    float: left;
-    width: 85%;
+.field-terms {
     &:empty::after {
         content: "Loading set...";
         font-size: larger;
     }
-    .mdc-card {
-        width: 100%;
+}
+.field-term-navigation {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #00000088;
+    a {
+        margin-right: 1rem;
     }
 }
 .field-description {
     word-break: break-word;
+}
+.guide-item {
+    width: 100%;
+    display: none;
+}
+.guide-item:target {
+    display: block;
 }
 .likes-badge {
     width: 100%;
