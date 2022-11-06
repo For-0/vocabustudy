@@ -56,7 +56,8 @@
     "firebase": "^9.9.4",
     "firebaseui": "^6.0.1",
     "fscreen": "^1.2.0",
-    "marked": "^4.1.1"
+    "marked": "^4.1.1",
+    "marked-katex-extension": "^1.0.1"
   },
   "devDependencies": {
     "@parcel/reporter-bundle-analyzer": "^2.7.0",
