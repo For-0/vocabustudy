@@ -137,7 +137,7 @@ html(lang="en")
                                     .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-right
                                         svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
                                             circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
-                    div
+                    div(style="overflow-x: auto;")
                         p.mdc-typography--headline3
                         div
                             p.mdc-typography--body1
@@ -166,7 +166,7 @@ html(lang="en")
                                 button.mdc-button(type='button')
                                     span.mdc-button__ripple
                                     span.mdc-button__label Override - Correct
-                        div
+                        div.custom-scrollbar
                             accent-keyboard
                             label.mdc-text-field.mdc-text-field--outlined(style='width: 88%;')
                                 span.mdc-notched-outline
