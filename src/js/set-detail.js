@@ -2,18 +2,17 @@ import { MDCCheckbox } from "@material/checkbox/index";
 import { MDCCircularProgress } from "@material/circular-progress/index";
 import { MDCDialog } from "@material/dialog/index";
 import { MDCFormField } from "@material/form-field/index";
-import { MDCIconButtonToggle } from "@material/icon-button";
 import { MDCList } from "@material/list/index";
 import { MDCRadio } from "@material/radio/index";
 import { MDCRipple } from "@material/ripple/index";
-import { MDCSnackbar } from "@material/snackbar/index";
 import { MDCTextField } from "@material/textfield/index";
-import { sanitize } from "dompurify";
+import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
-import { marked } from "marked";
 import initialize from "./general.js";
 import { createElement } from "./utils.js";
-import markedKatex from "marked-katex-extension";
+import { sanitize } from "dompurify";
+import { marked } from "marked";
+import { MDCIconButtonToggle } from "@material/icon-button";
 
 class AccentKeyboard extends HTMLElement {
     constructor() {
@@ -1159,7 +1158,6 @@ function showLikeStatus(likeStatus) {
 }
 
 addEventListener("DOMContentLoaded", async () => {
-    marked.use(markedKatex({throwOnError: false, output: "mathml"}));
     pages.flashcards.init();
     pages.learn.init();
     pages.test.init();

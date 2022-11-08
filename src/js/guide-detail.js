@@ -8,7 +8,6 @@ import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper } from "./utils.js";
 import { sanitize } from "dompurify";
 import { marked } from "marked";
-import markedKatex from "marked-katex-extension";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -225,7 +224,6 @@ function shuffle(arr) {
 }
 
 addEventListener("DOMContentLoaded", async () => {
-    marked.use(markedKatex({throwOnError: false, output: "mathml", displayMode: true})); // FIXME not working well
     pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
     try {
@@ -269,8 +267,6 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
-        location.hash = "#";
-        location.hash = "#item-0";
         setTimeout(() => document.documentElement.scrollTo(0, 0), 100);
     } catch (err) {
         if (err.message.includes("Forbidden")) {
