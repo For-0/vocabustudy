@@ -208,6 +208,7 @@ const pages = {
         },
         setName: document.querySelector("#flashcards h1 > span"),
         terms: document.querySelector("#flashcards > div:nth-child(2) > div:last-child"),
+        btnShuffle: document.querySelector("#flashcards > div > div:first-child .mdc-button--outlined"),
         btnPrevious: document.getElementById("btn-previous-flashcard"),
         btnNext: document.getElementById("btn-next-flashcard"),
         btnFlip: document.getElementById("btn-flip-flashcard"),
@@ -222,7 +223,7 @@ const pages = {
                 this.btnFlip.click();
             }
         },
-        createFlashcard({ term, definition }, index) {
+        createFlashcard({ term, definition, i }) {
             let cardEl = document.createElement("div");
             let cardInner = cardEl.appendChild(document.createElement("div"));
             let cardFront = cardInner.appendChild(document.createElement("div"));
@@ -230,19 +231,23 @@ const pages = {
             cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
             if (setType === "timeline") cardBack.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
             else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
-            if (window.StarredTerms.isStarred(index)) {
+            if (this.checkOnlyStarred.checked || window.StarredTerms.isStarred(i)) {
                 cardEl.style.color = "goldenrod";
                 cardEl.firstElementChild.style.boxShadow = "0 0 4px #d7a21faa";
             }
             return this.terms.appendChild(cardEl);
         },
-        show() {
-            let terms = currentSet.terms;
+        show(shuffleA=false) {
+            let terms = currentSet.terms.map((el, i) => ({i, ...el}));
             if (this.checkOnlyStarred.checked) terms = window.StarredTerms.getStarredTermList();
             this.numTerms = terms.length;
             this.setName.innerText = currentSet.name;
             this.terms.textContent = "";
-            for (let [i, term] of terms.entries()) this.createFlashcard(term, i);
+            if (shuffleA) {
+                terms = [...terms];
+                shuffle(terms);
+            }
+            for (let term of terms) this.createFlashcard(term);
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards." }, -1);
             this.index = 0;
             this.terms.children[0].querySelectorAll("p").forEach(el => {
@@ -257,6 +262,7 @@ const pages = {
             );
             this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
             this.checkOnlyStarred.listen("change", () => this.show());
+            this.btnShuffle.addEventListener("click", () => this.show(true));
             this.btnPrevious.addEventListener("click", () => {
                 this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
                 this.prevCard();
