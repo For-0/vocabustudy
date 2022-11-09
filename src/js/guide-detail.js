@@ -267,6 +267,8 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
+        location.hash = "#";
+        location.hash = "#item-0";
         setTimeout(() => document.documentElement.scrollTo(0, 0), 100);
     } catch (err) {
         if (err.message.includes("Forbidden")) {
