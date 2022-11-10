@@ -1,0 +1,13 @@
+{
+    "name": "Node.js",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:16-bullseye",
+  
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+    "postCreateCommand": "npm install && su node -c 'npm install -g firebase-tools'",
+    "remoteUser": "node",
+    "features": {
+      "ghcr.io/devcontainers/features/github-cli:1": {},
+      "ghcr.io/devcontainers/features/java:1": {}
+    }
+  }
