@@ -90,6 +90,9 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") {
         connectAuthEmulator(auth, "http://localhost:9099", {disableWarnings: true});
         connectFirestoreEmulator(db, "localhost", 8080);
+    } else if (process.env.CODESPACES) {
+        connectAuthEmulator(auth, `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`, {disableWarnings: true});
+        connectFirestoreEmulator(db, `${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`, 443);
     }
     addEventListener("DOMContentLoaded", () => {
         MDCTooltip.attachTo(navbar.tooltipAccountMenu);

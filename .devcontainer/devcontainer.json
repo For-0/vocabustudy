@@ -4,10 +4,20 @@
   
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
-    "postCreateCommand": "npm install && su node -c 'npm install -g firebase-tools'",
-    "remoteUser": "node",
+    "postCreateCommand": "npm install && sudo su node -c 'npm install -g firebase-tools'",
     "features": {
       "ghcr.io/devcontainers/features/github-cli:1": {},
       "ghcr.io/devcontainers/features/java:1": {}
-    }
+	},
+	"portsAttributes": {
+		"5000": {
+			"label": "Hosting"
+		},
+		"8080": {
+			"label": "Firestore"
+		},
+		"9099": {
+			"label": "Auth"
+		}
+	}
   }
