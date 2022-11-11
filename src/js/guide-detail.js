@@ -30,7 +30,7 @@ class QuizQuestion extends HTMLElement {
         if (this.question.type == 0) return this.correctOption.checked;
         else if (this.question.type == 1) {
             let isCorrect = this.question.answers.some(el => checkAnswers(el, this.input.value));
-            this.input.helperText.root.innerText = isCorrect ? "Correct!" : `Incorrect -> ${this.question.answers[0]}`;
+            this.input.helperText.root.innerText = isCorrect ? "Correct!" : `Incorrect -> ${normalizeAnswer(this.question.answers[0])}`;
             this.input.helperText.root.parentElement.hidden = false;
             return isCorrect;
         }
