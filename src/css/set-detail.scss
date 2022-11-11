@@ -208,7 +208,7 @@
     --track: transparent;
     --thumb: #6b473c;
     .mdc-text-field + button {
-        width: 9%;
+        width: 85px;
         margin-left: 2%;
     }
     > div {
@@ -230,10 +230,22 @@
                 flex-wrap: wrap;
                 justify-content: space-evenly;
                 --mdc-outlined-button-label-text-size: 1.25rem;
+                align-content: end;
                 --mdc-outlined-button-container-height: 56px;
                 button {
                     width: 45%;
                     overflow-wrap: anywhere;
+                    position: relative;
+                    .mdc-button__label {
+                        position: unset;
+                    }
+                    img {
+                        max-width: unset;
+                        max-height: 45px;
+                        position: absolute;
+                        top: 1px;
+                        right: 1px;
+                    }
                 }
             }
             > p {
@@ -416,6 +428,11 @@
     border-radius: 10px;
     cursor: pointer;
     padding: 16px;
+    img {
+        margin-left: auto;
+        margin-right: auto;
+        max-height: 15vh;
+    }
 }
 
 .answer-incorrect {
@@ -431,6 +448,11 @@
         bottom: 8px;
         right: 8px;
         --mdc-text-button-label-text-color: currentColor;
+    }
+    img {
+        margin-left: auto;
+        margin-right: auto;
+        max-height: 15vh;
     }
 }
 

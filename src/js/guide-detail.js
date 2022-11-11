@@ -5,7 +5,7 @@ import { MDCRadio } from "@material/radio/index";
 import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper } from "./utils.js";
+import { createElement, createTextFieldWithHelper, normalizeAnswer } from "./utils.js";
 import { sanitize } from "dompurify";
 import { marked } from "marked";
 
@@ -97,7 +97,6 @@ const { db, auth } = initialize(async user => {
         showLikeStatus(userLikes);
     } else showLikeStatus(false);
 });
-const ignoredCharsRE = /[\*_\.]/g;
 const [, setId] = decodeURIComponent(location.pathname).match(/\/guide\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
 /** @type {DOMPurify.Config} */
@@ -135,8 +134,8 @@ function showLikeStatus(likeStatus) {
 }
 
 function checkAnswers(answer, correct) {
-    let cleanAnswer = answer.trim().replace(ignoredCharsRE, "").toUpperCase();
-    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = el.trim().replace(ignoredCharsRE, "").toUpperCase());
+    let cleanAnswer = normalizeAnswer(answer).toUpperCase();
+    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
     return possibleCorrect.includes(cleanAnswer);
 }
 

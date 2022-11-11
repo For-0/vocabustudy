@@ -12,6 +12,16 @@ MDCList.prototype.handleClickEvent = function (evt) {
     this.foundation.handleClick(index, !toggleCheckbox, evt); // FIXME MANUAL HACK material-components/material-components-web#7618
 };
 const checkboxBackground = '<svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24"><path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" /></svg><div class="mdc-checkbox__mixedmark"></div>';
+const ignoredCharsRE = /[\*_\.]/g;
+const mdLinkRE = /!?\[[^\]]*\]\([^\)]*\)/g;
+/**
+ * Remove ignored characters and markdown links from a string, and trim it
+ * @param {string} answer The answer to normalize
+ * @returns {string} The normalized answer
+ */
+export function normalizeAnswer(answer) {
+    return answer.replace(ignoredCharsRE, "").replace(mdLinkRE, "").trim();
+}
 export function toLocaleDate(dateData) {
     switch (typeof dateData) {
         case "number": return new Date(dateData * 1000).toLocaleString();

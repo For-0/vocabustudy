@@ -9,7 +9,7 @@ import { MDCTextField } from "@material/textfield/index";
 import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement } from "./utils.js";
+import { createElement, normalizeAnswer } from "./utils.js";
 import { sanitize } from "dompurify";
 import { marked } from "marked";
 import { MDCIconButtonToggle } from "@material/icon-button";
@@ -97,8 +97,7 @@ const setRef = doc(db, "sets", setId);
 let socialRef = null;
 /** @type {DOMPurify.Config} */
 const sanitizerOpts = { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] };
-const accentsRE = /[^a-zA-Z0-9\s_\(\)'"\.\/\\,-]/ig;
-const ignoredCharsRE = /[\*_\.]/g;
+const accentsRE = /[^a-zA-Z0-9\s_\(\)\[\]!'"\.\/\\,-]/ig;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
 /**
@@ -688,7 +687,7 @@ const pages = {
                     numCorrect++;
                 } else {
                     sa.input.root.classList.add("incorrect");
-                    sa.input.helperTextContent = `Incorrect -> ${sa.answer}`;
+                    sa.input.helperTextContent = `Incorrect -> ${normalizeAnswer(sa.answer)}`;
                 }
             }
             for (let mc of this.questionInputs.mc) {
@@ -1070,8 +1069,8 @@ function makeRandomGroups(max, numGroups, aMax) {
     return groups;
 }
 function checkAnswers(answer, correct) {
-    let cleanAnswer = answer.trim().replace(ignoredCharsRE, "").toUpperCase();
-    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = el.trim().replace(ignoredCharsRE, "").toUpperCase());
+    let cleanAnswer = normalizeAnswer(answer).toUpperCase();
+    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
     return possibleCorrect.includes(cleanAnswer);
 }
 function getOffset(el) {
@@ -1193,10 +1192,12 @@ addEventListener("DOMContentLoaded", async () => {
         document.addEventListener("click", async e => {
             if (e.target.nodeName === "IMG") {
                 const { default: fscreen } = await import("fscreen");
+                e.stopPropagation();
+                e.stopImmediatePropagation();
                 if (fscreen.fullscreenElement === e.target) fscreen.exitFullscreen();
                 else fscreen.requestFullscreen(e.target);
             }
-        });
+        }, true);
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
