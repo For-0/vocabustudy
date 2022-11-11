@@ -6,6 +6,9 @@
     // "forwardPorts": [],
     "postCreateCommand": "npm install && sudo su node -c 'npm install -g firebase-tools'",
     "features": {
+	"ghcr.io/devcontainers/features/sshd:1": {
+        	"version": "latest"
+    	},	    
       "ghcr.io/devcontainers/features/github-cli:1": {},
       "ghcr.io/devcontainers/features/java:1": {}
 	},
