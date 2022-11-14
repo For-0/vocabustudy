@@ -54,6 +54,7 @@
 }
 .field-description {
     word-break: break-word;
+    overflow-wrap: anywhere;
 }
 .comments-container > .mdc-card {
     max-width: 25%;
@@ -277,6 +278,7 @@
                     display: table;
                     padding: 16px;
                     word-break: break-word;
+                    overflow-wrap: anywhere;
                 }
             }
             > div > p {
@@ -333,7 +335,8 @@
             left: 16%;
             width: calc(84% - 1rem);
             overflow-x: hidden;
-            word-break: break-word;
+            word-break: normal;
+            overflow-wrap: anywhere;
             accent-keyboard {
                 display: none;
                 max-width: calc(84vw - 4rem);
