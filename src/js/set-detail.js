@@ -622,9 +622,9 @@ const pages = {
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
             let groupTypes = this.checkboxes.map(el => el.checked);
             let terms = currentSet.terms;
-            this.termList = terms;
             let numGroups = groupTypes.filter(el => el).length;
             if (this.checkOnlyStarred.checked && window.StarredTerms.getStarredTermList().length >= numGroups) terms = window.StarredTerms.getStarredTermList();
+            this.termList = terms;
             let groups = makeRandomGroups(terms.length, numGroups, this.userMaxQuestions);
             this.questionInputs = { sa: [], mc: [], tf: [] };
             if (groupTypes[0] && groups[0]?.length) {
