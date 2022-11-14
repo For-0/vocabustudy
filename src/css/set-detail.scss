@@ -1,23 +1,33 @@
 @import "styles.scss";
-:is(#flashcards, #learn, #test, #match) > div:nth-child(2) {
-    display: flex;
-    flex-direction: row;
-    > div:first-child {
-        min-width: 15%;
-        @media (max-width: 750px) {
-            strong {
-                font-size: small;
-            }
-            > div {
-                text-align: center;
-                > div {
-                    flex-direction: column;
-                    label {
-                        margin-right: 0;
-                        padding-right: 0;
-                    }
+:is(#flashcards, #learn, #test, #match) {
+    > h1 > span {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        overflow: hidden;
+        max-width: calc(100% - var(--studymode-header-width));
+        vertical-align: middle;
+    }
+    > div:nth-child(2) {
+        display: flex;
+        flex-direction: row;
+        > div:first-child {
+            min-width: 15%;
+            @media (max-width: 750px) {
+                strong {
+                    font-size: small;
                 }
-                --mdc-typography-body2-font-size: 0.6rem;
+                > div {
+                    text-align: center;
+                    > div {
+                        flex-direction: column;
+                        label {
+                            margin-right: 0;
+                            padding-right: 0;
+                        }
+                    }
+                    --mdc-typography-body2-font-size: 0.6rem;
+                }
             }
         }
     }
@@ -61,6 +71,7 @@
     float: left;
     width: 85%;
     align-items: baseline;
+    overflow-wrap: break-word;
     &:empty::after {
         content: "Loading set...";
         font-size: larger;
@@ -102,6 +113,7 @@
 }
 
 #flashcards {
+    --studymode-header-width: 210px;
     > div:nth-child(2) {
         overflow: hidden;
         > div:last-child {
@@ -145,6 +157,10 @@
                 display: none;
                 transition: left 0.4s;
                 width: 75%;
+                overflow-wrap: break-word;
+                p {
+                    max-width: 100%;
+                }
                 &.show {
                     display: block;
                     position: relative;
@@ -207,6 +223,7 @@
 #learn {
     --track: transparent;
     --thumb: #6b473c;
+    --studymode-header-width: 125px;
     .mdc-text-field + button {
         width: 85px;
         margin-left: 2%;
@@ -259,6 +276,7 @@
                     text-align: center;
                     display: table;
                     padding: 16px;
+                    word-break: break-word;
                 }
             }
             > div > p {
@@ -272,6 +290,7 @@
 #test {
     --track: transparent;
     --thumb: #6b473c;
+    --studymode-header-width: 100px;
     > div {
         position: relative;
         > div {
@@ -314,6 +333,7 @@
             left: 16%;
             width: calc(84% - 1rem);
             overflow-x: hidden;
+            word-break: break-word;
             accent-keyboard {
                 display: none;
                 max-width: calc(84vw - 4rem);
@@ -328,6 +348,7 @@
 }
 
 #match {
+    --studymode-header-width: 135px;
     > div {
         position: relative;
         .btn-refresh:last-of-type {
@@ -363,6 +384,7 @@
                 align-content: start;
                 width: 48%;
                 overflow-y: auto;
+                --track: transparent;
                 .dropzone-card {
                     background-color: lighten($theme-color, 50%);
                     max-width: 48%;

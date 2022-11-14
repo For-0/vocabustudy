@@ -3,7 +3,7 @@
 - var title = "Study Guide";
 - var description = "Learn more about this topic with a study guide";
 doctype html
-html(lang="en")
+html.custom-scrollbar(lang="en")
     include includes/head
     body.mdc-typography
         include includes/navbar
@@ -19,7 +19,7 @@ html(lang="en")
                         span.field-num-terms
                         |  items
                 p.field-description
-                .field-term-navigation
+                .field-term-navigation.custom-scrollbar
                 .field-terms
                 details(style="margin-top: 1rem; float: left; width: 100%;")
                     summary

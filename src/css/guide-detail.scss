@@ -8,6 +8,7 @@
 }
 
 .field-terms {
+    overflow-wrap: break-word;
     &:empty::after {
         content: "Loading set...";
         font-size: larger;
@@ -16,12 +17,21 @@
 .field-term-navigation {
     padding-bottom: 1rem;
     border-bottom: 1px solid #00000088;
+    --track: transparent;
+    overflow-x: auto;
     a {
         margin-right: 1rem;
     }
 }
 .field-description {
     word-break: break-word;
+}
+.field-name {
+    max-width: calc(100% - 180px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
 }
 .guide-item {
     width: 100%;

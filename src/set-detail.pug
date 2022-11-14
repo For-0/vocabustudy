@@ -3,7 +3,7 @@
 - var title = "Set Detail";
 - var description = "Study a set, using one or more of our modes";
 doctype html
-html(lang="en")
+html.custom-scrollbar(lang="en")
     include includes/head
     body.mdc-typography
         include includes/navbar
@@ -363,8 +363,8 @@ html(lang="en")
                             br
                             | Tap a left item, then tap a right item
                     div
-                        div 
-                        div 
+                        .custom-scrollbar
+                        .custom-scrollbar
             .page#home
                 h1
                     span.field-name

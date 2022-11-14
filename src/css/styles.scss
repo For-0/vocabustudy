@@ -163,6 +163,7 @@ main>div,
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    overflow-wrap: break-word;
     > .mdc-card {
         max-width: 100%;
     }
