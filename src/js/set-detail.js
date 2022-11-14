@@ -156,9 +156,11 @@ const pages = {
         numTerms: document.querySelector("#home .field-num-terms"),
         terms: document.querySelector("#home .field-terms"),
         btnLike: document.querySelector("#home .btn-like"),
+        btnExportTerms: document.querySelector("#home .btn-export-terms"),
         commentsContainer: document.querySelector(".comments-container"),
         fieldComment: document.querySelector("#home .field-comment"),
-        snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved"))
+        snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved")),
+        modalExportTerms: new MDCDialog(document.querySelector("#modal-export-terms"))
     },
     flashcards: {
         el: document.getElementById("flashcards"),
@@ -1165,7 +1167,7 @@ addEventListener("DOMContentLoaded", async () => {
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
     if (setType === "timeline") {
         pages.setOverview.terms.style.justifyContent = "left";
-        document.querySelectorAll(".study-modes a:not([href='#flashcards'])").forEach(el => {
+        document.querySelectorAll(".study-modes :is(a, button):not([href='#flashcards'])").forEach(el => {
             el.style.pointerEvents = "none";
             el.style.opacity = 0.5;
         }); // TODO other study modes
@@ -1228,6 +1230,10 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.snackbarCommentSaved.open();
                 pages.setOverview.fieldComment.button.disabled = true;
             }
+        });
+        pages.setOverview.btnExportTerms.addEventListener("click", () => {
+            pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
+            pages.setOverview.modalExportTerms.open();
         });
     } catch (err) {
         if (err.message.includes("Forbidden")) {

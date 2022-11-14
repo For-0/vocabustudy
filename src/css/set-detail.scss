@@ -42,7 +42,7 @@
 #home .study-modes {
     float: none;
     overflow: hidden;
-    > a {
+    > :is(a, button) {
         display: flex;
         margin-bottom: 2rem;
         margin-left: 1rem;
@@ -50,6 +50,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+    }
+    > button {
+        width: calc(15% - 1rem);
+        position: absolute;
+        bottom: 43px;
     }
 }
 .field-description {

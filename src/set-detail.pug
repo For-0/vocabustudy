@@ -394,6 +394,10 @@ html.custom-scrollbar(lang="en")
                         span.mdc-button__ripple
                         i.material-icons-outlined.mdc-button__icon(aria-hidden="true") attach_file
                         span.mdc-button__label Match
+                    button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-export-terms
+                        span.mdc-button__ripple
+                        i.material-icons-outlined.mdc-button__icon(aria-hidden="true") file_download
+                        span.mdc-button__label Export
                 details(style="margin-top: 1rem; float: left; width: 100%;")
                     summary
                         h2.mdc-typography--headline6(style="display: inline;") Comments
@@ -429,4 +433,15 @@ html.custom-scrollbar(lang="en")
                         button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
                             .mdc-button__ripple
                             span.mdc-button__label Restart
+        .mdc-dialog#modal-export-terms
+            .mdc-dialog__container
+                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                    h2.mdc-dialog__title Export Terms
+                    .mdc-dialog__content.custom-scrollbar(style="--track: transparent;")
+                        p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
+                        pre
+                    .mdc-dialog__actions
+                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .mdc-button__ripple
+                            span.mdc-button__label Close
         script(src="js/set-detail.js" type="module")
