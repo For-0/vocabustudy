@@ -59,6 +59,7 @@ const pages = {
         email: document.querySelector("#account .field-email"),
         created: document.querySelector("#account .field-created"),
         emailVerified: document.querySelector("#account .field-email-verified"),
+        emailNotVerified: !document.querySelector("#account .field-email-not-verified"),
         btnVerifyEmail: document.querySelector("#account .btn-verify-email"),
         btnChangePassword: document.querySelector("#account .btn-change-password"),
         btnChangeName: document.querySelector("#account .btn-change-name"),
