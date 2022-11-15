@@ -1,0 +1,98 @@
+- var omitAccount = true;
+- var showBack = true;
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Vocabustudy - Privacy Policy
+        link(rel="stylesheet", href="css/styles.scss")
+        link(rel="stylesheet" href="css/material-components.scss")
+        link(rel="shortcut icon", href="favicon.ico", type="image/x-icon")
+        link(rel="preconnect", href="https://fonts.googleapis.com")
+        link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
+        link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons+Round|Material+Icons|Material+Icons+Outlined")
+        link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Raleway&display=swap")
+    body.mdc-typography.theme-system
+        include includes/navbar
+        main.mdc-top-app-bar--fixed-adjust
+            .page#home
+            
+              h1 Vocabustudy Help Center
+                  p.mdc-typography--headline5 How-tos and overall helpful tips and instructions!
+                  head
+                    meta(name='viewport' content='width=device-width, initial-scale=1')
+                    style.
+                      .collapsible {
+                      background-color: #795548;
+                      color: white;
+                      cursor: pointer;
+                      padding: 18px;
+                      width: 100%;
+                      border: none;
+                      text-align: left;
+                      outline: #fff;
+                      font-size: 15px;
+                      }
+                      .active, .collapsible:hover {
+                      background-color: #bda8a1;
+                      }
+                      .content {
+                      padding: 0 18px;
+                      max-height: 0;
+                      overflow: hidden;
+                      transition: max-height 0.2s ease-out;
+                      background-color: #f1f1f1;
+                      }
+                  button.collapsible How to create an account:
+                  .content
+                    h1 If you create an account, you can do many things, such as:
+                    ul
+                      li Create sets
+                      li Save sets
+                      li Comment on sets
+                      li Like sets
+                      li More!
+                    h1 How to create an account:
+                    p 1. Click the account icon at the top right of the header or go to https://vocabustudy.org/#login .
+                    p 2. Click "log in" in the menu that appears.
+                    p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email.
+                      | We recommend signing in with Google, because it is much easier to create your account and login to it.
+                      | However, if you want to create your account with email, here are the steps:
+                        ol
+                          li Press the button that says "Sign in with email".
+                          li Enter your email in the menu that appears.
+                          li Enter your name and the password that you want to use for your new account.
+                          li It will bring up information about email verification. Press "Send Verification Email" when you are ready.
+                          li You will get a message at the bottom of the screen when the email has been sent.
+                          li Open your email.
+                          li Look for an email from noreply@vocabustudy.org (such a cool, professional email, I know!!!!) titled "Verify your email for Vocabustudy".
+                          li Open it and click the link.
+                          li It will tell you when your email is verified.
+                          li Close the tab with the email verification link.
+                          li Reload the My Account page on Vocabustudy. 
+                          li Your Account has been verified!
+                          li You can now use your account when you use Vocabustudy.
+
+                  script.
+                    var coll = document.getElementsByClassName("collapsible");
+                    var i;
+                    for (i = 0; i < coll.length; i++) {
+                    coll[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var content = this.nextElementSibling;
+                    if (content.style.maxHeight){
+                    content.style.maxHeight = null;
+                    } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                    });
+                    }
+        script.
+            document.getElementById("checkbox-sentry-optout").checked = Boolean(localStorage.getItem("sentry_optout"));
+            document.getElementById("checkbox-sentry-optout").addEventListener("change", e => {
+                if (e.target.checked) localStorage.setItem("sentry_optout", true);
+                else localStorage.removeItem("sentry_output");
+            })
+        include includes/footer
