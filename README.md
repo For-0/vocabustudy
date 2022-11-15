@@ -16,4 +16,4 @@ Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created
 
 [Vocabustudy's nightly build](https://vocabustudyonline--nightly-q9kbiq6r.web.app/) includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or [here.](https://vocabustudy.org/)
 
-## Now Editable on Chromebooks! 
+## Now Editable on Chromebooks! hooray
