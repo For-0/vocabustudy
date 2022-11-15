@@ -177,6 +177,7 @@ function showAccountInfo({ displayName, email, emailVerified, metadata: { creati
     pages.account.name.innerText = displayName;
     pages.account.email.innerText = email;
     pages.account.emailVerified.hidden = emailVerified;
+    pages.account.emailNotVerified.hidden = !emailVerified;
     pages.account.btnVerifyEmail.hidden = emailVerified;
     if (creationTime) pages.account.created.innerText = toLocaleDate(creationTime);
     else if (auth.currentUser)
