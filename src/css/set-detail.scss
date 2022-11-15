@@ -132,7 +132,7 @@
             }
             &.switching {
                 > div.show {
-                    left: -150%;
+                    left: -150vw;
                     position: absolute;
                     + div {
                         display: block;
@@ -144,7 +144,7 @@
             }
             &.returning {
                 > div.show {
-                    left: 150%;
+                    left: 150vw;
                     position: absolute;
                 }
                 > div:not(.show):has(+ .show) {
