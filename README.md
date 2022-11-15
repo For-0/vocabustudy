@@ -3,6 +3,7 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version)](https://vocabustudy.org/)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&label=latest%20nightly)](https://vocabustudyonline--nightly-q9kbiq6r.web.app/)
 [![Automated Release Notes by gren](https://img.shields.io/badge/%F0%9F%A4%96-release%20notes-00B2EE.svg)](https://github-tools.github.io/github-release-notes/)
+[![Editable on Chromebooks](https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen)](https://vscode.dev/)
 
 Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created by students, for students.
 
