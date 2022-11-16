@@ -42,6 +42,10 @@
           "source": "/privacy/",
           "destination": "/privacy-policy.html"
         },
+        {
+          "source": "/help-center/",
+          "destination": "/help-center.html"
+        },
         { "source": "/go/**", "dynamicLinks": true }
       ],
       "trailingSlash": true
