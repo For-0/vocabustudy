@@ -30,7 +30,7 @@ const { db, auth } = initialize(async user => {
             localStorage.setItem("redirect_after_login", location.href);
             location.hash = "#login";
         }
-        showAccountInfo({ photoURL: "", displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
+        showAccountInfo({displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
     }
 }, async remoteConfig => {
     let featuredSets = JSON.parse(getValue(remoteConfig, "featuredSets").asString());
@@ -46,7 +46,6 @@ const hashTitles = {
     "#saved-sets": "Saved Sets",
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
-    "#login": "Log In",
     "#account": "My Account"
 };
 const pages = {
