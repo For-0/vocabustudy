@@ -6,7 +6,7 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Vocabustudy - Privacy Policy
+        title Vocabustudy - Help Center
         link(rel="stylesheet", href="css/styles.scss")
         link(rel="stylesheet" href="css/material-components.scss")
         link(rel="shortcut icon", href="favicon.ico", type="image/x-icon")
@@ -18,10 +18,8 @@ html(lang="en")
         include includes/navbar
         main.mdc-top-app-bar--fixed-adjust
             .page#home
-            
               h1 Vocabustudy Help Center
                   p.mdc-typography--headline5 How-tos and overall helpful tips and instructions!
-                  head
                     meta(name='viewport' content='width=device-width, initial-scale=1')
                     style.
                       .collapsible {
@@ -89,10 +87,4 @@ html(lang="en")
                     }
                     });
                     }
-        script.
-            document.getElementById("checkbox-sentry-optout").checked = Boolean(localStorage.getItem("sentry_optout"));
-            document.getElementById("checkbox-sentry-optout").addEventListener("change", e => {
-                if (e.target.checked) localStorage.setItem("sentry_optout", true);
-                else localStorage.removeItem("sentry_output");
-            })
         include includes/footer
