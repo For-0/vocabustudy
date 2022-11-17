@@ -130,7 +130,7 @@ async function showAuthUI() {
             uiShown: () => console.log("[FirebaseUI] Auth UI Loaded")
         },
         signInFlow: "popup",
-        privacyPolicyUrl: "https://vocabustudyonline.web.app/privacy",
+        privacyPolicyUrl: "https://vocabustudy.org/privacy",
         siteName: "Vocabustudy"
     });
 }
@@ -213,7 +213,7 @@ function registerCustomCollectionCard(docSnap) {
     });
     els.buttons[1].addEventListener("click", () => {
         if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
-        let cEls = createTextFieldWithHelper("Set ID", "vocabustudyonline.web.app/set/<SET ID>/view/");
+        let cEls = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
         els.card.querySelector(".collection-sets").append(cEls.textField, cEls.helperLine);
         cEls.obj.layout();
         cEls.obj.listen("change", () => els.buttons[2].disabled = false);
