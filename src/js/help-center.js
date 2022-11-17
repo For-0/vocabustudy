@@ -1,15 +1,8 @@
 import initialize from "./general";
 initialize();
-var coll = document.getElementsByClassName("collapsible");
-var i;
-for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight){
-             content.style.maxHeight = null;
-        } else {
-             content.style.maxHeight = content.scrollHeight + "px";
-        }
-    });
+const coll = document.getElementsByClassName("collapsible");
+for (let el of coll) {
+    el.addEventListener("click", () => {
+        el.nextElementSibling.classList.toggle("active");
+    })
 }
