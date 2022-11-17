@@ -1,0 +1,22 @@
+@import "styles.scss";
+.collapsible {
+    background-color: #795548;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: #fff;
+    font-size: 15px;
+}
+.active, .collapsible:hover {
+    background-color: #bda8a1;
+}
+.content {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+}
