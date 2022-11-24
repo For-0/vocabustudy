@@ -193,6 +193,7 @@ export async function parseCollections(collections, allCollections=null) {
  * Create a text field with an optional helper
  * @param {String} innerText Label text
  * @param {String?} helperText Helper text
+ * @param {HTMLInputElement} extraProperties Properties for the input el
  * @returns {{textField: HTMLLabelElement, helperLine: HTMLDivElement?, obj: MDCTextField}}
  */
 export function createTextFieldWithHelper(innerText, helperText=null, extraProperties={pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"}) {
