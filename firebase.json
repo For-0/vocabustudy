@@ -12,7 +12,6 @@
         "**/.*",
         "**/node_modules/**"
       ],
-      "appAssociation": "AUTO",
       "rewrites": [
         {
           "source": "/set/*/view/",
@@ -45,11 +44,50 @@
         {
           "source": "/help-center/",
           "destination": "/help-center.html"
-        },
-        { "source": "/go/**", "dynamicLinks": true }
+        }
       ],
       "trailingSlash": true
     },
+    {
+        "public": "dist",
+        "target": "nightly",
+        "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+        ],
+        "rewrites": [
+          {
+            "source": "/set/*/view/",
+            "destination": "/set-detail.html"
+          },
+          {
+            "source": "/timeline/*/view/",
+            "destination": "/set-detail.html"
+          },
+          {
+            "source": "/guide/*/view/",
+            "destination": "/guide-detail.html"
+          },
+          {
+            "source": "/set/*/edit/",
+            "destination": "/set-editor.html"
+          },
+          {
+            "source": "/user/*/",
+            "destination": "/user-sets.html"
+          },
+          {
+            "source": "/collection/*/",
+            "destination": "/custom-collections.html"
+          },
+          {
+            "source": "/privacy/",
+            "destination": "/privacy-policy.html"
+          }
+        ],
+        "trailingSlash": true
+      },
     {
       "public": "rd",
       "target": "rd"

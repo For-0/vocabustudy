@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for Vocabustudy
 title: ''
-labels: enhancement
+labels: enhancement, non triaged
 assignees: ''
 
 ---

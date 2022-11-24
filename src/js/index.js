@@ -30,7 +30,7 @@ const { db, auth } = initialize(async user => {
             localStorage.setItem("redirect_after_login", location.href);
             location.hash = "#login";
         }
-        showAccountInfo({ photoURL: "", displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
+        showAccountInfo({displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
     }
 }, async remoteConfig => {
     let featuredSets = JSON.parse(getValue(remoteConfig, "featuredSets").asString());
@@ -46,7 +46,6 @@ const hashTitles = {
     "#saved-sets": "Saved Sets",
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
-    "#login": "Log In",
     "#account": "My Account"
 };
 const pages = {
@@ -59,6 +58,7 @@ const pages = {
         email: document.querySelector("#account .field-email"),
         created: document.querySelector("#account .field-created"),
         emailVerified: document.querySelector("#account .field-email-verified"),
+        emailNotVerified: !document.querySelector("#account .field-email-not-verified"),
         btnVerifyEmail: document.querySelector("#account .btn-verify-email"),
         btnChangePassword: document.querySelector("#account .btn-change-password"),
         btnChangeName: document.querySelector("#account .btn-change-name"),
@@ -130,7 +130,7 @@ async function showAuthUI() {
             uiShown: () => console.log("[FirebaseUI] Auth UI Loaded")
         },
         signInFlow: "popup",
-        privacyPolicyUrl: "https://vocabustudyonline.web.app/privacy",
+        privacyPolicyUrl: "https://vocabustudy.org/privacy",
         siteName: "Vocabustudy"
     });
 }
@@ -176,6 +176,7 @@ function showAccountInfo({ displayName, email, emailVerified, metadata: { creati
     pages.account.name.innerText = displayName;
     pages.account.email.innerText = email;
     pages.account.emailVerified.hidden = emailVerified;
+    pages.account.emailNotVerified.hidden = !emailVerified;
     pages.account.btnVerifyEmail.hidden = emailVerified;
     if (creationTime) pages.account.created.innerText = toLocaleDate(creationTime);
     else if (auth.currentUser)
@@ -212,7 +213,7 @@ function registerCustomCollectionCard(docSnap) {
     });
     els.buttons[1].addEventListener("click", () => {
         if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
-        let cEls = createTextFieldWithHelper("Set ID", "vocabustudyonline.web.app/set/<SET ID>/view/");
+        let cEls = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
         els.card.querySelector(".collection-sets").append(cEls.textField, cEls.helperLine);
         cEls.obj.layout();
         cEls.obj.listen("change", () => els.buttons[2].disabled = false);

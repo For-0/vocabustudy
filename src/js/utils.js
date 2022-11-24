@@ -310,7 +310,7 @@ export function createCustomCollectionCard(collection, id) {
     /** @type {MDCTextField[]} */
     let textFields = [];
     let textEls = collection.sets.flatMap(setId => {
-        let {textField, helperLine, obj} = createTextFieldWithHelper("Set ID", "vocabustudyonline.web.app/set/<SET ID>/view/");
+        let {textField, helperLine, obj} = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
         obj.value = setId;
         textFields.push(obj);
         return [textField, helperLine];

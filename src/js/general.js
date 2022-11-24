@@ -27,7 +27,7 @@ const fabs = {
 
 const firebaseConfig = {
     apiKey: "AIzaSyCsDuM2jx3ZqccS8MS5aumkOKaV2LiVwZk",
-    authDomain: "vocabustudyonline.web.app",
+    authDomain: "vocabustudy.org",
     projectId: "vocab-u-study",
     storageBucket: "vocab-u-study.appspot.com",
     messagingSenderId: "230085427328",
@@ -75,6 +75,10 @@ export function setHue(hue) {
  * @param {remoteConfigActivatedCallback} remoteConfigActivatedCallback 
  */
 export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = () => {}) {
+    if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) {
+        location.host = "vocabustudy.org";
+        return;
+    }
     showTheme(localStorage.getItem("theme"));
     setHue(localStorage.getItem("theme_hue"));
     const app = initializeApp(firebaseConfig);
