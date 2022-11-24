@@ -22,10 +22,9 @@
     "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import emulator-data --export-on-exit",
     "clean": "rmdir /s dist && rmdir /s .parcel-cache",
     "publish": "npm run build && firebase deploy --only hosting:vocabustudy",
-    "publish-nightly": "npm version patch && npm run build && firebase hosting:channel:deploy nightly --only vocabustudy",
+    "publish-nightly": "npm version patch && npm run build && firebase deploy --only hosting:nightly",
     "publish-major": "npm version major && npm run publish",
-    "publish-minor": "npm version minor && npm run publish",
-    "push-stable": "firebase hosting:clone vocabustudyonline:nightly vocabustudyonline:live"
+    "publish-minor": "npm version minor && npm run publish"
   },
   "keywords": [],
   "author": "Siddhant Kameswar",
