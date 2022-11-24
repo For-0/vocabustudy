@@ -15,9 +15,9 @@ unless omitAccount
         span.mdc-fab__icon.material-icons-round brightness_high
 footer(style="position: relative;")
   p
-    span Vocabustudy #{process.env.npm_package_version} | &copy; 2022 Siddhant K. All Rights Reserved. 
+    span v#{process.env.npm_package_version} | &copy; 2022 Siddhant K. All Rights Reserved. 
       a.a(href="/#credits") Credits
-    span Version #{process.env.npm_package_version} - 
+    span v#{process.env.npm_package_version} - 
       a.a(href="/#credits") Credits
   div
     div
@@ -25,30 +25,20 @@ footer(style="position: relative;")
       |  | 
       a.a(href="/#discord") Discord
       |  | 
-      a.a(href="https://forms.gle/Lzk4cYu8AVA2XX1A6" target="_blank") Feedback
-      |  | 
-      a.a(href="https://nightly.vocabustudy.org/" target="_blank") Nightly Build
+      a.a(href="https://nightly.vocabustudy.org/" target="_blank") Nightly
       |  #[a(href="https://github.com/For-0/vocabustudy/blob/main/README.md#what-is-nightly" style="color:white") (?)]
       |  | 
       a.a(href="https://github.com/orgs/For-0/projects/2/insights/1" target="_blank") Leaderboard
-      |  | 
-      a.a(href="/#donate") Donate
     div(style="transform-origin: right; transform: scale(0.8);")
       a.mdc-icon-button(href="/privacy/" title="Privacy")
         .mdc-icon-button__ripple
-        i.material-icons-round lock
+        i.material-icons-round security
       a.mdc-icon-button(href="/#discord" title="Discord")
         .mdc-icon-button__ripple
         i.material-icons-round question_answer
-      a.mdc-icon-button(href="https://forms.gle/Lzk4cYu8AVA2XX1A6" target="_blank" title="Feedback/Bugs")
+      a.mdc-icon-button(href="https://nightly.vocabustudy.org/" target="_blank" title="Nightly")
         .mdc-icon-button__ripple
-        i.material-icons-round help
-      a.mdc-icon-button(href="/#donate" title="Donate")
-        .mdc-icon-button__ripple
-        i.material-icons-round paid
-      a.mdc-icon-button(href="https://nightly.vocabustudy.org/" target="_blank" title="Nightly Build")
-        .mdc-icon-button__ripple
-        i.material-icons-round build
+        i.material-icons-round bug_report
       a.mdc-icon-button(href="https://github.com/orgs/For-0/projects/2/insights/1" title="Leaderboard")
         .mdc-icon-button__ripple
         i.material-icons-round leaderboard

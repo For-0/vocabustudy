@@ -1,13 +1,5 @@
 @import "styles.scss";
 :is(#flashcards, #learn, #test, #match) {
-    > h1 > span {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: inline-block;
-        overflow: hidden;
-        max-width: calc(100% - var(--studymode-header-width));
-        vertical-align: middle;
-    }
     > div:nth-child(2) {
         display: flex;
         flex-direction: row;

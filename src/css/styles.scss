@@ -365,3 +365,19 @@ footer {
     color: black;
     margin-top: 3px;
 }
+.field-user-name, .field-collection-name {
+    vertical-align: bottom;
+    max-width: calc(100% - var(--));
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+}
+:is(#flashcards, #learn, #test, #match) > h1 > span, .field-user-name, .field-collection-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    max-width: calc(100% - var(--studymode-header-width));
+    vertical-align: middle;
+}

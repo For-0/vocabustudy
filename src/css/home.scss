@@ -123,7 +123,7 @@
     main:not(:has(.page:not(#home):target)) ~ footer {
         z-index: 20;
         opacity: 0;
-        &:hover {
+        &:has(> :hover) {
             opacity: 1;
             background-color: transparent;
             &::after {

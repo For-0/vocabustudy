@@ -50,19 +50,38 @@ html(lang="en" style="overflow-x: hidden;")
                             span.mdc-button__label Delete Account
             .page#mysets
                 h1 My Sets:
-                    div(style="position: absolute;right: 0;top: 0;")
-                        a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new/edit/" style="color: white;")
+                    .mdc-menu-surface--anchor(style="position: absolute;right: 0;top: 0;")
+                        button.mdc-button.mdc-button--leading.btn-create(style="color: white; cursor: pointer;")
                             span.mdc-button__ripple
                             i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                            span.mdc-button__label Set
-                        a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new-timeline/edit/" style="color: white;")
-                            span.mdc-button__ripple
-                            i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                            span.mdc-button__label Timeline
-                        a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new-guide/edit/" style="color: white;")
-                            span.mdc-button__ripple
-                            i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                            span.mdc-button__label Guide
+                            span.mdc-button__label Create
+                        .mdc-menu.mdc-menu-surface
+                            ul.mdc-list(role="menu" aria-orientation="vertical" tabindex="-1")
+                                li
+                                    a.mdc-list-item(role="menuitem" href="/set/new/edit/")
+                                        span.mdc-list-item__ripple
+                                        span.mdc-list-item__text Set
+                                li
+                                    a.mdc-list-item(role="menuitem" href="/set/new-timeline/edit/")
+                                        span.mdc-list-item__ripple
+                                        span.mdc-list-item__text Timeline
+                                li
+                                    a.mdc-list-item(role="menuitem" href="/set/new-guide/edit/")
+                                        span.mdc-list-item__ripple
+                                        span.mdc-list-item__text Guide
+                        //
+                            a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new/edit/" style="color: white;")
+                                span.mdc-button__ripple
+                                i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
+                                span.mdc-button__label Set
+                            a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new-timeline/edit/" style="color: white;")
+                                span.mdc-button__ripple
+                                i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
+                                span.mdc-button__label Timeline
+                            a.mdc-button.mdc-button--leading.btn-create-set(href="/set/new-guide/edit/" style="color: white;")
+                                span.mdc-button__ripple
+                                i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
+                                span.mdc-button__label Guide
                 .set-container(data-empty="You don't have any sets. Create one!")
                 button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
                     span.mdc-button__ripple
@@ -111,11 +130,11 @@ html(lang="en" style="overflow-x: hidden;")
                 button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-collections-menu(type="button" style="margin-left: 1rem;")
                     span.mdc-button__ripple
                     i.material-icons-round.mdc-button__icon(aria-hidden="true") filter_list
-                    span.mdc-button__label Filter by Collection
+                    span.mdc-button__label Collections
                 button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-clear-filters(type="button" style="margin-left: 1rem;")
                     span.mdc-button__ripple
                     i.material-icons-round.mdc-button__icon(aria-hidden="true") filter_list_off 
-                    span.mdc-button__label Clear Filters
+                    span.mdc-button__label Clear
                 button.mdc-button.mdc-button--raised.mdc-button--leading.btn-search-go(type="button" style="margin-left: 1rem;")
                     span.mdc-button__ripple
                     i.material-icons-round.mdc-button__icon(aria-hidden="true") search
