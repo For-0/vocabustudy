@@ -1,0 +1,104 @@
+- var showBack = true;
+- var styleFile = "help-center.scss"; 
+- var showBack = true;
+- var title = "Help Center";
+- var description = "Vocabustudy Help Center";
+doctype html
+html(lang="en")
+    include includes/head
+    body.mdc-typography.theme-system
+        include includes/navbar
+        main.mdc-top-app-bar--fixed-adjust
+            .page#home
+                h1 Vocabustudy Help Center
+                p.mdc-typography--headline5 How-tos, tips, and instructions!
+                button.collapsible Creating an account
+                .content
+                    h2 Creating an account gives you the ability to:
+                    ul
+                        li Create sets
+                        br
+                        li Save sets
+                        br
+                        li Comment on sets
+                        br
+                        li Like sets
+                        br
+                        li And more!
+                    h2 How to create an account
+                    p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login")] vocabustudy.org/#login].
+                    p 2. Click "log in" in the menu that appears.
+                    p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email. 
+                        | We recommend signing in with Google, because it is much easier to create your account and login to it. 
+                        | However, if you want to create your account with email, here are the steps:
+                    ol
+                        li Press the button that says "Sign in with email".
+                        br
+                        li Enter your email in the menu that appears.
+                        br
+                        li Enter your name and the password that you want to use for your new account.
+                        br
+                        li It will bring up information about email verification. Press "Send Verification Email" when you are ready.
+                        br
+                        li You will get a message at the bottom of the screen when the email has been sent.
+                        br
+                        li Open your email.
+                        br
+                        li Look for an email from noreply@vocabustudy.org (such a cool, professional email, I know!!!!) titled "Verify your email for Vocabustudy".
+                        br
+                        li Open it and click the link.
+                        br
+                        li It will tell you when your email is verified.
+                        br
+                        li Close the tab with the email verification link.
+                        br
+                        li Reload the My Account page on Vocabustudy. 
+                        br
+                    h3 Your Account has been verified!
+                    p You can now use your account when you are using Vocabustudy.
+                br
+                br
+                button.collapsible Creating a set
+                .content
+                    h2 Here's how to create a set:
+                    ol
+                        li Open Vocabustudy and make sure that you are logged in.
+                        br
+                        li Then, click the account icon on the top right and go to "My Sets", or go to "https://vocabustudy.org/#mysets".
+                        br
+                        li You will see buttons that will allow you to create sets, study guides, and timelines. In this tutorial, we will create a mew set.
+                        br
+                        li Click on "Add/+ set".
+                        br
+                        li Add a title. You can also add an optional description, if you like.
+                        br
+                        li Make the set either public or private.
+                        br
+                        li Add terms using the "add" button.
+                        br
+                        li You can also import terms from Quizlet or Blooket. You can also just copy and paste terms from a vocabulary list, Kahoot, etc.
+                        br
+                        li Add your set to the collections/subjects that it falls under, so that people can find it easily.
+                        br
+                        li Make sure that your set has at least four terms and a title.
+                        br
+                        li Click "save set".
+                    h4 Congratulations, you have created a set!
+                    p There are some guidelines for sets:
+                    ol
+                        br
+                        li Your sets cannot have offensive, harmful, or explicit content.
+                         | If your set meets the criteria listed, your set will at the very least be made private or deleted, and at worst, your account will be restricted.
+                        br
+                        li Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
+                        br
+                        li Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
+                    p Have fun making useful sets!
+                br
+                br
+                h3
+                 | If you have any feedback or questions, please use #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
+                h3 You can contact us with any questions that you have at #[a(href='mailto:management@vocabustudy.org') management@vocabustudy.org]. Thank you!
+
+        include includes/footer
+        script(src="js/help-center.js" type="module")

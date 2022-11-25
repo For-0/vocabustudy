@@ -56,6 +56,16 @@ $theme-color: #795548;
     .mdc-text-field--disabled .mdc-notched-outline__leading, .mdc-text-field--disabled .mdc-notched-outline__notch, .mdc-text-field--disabled .mdc-notched-outline__trailing {
         border-color: #ffffff0f;
     }
+    .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #262626;
+        &.active {
+            display: block;
+        }
+    }
     .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-notched-outline__leading, .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-notched-outline__notch, .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing, .mdc-text-field--invalid:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__leading, .mdc-text-field--invalid:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__notch, .mdc-text-field--invalid:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline .mdc-notched-outline__trailing, .mdc-text-field--invalid:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__leading, .mdc-text-field--invalid:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch, .mdc-text-field--invalid:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__trailing {
         border-color: #b00020;
     }

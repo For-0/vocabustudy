@@ -12,13 +12,15 @@
     "src/privacy-policy.pug",
     "src/custom-collections.pug",
     "src/404.pug",
-    "src/google867623008d63d621.html"
+    "src/google867623008d63d621.html",
+    "src/help-center.pug"
   ],
   "browserslist": "> 0.1% and last 2 versions and not dead",
   "scripts": {
     "start": "parcel",
     "build": "rmdir /Q /s dist && parcel build --no-source-maps",
-    "watch": "parcel watch --no-hmr",
+    "cleanup": "rmdir /q /s .parcel-cache dist",
+    "watch": "npm run cleanup && parcel watch --no-hmr",
     "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import emulator-data --export-on-exit",
     "clean": "rmdir /s dist && rmdir /s .parcel-cache",
     "publish": "npm run build && firebase deploy --only hosting:vocabustudy",
