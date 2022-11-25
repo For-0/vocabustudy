@@ -144,8 +144,7 @@ html.custom-scrollbar(lang="en")
                     div(style="overflow-x: auto;")
                         p.mdc-typography--headline3
                         div
-                            p.mdc-typography--body1
-                                | Tip: Use the number keys 1-4 to answer multiple choice questions
+                            p.mdc-typography--body1(style="font-size: 8px;") Tip: Use the number keys 1-4 to answer multiple choice questions
                             p(hidden='')
                                 button.mdc-button.mdc-button--icon-trailing(type='button')
                                     span.mdc-button__ripple
@@ -406,7 +405,7 @@ html.custom-scrollbar(lang="en")
                         label.mdc-text-field.mdc-text-field--filled
                             span.mdc-text-field__ripple
                             span.mdc-floating-label Comment
-                            input.mdc-text-field__input(type="text" required)
+                            input.mdc-text-field__input(type="text" required maxlength="500")
                             span.mdc-line-ripple
                         button.mdc-button.mdc-button--outlined(type="button" style="display: block;" disabled)
                             span.mdc-button__ripple

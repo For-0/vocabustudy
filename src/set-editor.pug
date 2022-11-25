@@ -22,14 +22,14 @@ html.custom-scrollbar(lang="en")
                             span.mdc-notched-outline__notch
                                 span.mdc-floating-label Set Name
                             span.mdc-notched-outline__trailing
-                        input.mdc-text-field__input(aria-label="Set Name" type="text" required)
+                        input.mdc-text-field__input(aria-label="Set Name" type="text" required maxlength="500")
                     label.mdc-text-field.mdc-text-field--outlined.field-description(style="width: 100%; margin-top: 1rem;")
                         span.mdc-notched-outline
                             span.mdc-notched-outline__leading
                             span.mdc-notched-outline__notch
                                 span.mdc-floating-label Set Description
                             span.mdc-notched-outline__trailing
-                        input.mdc-text-field__input(aria-label="Set Description" type="text")
+                        input.mdc-text-field__input(aria-label="Set Description" type="text" maxlength="5000")
                     div(style="margin-top: 1rem;")
                         button#field-public.mdc-switch.mdc-switch--unselected(type="button" role="switch" aria-checked="false")
                             .mdc-switch__track
@@ -69,6 +69,9 @@ html.custom-scrollbar(lang="en")
                         i.material-icons-round.mdc-button__icon(aria-hidden="true") cancel
                         span.mdc-button__label Cancel
         include includes/footer
+        aside.mdc-snackbar#snackbar-cant-save
+            .mdc-snackbar__surface(role="status" aria-relevant="additions")
+                .mdc-snackbar__label(aria-atomic="false") Unable to save. This may be caused by a recent display name change.
         .mdc-dialog#dialog-import-terms
             .mdc-dialog__container
                 .mdc-dialog__surface(role="alertdialog" aria-modal="true")

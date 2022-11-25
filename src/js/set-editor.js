@@ -7,6 +7,7 @@ import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
+import { MDCSnackbar } from "@material/snackbar/component.js";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -30,7 +31,7 @@ class QuizQuestion extends HTMLElement {
         }
     }
     createAnswerInput(answer) {
-        let input = createTextFieldWithHelper("Answer", null, {}).obj;
+        let input = createTextFieldWithHelper("Answer", null, {maxLength: 500}).obj;
         input.value = answer;
         this.appendChild(input.root);
         input.layout();
@@ -42,7 +43,7 @@ class QuizQuestion extends HTMLElement {
         return input;
     }
     showQuestion() {
-        this.questionInput = createTextFieldWithHelper("Question", null, {required: true}).obj;
+        this.questionInput = createTextFieldWithHelper("Question", null, {required: true, maxLength: 500}).obj;
         this.questionInput.root.style.width = "90%";
         this.questionInput.value = this.initialQuestion.question;
         this.appendChild(this.questionInput.root);
@@ -205,53 +206,38 @@ const fields = {
     importDialogInput: new MDCTextField(document.querySelector("#dialog-import-terms .mdc-text-field--textarea")),
     collections: document.querySelector(".field-collections"),
     btnImportBlooket: document.querySelector(".btn-import-blooket"),
-    fieldImportBlooket: new MDCTextField(document.querySelector(".field-import-blooket"))
+    fieldImportBlooket: new MDCTextField(document.querySelector(".field-import-blooket")),
+    snackbarCantSave: new MDCSnackbar(document.getElementById("snackbar-cant-save"))
 };
 let changesSaved = true;
 function createTermInput(term) {
     /** @type {HTMLDivElement?} */
     let termInput;
     if (setType === 0) {
+        let termField = createTextFieldWithHelper("Term", null, {required: true, maxLength: 500});
+        let definitionField = createTextFieldWithHelper("Definition", null, {required: true, maxLength: 500});
+        termField.textField.style.width = "";
+        definitionField.textField.style.width = "";
         termInput = createElement("div", ["editor-term"], {}, [
-            createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
-                createElement("span", ["mdc-notched-outline"], {}, [
-                    createElement("span", ["mdc-notched-outline__leading"]),
-                    createElement("span", ["mdc-notched-outline__notch"], {}, [
-                        createElement("span", ["mdc-floating-label"], {innerText: "Term"})
-                    ]),
-                    createElement("span", ["mdc-notched-outline__trailing"]),
-                ]),
-                createElement("input", ["mdc-text-field__input"], {"aria-label": "Term", type: "text", required: true}),
-            ]),
-            createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
-                createElement("span", ["mdc-notched-outline"], {}, [
-                    createElement("span", ["mdc-notched-outline__leading"]),
-                    createElement("span", ["mdc-notched-outline__notch"], {}, [
-                        createElement("span", ["mdc-floating-label"], {innerText: "Definition"})
-                    ]),
-                    createElement("span", ["mdc-notched-outline__trailing"]),
-                ]),
-                createElement("input", ["mdc-text-field__input"], {"aria-label": "Definition", type: "text", required: true}),
-            ]),
+            termField.textField,
+            definitionField.textField,
             createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
                 createElement("div", ["mdc-icon-button__ripple"]),
                 createElement("span", ["mdc-icon-button__focus-ring"]),
                 createElement("i", ["material-icons-round"], {innerText: "delete"})
             ])
         ]);
-        let termField = new MDCTextField(termInput.children[0]);
-        let definitionField = new MDCTextField(termInput.children[1]);
         MDCRipple.attachTo(termInput.children[2]).unbounded = true;
-        termField.value = term.term;
-        definitionField.value = term.definition;
+        termField.obj.value = term.term;
+        definitionField.obj.value = term.definition;
         termInput.children[2].addEventListener("click", () => termInput.remove());
     } else if (setType === 1) {
-        let inputName = createTextFieldWithHelper("Event", null, {required: true});
-        let inputDate = createTextFieldWithHelper("Date", null, {required: true});
+        let inputName = createTextFieldWithHelper("Event", null, {required: true, maxLength: 500});
+        let inputDate = createTextFieldWithHelper("Date", null, {required: true, maxLength: 500});
         let [name, date] = term.term.split("\x00");
         let details = term.definition.split("\x00");
         let detailInputs = details.map(el => {
-            let detailInput = createTextFieldWithHelper("Detail", null, {});
+            let detailInput = createTextFieldWithHelper("Detail", null, {maxLength: 500});
             detailInput.obj.value = el;
             return detailInput.textField;
         });
@@ -277,7 +263,7 @@ function createTermInput(term) {
             if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
         });
         actionButtons[1].addEventListener("click", () => {
-            termInput.querySelector(".details-container").insertBefore(createTextFieldWithHelper("Detail", null, {}).textField, termInput.querySelector(".details-container").lastElementChild);
+            termInput.querySelector(".details-container").insertBefore(createTextFieldWithHelper("Detail", null, {maxLength: 500}).textField, termInput.querySelector(".details-container").lastElementChild);
         });
         actionButtons[2].addEventListener("click", () => termInput.remove());
         actionButtons[3].addEventListener("click", () => {
@@ -285,7 +271,7 @@ function createTermInput(term) {
             else fields.terms.appendChild(termInput);
         });
     } else if (setType === 2) {
-        let inputName = createTextFieldWithHelper("Title", null, {required: true});
+        let inputName = createTextFieldWithHelper("Title", null, {required: true, maxLength: 500});
         /** @type {HTMLElement} */
         let bodyInput;
         let buttons = [
@@ -300,7 +286,7 @@ function createTermInput(term) {
                     createElement("span", ["mdc-notched-outline__trailing"])
                 ]),
                 createElement("span", ["mdc-text-field__resizer"], {}, [
-                    createElement("textarea", ["mdc-text-field__input"], {rows: 8, cols: 40})
+                    createElement("textarea", ["mdc-text-field__input", "custom-scrollbar"], {rows: 8, cols: 40})
                 ])
             ]);
             let bodyInputObj = new MDCTextField(bodyInput);
@@ -370,8 +356,12 @@ fields.formEdit.addEventListener("submit", async e => {
         batch.update(setMetaRef, {numTerms: terms.length, public: sPublic, name: setName, nameWords, collections, creator: creator || auth.currentUser.displayName});
         batch.update(setRef, {terms, public: sPublic, name: setName, description});
     }
-    await batch.commit();
-    goBack();
+    try {
+        await batch.commit();
+        goBack();
+    } catch {
+        fields.snackbarCantSave.open();
+    }
 });
 async function importTerms() {
     fields.importDialog.open();

@@ -3,6 +3,7 @@ import { MDCRipple } from "@material/ripple/index";
 import { MDCSlider } from "@material/slider";
 import { MDCSnackbar } from "@material/snackbar/index";
 import { MDCTextField } from "@material/textfield/index";
+import { MDCMenu } from "@material/menu";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
@@ -68,7 +69,9 @@ const pages = {
     mysets: {
         sets: document.querySelector('#mysets .set-container'),
         collections: document.querySelector("#mysets .collection-container"),
-        btnCreateCollection: document.querySelector("#mysets .btn-create-collection")
+        btnCreateCollection: document.querySelector("#mysets .btn-create-collection"),
+        btnCreate: document.querySelector("#mysets .btn-create"),
+        menuCreate: new MDCMenu(document.querySelector("#mysets .btn-create + .mdc-menu")),
     },
     publicsets: {
         sets: document.querySelectorAll("#search .set-container"),
@@ -414,12 +417,14 @@ addEventListener("DOMContentLoaded", () => {
             registerCustomCollectionCard(docSnap);
         }
     });
+    pages.mysets.btnCreate.addEventListener("click", () => pages.mysets.menuCreate.open = true);
     MDCRipple.attachTo(pages.account.btnVerifyEmail);
     MDCRipple.attachTo(pages.account.btnChangePassword);
     MDCRipple.attachTo(pages.account.btnDeleteAccount);
     MDCRipple.attachTo(pages.home.btnShowFeatures).unbounded = true;
     MDCRipple.attachTo(pages.account.btnChangeName);
     MDCRipple.attachTo(pages.mysets.btnCreateCollection);
+    MDCRipple.attachTo(pages.mysets.btnCreate);
     MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
     MDCRipple.attachTo(pages.publicsets.btnClearFilters);
     MDCRipple.attachTo(pages.publicsets.btnSearchGo);
