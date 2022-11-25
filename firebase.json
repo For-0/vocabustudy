@@ -84,6 +84,10 @@
           {
             "source": "/privacy/",
             "destination": "/privacy-policy.html"
+          },
+          {
+            "source": "/help-center/",
+            "destination": "/help-center.html"
           }
         ],
         "trailingSlash": true
