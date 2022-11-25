@@ -37,6 +37,7 @@ Examples of unacceptable behavior include:
 * Pushing changes without pulling changes pushed by other contributers
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
+* Gambling (unless you are the owner)
 
 ## Enforcement Responsibilities
 
