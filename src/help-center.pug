@@ -1,9 +1,10 @@
 - var showBack = true;
 - var styleFile = "help-center.scss"; 
 - var showBack = true;
+- var title = "Help Center";
+- var description = "Vocabustudy Help Center";
 doctype html
 html(lang="en")
-    title Help Center - Vocabustudy
     include includes/head
     body.mdc-typography.theme-system
         include includes/navbar
@@ -57,9 +58,9 @@ html(lang="en")
                     p You can now use your account when you are using Vocabustudy.
                 br
                 br
-                button.collapsible How to create a set:
+                button.collapsible Creating a set
                 .content
-                    h2 How to create a set:
+                    h2 Here's how to create a set:
                     ol
                         li Open Vocabustudy and make sure that you are logged in.
                         br
@@ -96,8 +97,7 @@ html(lang="en")
                 br
                 br
                 h3
-                 | If you have any feedback or questions, please use 
-                 #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
+                 | If you have any feedback or questions, please use #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
                 h3 You can contact us with any questions that you have at #[a(href='mailto:management@vocabustudy.org') management@vocabustudy.org]. Thank you!
 
         include includes/footer
