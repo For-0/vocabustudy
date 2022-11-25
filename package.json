@@ -49,19 +49,19 @@
     "@material/theme": "^14.0.0",
     "@material/tooltip": "^14.0.0",
     "@material/top-app-bar": "14.0.0",
-    "@sentry/browser": "^7.17.3",
-    "@sentry/tracing": "^7.17.3",
-    "dompurify": "^2.4.0",
+    "@sentry/browser": "^7.21.1",
+    "@sentry/tracing": "^7.21.1",
+    "dompurify": "^2.4.1",
     "firebase": "^9.14.0",
-    "firebaseui": "^6.0.1",
+    "firebaseui": "^6.0.2",
     "fscreen": "^1.2.0",
-    "marked": "^4.1.1"
+    "marked": "^4.2.3"
   },
   "devDependencies": {
-    "@parcel/reporter-bundle-analyzer": "^2.7.0",
-    "@parcel/transformer-pug": "^2.7.0",
-    "@parcel/transformer-sass": "^2.7.0",
-    "parcel": "^2.7.0",
+    "@parcel/reporter-bundle-analyzer": "^2.8.0",
+    "@parcel/transformer-pug": "^2.8.0",
+    "@parcel/transformer-sass": "^2.8.0",
+    "parcel": "^2.8.0",
     "process": "^0.11.10"
   }
 }
