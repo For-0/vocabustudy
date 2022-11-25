@@ -7,6 +7,7 @@ header.mdc-top-app-bar.mdc-top-app-bar
         button.material-icons-round.mdc-top-app-bar__navigation-icon.mdc-icon-button(onclick="javascript:(() => {((document.referrer.includes('vocabustudy') || location.host.includes('localhost') || location.hash) && history.length > 1) ? history.back() : location.href='/#search';})();" style="padding: 0; margin-left: -15px;") arrow_back
         a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal; padding: 0;' href='/#') Vocabustudy
       else
+        img(src="icons/icon-192.png" height="32px")
         a.mdc-top-app-bar__title(style='color: currentColor; font-weight: normal;' href='/#') Vocabustudy
     unless omitAccount
       // A goal that I have is to get linear z indices - 1, 2, 3, 4, 5, etc

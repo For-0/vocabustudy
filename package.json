@@ -63,6 +63,7 @@
     "@parcel/transformer-jsonld": "^2.8.0",
     "@parcel/transformer-pug": "^2.8.0",
     "@parcel/transformer-sass": "^2.8.0",
+    "@parcel/transformer-webmanifest": "^2.8.0",
     "parcel": "^2.8.0",
     "process": "^0.11.10"
   }
