@@ -46,7 +46,6 @@
     > button {
         width: calc(15% - 1rem);
         position: absolute;
-        bottom: 43px;
     }
 }
 .field-description {
@@ -194,6 +193,9 @@
                         align-items: center;
                         text-align: center;
                         transform: rotateX(0deg);
+                        ul, li {
+                            text-align: left;
+                        }
                         &:last-child {
                             transform: rotateY(180deg);
                         }

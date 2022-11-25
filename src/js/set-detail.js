@@ -105,6 +105,7 @@ let currentMatchLeaderboard = null;
  */
 let currentSet = null;
 let specialCharCollator = new Intl.Collator().compare;
+let resizeTimeout;
 window.StarredTerms = {
     getAllStarred() {
         return JSON.parse(localStorage.getItem("starred_terms")) || {};
@@ -229,7 +230,7 @@ const pages = {
             let cardFront = cardInner.appendChild(document.createElement("div"));
             let cardBack = cardInner.appendChild(document.createElement("div"));
             cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
-            if (setType === "timeline") cardBack.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+            if (setType === "timeline" && definition.includes("\x00")) cardBack.appendChild(document.createElement("p")).appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
             else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
             if (this.checkOnlyStarred.checked || window.StarredTerms.isStarred(i)) {
                 cardEl.style.color = "goldenrod";
@@ -611,6 +612,16 @@ const pages = {
             match.style.setProperty("--top", `${cy}px`);
             match.style.setProperty("--length", `${length}px`);
             match.style.setProperty("--angle", `${angle}deg`);
+        },
+        rematchEls(matchEl) {
+            let leftEl = document.querySelector(`.test-matching-box.left[data-question-id='${matchEl.dataset.fromCard}']`);
+            let rightEl = document.querySelector(`.test-matching-box.right[data-question-id='${matchEl.dataset.toCard}']`);
+            if (!leftEl || !rightEl) return;
+            matchEl.remove();
+            this.matchEls(leftEl, rightEl);
+        },
+        onResize() {
+            this.questionContainers[2].querySelectorAll(".matches-container > div").forEach(el => this.rematchEls(el));
         },
         randomizeMatchOptions() {
             let container = this.questionContainers[2].querySelector(":scope > div:nth-child(2)");
@@ -1176,7 +1187,6 @@ addEventListener("DOMContentLoaded", async () => {
         let setSnap = await getDoc(setRef);
         if (!setSnap.exists()) return location.href = "/404";
         currentSet = setSnap.data();
-        document.title = `${currentSet.name} - Vocabustudy`;
         currentSet.terms.forEach(term => {
             term.term = term.term.replace(/[\u2018\u2019]/g, "'");
             term.definition = term.definition.replace(/[\u2018\u2019]/g, "'");
@@ -1184,6 +1194,27 @@ addEventListener("DOMContentLoaded", async () => {
         currentSet.specials = currentSet.terms.map(el => [[...el.term.matchAll(accentsRE)].map(el => el[0]), [...el.definition.matchAll(accentsRE)].map(el => el[0])]).flat(2);
         currentSet.specials = currentSet.specials.concat(currentSet.specials.map(el => el.toUpperCase()));
         currentSet.specials = [...new Set(currentSet.specials)].sort(specialCharCollator);
+        document.querySelector("meta[property='og:title']").content = document.title = `${currentSet.name} - Vocabustudy`;
+        document.querySelector("meta[name=description]").content = document.querySelector("meta[property='og:description']").content = currentSet.description || `${currentSet.terms.length} terms`;
+        let quizJsonLD = {
+            "@context": "https://schema.org/",
+            "@type": "Quiz",
+            about: {
+                "@type": "Name",
+                name: currentSet.description
+            },
+            hasPart: currentSet.terms.slice(0, 5).map(el => ({
+                "@context": "https://schema.org/",
+                "@type": "Question",
+                eduQuestionType: "Flashcard",
+                text: el.term,
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: el.definition
+                }
+            }))
+        };
+        document.head.appendChild(createElement("script", [], {type: "application/ld+json", innerText: JSON.stringify(quizJsonLD)}));
 
         // MDC Instantiation and Events
         document.querySelectorAll("#home .study-modes .mdc-button").forEach(el => MDCRipple.attachTo(el));
@@ -1200,6 +1231,12 @@ addEventListener("DOMContentLoaded", async () => {
                 else fscreen.requestFullscreen(e.target);
             }
         }, true);
+        window.addEventListener("resize", () => {
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (location.hash === "#test") pages.test.onResize();
+            }, 100);
+        })
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;

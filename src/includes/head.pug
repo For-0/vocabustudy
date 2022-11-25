@@ -19,3 +19,22 @@ head
     link(rel="preload" href="./hero-background.svg" as="image")
     link(rel="stylesheet" href="npm:firebaseui/dist/firebaseui.css" disabled id="firebaseui-css")
     script(src="js/sentry.js" type="module")
+    script(type="application/ld+json").
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Vocabustudy",
+            "applicationCategory": "BrowserApplication,EducationalApplication",
+            "operatingSystem": "Browser",
+            "offers": {
+                "@type": "Offer",
+                "price": "0"
+            }
+        }
+    script(type="application/ld+json").
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Vocabustudy",
+            "url": "https://vocabustudy.org/"
+        }
