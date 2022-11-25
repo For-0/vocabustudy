@@ -10,6 +10,9 @@
         ],
         "vocabustudy": [
           "vocabustudyonline"
+        ],
+        "nightly": [
+            "vocabustudyonline--nightly-q9kbiq6r"
         ]
       }
     }

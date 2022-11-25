@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help improve Vocabustudy
 title: ''
-labels: bug
+labels: bug, non triaged
 assignees: ''
 
 ---
