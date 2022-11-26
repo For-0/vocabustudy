@@ -6,13 +6,13 @@ html(lang="en")
     include includes/head
     body.mdc-typography
         include includes/navbar
-        main.mdc-top-app-bar--fixed-adjust
+        main
             div#home.page
                 h1 Sets by User - 
                     span.field-user-name(style="word-break: break-word; --studymode-header-width: 240px;")
                 .set-container(data-empty="This user has not made any sets")
-                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.mdc-button__ripple
-                    span.mdc-button__label Load More
+                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.button__ripple
+                    span.button__label Load More
         include includes/footer
         script(src="js/user-sets.js" type="module")

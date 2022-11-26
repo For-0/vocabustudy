@@ -102,7 +102,7 @@
         }
     }
     .set-container {
-        .mdc-card-wrapper__text-section:nth-last-child(2) {
+        .card-content:nth-last-child(2) {
             margin-top: 4px;
         }
         .mdc-card__primary-action {
@@ -113,7 +113,7 @@
         .field-search-container {
             width: 100% !important;
             margin-bottom: 1rem;
-            + .mdc-button--outlined {
+            + .button--outlined {
                 margin-left: 0 !important;
             }
         }
@@ -134,7 +134,7 @@
 }
 
 #admin, #mysets {
-    .mdc-card-wrapper__text-section:nth-last-child(2) {
+    .card-content:nth-last-child(2) {
         margin-top: 6px;
         padding-bottom: 2px;
     }

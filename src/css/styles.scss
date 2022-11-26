@@ -183,7 +183,7 @@ main>div,
     }
 }
 
-.mdc-card-wrapper__text-section {
+.card-content {
     padding-left: 16px;
     padding-right: 16px;
     &:first-child {
@@ -215,7 +215,7 @@ a:not([class]) {
     }
 }
 
-.mdc-top-app-bar--fixed-adjust {
+main {
     margin-left: 1rem;
     margin-right: 1rem;
 }

@@ -225,34 +225,34 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
     let collectionLabels = await parseCollections(set.collections);
     let setType = set.collections.includes("-:0") ? "timeline" : (set.collections.includes("-:1") ? "guide" : "set");
     let buttons = [
-        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/${setType}/${id}/view/`}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "View"})
+        createElement("a", ["button", "mdc-card__action", "mdc-card__action--button"], {href: `/${setType}/${id}/view/`}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "View"})
         ]),
-        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/set/${id}/edit/`}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "Edit"})
+        createElement("a", ["button", "mdc-card__action", "mdc-card__action--button"], {href: `/set/${id}/edit/`}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "Edit"})
         ]),
-        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "Delete"})
+        createElement("button", ["button", "mdc-card__action", "mdc-card__action--button"], {}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "Delete"})
         ])
     ];
     buttons.forEach(el => MDCRipple.attachTo(el));
     let likeText = set.public ? ` - ${set.likes || "0"} likes` : "";
     let creatorLink = linkCreator ? createElement("a", [], {href: `/user/${set.uid}/`, innerText: `Created by ${set.creator}`}) : createElement("div", [], {innerText: `Created by ${set.creator}`});
     let cardEl = createElement("div", ["mdc-card"], {}, [
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-            createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: set.name }),
+        createElement("div", ["card-content"], {}, [
+            createElement("div", ["title.is-size-5", "fw-bold"], { innerText: set.name }),
             createElement("div", [], { innerText: `${set.numTerms} terms${likeText}` }),
             creatorLink
         ]),
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+        createElement("div", ["card-content"], {}, [
             createElement("div", [], { innerText: "Visibility: " }, [
                 createElement("span", [`bg-${set.public ? "green" : "yellow"}`], {innerText: set.public ? "Public" : "Private"})
             ])
         ]),
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, collectionLabels),
+        createElement("div", ["card-content"], {}, collectionLabels),
         createElement("div", ["mdc-card__actions"], {}, buttons)
     ]);
     return { card: cardEl, buttons };
@@ -277,12 +277,12 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     } else textEls.push(createElement("div", [], { innerText: `Created by ${creator}` }));
     let setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
     let primaryAction = createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/${setType}/${id}/view/` }, [
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-            createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: name }),
+        createElement("div", ["card-content"], {}, [
+            createElement("div", ["title.is-size-5", "fw-bold"], { innerText: name }),
             createElement("div", [], { innerText: `${numTerms} terms - ${likes || "0"} likes` })
         ]),
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, textEls),
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, collectionLabels),
+        createElement("div", ["card-content"], {}, textEls),
+        createElement("div", ["card-content"], {}, collectionLabels),
         createElement("div", ["mdc-card__ripple"])
     ]);
     let cardEl = createElement("div", ["mdc-card"], {}, [primaryAction])
@@ -291,21 +291,21 @@ export async function createSetCard({ name, creator, numTerms, collections, like
 }
 export function createCustomCollectionCard(collection, id) {
     let buttons = [
-        createElement("a", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {href: `/collection/${id}/`}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "View"})
+        createElement("a", ["button", "mdc-card__action", "mdc-card__action--button"], {href: `/collection/${id}/`}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "View"})
         ]),
-        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "Add Set"})
+        createElement("button", ["button", "mdc-card__action", "mdc-card__action--button"], {}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "Add Set"})
         ]),
-        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {disabled: true}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "Save"})
+        createElement("button", ["button", "mdc-card__action", "mdc-card__action--button"], {disabled: true}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "Save"})
         ]),
-        createElement("button", ["mdc-button", "mdc-card__action", "mdc-card__action--button"], {}, [
-            createElement('div', ["mdc-button__ripple"]),
-            createElement("div", ["mdc-button__label"], {innerText: "Delete"})
+        createElement("button", ["button", "mdc-card__action", "mdc-card__action--button"], {}, [
+            createElement('div', ["button__ripple"]),
+            createElement("div", ["button__label"], {innerText: "Delete"})
         ])
     ];
     /** @type {MDCTextField[]} */
@@ -318,11 +318,11 @@ export function createCustomCollectionCard(collection, id) {
     })
     buttons.forEach(el => MDCRipple.attachTo(el));
     let cardEl = createElement("div", ["mdc-card"], {}, [
-        createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-            createElement("div", ["mdc-typography--headline5", "fw-bold"], { innerText: collection.name }),
+        createElement("div", ["card-content"], {}, [
+            createElement("div", ["title.is-size-5", "fw-bold"], { innerText: collection.name }),
             createElement("div", [], { innerText: `${collection.sets.length} sets` })
         ]),
-        createElement("div", ["mdc-card-wrapper__text-section", "collection-sets"], {}, [...textEls]),
+        createElement("div", ["card-content", "collection-sets"], {}, [...textEls]),
         createElement("div", ["mdc-card__actions"], {}, buttons)
     ]);
     return { card: cardEl, buttons, textFields };

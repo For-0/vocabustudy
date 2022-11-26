@@ -1,8 +1,8 @@
-import { MDCRipple } from "@material/ripple/index";
-import { MDCTextField } from "@material/textfield/index";
-import { MDCFormField } from "@material/form-field/index";
-import { MDCRadio } from "@material/radio/index";
-import { MDCSnackbar } from "@material/snackbar/index";
+// import { MDCRipple } from "@material/ripple/index";
+// import { MDCTextField } from "@material/textfield/index";
+// import { MDCFormField } from "@material/form-field/index";
+// import { MDCRadio } from "@material/radio/index";
+// import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, normalizeAnswer } from "./utils.js";

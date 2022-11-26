@@ -37,9 +37,9 @@ class AccentKeyboard extends HTMLElement {
     showButtons() {
         for (let specialChar of this.accents) {
             let btn = this.fieldset.appendChild(document.createElement("button"));
-            btn.classList.add("mdc-button", "mdc-button--outlined");
-            btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
-            btn.appendChild(document.createElement("span")).classList.add("mdc-button__label");
+            btn.classList.add("button", "button--outlined");
+            btn.appendChild(document.createElement("span")).classList.add("button__ripple");
+            btn.appendChild(document.createElement("span")).classList.add("button__label");
             btn.lastElementChild.innerText = specialChar;
             btn.addEventListener("mousedown", e => {
                 e.preventDefault();
@@ -209,7 +209,7 @@ const pages = {
         },
         setName: document.querySelector("#flashcards h1 > span"),
         terms: document.querySelector("#flashcards > div:nth-child(2) > div:last-child"),
-        btnShuffle: document.querySelector("#flashcards > div > div:first-child .mdc-button--outlined"),
+        btnShuffle: document.querySelector("#flashcards > div > div:first-child .button--outlined"),
         btnPrevious: document.getElementById("btn-previous-flashcard"),
         btnNext: document.getElementById("btn-next-flashcard"),
         btnFlip: document.getElementById("btn-flip-flashcard"),
@@ -257,7 +257,7 @@ const pages = {
             });
         },
         init() {
-            document.querySelectorAll("#flashcards > div:last-child .mdc-button").forEach(el => MDCRipple.attachTo(el));
+            document.querySelectorAll("#flashcards > div:last-child .button").forEach(el => MDCRipple.attachTo(el));
             this.radioBtns = [...this.radioBtns].map(el =>
                 MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
             );
@@ -391,7 +391,7 @@ const pages = {
                 answers.forEach((answer, i) => {
                     let btn = this.answerMC.elements[i];
                     let ansTerm = currentSet.terms[answer];
-                    applyStyling(ansTerm[this.answerType], btn.querySelector(".mdc-button__label"));
+                    applyStyling(ansTerm[this.answerType], btn.querySelector(".button__label"));
                     resizeButtonText(btn);
                     btn.dataset.answerindex = answer;
                 });
@@ -498,8 +498,8 @@ const pages = {
     test: {
         el: document.getElementById("test"),
         setName: document.querySelector("#test h1 > span"),
-        btnNew: document.querySelector("#test > div > div:first-child .mdc-button--outlined"),
-        btnCheck: document.querySelector("#test > div > div:first-child .mdc-button--raised"),
+        btnNew: document.querySelector("#test > div > div:first-child .button--outlined"),
+        btnCheck: document.querySelector("#test > div > div:first-child .button--raised"),
         radioBtns: document.querySelectorAll("#test .answer-with"),
         /** @type {MDCCheckbox[]} */
         checkboxes: document.querySelectorAll("#test .check-test-question-types"),
@@ -577,7 +577,7 @@ const pages = {
                 return el;
             });
             let questionContainer = this.questionContainers[container].appendChild(createElement("div", [], {}, [
-                createElement("h3", ["mdc-typography--headline5"], {}, []),
+                createElement("h3", ["title.is-size-5"], {}, []),
                 ...answerRadios
             ]));
             if (isStarred) questionContainer.querySelector("h3").style.color = "goldenrod";
@@ -629,7 +629,7 @@ const pages = {
         },
         generateQuestions() {
             this.btnCheck.disabled = false;
-            this.btnCheck.querySelector(".mdc-button__label").innerText = "Check Answers";
+            this.btnCheck.querySelector(".button__label").innerText = "Check Answers";
             this.questionContainers[0].textContent = this.questionContainers[1].textContent = this.questionContainers[3].textContent = "";
             this.questionContainers[2].querySelectorAll(":scope > div").forEach(el => el.textContent = "");
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
@@ -725,7 +725,7 @@ const pages = {
             let percentCorrect = Math.round(numCorrect * 100 / total);
             this.btnCheck.disabled = true;
             this.btnCheck.classList.remove("mdc-ripple-upgraded--background-focused");
-            this.btnCheck.querySelector(".mdc-button__label").innerText = `${percentCorrect}%`;
+            this.btnCheck.querySelector(".button__label").innerText = `${percentCorrect}%`;
         },
         matchingBoxClickListener(e) {
             switch (pages.test.currentMatchMode) {
@@ -798,7 +798,7 @@ const pages = {
             }
         },
         init() {
-            document.querySelectorAll("#test .mdc-button").forEach(el => MDCRipple.attachTo(el));
+            document.querySelectorAll("#test .button").forEach(el => MDCRipple.attachTo(el));
             this.radioBtns = [...this.radioBtns].map(el =>
                 MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
             );
@@ -893,7 +893,7 @@ const pages = {
         },
         makeDraggableCard(text, questionId, index) {
             let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], { draggable: true }, [
-                createElement("div", ["mdc-card-wrapper__text-section"])
+                createElement("div", ["card-content"])
             ]);
             applyStyling(text, card.firstElementChild);
             card.dataset.questionId = questionId;
@@ -905,7 +905,7 @@ const pages = {
         },
         makeDropzoneCard(text, questionId) {
             let card = createElement("div", ["mdc-card", "dropzone-card"], {}, [
-                createElement("div", ["mdc-card-wrapper__text-section"]),
+                createElement("div", ["card-content"]),
                 createElement("div")
             ]);
             applyStyling(text, card.firstElementChild);
@@ -1008,7 +1008,7 @@ const pages = {
             clearInterval(this.interval);
         },
         init() {
-            document.querySelectorAll("#test .mdc-button").forEach(el => MDCRipple.attachTo(el));
+            document.querySelectorAll("#test .button").forEach(el => MDCRipple.attachTo(el));
             this.radioBtns = [...this.radioBtns].map(el =>
                 MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
             );
@@ -1110,9 +1110,9 @@ function createTermCard({ term, definition }, index) {
     let cardEl = document.createElement("div");
     cardEl.classList.add("mdc-card", "mdc-card--outlined");
     let cardHeading = cardEl.appendChild(document.createElement("div"));
-    cardHeading.classList.add("mdc-card-wrapper__text-section");
+    cardHeading.classList.add("card-content");
     let cardTitle = cardHeading.appendChild(document.createElement("div"));
-    cardTitle.classList.add("mdc-typography--headline6");
+    cardTitle.classList.add("title.is6");
     cardTitle.style.fontWeight = "600";
     applyStyling(term.replace("\x00", " - "), cardTitle);
     let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", { is: "star-button" }))));
@@ -1128,8 +1128,8 @@ function createTermCard({ term, definition }, index) {
 function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
     let cardEl = createElement("div", ["mdc-card"]);
-    let cardHeading = cardEl.appendChild(createElement("div", ["mdc-card-wrapper__text-section"]));
-    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], { innerText: name, href: `/user/${id}/` })]));
+    let cardHeading = cardEl.appendChild(createElement("div", ["card-content"]));
+    let cardTitle = cardHeading.appendChild(createElement("div", ["title.is6"], {}, [createElement("a", [], { innerText: name, href: `/user/${id}/` })]));
     cardTitle.style.fontWeight = "600";
     let cardText = cardHeading.appendChild(document.createElement("div"));
     if (isMyComment) {
@@ -1161,11 +1161,11 @@ function navigate() {
 }
 function showLikeStatus(likeStatus) {
     if (likeStatus) {
-        pages.setOverview.btnLike.querySelector(".mdc-button__label").innerText = "Unlike";
-        pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText = "favorite";
+        pages.setOverview.btnLike.querySelector(".button__label").innerText = "Unlike";
+        pages.setOverview.btnLike.querySelector(".button__icon").innerText = "favorite";
     } else {
-        pages.setOverview.btnLike.querySelector(".mdc-button__label").innerText = "Like";
-        pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText = "favorite_border";
+        pages.setOverview.btnLike.querySelector(".button__label").innerText = "Like";
+        pages.setOverview.btnLike.querySelector(".button__icon").innerText = "favorite_border";
     }
 }
 
@@ -1217,7 +1217,7 @@ addEventListener("DOMContentLoaded", async () => {
         document.head.appendChild(createElement("script", [], {type: "application/ld+json", innerText: JSON.stringify(quizJsonLD)}));
 
         // MDC Instantiation and Events
-        document.querySelectorAll("#home .study-modes .mdc-button").forEach(el => MDCRipple.attachTo(el));
+        document.querySelectorAll("#home .study-modes .button").forEach(el => MDCRipple.attachTo(el));
         document.addEventListener("keyup", e => {
             if (location.hash === "#flashcards") pages.flashcards.onKeyUp(e);
             else if (location.hash === "#learn") pages.learn.onKeyUp(e);
@@ -1247,7 +1247,7 @@ addEventListener("DOMContentLoaded", async () => {
                 localStorage.setItem("redirect_after_login", location.href);
                 location.href = "/#login";
             } else if (socialRef) {
-                let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
+                let currentLikeStatus = pages.setOverview.btnLike.querySelector(".button__icon").innerText === "favorite";
                 await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }

@@ -1,0 +1,47 @@
+@charset "utf-0";
+/*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
+
+$primary: #795548;
+$secondary: #4F2B26;
+$third: #411E1C;
+$fourth: #280000;
+// Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
+
+
+/*
+@use "@material/tooltip/styles" as mdc-tooltip;
+@use "@material/list/mdc-list";
+@use "@material/menu-surface/mdc-menu-surface";
+@use "@material/menu/mdc-menu";
+@use "@material/dialog/mdc-dialog";
+@use "@material/snackbar/mdc-snackbar";
+@use "@material/circular-progress/mdc-circular-progress"; --done
+@use "@material/switch/styles" as mdc-switch;
+@use "@material/fab/mdc-fab";
+@use "@material/slider/styles" as mdc-slider; --done
+TODO: Convert to bulma components
+*/
+
+@import "bulma/sass/base/_all";
+@import "bulma/sass/elements/box";
+@import "bulma/sass/elements/button";
+@import "bulma/sass/elements/content";
+@import "bulma/sass/elements/tag";
+@import "bulma/sass/elements/title";
+@import "bulma/sass/elements/other";
+@import "bulma/sass/components/navbar";
+@import "bulma/sass/components/card";
+@import "bulma/sass/components/tabs";
+@import "bulma/sass/components/modal";
+@import "bulma/sass/components/dropdown";
+@import "bulma/sass/form/_all";
+@import "bulma/sass/grid/_all";
+@import "bulma/sass/helpers/_all";
+@import "bulma/sass/layout/_all";
+@import "bulma/sass/utilities/_all";
+@import "bulma-slider/src/sass";
+@import "bulma-checkradio/src/sass";
+@import "bulma-switch/src/sass";
+@import "@creativebulma/bulma-tooltip/src/sass";
+@import "@creativebulma/bulma-divider/src/sass";
+@import "bulma-list/sass/bulma-list";

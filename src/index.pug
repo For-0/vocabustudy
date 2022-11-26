@@ -1,6 +1,6 @@
 - var styleFile = "home.scss";
 doctype html
-html(lang="en" style="overflow-x: hidden;")
+html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden;")
     include includes/head
     body.mdc-typography
         include includes/navbar
@@ -9,52 +9,52 @@ html(lang="en" style="overflow-x: hidden;")
                 .mdc-icon-button__ripple
                 span.mdc-icon-button__focus-ring
                 i.material-icons-round palette
-        main.mdc-top-app-bar--fixed-adjust
+        main
             .page#login(data-nosnippet)
-                h1  
+                h1.title.is1 Log In  
                 div
                     div
-                        p.mdc-typography--headline4 Log In / Sign Up:
+                        p.title.is4 Log In / Sign Up:
                         p(style="margin: 0;") You must be at least 13 years old to sign up, or have permission from a parent/guardian.
                         #firebaseui-auth-container
                 div
-                    p.mdc-typography--headline5 Create sets and make assignments with a 
+                    p.title.is-size-5 Create sets and make assignments with a 
                         strong(style="display: block;") free account.
                         img(src="pencil.png" alt="image of pencil.")
             .page#account(data-nosnippet)
                 h1 My Account
                 p Only your display name is public.
-                .mdc-card 
-                    .mdc-card-wrapper__text-section
-                        .mdc-typography--headline5.fw-bold.field-name(style="word-break:break-word;")
+                .card 
+                    .card-content
+                        .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
                         .supporting-text
                             span.field-email
                             span.field-email-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: red; border: 0.2rem solid; border-radius: 0.3rem; border-color: red;" hidden) Email Not Verified
                             span.field-email-not-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: green; border: 0.2rem solid; border-radius: 0.3rem; border-color: green;" hidden) Email Verified
-                    .mdc-card-wrapper__text-section
+                    .card-content
                         .supporting-text 
                             strong Account Created: 
                             span.field-created
-                    .mdc-card__actions
-                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-verify-email(hidden)
-                            .mdc-button__ripple
-                            span.mdc-button__label Verify Email
-                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-change-name
-                            .mdc-button__ripple
-                            span.mdc-button__label Change Display Name
-                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-change-password
-                            .mdc-button__ripple
-                            span.mdc-button__label Change Password
-                        button.mdc-button.mdc-card__action.mdc-card__action--button.btn-delete-account(style="color: #b30000;")
-                            .mdc-button__ripple
-                            span.mdc-button__label Delete Account
+                    .card-footer
+                        button.button.mdc-card__action.mdc-card__action--button.btn-verify-email(hidden)
+                            .button__ripple
+                            span.button__label Verify Email
+                        button.button.mdc-card__action.mdc-card__action--button.btn-change-name
+                            .button__ripple
+                            span.button__label Change Display Name
+                        button.button.mdc-card__action.mdc-card__action--button.btn-change-password
+                            .button__ripple
+                            span.button__label Change Password
+                        button.button.mdc-card__action.mdc-card__action--button.btn-delete-account(style="color: #b30000;")
+                            .button__ripple
+                            span.button__label Delete Account
             .page#mysets(data-nosnippet)
                 h1 My Sets:
                     .mdc-menu-surface--anchor(style="position: absolute;right: 0;top: 0;")
-                        button.mdc-button.mdc-button--leading.btn-create(style="color: white; cursor: pointer;")
-                            span.mdc-button__ripple
-                            i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                            span.mdc-button__label Create
+                        button.button.button--leading.btn-create(style="color: white; cursor: pointer;")
+                            span.button__ripple
+                            i.material-icons-round.button__icon(aria-hidden="true") add_circle_outline
+                            span.button__label Create
                         .mdc-menu.mdc-menu-surface
                             ul.mdc-list(role="menu" aria-orientation="vertical" tabindex="-1")
                                 li
@@ -70,38 +70,38 @@ html(lang="en" style="overflow-x: hidden;")
                                         span.mdc-list-item__ripple
                                         span.mdc-list-item__text Guide
                 .set-container(data-empty="You don't have any sets. Create one!")
-                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.mdc-button__ripple
-                    span.mdc-button__label Load More
-                h2.mdc-typography--headline5 My Custom Collections:
-                    button.mdc-button.mdc-button--leading.btn-create-collection(style="float: right")
-                        span.mdc-button__ripple
-                        i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                        span.mdc-button__label Create Custom Collection
+                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.button__ripple
+                    span.button__label Load More
+                h2.title.is-size-5 My Custom Collections:
+                    button.button.button--leading.btn-create-collection(style="float: right")
+                        span.button__ripple
+                        i.material-icons-round.button__icon(aria-hidden="true") add_circle_outline
+                        span.button__label Create Custom Collection
                 .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
             .page#admin(data-nosnippet)
                 h1 Admin Portal
-                button.mdc-button.mdc-button--raised.btn-get-all(style="display: block; margin-bottom: 1rem;")
-                    span.mdc-button__ripple
-                    span.mdc-button__label Load All Sets
+                button.button.button--raised.btn-get-all(style="display: block; margin-bottom: 1rem;")
+                    span.button__ripple
+                    span.button__label Load All Sets
                 .set-container(data-empty="No Sets")
-                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.mdc-button__ripple
-                    span.mdc-button__label Load More
+                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.button__ripple
+                    span.button__label Load More
             .page#saved-sets(data-nosnippet)
                 h1 Saved Sets
                 h2 Liked Sets:
                 .liked-container.set-container(data-empty="No Sets")
-                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.mdc-button__ripple
-                    span.mdc-button__label Load More
+                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.button__ripple
+                    span.button__label Load More
             .page#search(data-nosnippet)
                 h1 Browse Sets:
                 details
                     summary
-                        h2.mdc-typography--headline5(style="display: inline;") Featured Sets
+                        h2.title.is-size-5(style="display: inline;") Featured Sets
                     .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
-                h2.mdc-typography--headline5 Search:
+                h2.title.is-size-5 Search:
                 p Most sets are created by CVMS students for CVMS students
                 div.field-search-container(style="width: 50%; display: inline-grid;")
                     label.mdc-text-field.mdc-text-field--outlined.field-search
@@ -114,26 +114,26 @@ html(lang="en" style="overflow-x: hidden;")
                     .mdc-text-field-helper-line
                         .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
                             span.list-collections
-                button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-collections-menu(type="button" style="margin-left: 1rem;")
-                    span.mdc-button__ripple
-                    i.material-icons-round.mdc-button__icon(aria-hidden="true") filter_list
-                    span.mdc-button__label Collections
-                button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-clear-filters(type="button" style="margin-left: 1rem;")
-                    span.mdc-button__ripple
-                    i.material-icons-round.mdc-button__icon(aria-hidden="true") filter_list_off 
-                    span.mdc-button__label Clear
-                button.mdc-button.mdc-button--raised.mdc-button--leading.btn-search-go(type="button" style="margin-left: 1rem;")
-                    span.mdc-button__ripple
-                    i.material-icons-round.mdc-button__icon(aria-hidden="true") search
-                    span.mdc-button__label Go
+                button.button.button--outlined.button--leading.btn-collections-menu(type="button" style="margin-left: 1rem;")
+                    span.button__ripple
+                    i.material-icons-round.button__icon(aria-hidden="true") filter_list
+                    span.button__label Collections
+                button.button.button--outlined.button--leading.btn-clear-filters(type="button" style="margin-left: 1rem;")
+                    span.button__ripple
+                    i.material-icons-round.button__icon(aria-hidden="true") filter_list_off 
+                    span.button__label Clear
+                button.button.button--raised.button--leading.btn-search-go(type="button" style="margin-left: 1rem;")
+                    span.button__ripple
+                    i.material-icons-round.button__icon(aria-hidden="true") search
+                    span.button__label Go
                 .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
-                button.mdc-button.mdc-button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.mdc-button__ripple
-                    span.mdc-button__label Load More
+                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+                    span.button__ripple
+                    span.button__label Load More
             .page#credits(data-nosnippet)
                 h1 Credits - Vocabustudy
-                p.mdc-typography--headline5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
-                p.mdc-typography--headline5 For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
+                p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
+                p.title.is-size-5 For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
                 h3 The following people have also contributed to the project:
                 ul
                     li #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing and minor bug fixes] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
@@ -150,22 +150,22 @@ html(lang="en" style="overflow-x: hidden;")
                 p(style="margin-top: 2rem; font-size: 8px;") *Maybe they can be??????????
             .page#donate(data-nosnippet)
                 h1 Donate
-                p.mdc-typography--headline5 Your donations help!
+                p.title.is-size-5 Your donations help!
                 p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
                 p If you'd like to donate, there are two ways you can help out!
-                p.mdc-typography--headline5 BuyMeACoffee
+                p.title.is-size-5 BuyMeACoffee
                 p If you can donate electronically, please consider buying us a coffee.
                 <a href="https://www.buymeacoffee.com/forzero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" class="nohuechange"></a>
-                p.mdc-typography--headline5 Physical Donation
+                p.title.is-size-5 Physical Donation
                 //p Donations will help us pay for the domain. It is about $12 per year.
                 //p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
                 p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell. (next to Ms. Krull's room)
                 ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
                 p Coins do not fit through the slot. Only bills do.
-                h2.mdc-typography--headline4 Thank you for your donations! Even a dollar can help us improve this website.
+                h2.title.is4 Thank you for your donations! Even a dollar can help us improve this website.
             .page#discord(data-nosnippet)
                 h1 Discord
-                p.mdc-typography--headline5 Vocabustudy Discord Server
+                p.title.is-size-5 Vocabustudy Discord Server
                 p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
                 p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderation by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
                 p For any questions about the Discord server, please contact "OP#1192" or "Nikhilatvocabustudy#4578" in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
@@ -175,7 +175,7 @@ html(lang="en" style="overflow-x: hidden;")
                     div
                         div
                             div
-                                h2.mdc-typography--headline4 Learn Vocabulary, #[br]For Free.
+                                h2.title.is4 Learn Vocabulary, #[br]For Free.
                                 ul
                                     li 100% Free
                                     li No Ads
@@ -190,7 +190,7 @@ html(lang="en" style="overflow-x: hidden;")
                                     i.material-icons-round keyboard_double_arrow_down
                     div.home-features
                         div
-                            h2 Features:
+                            h2.subtitle Features:
                             ul.mdc-list 
                                 li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
                                     span.mdc-list-item__start
@@ -223,147 +223,71 @@ html(lang="en" style="overflow-x: hidden;")
                                         span.mdc-list-item__primary-text Assignments (Coming Soon)
                                         span.mdc-list-item__secondary-text Transform learning at home and in the classroom.
                             div(style="text-align: center;")
-                                a.mdc-button.mdc-button--raised.mdc-button--leading(href="/#search" style="margin-right: 1rem;")
-                                    span.mdc-button__ripple
-                                    i.material-icons-round.mdc-button__icon(aria-hidden="true") search
-                                    span.mdc-button__label Browse Sets
-                                a.mdc-button.mdc-button--outlined.mdc-button--leading.btn-cancel(href="/#login")
-                                    span.mdc-button__ripple
-                                    i.material-icons-round.mdc-button__icon(aria-hidden="true") account_circle
-                                    span.mdc-button__label Sign Up
+                                a.button.button--raised.button--leading(href="/#search" style="margin-right: 1rem;")
+                                    span.button__ripple
+                                    i.material-icons-round.button__icon(aria-hidden="true") search
+                                    span.button__label Browse Sets
+                                a.button.button--outlined.button--leading.btn-cancel(href="/#login")
+                                    span.button__ripple
+                                    i.material-icons-round.button__icon(aria-hidden="true") account_circle
+                                    span.button__label Sign Up
         include includes/footer
-        aside.mdc-snackbar#snackbar-email-verification
-            .mdc-snackbar__surface(role="status" aria-relevant="additions")
-                .mdc-snackbar__label(aria-atomic="false") Verification email sent. Reload once you have verified your email.
-        aside.mdc-snackbar#snackbar-max-collections
-            .mdc-snackbar__surface(role="status" aria-relevant="additions")
-                .mdc-snackbar__label(aria-atomic="false") Warning: You can only choose up to 10 collections!
-        .mdc-dialog#modal-email-confirmation
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Verify Email Address
-                    .mdc-dialog__content
-                        p You will not be able to use your account if you do not verify your email address.
-                        p Press the button below to verify your email address:
-                        p Note: If it does not work, contact Omkar Patil (Vocabustudy Co-Admin) or Nikhil Gupta (Server Owner + Co-Admin) on Discord in order to get your email verified manually.
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Not Now
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
-                            .mdc-button__ripple
-                            span.mdc-button__label Send Verification Email 
             .mdc-dialog__scrim
-        .mdc-dialog#modal-reauthenticate-password
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Re-Authenticate
-                    .mdc-dialog__content
-                        p To verify your identity, please sign in again:
-                        label.mdc-text-field.mdc-text-field--filled
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Password
-                            input.mdc-text-field__input(type="password" required)
-                            span.mdc-line-ripple
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Cancel
-                        button.mdc-button.mdc-dialog__button(type="button")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
-            .mdc-dialog__scrim
-        .mdc-dialog#modal-change-password
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Change Password
-                    .mdc-dialog__content
-                        label.mdc-text-field.mdc-text-field--filled(style="display: block; margin-bottom: 1rem;")
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Password
-                            input.mdc-text-field__input(type="password" required minlength="6")
-                            span.mdc-line-ripple
-                        label.mdc-text-field.mdc-text-field--filled
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Confirm Password
-                            input.mdc-text-field__input(type="password" required minlength="6")
-                            span.mdc-line-ripple
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Cancel
-                        button.mdc-button.mdc-dialog__button(type="button")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
-        .mdc-dialog#modal-change-name
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Set Name
-                    .mdc-dialog__content
-                        label.mdc-text-field.mdc-text-field--filled
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Name
-                            input.mdc-text-field__input(type="text" required)
-                            span.mdc-line-ripple
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Cancel
-                        button.mdc-button.mdc-dialog__button(type="button")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
-            .mdc-dialog__scrim
-        .mdc-dialog#modal-delete-account
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    .mdc-dialog__content Are you sure you would like to delete your account? Your sets will not be deleted.
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Cancel
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
-            .mdc-dialog__scrim
-        .mdc-dialog#modal-delete-set
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    .mdc-dialog__content Are you sure you would like to delete this item? This action cannot be undone.
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Cancel
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
-            .mdc-dialog__scrim
-        .mdc-dialog#modal-filter-collection
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Filter by Collection:
-                    .mdc-dialog__content(style="overflow-y: scroll;")
-                        p(style="margin: 0") You can choose a maximum of 10 collections to filter by
+        .modal#modal-reauthenticate-password
+            .modal-background
+            .modal-card
+                header.modal-card-head
+                    p.modal-card-title Re-Authenticate
+                    button.delete(aria-label="close")
+                section.modal-card-body
+                    p To verify your identity, please sign in again:
+                    input.input(type="password" required placeholder="Password")
+                footer.modal-card-foot
+                    button.button.is-success(type="button") OK
+                    button.button(type="button") Cancel
+        .modal#modal-change-password
+            .modal-background
+            .modal-card
+                header.modal-card-head
+                    p.modal-card-title Change Password
+                    button.delete(aria-label="close")
+                section.modal-card-body
+                    input.input(type="password" required placeholder="Password" minlength="6")
+                    input.input(type="password" required placeholder="Confirm Password" minlength="6")
+                footer.modal-card-foot
+                    button.button.is-success(type="button") OK
+                    button.button(type="button") Cancel
+        .modal#modal-change-name
+            .modal-background
+            .modal-card
+                header.modal-card-head
+                    p.modal-card-title Set Name
+                    button.delete(aria-label="close")
+                section.modal-card-body
+                    input.input(type="text" required placeholder="Name")
+                footer.modal-card-foot
+                    button.button.is-success(type="button") OK
+                    button.button(type="button") Cancel
+        .modal#modal-filter-collection
+            .modal-background
+            .modal-card
+                header.modal-card-head
+                    p.modal-card-title Filter by Collection
+                    button.delete(aria-label="close")
+                section.modal-card-body
+                    p(style="margin: 0") You can choose a maximum of 10 collections to filter by
                         ul.mdc-list(data-evolution="true")
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
-        .mdc-dialog#modal-change-hue
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Change Theme
-                    .mdc-dialog__content
-                        p Set Hue:
-                        .mdc-slider
-                            input.mdc-slider__input(type="range" min="0" max="360" value="0" aria-label="Select Value" name="volume")
-                            .mdc-slider__track
-                                .mdc-slider__track--inactive
-                                .mdc-slider__track--active
-                                    .mdc-slider__track--active_fill
-                            .mdc-slider__thumb
-                                .mdc-slider__thumb-knob
-                    .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
+                footer.modal-card-foot
+                    button.button.is-success(type="button") OK
+        .modal#modal-change-hue
+            .modal-background
+            .modal-card
+                header.modal-card-head
+                    p.modal-card-title Change Theme
+                    button.delete(aria-label="close")
+                section.modal-card-body
+                    p Set Hue:
+                    input.slider.is-fullwidth.is-primary(min="0" max="360" type="range" value="0")
+                footer.modal-card-foot
+                    button.button.is-success(type="button") OK
         script(src="js/index.js" type="module")

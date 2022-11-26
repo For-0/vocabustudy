@@ -9,7 +9,7 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(name="robots", content="noindex")
         link(rel="stylesheet", href="css/styles.scss")
-        link(rel="stylesheet" href="css/material-components.scss")
+        link(rel="stylesheet" href="css/bulma-styles.scss")
         link(rel="icon", href="icons/favicon.ico", type="image/x-icon")
         link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons+Round|Material+Icons|Material+Icons+Outlined")
         link(rel="preconnect", href="https://fonts.googleapis.com")
@@ -18,7 +18,7 @@ html(lang="en")
         script(src="js/sentry.js" type="module")
     body.mdc-typography
         include includes/navbar
-        main.mdc-top-app-bar--fixed-adjust
+        main
             div.page#home
                 h1 Learn Results
                 div.container-results(style="overflow-wrap: break-word;")
@@ -36,10 +36,10 @@ html(lang="en")
                         row.appendChild(document.createElement("span")).innerText = el[2];
                     });
                     let btn = document.querySelector(".container-results").appendChild(document.createElement("button"));
-                    btn.classList.add("mdc-button", "mdc-button--raised");
-                    btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
+                    btn.classList.add("button", "button--raised");
+                    btn.appendChild(document.createElement("span")).classList.add("button__ripple");
                     let label = btn.appendChild(document.createElement("span"));
-                    label.classList.add("mdc-button__label");
+                    label.classList.add("button__label");
                     label.innerText = "Star All Terms";
                     btn.addEventListener("click", () => {
                         opener.StarredTerms.setStars(learnResults.results.map(el => el[0]), true);

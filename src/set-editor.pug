@@ -7,7 +7,7 @@ html.custom-scrollbar(lang="en")
     include includes/head
     body.mdc-typography
         include includes/navbar
-        main.mdc-top-app-bar--fixed-adjust
+        main
             div#home.page
                 h1 Edit Set
                 p(style="opacity: 0.7;")
@@ -44,30 +44,30 @@ html.custom-scrollbar(lang="en")
                                         svg.mdc-switch__icon.mdc-switch__icon--off(viewBox="0 0 24 24")
                                             path(d="M20 13H4v-2h16v2z")
                         label(for="field-public")  Public
-                    h2.mdc-typography--headline5 Vocabulary Words
-                        button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-add-term(type="button" style="margin-left: 1rem;")
-                            span.mdc-button__ripple
-                            i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                            span.mdc-button__label Add
-                        button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-add-quiz(type="button" style="margin-left: 1rem;" hidden)
-                            span.mdc-button__ripple
-                            i.material-icons-round.mdc-button__icon(aria-hidden="true") add_circle_outline
-                            span.mdc-button__label Add Quiz
-                        button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-import-terms(type="button" style="margin-left: 1rem;")
-                            span.mdc-button__ripple
-                            i.material-icons-round.mdc-button__icon(aria-hidden="true") upload_file
-                            span.mdc-button__label Import Items
+                    h2.title.is-size-5 Vocabulary Words
+                        button.button.button--outlined.button--leading.btn-add-term(type="button" style="margin-left: 1rem;")
+                            span.button__ripple
+                            i.material-icons-round.button__icon(aria-hidden="true") add_circle_outline
+                            span.button__label Add
+                        button.button.button--outlined.button--leading.btn-add-quiz(type="button" style="margin-left: 1rem;" hidden)
+                            span.button__ripple
+                            i.material-icons-round.button__icon(aria-hidden="true") add_circle_outline
+                            span.button__label Add Quiz
+                        button.button.button--outlined.button--leading.btn-import-terms(type="button" style="margin-left: 1rem;")
+                            span.button__ripple
+                            i.material-icons-round.button__icon(aria-hidden="true") upload_file
+                            span.button__label Import Items
                     .field-terms-edit.set-container(data-empty="There are no items. Add some!")
-                    h2.mdc-typography--headline5 Collections
+                    h2.title.is-size-5 Collections
                     ul.mdc-list.field-collections(data-evolution="true" style="width: 50%; margin-bottom: 1rem;")
-                    button.mdc-button.mdc-button--raised.mdc-button--leading(type="submit" style="margin-right: 1rem;")
-                        span.mdc-button__ripple
-                        i.material-icons-round.mdc-button__icon(aria-hidden="true") save
-                        span.mdc-button__label Save
-                    button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-cancel(type="button")
-                        span.mdc-button__ripple
-                        i.material-icons-round.mdc-button__icon(aria-hidden="true") cancel
-                        span.mdc-button__label Cancel
+                    button.button.button--raised.button--leading(type="submit" style="margin-right: 1rem;")
+                        span.button__ripple
+                        i.material-icons-round.button__icon(aria-hidden="true") save
+                        span.button__label Save
+                    button.button.button--outlined.button--leading.btn-cancel(type="button")
+                        span.button__ripple
+                        i.material-icons-round.button__icon(aria-hidden="true") cancel
+                        span.button__label Cancel
         include includes/footer
         aside.mdc-snackbar#snackbar-cant-save
             .mdc-snackbar__surface(role="status" aria-relevant="additions")
@@ -92,9 +92,9 @@ html.custom-scrollbar(lang="en")
                                 input.mdc-text-field__input(aria-label="Blooket URL" type="url" required aria-describedby="import-blooket-helper" aria-controls="import-blooket-helper")
                             .mdc-text-field-helper-line
                                 .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#import-blooket-helper Enter a URL like https://dashboard.blooket.com/set/..... or https://play.blooket.com/play?hwId=.....
-                            button.mdc-button.mdc-button--outlined.btn-import-blooket(type="button" style="margin-top: 1rem;")
-                                span.mdc-button__ripple
-                                span.mdc-button__label Go
+                            button.button.button--outlined.btn-import-blooket(type="button" style="margin-top: 1rem;")
+                                span.button__ripple
+                                span.button__label Go
                         label.mdc-text-field.mdc-text-field--outlined.mdc-text-field--textarea.mdc-text-field--no-label
                             span.mdc-notched-outline
                                 span.mdc-notched-outline__leading
@@ -104,10 +104,10 @@ html.custom-scrollbar(lang="en")
                         .mdc-text-field-helper-line
                             .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#import-terms-helper Each term/definition pair should be on its own line. Separate terms and definitions with two spaces
                     .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Cancel
-                        button.mdc-button.mdc-dialog__button.btn-submit(type="button")
-                            .mdc-button__ripple
-                            span.mdc-button__label OK
+                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .button__ripple
+                            span.button__label Cancel
+                        button.button.mdc-dialog__button.btn-submit(type="button")
+                            .button__ripple
+                            span.button__label OK
         script(src="js/set-editor.js" type="module")

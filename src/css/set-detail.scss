@@ -38,7 +38,7 @@
         display: flex;
         margin-bottom: 2rem;
         margin-left: 1rem;
-        > .mdc-button__label {
+        > .button__label {
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -54,7 +54,7 @@
 }
 .comments-container > .mdc-card {
     max-width: 25%;
-    .mdc-typography--headline6 {
+    .title.is6 {
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -210,10 +210,10 @@
         display: flex;
         justify-content: space-evenly;
         @media (max-width: 700px) {
-            .mdc-button__label {
+            .button__label {
                 display: none;
             }
-            .mdc-button__icon {
+            .button__icon {
                 margin: 0;
             }
         }
@@ -253,7 +253,7 @@
                     width: 45%;
                     overflow-wrap: anywhere;
                     position: relative;
-                    .mdc-button__label {
+                    .button__label {
                         position: unset;
                     }
                     img {
@@ -297,10 +297,10 @@
         > div {
             > button {
                 @media(max-width: 730px) {
-                    .mdc-button__label {
+                    .button__label {
                         display: none;
                     }
-                    .mdc-button__icon {
+                    .button__icon {
                         margin: 0;
                     }
                 }
@@ -414,7 +414,7 @@
                     }
                     .draggable-card {
                         max-width: unset;
-                        .mdc-card-wrapper__text-section {
+                        .card-content {
                             padding: 8px;
                         }
                     }
@@ -467,7 +467,7 @@
     border-radius: 10px;
     cursor: pointer;
     position: relative;
-    .mdc-button {
+    .button {
         position: absolute;
         bottom: 8px;
         right: 8px;
@@ -567,7 +567,7 @@ accent-keyboard {
         --mdc-typography-button-text-transform: none;
         padding: 0;
         border: 0;
-        > button.mdc-button {
+        > button.button {
             margin-right: 8px;
             min-width: auto;
         }

@@ -7,7 +7,7 @@ html.custom-scrollbar(lang="en")
     include includes/head
     body.mdc-typography
         include includes/navbar
-        main.mdc-top-app-bar--fixed-adjust
+        main
             .page#flashcards
                 h1 Flashcards - 
                     span
@@ -48,26 +48,26 @@ html.custom-scrollbar(lang="en")
                                         .mdc-checkbox__mixedmark
                                     .mdc-checkbox__ripple
                                 label(for="check-flashcard-starred") Only Starred
-                        button.mdc-button.mdc-button--icon-leading.mdc-button--outlined(style='display: block; margin-bottom: 8px')
-                            span.mdc-button__ripple
-                            i.material-icons.mdc-button__icon(aria-hidden='true') loop
-                            span.mdc-button__label Shuffle
+                        button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
+                            span.button__ripple
+                            i.material-icons.button__icon(aria-hidden='true') loop
+                            span.button__label Shuffle
                     div
                 div
-                    button#btn-previous-flashcard.mdc-button.mdc-button--icon-leading.mdc-button--outlined
-                        span.mdc-button__ripple
-                        i.material-icons.mdc-button__icon(aria-hidden='true') arrow_back
-                        span.mdc-button__label Previous (Left Arrow)
-                    button#btn-flip-flashcard.mdc-button.mdc-button--icon-leading.mdc-button--raised
-                        span.mdc-button__ripple
-                        i.material-icons.mdc-button__icon(aria-hidden='true') change_circle
-                        span.mdc-button__label Flip (Space)
-                    button#btn-next-flashcard.mdc-button.mdc-button--icon-trailing.mdc-button--outlined
-                        span.mdc-button__ripple
-                        span.mdc-button__label Next (Right Arrow)
-                        i.material-icons.mdc-button__icon(aria-hidden='true') arrow_forward
+                    button#btn-previous-flashcard.button.button--icon-leading.button--outlined
+                        span.button__ripple
+                        i.material-icons.button__icon(aria-hidden='true') arrow_back
+                        span.button__label Previous (Left Arrow)
+                    button#btn-flip-flashcard.button.button--icon-leading.button--raised
+                        span.button__ripple
+                        i.material-icons.button__icon(aria-hidden='true') change_circle
+                        span.button__label Flip (Space)
+                    button#btn-next-flashcard.button.button--icon-trailing.button--outlined
+                        span.button__ripple
+                        span.button__label Next (Right Arrow)
+                        i.material-icons.button__icon(aria-hidden='true') arrow_forward
             .page#learn
-                h1.mdc-typography--headline4
+                h1.title.is4
                     | Learn - 
                     span
                 div
@@ -142,14 +142,14 @@ html.custom-scrollbar(lang="en")
                                         svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
                                             circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
                     div(style="overflow-x: auto;")
-                        p.mdc-typography--headline3
+                        p.title.is3
                         div
                             p.mdc-typography--body1(style="font-size: 8px;") Tip: Use the number keys 1-4 to answer multiple choice questions
                             p(hidden='')
-                                button.mdc-button.mdc-button--icon-trailing(type='button')
-                                    span.mdc-button__ripple
-                                    span.mdc-button__label Most Missed Questions
-                                    i.material-icons.mdc-button__icon(aria-hidden='true') open_in_new
+                                button.button.button--icon-trailing(type='button')
+                                    span.button__ripple
+                                    span.button__label Most Missed Questions
+                                    i.material-icons.button__icon(aria-hidden='true') open_in_new
                             p.answer-correct.mdc-typography-button(hidden='')
                                 | Correct!
                                 br
@@ -166,9 +166,9 @@ html.custom-scrollbar(lang="en")
                                 | Press 
                                 kbd Enter
                                 |    or click here to move on
-                                button.mdc-button(type='button')
-                                    span.mdc-button__ripple
-                                    span.mdc-button__label Override - Correct
+                                button.button(type='button')
+                                    span.button__ripple
+                                    span.button__label Override - Correct
                         div
                             accent-keyboard.custom-scrollbar
                             label.mdc-text-field.mdc-text-field--outlined(style='width: calc(97% - 85px);')
@@ -178,28 +178,28 @@ html.custom-scrollbar(lang="en")
                                         span#learn-inputbox-label.mdc-floating-label Your Answer
                                     span.mdc-notched-outline__trailing
                                 input.mdc-text-field__input(type='text' aria-labelledby='learn-inputbox-label' required)
-                            button.mdc-button.mdc-button--raised(type='button')
-                                span.mdc-button__ripple
-                                span.mdc-button__label Check
+                            button.button.button--raised(type='button')
+                                span.button__ripple
+                                span.button__label Check
                         fieldset
-                            button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='0')
-                                span.mdc-button__ripple
-                                i.material-icons.mdc-button__icon(aria-hidden='true') filter_1
-                                span.mdc-button__label Option 1
-                            button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='1')
-                                span.mdc-button__ripple
-                                i.material-icons.mdc-button__icon(aria-hidden='true') filter_2
-                                span.mdc-button__label Option 2
-                            button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='3')
-                                span.mdc-button__ripple
-                                i.material-icons.mdc-button__icon(aria-hidden='true') filter_3
-                                span.mdc-button__label Option 3
-                            button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='4')
-                                span.mdc-button__ripple
-                                i.material-icons.mdc-button__icon(aria-hidden='true') filter_4
-                                span.mdc-button__label Option 4
+                            button.button.button--outlined.button--icon-leading(data-answerindex='0')
+                                span.button__ripple
+                                i.material-icons.button__icon(aria-hidden='true') filter_1
+                                span.button__label Option 1
+                            button.button.button--outlined.button--icon-leading(data-answerindex='1')
+                                span.button__ripple
+                                i.material-icons.button__icon(aria-hidden='true') filter_2
+                                span.button__label Option 2
+                            button.button.button--outlined.button--icon-leading(data-answerindex='3')
+                                span.button__ripple
+                                i.material-icons.button__icon(aria-hidden='true') filter_3
+                                span.button__label Option 3
+                            button.button.button--outlined.button--icon-leading(data-answerindex='4')
+                                span.button__ripple
+                                i.material-icons.button__icon(aria-hidden='true') filter_4
+                                span.button__label Option 4
             .page#test
-                h1.mdc-typography--headline4
+                h1.title.is4
                     | Test - 
                     span
                 div
@@ -283,30 +283,30 @@ html.custom-scrollbar(lang="en")
                             span.mdc-floating-label Max Terms
                             input.mdc-text-field__input(type="number" min="0")
                             span.mdc-line-ripple
-                        button.mdc-button.mdc-button--icon-leading.mdc-button--outlined(style='display: block; margin-bottom: 8px')
-                            span.mdc-button__ripple
-                            i.material-icons.mdc-button__icon(aria-hidden='true') loop
-                            span.mdc-button__label New Test
-                        button.mdc-button.mdc-button--icon-leading.mdc-button--raised
-                            span.mdc-button__ripple
-                            i.material-icons.mdc-button__icon(aria-hidden='true') check_circle
-                            span.mdc-button__label Check Answers
+                        button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
+                            span.button__ripple
+                            i.material-icons.button__icon(aria-hidden='true') loop
+                            span.button__label New Test
+                        button.button.button--icon-leading.button--raised
+                            span.button__ripple
+                            i.material-icons.button__icon(aria-hidden='true') check_circle
+                            span.button__label Check Answers
                     fieldset.custom-scrollbar
-                        h2.mdc-typography--headline4(data-count='0')  Short Answer Questions
+                        h2.title.is4(data-count='0')  Short Answer Questions
                         div
-                        h2.mdc-typography--headline4(data-count='0')  Multiple Choice Questions
+                        h2.title.is4(data-count='0')  Multiple Choice Questions
                         div
-                        h2.mdc-typography--headline4(data-count='0')
+                        h2.title.is4(data-count='0')
                             |  Matching Questions 
                             p.mdc-typography--body1(style='margin:0;') Select an item on the left, then choose the matching item on the right
                         div(style='display:flex;flex-direction:row;gap:20%;position:relative')
                             div
                             div
                             .matches-container
-                        h2.mdc-typography--headline4(data-count='0')  True/False Questions
+                        h2.title.is4(data-count='0')  True/False Questions
                         div
             .page#match
-                h1.mdc-typography--headline4
+                h1.title.is4
                     | Match - 
                     span
                 div
@@ -344,15 +344,15 @@ html.custom-scrollbar(lang="en")
                         p(style="margin: 0;") Time: 
                             span.field-time 0.0
                             | s
-                        button.mdc-button.mdc-button--icon-leading.mdc-button--outlined.btn-refresh(style='margin-bottom: 8px;')
-                            span.mdc-button__ripple
-                            i.material-icons.mdc-button__icon(aria-hidden='true') loop
-                            span.mdc-button__label Restart
+                        button.button.button--icon-leading.button--outlined.btn-refresh(style='margin-bottom: 8px;')
+                            span.button__ripple
+                            i.material-icons.button__icon(aria-hidden='true') loop
+                            span.button__label Restart
                         button.mdc-icon-button.btn-refresh(style='margin-bottom: 8px')
                             .mdc-icon-button__ripple
                             span.mdc-icon-button__focus-ring
                             i.material-icons-round loop
-                        h2.mdc-typography--headline6(style="margin-bottom: 0; padding-bottom: 0;") Help:
+                        h2.title.is6(style="margin-bottom: 0; padding-bottom: 0;") Help:
                         p(style="margin: 0; font-size: small;")
                             strong Mouse:
                             br
@@ -367,39 +367,39 @@ html.custom-scrollbar(lang="en")
             .page#home
                 h1
                     span.field-name
-                    button.mdc-button.mdc-button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
-                        span.mdc-button__ripple
-                        i.material-icons-round.mdc-button__icon(aria-hidden="true") favorite_border
-                        span.mdc-button__label Like
+                    button.button.button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
+                        span.button__ripple
+                        i.material-icons-round.button__icon(aria-hidden="true") favorite_border
+                        span.button__label Like
                     p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
                         span.field-num-terms
                         |  terms
                 p.field-description
                 .field-terms
                 .study-modes
-                    a.mdc-button.mdc-button--raised.mdc-button--leading(style="--mdc-typography-button-font-size: .85rem;" href="#flashcards")
-                        span.mdc-button__ripple
-                        i.material-icons-round.mdc-button__icon(aria-hidden="true") collections
-                        span.mdc-button__label Flashcards
-                    a.mdc-button.mdc-button--outlined.mdc-button--leading(href="#learn")
-                        span.mdc-button__ripple
-                        i.material-icons-outlined.mdc-button__icon(aria-hidden="true") quiz
-                        span.mdc-button__label Learn
-                    a.mdc-button.mdc-button--outlined.mdc-button--leading(href="#test")
-                        span.mdc-button__ripple
-                        i.material-icons-outlined.mdc-button__icon(aria-hidden="true") assignment
-                        span.mdc-button__label Test
-                    a.mdc-button.mdc-button--outlined.mdc-button--leading(href="#match")
-                        span.mdc-button__ripple
-                        i.material-icons-outlined.mdc-button__icon(aria-hidden="true") attach_file
-                        span.mdc-button__label Match
-                    button.mdc-button.mdc-button--outlined.mdc-button--leading.btn-export-terms
-                        span.mdc-button__ripple
-                        i.material-icons-outlined.mdc-button__icon(aria-hidden="true") file_download
-                        span.mdc-button__label Export
+                    a.button.button--raised.button--leading(style="--mdc-typography-button-font-size: .85rem;" href="#flashcards")
+                        span.button__ripple
+                        i.material-icons-round.button__icon(aria-hidden="true") collections
+                        span.button__label Flashcards
+                    a.button.button--outlined.button--leading(href="#learn")
+                        span.button__ripple
+                        i.material-icons-outlined.button__icon(aria-hidden="true") quiz
+                        span.button__label Learn
+                    a.button.button--outlined.button--leading(href="#test")
+                        span.button__ripple
+                        i.material-icons-outlined.button__icon(aria-hidden="true") assignment
+                        span.button__label Test
+                    a.button.button--outlined.button--leading(href="#match")
+                        span.button__ripple
+                        i.material-icons-outlined.button__icon(aria-hidden="true") attach_file
+                        span.button__label Match
+                    button.button.button--outlined.button--leading.btn-export-terms
+                        span.button__ripple
+                        i.material-icons-outlined.button__icon(aria-hidden="true") file_download
+                        span.button__label Export
                 details(style="margin-top: 1rem; float: left; width: 100%;")
                     summary
-                        h2.mdc-typography--headline6(style="display: inline;") Comments
+                        h2.title.is6(style="display: inline;") Comments
                     .comments-container.set-container(data-empty="No Comments. Post one!")
                     .field-comment(hidden)
                         label.mdc-text-field.mdc-text-field--filled
@@ -407,9 +407,9 @@ html.custom-scrollbar(lang="en")
                             span.mdc-floating-label Comment
                             input.mdc-text-field__input(type="text" required maxlength="500")
                             span.mdc-line-ripple
-                        button.mdc-button.mdc-button--outlined(type="button" style="display: block;" disabled)
-                            span.mdc-button__ripple
-                            span.mdc-button__label Save
+                        button.button.button--outlined(type="button" style="display: block;" disabled)
+                            span.button__ripple
+                            span.button__label Save
         include includes/footer
         aside.mdc-snackbar#snackbar-comment-saved
             .mdc-snackbar__surface(role="status" aria-relevant="additions")
@@ -426,12 +426,12 @@ html.custom-scrollbar(lang="en")
                             strong Leaderboard:
                         ul.mdc-list(data-evolution="true")
                     .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Back
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
-                            .mdc-button__ripple
-                            span.mdc-button__label Restart
+                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .button__ripple
+                            span.button__label Back
+                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                            .button__ripple
+                            span.button__label Restart
         .mdc-dialog#modal-export-terms
             .mdc-dialog__container
                 .mdc-dialog__surface(role="alertdialog" aria-modal="true")
@@ -440,7 +440,7 @@ html.custom-scrollbar(lang="en")
                         p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
                         pre
                     .mdc-dialog__actions
-                        button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .mdc-button__ripple
-                            span.mdc-button__label Close
+                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                            .button__ripple
+                            span.button__label Close
         script(src="js/set-detail.js" type="module")

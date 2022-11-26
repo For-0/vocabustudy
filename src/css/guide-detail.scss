@@ -1,7 +1,7 @@
 @import "styles.scss";
 .comments-container > .mdc-card {
     max-width: 25%;
-    .mdc-typography--headline6 {
+    .title.is6 {
         overflow: hidden;
         text-overflow: ellipsis;
     }

@@ -1,6 +1,6 @@
-import { MDCMenu } from "@material/menu/index";
-import { MDCTooltip } from "@material/tooltip/index";
-import { MDCRipple } from "@material/ripple/index";
+// import { MDCMenu } from "@material/menu/index";
+// import { MDCTooltip } from "@material/tooltip/index";
+// import { MDCRipple } from "@material/ripple/index";
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
@@ -12,12 +12,9 @@ function setLoginButtonsState(state, isAdmin) {
     document.querySelectorAll(".adminonly").forEach(el => el.hidden = !isAdmin);
 }
 const navbar = {
-    accountMenu: document.getElementById("account-menu"),
-    btnAccountMenu: document.getElementById("btn-account-menu"),
     btnLogout: document.getElementById("btn-logout"),
-    tooltipAccountMenu: document.getElementById("tooltip-btn-account-menu"),
-    tooltipBtnBrowse: document.getElementById("tooltip-btn-browse"),
-    tooltipBtnHelp: document.getElementById("tooltip-btn-support")
+    burger: document.querySelector(".navbar-burger"),
+    menu: document.getElementById("main-navbar")
 };
 const fabs = {
     theme: document.querySelector(".fab-theme"),
@@ -99,9 +96,10 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         connectFirestoreEmulator(db, `${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`, 443);
     }
     addEventListener("DOMContentLoaded", () => {
-        MDCTooltip.attachTo(navbar.tooltipAccountMenu);
-        MDCTooltip.attachTo(navbar.tooltipBtnBrowse);
-        MDCTooltip.attachTo(navbar.tooltipBtnHelp);
+        navbar.burger.addEventListener("click", () => {
+            navbar.burger.classList.toggle("is-active");
+            navbar.menu.classList.toggle("is-active");
+        })
         MDCRipple.attachTo(fabs.theme);
         fabs.themeOptions.forEach((el, i) => {
             MDCRipple.attachTo(el);
@@ -110,9 +108,6 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
                 localStorage.setItem("theme", themes[i]);
             });
         });
-        let menu = new MDCMenu(navbar.accountMenu);
-        menu.setAnchorMargin({ top: 20 });
-        navbar.btnAccountMenu.addEventListener("mousedown", () => menu.open = !menu.open);
         navbar.btnLogout.addEventListener("click", () => auth.signOut());
     });
     auth.onAuthStateChanged(async user => {

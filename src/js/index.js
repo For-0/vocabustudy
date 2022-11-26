@@ -1,16 +1,19 @@
-import { MDCDialog } from "@material/dialog/index";
-import { MDCRipple } from "@material/ripple/index";
-import { MDCSlider } from "@material/slider";
-import { MDCSnackbar } from "@material/snackbar/index";
-import { MDCTextField } from "@material/textfield/index";
-import { MDCMenu } from "@material/menu";
+// import { MDCDialog } from "@material/dialog/index";
+// import { MDCRipple } from "@material/ripple/index";
+// import { MDCSlider } from "@material/slider";
+// import { MDCSnackbar } from "@material/snackbar/index";
+// import { MDCTextField } from "@material/textfield/index";
+// import { MDCMenu } from "@material/menu";
+import { toast } from "bulma-toast";
+import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
+import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize, { setHue } from "./general";
 import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
-
+window.Modal = Modal;
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth } = initialize(async user => {
     if (user) {
@@ -23,9 +26,7 @@ const { db, auth } = initialize(async user => {
         }
         verifyAdmin();
         showAccountInfo(auth.currentUser);
-        if (!user.emailVerified) {
-            pages.modals.emailVerification.open();
-        }
+        if (!user.emailVerified) verifyEmail();
     } else {
         if (restrictedUrls.includes(location.hash)) {
             localStorage.setItem("redirect_after_login", location.href);
@@ -63,8 +64,7 @@ const pages = {
         btnVerifyEmail: document.querySelector("#account .btn-verify-email"),
         btnChangePassword: document.querySelector("#account .btn-change-password"),
         btnChangeName: document.querySelector("#account .btn-change-name"),
-        btnDeleteAccount: document.querySelector("#account .btn-delete-account"),
-        snackbarVerifyEmail: new MDCSnackbar(document.getElementById("snackbar-email-verification"))
+        btnDeleteAccount: document.querySelector("#account .btn-delete-account")
     },
     mysets: {
         sets: document.querySelector('#mysets .set-container'),
@@ -78,26 +78,22 @@ const pages = {
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
         btnClearFilters: document.querySelector("#search .btn-clear-filters"),
-        searchInput: new MDCTextField(document.querySelector("#search .field-search")),
-        snackbarMaxCollections: new MDCSnackbar(document.getElementById("snackbar-max-collections"))
+        searchInput: new MDCTextField(document.querySelector("#search .field-search"))
     },
     savedSets: {
         likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
-        emailVerification: new MDCDialog(document.getElementById("modal-email-confirmation")),
-        reauthenticatePassword: new MDCDialog(document.getElementById("modal-reauthenticate-password")),
-        reauthenticatePasswordInput: new MDCTextField(document.querySelector("#modal-reauthenticate-password .mdc-text-field")),
+        reauthenticatePassword: new Modal("#modal-reauthenticate-password"),
+        reauthenticatePasswordInput: document.querySelector("#modal-reauthenticate-password input"),
         changePassword: new MDCDialog(document.getElementById("modal-change-password")),
-        changePasswordInputs: [...document.querySelectorAll("#modal-change-password .mdc-text-field")].map(el => new MDCTextField(el)),
-        deleteAccount: new MDCDialog(document.getElementById("modal-delete-account")),
-        deleteSet: new MDCDialog(document.getElementById("modal-delete-set")),
+        changePasswordInputs: [...document.querySelectorAll("#modal-change-password input")],
         changeName: new MDCDialog(document.getElementById("modal-change-name")),
-        changeNameInput: new MDCTextField(document.querySelector("#modal-change-name .mdc-text-field")),
+        changeNameInput: document.querySelector("#modal-change-name input"),
         filterCollection: new MDCDialog(document.getElementById("modal-filter-collection")),
         filterCollectionList: document.querySelector("#modal-filter-collection .mdc-list"),
         changeHue: new MDCDialog(document.getElementById("modal-change-hue")),
-        changeHueInput: new MDCSlider(document.querySelector("#modal-change-hue .mdc-slider"))
+        changeHueInput: document.querySelector("#modal-change-hue input")
     },
     admin: {
         btn: document.querySelector("#admin .btn-get-all"),
@@ -124,7 +120,7 @@ async function showAuthUI() {
             }
         ],
         callbacks: {
-            signInSuccessWithAuthResult: (_authResult, _redirectUrl) => {
+            signInSuccessWithAuthResult: () => {
                 let afterLogin = localStorage.getItem("redirect_after_login");
                 localStorage.removeItem("redirect_after_login");
                 location.href = afterLogin || "#account";
@@ -194,14 +190,23 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
         docs.forEach(async docSnap => {
             let els = await createSetCardOwner(docSnap.data(), docSnap.id, showAll);
             el.appendChild(els.card);
-            els.buttons[2].addEventListener("click", async () => {
-                pages.modals.deleteSet.open();
-                let modalResult = await (() => new Promise(resolve => pages.modals.deleteSet.listen("MDCDialog:closing", e => resolve(e.detail.action), { once: true })))();
-                if (modalResult === "accept") {
-                    await deleteDoc(docSnap.ref);
-                    await deleteDoc(doc(db, "sets", docSnap.id));
-                    els.card.remove();
-                }
+            els.buttons[2].addEventListener("click", () => {
+                new Alert({
+                    type: "danger",
+                    title: "Delete Set",
+                    body: "Are you sure you would like to delete this set? This action cannot be undone.",
+                    confirm: {
+                        label: "OK",
+                        onClick: async () => {
+                            await deleteDoc(docSnap.ref);
+                            await deleteDoc(doc(db, "sets", docSnap.id));
+                            els.card.remove();
+                        }
+                    },
+                    cancel: {
+                        label: "Cancel"
+                    }
+                });
             })
         });
     }, ...extraParams)
@@ -233,16 +238,25 @@ function registerCustomCollectionCard(docSnap) {
         if ([...els.card.querySelectorAll(".collection-sets > label > input")].every(el => el.reportValidity())) {
             let sets = [...els.card.querySelectorAll(".collection-sets > label input")].map(el => el.value);
             await updateDoc(docSnap.ref, { sets });
-            els.card.querySelector(".mdc-card-wrapper__text-section > div:last-child").innerText = `${sets.length} sets`;
+            els.card.querySelector(".card-content > div:last-child").innerText = `${sets.length} sets`;
         }
     });
-    els.buttons[3].addEventListener("click", async () => {
-        pages.modals.deleteSet.open();
-        let modalResult = await (() => new Promise(resolve => pages.modals.deleteSet.listen("MDCDialog:closing", e => resolve(e.detail.action), { once: true })))();
-        if (modalResult === "accept") {
-            await deleteDoc(docSnap.ref);
-            els.card.remove();
-        }
+    els.buttons[3].addEventListener("click", () => {
+        new Alert({
+            type: "danger",
+            title: "Delete Collection",
+            body: "Are you sure you would like to delete this collection? This action cannot be undone.",
+            confirm: {
+                label: "OK",
+                onClick: async () => {
+                    await deleteDoc(docSnap.ref);
+                    els.card.remove();
+                }
+            },
+            cancel: {
+                label: "Cancel"
+            }
+        });
     });
 }
 async function showMyCollections() {
@@ -319,11 +333,25 @@ async function verifyAdmin() {
     if (!token.claims.admin && location.hash === "#admin") location.hash = "#";
     return token.claims.admin;
 }
+function verifyEmail() {
+    if (auth.currentUser) {
+        new Alert({
+            type: "info",
+            title: "Verify Email Address",
+            body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address:\nNote: If it does not work, contact Omkar Patil (Vocabustudy Co-Admin) or Nikhil Gupta (Server Owner + Co-Admin) on Discord in order to get your email verified manually.",
+            confirm: {
+                label: "Send Verification Email",
+                onClick: () => 
+                    sendEmailVerification(auth.currentUser).then(() => toast({message: "Verification email sent. Reload once you have verified your email.", type: "is-success", dismissible: true, position: "bottom-center"}))
+            },
+            cancel: {
+                label: "Not Now"
+            }
+        });
+    }
+}
 addEventListener("DOMContentLoaded", () => {
     // MDC Instantiation and Events
-    pages.modals.emailVerification.listen("MDCDialog:closing", e => {
-        if (e.detail.action === "accept") sendEmailVerification(auth.currentUser).then(() => pages.account.snackbarVerifyEmail.open());
-    });
     pages.modals.reauthenticatePassword.listen("MDCDialog:closing", e => {
         if (e.detail.action === "close") pages.modals.reauthenticatePassword.emit("V:AuthResult", { result: false });
     });
@@ -335,7 +363,7 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.modals.filterCollection.listen("MDCDialog:closing", () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
-        if (collections.length > 10) pages.publicsets.snackbarMaxCollections.open();
+        if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
     });
     pages.modals.reauthenticatePassword.root.querySelector("button:last-child").addEventListener("click", () => {
@@ -374,7 +402,7 @@ addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("theme_hue", pages.modals.changeHueInput.getValue());
         setHue(pages.modals.changeHueInput.getValue());
     });
-    pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : pages.modals.emailVerification.open());
+    pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : verifyEmail());
     pages.account.btnChangePassword.addEventListener("click", async () => {
         let result = await reauthenticateUser();
         if (result) await changePassword();
@@ -385,12 +413,19 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.account.btnDeleteAccount.addEventListener("click", async () => {
         let result = await reauthenticateUser();
-        if (result) {
-            pages.modals.deleteAccount.open();
-            let modalResult = await (() => new Promise(resolve => pages.modals.deleteAccount.listen("MDCDialog:closing", e => resolve(e.detail.action), { once: true })))();
-            if (modalResult === "accept")
-                await deleteUser(auth.currentUser);
-        }
+        if (result)
+            new Alert({
+                type: "danger",
+                title: "Delete Account",
+                body: "Are you sure you would like to delete your account? Your sets will not be deleted.",
+                confirm: {
+                    label: "OK",
+                    onClick: () => deleteUser(auth.currentUser)
+                },
+                cancel: {
+                    label: "Cancel"
+                }
+            })
     });
     pages.publicsets.btnSearchGo.addEventListener("click", () => search());
     pages.publicsets.searchInput.listen("keyup", e => {

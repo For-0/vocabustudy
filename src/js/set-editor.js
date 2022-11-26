@@ -242,11 +242,11 @@ function createTermInput(term) {
             return detailInput.textField;
         });
         termInput = createElement("div", ["mdc-card", "editor-timeline-piece"], {}, [
-            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+            createElement("div", ["card-content"], {}, [
                 inputName.textField,
                 inputDate.textField
             ]),
-            createElement("div", ["mdc-card-wrapper__text-section", "details-container"], {}, [...detailInputs, 
+            createElement("div", ["card-content", "details-container"], {}, [...detailInputs, 
                 createElement("p", [], {innerText: "Leave a detail blank to delete"})
             ]),
             createElement("div", ["mdc-card__actions"], {}, [
@@ -300,10 +300,10 @@ function createTermInput(term) {
             buttons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [], type: 0}}), bodyInput.lastElementChild));
         } else return;
         termInput = createElement("div", ["mdc-card", "editor-study-piece"], {}, [
-            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
+            createElement("div", ["card-content"], {}, [
                 inputName.textField
             ]),
-            createElement("div", ["mdc-card-wrapper__text-section", "details-container"], {}, [
+            createElement("div", ["card-content", "details-container"], {}, [
                 createElement("p", [], {innerText: (term.type === 1) ? "Quiz Questions:" : "Item body:"}),
                 bodyInput
             ]),
