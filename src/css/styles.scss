@@ -61,7 +61,12 @@ $theme-color: #795548;
         display: none;
         overflow: hidden;
         transition: max-height 0.2s ease-out;
-        background-color: #262626;
+        &:not(.nested) {
+            background-color: #262626;
+        }
+        &.nested {
+            background-color: #3c3c3c;
+        }
         &.active {
             display: block;
         }
