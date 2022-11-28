@@ -1,0 +1,10 @@
+@charset "utf-0";
+
+strong {
+  color: black;
+}
+
+@import "/bulma-style-light.scss";
+
+$scheme-main: $black;
+$scheme-invert: $white;

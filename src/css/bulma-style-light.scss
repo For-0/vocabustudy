@@ -5,6 +5,7 @@ $primary: #795548;
 $secondary: #4F2B26;
 $third: #411E1C;
 $fourth: #280000;
+
 // Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
 @import "bulma/sass/utilities/_all";
 @import "bulma/sass/base/_all";
@@ -69,4 +70,7 @@ $fourth: #280000;
     .list-item-description {
         color: $grey-light;
     }
+}
+strong {
+    color: black;
 }
