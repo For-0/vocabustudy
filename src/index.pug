@@ -1,6 +1,6 @@
 - var styleFile = "home.scss";
 doctype html
-html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden;")
+html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;")
     include includes/head
     body
         include includes/navbar
@@ -97,35 +97,33 @@ html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden;")
                     span.button__label Load More
             .page#search(data-nosnippet)
                 h1 Browse Sets:
-                details
+                details.box.block
                     summary
-                        h2.title.is-size-5(style="display: inline;") Featured Sets
+                        h2.title.is-size-4(style="display: inline;") Featured Sets
                     .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
-                h2.title.is-size-5 Search:
-                p Most sets are created by CVMS students for CVMS students
-                div.field-search-container(style="width: 50%; display: inline-grid;")
-                    label.mdc-text-field.mdc-text-field--outlined.field-search
-                        span.mdc-notched-outline
-                            span.mdc-notched-outline__leading
-                            span.mdc-notched-outline__notch
-                                span.mdc-floating-label Search
-                            span.mdc-notched-outline__trailing
-                        input.mdc-text-field__input(aria-label="Search" type="text" aria-controls="field-search-helper" aria-describedby="field-search-helper" autocomplete="off")
-                    .mdc-text-field-helper-line
-                        .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
-                            span.list-collections
-                button.button.button--outlined.button--leading.btn-collections-menu(type="button" style="margin-left: 1rem;")
-                    span.button__ripple
-                    i.material-icons-round.button__icon(aria-hidden="true") filter_list
-                    span.button__label Collections
-                button.button.button--outlined.button--leading.btn-clear-filters(type="button" style="margin-left: 1rem;")
-                    span.button__ripple
-                    i.material-icons-round.button__icon(aria-hidden="true") filter_list_off 
-                    span.button__label Clear
-                button.button.button--raised.button--leading.btn-search-go(type="button" style="margin-left: 1rem;")
-                    span.button__ripple
-                    i.material-icons-round.button__icon(aria-hidden="true") search
-                    span.button__label Go
+                h2.title.is-size-4.mb-0 Search:
+                p.block Most sets are created by CVMS students for CVMS students
+                div.field-search-container.box.level
+                    .column.is-four-fifths
+                        input.input(placeholder="Search" type="text" autocomplete="off")
+                    .column
+                        button.button.is-outlined.is-primary.btn-collections.menu(type="button")
+                            span.icon
+                                i.material-icons-round(aria-hidden="true") filter_list
+                            span Collections
+                    .column
+                        button.button.is-outlined.is-primary.is-light.btn-clear-filters(type="button")
+                            span.icon
+                                i.material-icons-round(aria-hidden="true") filter_list_off
+                            span Clear
+                    .column
+                        button.button.is-primary.btn-search-go(type="button")
+                            span.icon
+                                i.material-icons-round(aria-hidden="true") search
+                            span Search
+                .mdc-text-field-helper-line
+                    .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
+                        span.list-collections
                 .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
                 button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
                     span.button__ripple
@@ -175,62 +173,66 @@ html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden;")
                     div
                         div
                             div
-                                h2.title.is2 Learn Vocabulary, #[br]For Free.
+                                h2.is-size-2 Learn Vocabulary, #[br]For Free.
                                 ul
                                     li 100% Free
                                     li No Ads
                                     li Relevant Vocab
                             p(style="margin-bottom: 0; font-size: 1.25rem; font-weight: bold;") Created/developed by Siddhant Kameswar
-                            p(style="margin-bottom: 0; margin-top: 0; font-size: 1rem;") #[a(href="/#credits" style="color: white; font-size: 1.25rem; font-weight: bold;") Credits]
+                            p(style="margin-bottom: 0; margin-top: 0; font-size: 1rem;") #[a(href="/#credits" style="color: white; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid white;") Credits]
                             p.mdc-typography--overline(style="margin-bottom: 0;") VOCABUSTUDY - U STUDY VOCAB
                                 br
-                                button.mdc-icon-button.btn-show-features
-                                    .mdc-icon-button__ripple
-                                    span.mdc-icon-button__focus-ring
-                                    i.material-icons-round keyboard_double_arrow_down
+                                button.button.is-ghost.btn-show-features(style="color: white;")
+                                    span.icon.is-small
+                                        i.material-icons-round keyboard_double_arrow_down
                     div.home-features
                         div
-                            h2.subtitle Features:
-                            ul.mdc-list 
-                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
-                                    span.mdc-list-item__start
-                                        i.material-icons-round tune
-                                    span.mdc-list-item__content 
-                                        span.mdc-list-item__primary-text Multiple Study Modes
-                                        span.mdc-list-item__secondary-text Don't like flashcards? You can take a mock test, match terms, and more!
-                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
-                                    span.mdc-list-item__start
-                                        i.material-icons-round category
-                                    span.mdc-list-item__content
-                                        span.mdc-list-item__primary-text Collections
-                                        span.mdc-list-item__secondary-text Transform your learning with designed collections of vocab sets.
-                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
-                                    span.mdc-list-item__start
-                                        i.material-icons-round rule
-                                    span.mdc-list-item__content 
-                                        span.mdc-list-item__primary-text Effective Test Prep
-                                        span.mdc-list-item__secondary-text Ace your test with customized sets for your classes.
-                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--with-leading-icon(onclick="window.open('https://github.com/For-0')")
-                                    span.mdc-list-item__start
-                                        i.material-icons-round money_off
-                                    span.mdc-list-item__content
-                                        span.mdc-list-item__primary-text(style="font-weight: bold; text-decoration: underline;") A For Zero Application
-                                        span.mdc-list-item__secondary-text Fast, simple, effective, and completely free.
-                                li.mdc-list-item.mdc-list-item--with-two-lines.mdc-list-item--non-interactive.mdc-list-item--with-leading-icon
-                                    span.mdc-list-item__start
-                                        i.material-icons-round school
-                                    span.mdc-list-item__content
-                                        span.mdc-list-item__primary-text Assignments (Coming Soon)
-                                        span.mdc-list-item__secondary-text Transform learning at home and in the classroom.
-                            div(style="text-align: center;")
-                                a.button.button--raised.button--leading(href="/#search" style="margin-right: 1rem;")
-                                    span.button__ripple
-                                    i.material-icons-round.button__icon(aria-hidden="true") search
-                                    span.button__label Browse Sets
-                                a.button.button--outlined.button--leading.btn-cancel(href="/#login")
-                                    span.button__ripple
-                                    i.material-icons-round.button__icon(aria-hidden="true") account_circle
-                                    span.button__label Sign Up
+                            h2.is-size-4 Features:
+                            ul.list.has-text-white
+                                li.list-item
+                                    div.list-item-image
+                                        span.icon
+                                            i.material-icons-round tune
+                                    div.list-item-content 
+                                        div.list-item-title Multiple Study Modes
+                                        div.list-item-description Don't like flashcards? You can take a mock test, match terms, and more!
+                                li.list-item
+                                    div.list-item-image
+                                        span.icon
+                                            i.material-icons-round category
+                                    div.list-item-content
+                                        div.list-item-title Collections
+                                        div.list-item-description Transform your learning with designed collections of vocab sets.
+                                li.list-item
+                                    div.list-item-image
+                                        span.icon
+                                            i.material-icons-round rule
+                                    div.list-item-content 
+                                        div.list-item-title Effective Test Prep
+                                        div.list-item-description Ace your test with customized sets for your classes.
+                                li.list-item.is-clickable(onclick="window.open('https://github.com/For-0')")
+                                    div.list-item-image
+                                        span.icon
+                                            i.material-icons-round money_off
+                                    div.list-item-content
+                                        div.list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
+                                        div.list-item-description Fast, simple, effective, and completely free.
+                                li.list-item
+                                    div.list-item-image
+                                        span.icon
+                                            i.material-icons-round school
+                                    div.list-item-content
+                                        div.list-item-title Assignments (Coming Soon)
+                                        div.list-item-description Transform learning at home and in the classroom.
+                            div.buttons.has-addons.is-centered(style="margin-top: 1rem;")
+                                a.button.is-primary(href="/#search")
+                                    span.icon
+                                        i.material-icons-round(aria-hidden="true") search
+                                    span Browse Sets
+                                a.button.is-light(href="/#login")
+                                    span.icon
+                                        i.material-icons-round(aria-hidden="true") account_circle
+                                    span Sign Up
         include includes/footer
             .mdc-dialog__scrim
         .modal#modal-reauthenticate-password

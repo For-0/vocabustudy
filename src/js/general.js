@@ -1,6 +1,4 @@
-// import { MDCMenu } from "@material/menu/index";
-// import { MDCTooltip } from "@material/tooltip/index";
-// import { MDCRipple } from "@material/ripple/index";
+/* eslint-disable no-undef */
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
@@ -36,15 +34,15 @@ function showTheme(theme) {
     document.body.classList.remove("theme-dark", "theme-system");
     switch(theme) {
         case "dark":
-            fabs.theme.querySelector("span").innerText = "brightness_4";
+            fabs.theme.querySelector("i").innerText = "brightness_4";
             document.body.classList.add("theme-dark");
             break;
         case "system":
-            fabs.theme.querySelector("span").innerText = "settings_brightness";
+            fabs.theme.querySelector("i").innerText = "settings_brightness";
             document.body.classList.add("theme-system");
             break;
         case "light":
-            fabs.theme.querySelector("span").innerText = "brightness_high";
+            fabs.theme.querySelector("i").innerText = "brightness_high";
             break;
     }
 }
@@ -100,9 +98,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
             navbar.burger.classList.toggle("is-active");
             navbar.menu.classList.toggle("is-active");
         })
-        MDCRipple.attachTo(fabs.theme);
         fabs.themeOptions.forEach((el, i) => {
-            MDCRipple.attachTo(el);
             el.addEventListener("click", () => {
                 showTheme(themes[i]);
                 localStorage.setItem("theme", themes[i]);

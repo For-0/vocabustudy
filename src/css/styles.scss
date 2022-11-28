@@ -98,7 +98,7 @@ $theme-color: #795548;
             color: lighten($theme-color, 10%);
         }
     }
-    footer, header, .realhome {
+    body > footer, header, .realhome {
         &::after {
             backdrop-filter: brightness(65%) saturate(110%);
             content: "";
@@ -255,7 +255,7 @@ main {
     display: block;
 }
 
-footer {
+body > footer {
     display: flex;
     flex-direction: row;
     align-items: center;
