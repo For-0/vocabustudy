@@ -1,295 +1,295 @@
-- var styleFile = "home.scss";
-doctype html
-html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;")
-    include includes/head
-    body
-        include includes/navbar
-        .change-hue-container
-            button.mdc-icon-button.btn-change-hue
-                .mdc-icon-button__ripple
-                span.mdc-icon-button__focus-ring
-                i.material-icons-round palette
-        main
-            .page#login(data-nosnippet)
-                h1.title.is1 Log In  
+extends includes/layout.pug
+
+block main-stylesheet
+    - var title = "Homes";
+    link(rel="stylesheet" href="css/home.scss")
+    link(rel="stylesheet" href="npm:firebaseui/dist/firebaseui.css" disabled id="firebaseui-css")
+block extrahead
+    link(rel="preload" href="./hero-background.svg" as="image")
+prepend navbar
+    .change-hue-container
+        button.mdc-icon-button.btn-change-hue
+            .mdc-icon-button__ripple
+            span.mdc-icon-button__focus-ring
+            i.material-symbols-rounded palette
+block content
+    .page#login(data-nosnippet)
+        h1.title.is1 Log In  
+        div
+            div
+                p.title.is4 Log In / Sign Up:
+                p(style="margin: 0;") You must be at least 13 years old to sign up, or have permission from a parent/guardian.
+                #firebaseui-auth-container
+        div
+            p.title.is-size-5 Create sets and make assignments with a 
+                strong(style="display: block;") free account.
+                img(src="pencil.png" alt="image of pencil.")
+    .page#account(data-nosnippet)
+        h1 My Account
+        p Only your display name is public.
+        .card 
+            .card-content
+                .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
+                .supporting-text
+                    span.field-email
+                    span.field-email-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: red; border: 0.2rem solid; border-radius: 0.3rem; border-color: red;" hidden) Email Not Verified
+                    span.field-email-not-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: green; border: 0.2rem solid; border-radius: 0.3rem; border-color: green;" hidden) Email Verified
+            .card-content
+                .supporting-text 
+                    strong Account Created: 
+                    span.field-created
+            .card-footer
+                button.button.mdc-card__action.mdc-card__action--button.btn-verify-email(hidden)
+                    .button__ripple
+                    span.button__label Verify Email
+                button.button.mdc-card__action.mdc-card__action--button.btn-change-name
+                    .button__ripple
+                    span.button__label Change Display Name
+                button.button.mdc-card__action.mdc-card__action--button.btn-change-password
+                    .button__ripple
+                    span.button__label Change Password
+                button.button.mdc-card__action.mdc-card__action--button.btn-delete-account(style="color: #b30000;")
+                    .button__ripple
+                    span.button__label Delete Account
+    .page#mysets(data-nosnippet)
+        h1 My Sets:
+            .mdc-menu-surface--anchor(style="position: absolute;right: 0;top: 0;")
+                button.button.button--leading.btn-create(style="color: white; cursor: pointer;")
+                    span.button__ripple
+                    i.material-symbols-rounded.button__icon(aria-hidden="true") add_circle_outline
+                    span.button__label Create
+                .mdc-menu.mdc-menu-surface
+                    ul.mdc-list(role="menu" aria-orientation="vertical" tabindex="-1")
+                        li
+                            a.mdc-list-item(role="menuitem" href="/set/new/edit/")
+                                span.mdc-list-item__ripple
+                                span.mdc-list-item__text Set
+                        li
+                            a.mdc-list-item(role="menuitem" href="/set/new-timeline/edit/")
+                                span.mdc-list-item__ripple
+                                span.mdc-list-item__text Timeline
+                        li
+                            a.mdc-list-item(role="menuitem" href="/set/new-guide/edit/")
+                                span.mdc-list-item__ripple
+                                span.mdc-list-item__text Guide
+        .set-container(data-empty="You don't have any sets. Create one!")
+        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+            span.button__ripple
+            span.button__label Load More
+        h2.title.is-size-5 My Custom Collections:
+            button.button.button--leading.btn-create-collection(style="float: right")
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") add_circle_outline
+                span.button__label Create Custom Collection
+        .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
+    .page#admin(data-nosnippet)
+        h1 Admin Portal
+        button.button.button--raised.btn-get-all(style="display: block; margin-bottom: 1rem;")
+            span.button__ripple
+            span.button__label Load All Sets
+        .set-container(data-empty="No Sets")
+        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+            span.button__ripple
+            span.button__label Load More
+    .page#saved-sets(data-nosnippet)
+        h1 Saved Sets
+        h2 Liked Sets:
+        .liked-container.set-container(data-empty="No Sets")
+        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+            span.button__ripple
+            span.button__label Load More
+    .page#search(data-nosnippet)
+        h1 Browse Sets:
+        details.box.block.mt-5
+            summary
+                h2.title.is-size-4(style="display: inline;") Featured Sets
+            .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
+        h2.title.is-size-4.mb-0 Search:
+        p.block Most sets are created by CVMS students for CVMS students
+        div.field-search-container.box.level
+            .column.is-four-fifths-fullhd.is-three-quarters-widescreen.is-two-thirds-desktop.is-half-tablet
+                input.input(placeholder="Search" type="text" autocomplete="off")
+            .column.field.has-addons
+                .control
+                    button.button.is-outlined.is-info.btn-collections-menu(type="button")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_list
+                        span Collections
+                .control
+                    button.button.is-outlined.is-danger.btn-clear-filters(type="button")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_list_off
+                        span Clear
+                .control
+                    button.button.is-primary.btn-search-go(type="button")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") search
+                        span Search
+        .mdc-text-field-helper-line
+            .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
+                span.list-collections
+        .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
+        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+            span.button__ripple
+            span.button__label Load More
+    .page#credits(data-nosnippet)
+        h1 Credits - Vocabustudy
+        p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
+        p.title.is-size-5 For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
+        h3 The following people have also contributed to the project:
+        ul
+            li #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing and minor bug fixes] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
+            li #[strong Ruhan Gupta] (not Nikhil's brother) helped #[strong co-found] For Zero and has contributed to the #[strong design] of the applications, like Vocabustudy. He has #[strong helped with design, testing, and bug fixes], created the #[strong For Zero logo], and helped design the #[strong Vocabustudy Discord Server]. He also helped set up the #[strong GitHub Page] for For Zero.
+            li #[strong Nikhil Gupta] (not Ruhan's brother) has also been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong requested features] to make Vocabustudy better. He #[strong created the Discord server], #[strong invited people], and #[moderates it]. He and Omkar have #[strong shared Vocabustudy with the world], which has helped grow it along the way.
+            li #[strong Michael Zhao], once told about Vocabustudy, started stress testing it. The amount of bugs he found and helped fix cannot be counted.*
+        h3 Honorable Mentions:
+        ul(style="margin-bottom: 2rem;")
+            li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
+            li Thank you to all moderators and helpers on the Vocabustudy Discord Server. You help make the server a better place.
+            //li Thank you to the rest of the Developer team. Without you, Vocabustudy wouldn't be what it is now. Comment: There is no "rest of developer team" lol
+        p #[strong If you need help with anything For Zero or Vocabustudy related, these people are a great place to start. You can also join the Vocabustudy Discord Server and ask for help there.]
+            p Thank you to everyone who has helped spread the word, used the app, and made sets! We hope Vocabustudy has been a great help to you.
+        p(style="margin-top: 2rem; font-size: 8px;") *Maybe they can be??????????
+    .page#donate(data-nosnippet)
+        h1 Donate
+        p.title.is-size-5 Your donations help!
+        p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
+        p If you'd like to donate, there are two ways you can help out!
+        p.title.is-size-5 BuyMeACoffee
+        p If you can donate electronically, please consider buying us a coffee.
+        <a href="https://www.buymeacoffee.com/forzero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" class="nohuechange"></a>
+        p.title.is-size-5 Physical Donation
+        //p Donations will help us pay for the domain. It is about $12 per year.
+        //p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
+        p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell. (next to Ms. Krull's room)
+        ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
+        p Coins do not fit through the slot. Only bills do.
+        h2.title.is4 Thank you for your donations! Even a dollar can help us improve this website.
+    .page#discord(data-nosnippet)
+        h1 Discord
+        p.title.is-size-5 Vocabustudy Discord Server
+        p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
+        p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderation by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
+        p For any questions about the Discord server, please contact "OP#1192" or "Nikhilatvocabustudy#4578" in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
+        p If you wish to join, you can join #[a(href="https://discord.gg/UrRs7Bbr6d") here].
+    .page.realhome#home
+        div.custom-scrollbar
+            div
                 div
                     div
-                        p.title.is4 Log In / Sign Up:
-                        p(style="margin: 0;") You must be at least 13 years old to sign up, or have permission from a parent/guardian.
-                        #firebaseui-auth-container
+                        h2.is-size-2 Learn Vocabulary, #[br]For Free.
+                        ul
+                            li 100% Free
+                            li No Ads
+                            li Relevant Vocab
+                    p(style="margin-bottom: 0; font-size: 1.25rem; font-weight: bold;") Created/developed by Siddhant Kameswar
+                    p(style="margin-bottom: 0; margin-top: 0; font-size: 1rem;") #[a(href="/#credits" style="color: white; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid white;") Credits]
+                    p.mdc-typography--overline(style="margin-bottom: 0;") VOCABUSTUDY - U STUDY VOCAB
+                        br
+                        button.button.is-ghost.btn-show-features(style="color: white;")
+                            span.icon.is-small
+                                i.material-symbols-rounded keyboard_double_arrow_down
+            div.home-features
                 div
-                    p.title.is-size-5 Create sets and make assignments with a 
-                        strong(style="display: block;") free account.
-                        img(src="pencil.png" alt="image of pencil.")
-            .page#account(data-nosnippet)
-                h1 My Account
-                p Only your display name is public.
-                .card 
-                    .card-content
-                        .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
-                        .supporting-text
-                            span.field-email
-                            span.field-email-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: red; border: 0.2rem solid; border-radius: 0.3rem; border-color: red;" hidden) Email Not Verified
-                            span.field-email-not-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: green; border: 0.2rem solid; border-radius: 0.3rem; border-color: green;" hidden) Email Verified
-                    .card-content
-                        .supporting-text 
-                            strong Account Created: 
-                            span.field-created
-                    .card-footer
-                        button.button.mdc-card__action.mdc-card__action--button.btn-verify-email(hidden)
-                            .button__ripple
-                            span.button__label Verify Email
-                        button.button.mdc-card__action.mdc-card__action--button.btn-change-name
-                            .button__ripple
-                            span.button__label Change Display Name
-                        button.button.mdc-card__action.mdc-card__action--button.btn-change-password
-                            .button__ripple
-                            span.button__label Change Password
-                        button.button.mdc-card__action.mdc-card__action--button.btn-delete-account(style="color: #b30000;")
-                            .button__ripple
-                            span.button__label Delete Account
-            .page#mysets(data-nosnippet)
-                h1 My Sets:
-                    .mdc-menu-surface--anchor(style="position: absolute;right: 0;top: 0;")
-                        button.button.button--leading.btn-create(style="color: white; cursor: pointer;")
-                            span.button__ripple
-                            i.material-icons-round.button__icon(aria-hidden="true") add_circle_outline
-                            span.button__label Create
-                        .mdc-menu.mdc-menu-surface
-                            ul.mdc-list(role="menu" aria-orientation="vertical" tabindex="-1")
-                                li
-                                    a.mdc-list-item(role="menuitem" href="/set/new/edit/")
-                                        span.mdc-list-item__ripple
-                                        span.mdc-list-item__text Set
-                                li
-                                    a.mdc-list-item(role="menuitem" href="/set/new-timeline/edit/")
-                                        span.mdc-list-item__ripple
-                                        span.mdc-list-item__text Timeline
-                                li
-                                    a.mdc-list-item(role="menuitem" href="/set/new-guide/edit/")
-                                        span.mdc-list-item__ripple
-                                        span.mdc-list-item__text Guide
-                .set-container(data-empty="You don't have any sets. Create one!")
-                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.button__ripple
-                    span.button__label Load More
-                h2.title.is-size-5 My Custom Collections:
-                    button.button.button--leading.btn-create-collection(style="float: right")
-                        span.button__ripple
-                        i.material-icons-round.button__icon(aria-hidden="true") add_circle_outline
-                        span.button__label Create Custom Collection
-                .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
-            .page#admin(data-nosnippet)
-                h1 Admin Portal
-                button.button.button--raised.btn-get-all(style="display: block; margin-bottom: 1rem;")
-                    span.button__ripple
-                    span.button__label Load All Sets
-                .set-container(data-empty="No Sets")
-                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.button__ripple
-                    span.button__label Load More
-            .page#saved-sets(data-nosnippet)
-                h1 Saved Sets
-                h2 Liked Sets:
-                .liked-container.set-container(data-empty="No Sets")
-                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.button__ripple
-                    span.button__label Load More
-            .page#search(data-nosnippet)
-                h1 Browse Sets:
-                details.box.block
-                    summary
-                        h2.title.is-size-4(style="display: inline;") Featured Sets
-                    .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
-                h2.title.is-size-4.mb-0 Search:
-                p.block Most sets are created by CVMS students for CVMS students
-                div.field-search-container.box.level
-                    .column.is-four-fifths
-                        input.input(placeholder="Search" type="text" autocomplete="off")
-                    .column
-                        button.button.is-outlined.is-primary.btn-collections.menu(type="button")
+                    h2.is-size-4 Features:
+                    ul.list.has-text-white.is-filled
+                        li.list-item
+                            div.list-item-image
+                                span.icon
+                                    i.material-symbols-rounded tune
+                            div.list-item-content 
+                                div.list-item-title Multiple Study Modes
+                                div.list-item-description Don't like flashcards? You can take a mock test, match terms, and more!
+                        li.list-item
+                            div.list-item-image
+                                span.icon
+                                    i.material-symbols-rounded category
+                            div.list-item-content
+                                div.list-item-title Collections
+                                div.list-item-description Transform your learning with designed collections of vocab sets.
+                        li.list-item
+                            div.list-item-image
+                                span.icon
+                                    i.material-symbols-rounded rule
+                            div.list-item-content 
+                                div.list-item-title Effective Test Prep
+                                div.list-item-description Ace your test with customized sets for your classes.
+                        li.list-item.is-clickable(onclick="window.open('https://github.com/For-0')")
+                            div.list-item-image
+                                span.icon
+                                    i.material-symbols-rounded money_off
+                            div.list-item-content
+                                div.list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
+                                div.list-item-description Fast, simple, effective, and completely free.
+                        li.list-item
+                            div.list-item-image
+                                span.icon
+                                    i.material-symbols-rounded school
+                            div.list-item-content
+                                div.list-item-title Assignments (Coming Soon)
+                                div.list-item-description Transform learning at home and in the classroom.
+                    div.buttons.has-addons.is-centered(style="margin-top: 1rem;")
+                        a.button.is-primary(href="/#search")
                             span.icon
-                                i.material-icons-round(aria-hidden="true") filter_list
-                            span Collections
-                    .column
-                        button.button.is-outlined.is-primary.is-light.btn-clear-filters(type="button")
+                                i.material-symbols-rounded(aria-hidden="true") search
+                            span Browse Sets
+                        a.button.is-light(href="/#login")
                             span.icon
-                                i.material-icons-round(aria-hidden="true") filter_list_off
-                            span Clear
-                    .column
-                        button.button.is-primary.btn-search-go(type="button")
-                            span.icon
-                                i.material-icons-round(aria-hidden="true") search
-                            span Search
-                .mdc-text-field-helper-line
-                    .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
-                        span.list-collections
-                .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
-                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.button__ripple
-                    span.button__label Load More
-            .page#credits(data-nosnippet)
-                h1 Credits - Vocabustudy
-                p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
-                p.title.is-size-5 For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
-                h3 The following people have also contributed to the project:
-                ul
-                    li #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing and minor bug fixes] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
-                    li #[strong Ruhan Gupta] (not Nikhil's brother) helped #[strong co-found] For Zero and has contributed to the #[strong design] of the applications, like Vocabustudy. He has #[strong helped with design, testing, and bug fixes], created the #[strong For Zero logo], and helped design the #[strong Vocabustudy Discord Server]. He also helped set up the #[strong GitHub Page] for For Zero.
-                    li #[strong Nikhil Gupta] (not Ruhan's brother) has also been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong requested features] to make Vocabustudy better. He #[strong created the Discord server], #[strong invited people], and #[moderates it]. He and Omkar have #[strong shared Vocabustudy with the world], which has helped grow it along the way.
-                    li #[strong Michael Zhao], once told about Vocabustudy, started stress testing it. The amount of bugs he found and helped fix cannot be counted.*
-                h3 Honorable Mentions:
-                ul(style="margin-bottom: 2rem;")
-                    li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
-                    li Thank you to all moderators and helpers on the Vocabustudy Discord Server. You help make the server a better place.
-                    //li Thank you to the rest of the Developer team. Without you, Vocabustudy wouldn't be what it is now. Comment: There is no "rest of developer team" lol
-                p #[strong If you need help with anything For Zero or Vocabustudy related, these people are a great place to start. You can also join the Vocabustudy Discord Server and ask for help there.]
-                    p Thank you to everyone who has helped spread the word, used the app, and made sets! We hope Vocabustudy has been a great help to you.
-                p(style="margin-top: 2rem; font-size: 8px;") *Maybe they can be??????????
-            .page#donate(data-nosnippet)
-                h1 Donate
-                p.title.is-size-5 Your donations help!
-                p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
-                p If you'd like to donate, there are two ways you can help out!
-                p.title.is-size-5 BuyMeACoffee
-                p If you can donate electronically, please consider buying us a coffee.
-                <a href="https://www.buymeacoffee.com/forzero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" class="nohuechange"></a>
-                p.title.is-size-5 Physical Donation
-                //p Donations will help us pay for the domain. It is about $12 per year.
-                //p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
-                p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell. (next to Ms. Krull's room)
-                ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
-                p Coins do not fit through the slot. Only bills do.
-                h2.title.is4 Thank you for your donations! Even a dollar can help us improve this website.
-            .page#discord(data-nosnippet)
-                h1 Discord
-                p.title.is-size-5 Vocabustudy Discord Server
-                p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
-                p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderation by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
-                p For any questions about the Discord server, please contact "OP#1192" or "Nikhilatvocabustudy#4578" in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
-                p If you wish to join, you can join #[a(href="https://discord.gg/UrRs7Bbr6d") here].
-            .page.realhome#home
-                div.custom-scrollbar
-                    div
-                        div
-                            div
-                                h2.is-size-2 Learn Vocabulary, #[br]For Free.
-                                ul
-                                    li 100% Free
-                                    li No Ads
-                                    li Relevant Vocab
-                            p(style="margin-bottom: 0; font-size: 1.25rem; font-weight: bold;") Created/developed by Siddhant Kameswar
-                            p(style="margin-bottom: 0; margin-top: 0; font-size: 1rem;") #[a(href="/#credits" style="color: white; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid white;") Credits]
-                            p.mdc-typography--overline(style="margin-bottom: 0;") VOCABUSTUDY - U STUDY VOCAB
-                                br
-                                button.button.is-ghost.btn-show-features(style="color: white;")
-                                    span.icon.is-small
-                                        i.material-icons-round keyboard_double_arrow_down
-                    div.home-features
-                        div
-                            h2.is-size-4 Features:
-                            ul.list.has-text-white
-                                li.list-item
-                                    div.list-item-image
-                                        span.icon
-                                            i.material-icons-round tune
-                                    div.list-item-content 
-                                        div.list-item-title Multiple Study Modes
-                                        div.list-item-description Don't like flashcards? You can take a mock test, match terms, and more!
-                                li.list-item
-                                    div.list-item-image
-                                        span.icon
-                                            i.material-icons-round category
-                                    div.list-item-content
-                                        div.list-item-title Collections
-                                        div.list-item-description Transform your learning with designed collections of vocab sets.
-                                li.list-item
-                                    div.list-item-image
-                                        span.icon
-                                            i.material-icons-round rule
-                                    div.list-item-content 
-                                        div.list-item-title Effective Test Prep
-                                        div.list-item-description Ace your test with customized sets for your classes.
-                                li.list-item.is-clickable(onclick="window.open('https://github.com/For-0')")
-                                    div.list-item-image
-                                        span.icon
-                                            i.material-icons-round money_off
-                                    div.list-item-content
-                                        div.list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
-                                        div.list-item-description Fast, simple, effective, and completely free.
-                                li.list-item
-                                    div.list-item-image
-                                        span.icon
-                                            i.material-icons-round school
-                                    div.list-item-content
-                                        div.list-item-title Assignments (Coming Soon)
-                                        div.list-item-description Transform learning at home and in the classroom.
-                            div.buttons.has-addons.is-centered(style="margin-top: 1rem;")
-                                a.button.is-primary(href="/#search")
-                                    span.icon
-                                        i.material-icons-round(aria-hidden="true") search
-                                    span Browse Sets
-                                a.button.is-light(href="/#login")
-                                    span.icon
-                                        i.material-icons-round(aria-hidden="true") account_circle
-                                    span Sign Up
-        include includes/footer
-            .mdc-dialog__scrim
-        .modal#modal-reauthenticate-password
-            .modal-background
-            .modal-card
-                header.modal-card-head
-                    p.modal-card-title Re-Authenticate
-                    button.delete(aria-label="close")
-                section.modal-card-body
-                    p To verify your identity, please sign in again:
-                    input.input(type="password" required placeholder="Password")
-                footer.modal-card-foot
-                    button.button.is-success(type="button") OK
-                    button.button(type="button") Cancel
-        .modal#modal-change-password
-            .modal-background
-            .modal-card
-                header.modal-card-head
-                    p.modal-card-title Change Password
-                    button.delete(aria-label="close")
-                section.modal-card-body
-                    input.input(type="password" required placeholder="Password" minlength="6")
-                    input.input(type="password" required placeholder="Confirm Password" minlength="6")
-                footer.modal-card-foot
-                    button.button.is-success(type="button") OK
-                    button.button(type="button") Cancel
-        .modal#modal-change-name
-            .modal-background
-            .modal-card
-                header.modal-card-head
-                    p.modal-card-title Set Name
-                    button.delete(aria-label="close")
-                section.modal-card-body
-                    input.input(type="text" required placeholder="Name")
-                footer.modal-card-foot
-                    button.button.is-success(type="button") OK
-                    button.button(type="button") Cancel
-        .modal#modal-filter-collection
-            .modal-background
-            .modal-card
-                header.modal-card-head
-                    p.modal-card-title Filter by Collection
-                    button.delete(aria-label="close")
-                section.modal-card-body
-                    p(style="margin: 0") You can choose a maximum of 10 collections to filter by
-                        ul.mdc-list(data-evolution="true")
-                footer.modal-card-foot
-                    button.button.is-success(type="button") OK
-        .modal#modal-change-hue
-            .modal-background
-            .modal-card
-                header.modal-card-head
-                    p.modal-card-title Change Theme
-                    button.delete(aria-label="close")
-                section.modal-card-body
-                    p Set Hue:
-                    input.slider.is-fullwidth.is-primary(min="0" max="360" type="range" value="0")
-                footer.modal-card-foot
-                    button.button.is-success(type="button") OK
-        script(src="js/index.js" type="module")
+                                i.material-symbols-rounded.is-filled(aria-hidden="true") account_circle
+                            span Sign Up
+append scripts-footer
+    .modal#modal-reauthenticate-password
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Re-Authenticate
+                button.delete(aria-label="close")
+            section.modal-card-body
+                p To verify your identity, please sign in again:
+                input.input(type="password" required placeholder="Password")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    .modal#modal-change-password
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Change Password
+                button.delete(aria-label="close")
+            section.modal-card-body
+                input.input(type="password" required placeholder="Password" minlength="6")
+                input.input(type="password" required placeholder="Confirm Password" minlength="6")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    .modal#modal-change-name
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Set Name
+                button.delete(aria-label="close")
+            section.modal-card-body
+                input.input(type="text" required placeholder="Name")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    .modal#modal-filter-collection
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Filter by Collection
+                button.delete(aria-label="close")
+            section.modal-card-body
+                p(style="margin: 0") You can choose a maximum of 10 collections to filter by
+                    ul.mdc-list(data-evolution="true")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    .modal#modal-change-hue
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Change Theme
+                button.delete(aria-label="close")
+            section.modal-card-body
+                p Set Hue:
+                input.slider.is-fullwidth.is-primary(min="0" max="360" type="range" value="0")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    script(src="js/index.js" type="module")

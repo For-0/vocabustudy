@@ -49,7 +49,7 @@ class QuizQuestion extends HTMLElement {
         this.appendChild(this.questionInput.root);
         this.deleteButton = createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
             createElement("div", ["mdc-icon-button__ripple"]),
-            createElement("i", ["material-icons-round"], {innerText: "delete"})
+            createElement("i", ["material-symbols-rounded"], {innerText: "delete"})
         ]);
         this.appendChild(this.deleteButton);
         MDCRipple.attachTo(this.deleteButton).unbounded = true;
@@ -224,7 +224,7 @@ function createTermInput(term) {
             createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
                 createElement("div", ["mdc-icon-button__ripple"]),
                 createElement("span", ["mdc-icon-button__focus-ring"]),
-                createElement("i", ["material-icons-round"], {innerText: "delete"})
+                createElement("i", ["material-symbols-rounded"], {innerText: "delete"})
             ])
         ]);
         MDCRipple.attachTo(termInput.children[2]).unbounded = true;
@@ -250,10 +250,10 @@ function createTermInput(term) {
                 createElement("p", [], {innerText: "Leave a detail blank to delete"})
             ]),
             createElement("div", ["mdc-card__actions"], {}, [
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Add Detail", type: "button", innerText: "add"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Add Detail", type: "button", innerText: "add"}),
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
+                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Move Right", type: "button", innerText: "navigate_next"})
             ])
         ]);
         inputName.obj.value = name || "";
@@ -275,9 +275,9 @@ function createTermInput(term) {
         /** @type {HTMLElement} */
         let bodyInput;
         let buttons = [
-            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
-            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
-            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
+            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
+            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Move Right", type: "button", innerText: "navigate_next"})
         ];
         if (term.type === 0) {
             bodyInput = createElement("label", ["mdc-text-field", "mdc-text-field--outlined", "mdc-text-field--textarea", "mdc-text-field--no-label"], {}, [
@@ -296,7 +296,7 @@ function createTermInput(term) {
                 ...term.questions.map(el => createElement("quiz-question", [], {initialQuestion: el})),
                 createElement("p", [], {innerText: "MC: First is correct, SA: All are correct"})
             ]);
-            buttons.splice(1, 0, createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Add Question", type: "button", innerText: "add"}));
+            buttons.splice(1, 0, createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Add Question", type: "button", innerText: "add"}));
             buttons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [], type: 0}}), bodyInput.lastElementChild));
         } else return;
         termInput = createElement("div", ["mdc-card", "editor-study-piece"], {}, [

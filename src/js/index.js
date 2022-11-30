@@ -11,8 +11,8 @@ import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCr
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
-import initialize, { setHue } from "./general";
-import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections } from "./utils";
+import initialize from "./general";
+import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise } from "./utils";
 window.Modal = Modal;
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth } = initialize(async user => {
@@ -78,22 +78,22 @@ const pages = {
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
         btnClearFilters: document.querySelector("#search .btn-clear-filters"),
-        searchInput: new MDCTextField(document.querySelector("#search .field-search"))
+        searchInput: document.querySelector("#search .field-search")
     },
     savedSets: {
         likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
         reauthenticatePassword: new Modal("#modal-reauthenticate-password"),
-        reauthenticatePasswordInput: document.querySelector("#modal-reauthenticate-password input"),
-        changePassword: new MDCDialog(document.getElementById("modal-change-password")),
-        changePasswordInputs: [...document.querySelectorAll("#modal-change-password input")],
-        changeName: new MDCDialog(document.getElementById("modal-change-name")),
-        changeNameInput: document.querySelector("#modal-change-name input"),
-        filterCollection: new MDCDialog(document.getElementById("modal-filter-collection")),
+        reauthenticatePasswordInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-reauthenticate-password input"))),
+        changePassword: new Modal("#modal-change-password"),
+        changePasswordInputs: (/** @type {HTMLInputElement[]} */ ([...document.querySelectorAll("#modal-change-password input")])),
+        changeName: new Modal("#modal-change-name"),
+        changeNameInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-name input"))),
+        filterCollection: new Modal("#modal-filter-collection"),
         filterCollectionList: document.querySelector("#modal-filter-collection .mdc-list"),
-        changeHue: new MDCDialog(document.getElementById("modal-change-hue")),
-        changeHueInput: document.querySelector("#modal-change-hue input")
+        changeHue: new Modal("#modal-change-hue"),
+        changeHueInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-hue input")))
     },
     admin: {
         btn: document.querySelector("#admin .btn-get-all"),
@@ -135,7 +135,7 @@ async function showAuthUI() {
 }
 async function reauthenticateUser() {
     switch (auth.currentUser.providerData[0].providerId) {
-        case GoogleAuthProvider.PROVIDER_ID:
+        case GoogleAuthProvider.PROVIDER_ID: {
             let provider = new GoogleAuthProvider();
             provider.setCustomParameters({
                 prompt: "consent",
@@ -143,29 +143,25 @@ async function reauthenticateUser() {
             })
             await reauthenticateWithPopup(auth.currentUser, provider);
             return true;
-        case EmailAuthProvider.PROVIDER_ID:
+        } case EmailAuthProvider.PROVIDER_ID: {
             pages.modals.reauthenticatePasswordInput.value = "";
-            pages.modals.reauthenticatePasswordInput.valid = true;
-            pages.modals.reauthenticatePasswordInput.root.querySelector("input").setCustomValidity("");
-            pages.modals.reauthenticatePassword.open();
-            let result = await (() => new Promise(resolve => pages.modals.reauthenticatePassword.listen("V:AuthResult", e => resolve(e.detail.result), { once: true })))();
+            pages.modals.reauthenticatePasswordInput.setCustomValidity("");
+            let result = await bulmaModalPromise(pages.modals.reauthenticatePassword);
             return result;
+        }
     }
 }
 async function changePassword() {
     pages.modals.changePassword.open();
     pages.modals.changePasswordInputs.forEach(el => el.value = "");
-    pages.modals.changePasswordInputs.forEach(el => el.valid = true);
-    pages.modals.changePasswordInputs.forEach(el => el.root.querySelector("input").setCustomValidity(""));
-    let result = await (() => new Promise(resolve => pages.modals.changePassword.listen("V:Result", e => resolve(e.detail.result), { once: true })))();
-    if (result !== null) await updatePassword(auth.currentUser, result);
+    pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
+    let result = await bulmaModalPromise(pages.modals.changePassword);
+    if (result) await updatePassword(auth.currentUser, pages.modals.changePasswordInputs[0].value);
 }
 async function changeName() {
-    pages.modals.changeName.open();
     pages.modals.changeNameInput.value = "";
-    pages.modals.changeNameInput.valid = true;
-    let result = await (() => new Promise(resolve => pages.modals.changeName.listen("V:Result", e => resolve(e.detail.result), { once: true })))();
-    if (result !== null) await updateProfile(auth.currentUser, { displayName: result });
+    let result = await bulmaModalPromise(pages.modals.changeName);
+    if (result) await updateProfile(auth.currentUser, { displayName: pages.modals.changeNameInput.value });
 }
 /**
  * Show account info
@@ -352,55 +348,42 @@ function verifyEmail() {
 }
 addEventListener("DOMContentLoaded", () => {
     // MDC Instantiation and Events
-    pages.modals.reauthenticatePassword.listen("MDCDialog:closing", e => {
-        if (e.detail.action === "close") pages.modals.reauthenticatePassword.emit("V:AuthResult", { result: false });
-    });
-    pages.modals.changePassword.listen("MDCDialog:closing", e => {
-        if (e.detail.action === "close") pages.modals.changePassword.emit("V:Result", { result: null });
-    });
-    pages.modals.changeName.listen("MDCDialog:closing", e => {
-        if (e.detail.action === "close") pages.modals.changeName.emit("V:Result", { result: null });
-    });
-    pages.modals.filterCollection.listen("MDCDialog:closing", () => {
+    initBulmaModals(pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName);
+    pages.modals.filterCollection.onclose = () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
-    });
-    pages.modals.reauthenticatePassword.root.querySelector("button:last-child").addEventListener("click", () => {
-        pages.modals.reauthenticatePasswordInput.root.querySelector("input").setCustomValidity("");
-        if (pages.modals.reauthenticatePasswordInput.valid = pages.modals.reauthenticatePasswordInput.valid) { // assignment to itself triggers the property setter, therefore triggering validity styles
+    };
+    pages.modals.reauthenticatePassword.validateInput = async () => {
+        pages.modals.reauthenticatePasswordInput.setCustomValidity("");
+        if (pages.modals.reauthenticatePasswordInput.reportValidity()) {
             let credential = EmailAuthProvider.credential(auth.currentUser.email, pages.modals.reauthenticatePasswordInput.value);
-            reauthenticateWithCredential(auth.currentUser, credential).then(() => {
-                pages.modals.reauthenticatePassword.emit("V:AuthResult", { result: true });
-                pages.modals.reauthenticatePassword.close("success");
-            }).catch(_ => {
-                pages.modals.reauthenticatePasswordInput.root.querySelector("input").setCustomValidity("Incorrect Password");
-                pages.modals.reauthenticatePasswordInput.root.querySelector("input").reportValidity();
-            });
-        }
-    });
-    pages.modals.changePassword.root.querySelector("button:last-child").addEventListener("click", () => {
-        pages.modals.changePasswordInputs.forEach(el => el.root.querySelector("input").setCustomValidity(""));
-        if (pages.modals.changePasswordInputs.every(el => el.valid = el.valid)) { // assignment to itself triggers the property setter, therefore triggering validity styles
-            if (pages.modals.changePasswordInputs[0].value === pages.modals.changePasswordInputs[1].value) {
-                pages.modals.changePassword.emit("V:Result", { result: pages.modals.changePasswordInputs[0].value });
-                pages.modals.changePassword.close("success");
-            } else {
-                pages.modals.changePasswordInputs[0].root.querySelector("input").setCustomValidity("Passwords do not match");
-                pages.modals.changePasswordInputs[0].root.querySelector("input").reportValidity();
+            try {
+                await reauthenticateWithCredential(auth.currentUser, credential);
+                return true;
+            } catch {
+                pages.modals.reauthenticatePasswordInput.setCustomValidity("Incorrect Password");
+                pages.modals.reauthenticatePasswordInput.reportValidity();
+                return false;
             }
         }
-    });
-    pages.modals.changeName.root.querySelector("button:last-child").addEventListener("click", () => {
-        if (pages.modals.changeNameInput.valid = pages.modals.changeNameInput.valid) { // assignment to itself triggers the property setter, therefore triggering validity styles
-            pages.modals.changeName.emit("V:Result", { result: pages.modals.changeNameInput.value });
-            pages.modals.changeName.close("success");
+    };
+    pages.modals.changePassword.validateInput = () => {
+        pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
+        if (pages.modals.changePasswordInputs.every(el => el.reportValidity())) {
+            if (pages.modals.changePasswordInputs[0].value === pages.modals.changePasswordInputs[1].value) return true;
+            else {
+                pages.modals.changePasswordInputs[0].setCustomValidity("Passwords do not match");
+                pages.modals.changePasswordInputs[0].reportValidity();
+                return false;
+            }
         }
-    });
-    pages.modals.changeHue.listen("MDCDialog:opened", () => setTimeout(() => pages.modals.changeHueInput.layout(), 100));
-    pages.modals.changeHueInput.listen("MDCSlider:change", () => {
-        localStorage.setItem("theme_hue", pages.modals.changeHueInput.getValue());
-        setHue(pages.modals.changeHueInput.getValue());
+    };
+    pages.modals.changeName.validateInput = () => pages.modals.changeNameInput.reportValidity();
+    pages.modals.changeHue.on("open", () => pages.modals.changeHueInput.value = localStorage.getItem("theme_hue") || 0);
+    pages.modals.changeHueInput.addEventListener("change", () => {
+        localStorage.setItem("theme_hue", pages.modals.changeHueInput.value);
+        setHue(pages.modals.changeHueInput.valueAsNumber);
     });
     pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : verifyEmail());
     pages.account.btnChangePassword.addEventListener("click", async () => {

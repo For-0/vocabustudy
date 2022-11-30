@@ -50,22 +50,22 @@ html.custom-scrollbar(lang="en")
                                 label(for="check-flashcard-starred") Only Starred
                         button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
                             span.button__ripple
-                            i.material-icons.button__icon(aria-hidden='true') loop
+                            i.material-symbols-rounded.button__icon(aria-hidden='true') loop
                             span.button__label Shuffle
                     div
                 div
                     button#btn-previous-flashcard.button.button--icon-leading.button--outlined
                         span.button__ripple
-                        i.material-icons.button__icon(aria-hidden='true') arrow_back
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_back
                         span.button__label Previous (Left Arrow)
                     button#btn-flip-flashcard.button.button--icon-leading.button--raised
                         span.button__ripple
-                        i.material-icons.button__icon(aria-hidden='true') change_circle
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') change_circle
                         span.button__label Flip (Space)
                     button#btn-next-flashcard.button.button--icon-trailing.button--outlined
                         span.button__ripple
                         span.button__label Next (Right Arrow)
-                        i.material-icons.button__icon(aria-hidden='true') arrow_forward
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_forward
             .page#learn
                 h1.title.is4
                     | Learn - 
@@ -149,7 +149,7 @@ html.custom-scrollbar(lang="en")
                                 button.button.button--icon-trailing(type='button')
                                     span.button__ripple
                                     span.button__label Most Missed Questions
-                                    i.material-icons.button__icon(aria-hidden='true') open_in_new
+                                    i.material-symbols-rounded.button__icon(aria-hidden='true') open_in_new
                             p.answer-correct.mdc-typography-button(hidden='')
                                 | Correct!
                                 br
@@ -184,19 +184,19 @@ html.custom-scrollbar(lang="en")
                         fieldset
                             button.button.button--outlined.button--icon-leading(data-answerindex='0')
                                 span.button__ripple
-                                i.material-icons.button__icon(aria-hidden='true') filter_1
+                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_1
                                 span.button__label Option 1
                             button.button.button--outlined.button--icon-leading(data-answerindex='1')
                                 span.button__ripple
-                                i.material-icons.button__icon(aria-hidden='true') filter_2
+                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_2
                                 span.button__label Option 2
                             button.button.button--outlined.button--icon-leading(data-answerindex='3')
                                 span.button__ripple
-                                i.material-icons.button__icon(aria-hidden='true') filter_3
+                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_3
                                 span.button__label Option 3
                             button.button.button--outlined.button--icon-leading(data-answerindex='4')
                                 span.button__ripple
-                                i.material-icons.button__icon(aria-hidden='true') filter_4
+                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_4
                                 span.button__label Option 4
             .page#test
                 h1.title.is4
@@ -285,11 +285,11 @@ html.custom-scrollbar(lang="en")
                             span.mdc-line-ripple
                         button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
                             span.button__ripple
-                            i.material-icons.button__icon(aria-hidden='true') loop
+                            i.material-symbols-rounded.button__icon(aria-hidden='true') loop
                             span.button__label New Test
                         button.button.button--icon-leading.button--raised
                             span.button__ripple
-                            i.material-icons.button__icon(aria-hidden='true') check_circle
+                            i.material-symbols-rounded.button__icon(aria-hidden='true') check_circle
                             span.button__label Check Answers
                     fieldset.custom-scrollbar
                         h2.title.is4(data-count='0')  Short Answer Questions
@@ -346,12 +346,12 @@ html.custom-scrollbar(lang="en")
                             | s
                         button.button.button--icon-leading.button--outlined.btn-refresh(style='margin-bottom: 8px;')
                             span.button__ripple
-                            i.material-icons.button__icon(aria-hidden='true') loop
+                            i.material-symbols-rounded.button__icon(aria-hidden='true') loop
                             span.button__label Restart
                         button.mdc-icon-button.btn-refresh(style='margin-bottom: 8px')
                             .mdc-icon-button__ripple
                             span.mdc-icon-button__focus-ring
-                            i.material-icons-round loop
+                            i.material-symbols-rounded loop
                         h2.title.is6(style="margin-bottom: 0; padding-bottom: 0;") Help:
                         p(style="margin: 0; font-size: small;")
                             strong Mouse:
@@ -369,7 +369,7 @@ html.custom-scrollbar(lang="en")
                     span.field-name
                     button.button.button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
                         span.button__ripple
-                        i.material-icons-round.button__icon(aria-hidden="true") favorite_border
+                        i.material-symbols-rounded.button__icon(aria-hidden="true") favorite_border
                         span.button__label Like
                     p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
                         span.field-num-terms
@@ -379,23 +379,23 @@ html.custom-scrollbar(lang="en")
                 .study-modes
                     a.button.button--raised.button--leading(style="--mdc-typography-button-font-size: .85rem;" href="#flashcards")
                         span.button__ripple
-                        i.material-icons-round.button__icon(aria-hidden="true") collections
+                        i.material-symbols-rounded.button__icon(aria-hidden="true") collections
                         span.button__label Flashcards
                     a.button.button--outlined.button--leading(href="#learn")
                         span.button__ripple
-                        i.material-icons-outlined.button__icon(aria-hidden="true") quiz
+                        i.material-symbols-rounded.button__icon(aria-hidden="true") quiz
                         span.button__label Learn
                     a.button.button--outlined.button--leading(href="#test")
                         span.button__ripple
-                        i.material-icons-outlined.button__icon(aria-hidden="true") assignment
+                        i.material-symbols-rounded.button__icon(aria-hidden="true") assignment
                         span.button__label Test
                     a.button.button--outlined.button--leading(href="#match")
                         span.button__ripple
-                        i.material-icons-outlined.button__icon(aria-hidden="true") attach_file
+                        i.material-symbols-rounded.button__icon(aria-hidden="true") attach_file
                         span.button__label Match
                     button.button.button--outlined.button--leading.btn-export-terms
                         span.button__ripple
-                        i.material-icons-outlined.button__icon(aria-hidden="true") file_download
+                        i.material-symbols-rounded.button__icon(aria-hidden="true") file_download
                         span.button__label Export
                 details(style="margin-top: 1rem; float: left; width: 100%;")
                     summary

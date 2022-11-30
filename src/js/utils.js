@@ -150,7 +150,7 @@ export function createCollectionParentListItem(name) {
             createElement("span", ["mdc-list-item__primary-text"], { innerText: name })
         ]),
         createElement("span", ["mdc-list-item__end"], {}, [
-            createElement("i", ["material-icons-round"], { innerText: "expand_more" })
+            createElement("i", ["material-symbols-rounded"], { innerText: "expand_more" })
         ]),
     ]);
     listItem.setAttribute("tabindex", "-1");
@@ -350,4 +350,25 @@ export async function paginateQueries(queries, btnMore, onResults, startAfterN =
         btnMore.hidden = false;
         btnMore.onclick = () => paginateQueries(nextQueries.map(el => el.origQ), btnMore, onResults, nextQueries.map(el => el.snap.docs[el.snap.size - 1]), orderByField);
     }
+}
+
+export async function initBulmaModals(modals) {
+    modals.forEach(modal => 
+        modal.on("close", () => modal.onclose && modal.onclose())
+    );
+}
+/**
+ * Wait for a BulmaJS Modal to close, whether by button press or other close method
+ */
+export async function bulmaModalPromise(modal) {
+    return new Promise(resolve => {
+        modal.open();
+        modal.onclose = () => resolve(false);
+        modal.root.querySelector("footer button").onclick = async () => {
+            if (!modal.validateInput || await modal.validateInput()) {
+                modal.close();
+                resolve(true);
+            }
+        }
+    });
 }

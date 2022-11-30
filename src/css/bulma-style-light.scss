@@ -40,6 +40,7 @@ $fourth: #280000;
     font-size: 1.6rem;
     box-shadow: 0 .0625em .125em rgba($scheme-invert,.05);
     z-index: 3;
+    padding: 0;
     &.is-large {
         width: 90px;
         height: 90px;
@@ -55,6 +56,12 @@ $fourth: #280000;
         height: 45px;
         font-size: 1.2rem;
         border-radius: 50px;
+    }
+    i {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateY(-50%) translateX(-50%);
     }
 }
 
@@ -73,4 +80,21 @@ $fourth: #280000;
 }
 strong {
     color: black;
+}
+.material-symbols-rounded {
+    font-variation-settings:
+        'FILL' var(--font-variation-fill, 0),
+        'wght' var(--font-variation-weight, 400),
+        'GRAD' var(--font-variation-grade, 0),
+        'opsz' var(--font-variation-optical-size, 48);
+}
+.is-filled {
+    --font-variation-fill: 1;
+}
+.button:not(.is-floating):not(.is-ghost) .material-symbols-rounded {
+    font-size: 1rem;
+    vertical-align: sub;
+}
+.button {
+    transition: 0.1s all;
 }

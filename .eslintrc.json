@@ -11,5 +11,9 @@
         "sourceType": "module"
     },
     "rules": {
+    },
+    "globals": {
+        "process": true,
+        "setHue": true
     }
 }

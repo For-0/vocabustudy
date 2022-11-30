@@ -73,8 +73,8 @@ class StarButton extends HTMLButtonElement {
             this.classList.add("mdc-icon-button");
             this.ariaPressed = this.initialValue;
             this.appendChild(createElement("div", ["mdc-icon-button__ripple"]));
-            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], { innerText: "star" }));
-            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon"], { innerText: "star_border" }));
+            this.appendChild(createElement("i", ["material-symbols-rounded", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], { innerText: "star" }));
+            this.appendChild(createElement("i", ["material-symbols-rounded", "mdc-icon-button__icon"], { innerText: "star_border" }));
             this.obj = new MDCIconButtonToggle(this);
             this.obj.on = this.initialValue;
         }
