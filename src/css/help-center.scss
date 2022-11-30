@@ -4,23 +4,43 @@
     color: white;
     cursor: pointer;
     padding: 18px;
-    width: auto;
+    width: 100%;
     border: none;
     text-align: left;
     outline: #fff;
-    font-size: 15px;
-    text-size: 5rem;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 1rem;
     &:hover {
         background-color: #bda8a1;
+    }
+    &.active {
+        + .content {
+            display: block;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        border-bottom-left-radius: 0rem;
+        border-bottom-right-radius: 0rem;
+    }
+    &:not(.active) + .content {
+        border-bottom-left-radius: 0rem;
+        border-bottom-right-radius: 0rem;
     }
 }
 .content {
     padding: 0 18px;
     display: none;
     overflow: hidden;
-    transition: max-height 0.2s ease-out;
-    background-color: #f1f1f1;
-    &.active {
-        display: block;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    &:not(.nested) {
+        background-color: #f1f1f1;
+    }
+    &.nested {
+        background-color: #e5e5e5;
+    }
+    .content-inner {
+        padding: 0 18px;
     }
 }
