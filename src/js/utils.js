@@ -12,8 +12,8 @@ MDCList.prototype.handleClickEvent = function (evt) {
     this.foundation.handleClick(index, !toggleCheckbox, evt); // FIXME MANUAL HACK material-components/material-components-web#7618
 };
 const checkboxBackground = '<svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24"><path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" /></svg><div class="mdc-checkbox__mixedmark"></div>';
-const ignoredCharsRE = /[\*_\.]/g;
-const mdLinkRE = /!?\[[^\]]*\]\([^\)]*\)/g;
+const ignoredCharsRE = /[*_.]/g;
+const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
 /**
  * Remove ignored characters and markdown links from a string, and trim it
  * @param {string} answer The answer to normalize
@@ -187,7 +187,7 @@ export async function parseCollections(collections, allCollections=null) {
             return "Unknown Collection";
         }
     });
-    return collectionNames.map(el => createElement("span", ["collection-label"], {innerText: el || "Unknown Collection"}));
+    return collectionNames.map(el => createElement("span", ["tag", "is-primary"], {innerText: el || "Unknown Collection"}));
 }
 /**
  * Create a text field with an optional helper

@@ -7,13 +7,14 @@
 import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
+import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
 import initialize from "./general";
 import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise } from "./utils";
-window.Modal = Modal;
+
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth } = initialize(async user => {
     if (user) {
@@ -69,30 +70,29 @@ const pages = {
     mysets: {
         sets: document.querySelector('#mysets .set-container'),
         collections: document.querySelector("#mysets .collection-container"),
-        btnCreateCollection: document.querySelector("#mysets .btn-create-collection"),
-        btnCreate: document.querySelector("#mysets .btn-create"),
-        menuCreate: new MDCMenu(document.querySelector("#mysets .btn-create + .mdc-menu")),
+        btnCreateCollection: document.querySelector("#mysets .btn-create-collection")
     },
     publicsets: {
         sets: document.querySelectorAll("#search .set-container"),
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
         btnClearFilters: document.querySelector("#search .btn-clear-filters"),
-        searchInput: document.querySelector("#search .field-search")
+        searchInput: document.querySelector("#search .field-search"),
+        searchInputCollections: document.querySelector("#search .field-search-collections-list")
     },
     savedSets: {
         likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
-        reauthenticatePassword: new Modal("#modal-reauthenticate-password"),
+        reauthenticatePassword: new Modal("#modal-reauthenticate-password").modal(),
         reauthenticatePasswordInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-reauthenticate-password input"))),
-        changePassword: new Modal("#modal-change-password"),
+        changePassword: new Modal("#modal-change-password").modal(),
         changePasswordInputs: (/** @type {HTMLInputElement[]} */ ([...document.querySelectorAll("#modal-change-password input")])),
-        changeName: new Modal("#modal-change-name"),
+        changeName: new Modal("#modal-change-name").modal(),
         changeNameInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-name input"))),
-        filterCollection: new Modal("#modal-filter-collection"),
+        filterCollection: new Modal("#modal-filter-collection").modal(),
         filterCollectionList: document.querySelector("#modal-filter-collection .mdc-list"),
-        changeHue: new Modal("#modal-change-hue"),
+        changeHue: new Modal("#modal-change-hue").modal(),
         changeHueInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-hue input")))
     },
     admin: {
@@ -100,6 +100,7 @@ const pages = {
         sets: document.querySelector('#admin .set-container'),
     }
 };
+window.pages = pages;
 const authUI = new firebaseui.auth.AuthUI(auth);
 async function showAuthUI() {
     if (auth.currentUser) 
@@ -275,8 +276,8 @@ function saveSearch() {
 }
 async function listPreviewCollections(collections, allCollections=null) {
     let collectionEls = await parseCollections(collections, (allCollections ? {c: allCollections} : null));
-    pages.publicsets.searchInput.helperText.root.querySelector(".list-collections").textContent = "";
-    pages.publicsets.searchInput.helperText.root.querySelector(".list-collections").append(...collectionEls)
+    pages.publicsets.searchInputCollections.textContent = "";
+    pages.publicsets.searchInputCollections.append(...collectionEls);
 }
 async function search() {
     let searchTerm = pages.publicsets.searchInput.value;
@@ -348,9 +349,10 @@ function verifyEmail() {
 }
 addEventListener("DOMContentLoaded", () => {
     // MDC Instantiation and Events
-    initBulmaModals(pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName);
+    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName]);
     pages.modals.filterCollection.onclose = () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
+        console.log(collections);
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
     };
@@ -411,7 +413,7 @@ addEventListener("DOMContentLoaded", () => {
             })
     });
     pages.publicsets.btnSearchGo.addEventListener("click", () => search());
-    pages.publicsets.searchInput.listen("keyup", e => {
+    pages.publicsets.searchInput.addEventListener("keyup", e => {
         if (e.key === "Enter") search();
     })
     pages.publicsets.btnCollectionsMenu.addEventListener("click", () => pages.modals.filterCollection.open());
@@ -435,23 +437,10 @@ addEventListener("DOMContentLoaded", () => {
             registerCustomCollectionCard(docSnap);
         }
     });
-    pages.mysets.btnCreate.addEventListener("click", () => pages.mysets.menuCreate.open = true);
-    MDCRipple.attachTo(pages.account.btnVerifyEmail);
-    MDCRipple.attachTo(pages.account.btnChangePassword);
-    MDCRipple.attachTo(pages.account.btnDeleteAccount);
-    MDCRipple.attachTo(pages.home.btnShowFeatures).unbounded = true;
-    MDCRipple.attachTo(pages.account.btnChangeName);
-    MDCRipple.attachTo(pages.mysets.btnCreateCollection);
-    MDCRipple.attachTo(pages.mysets.btnCreate);
-    MDCRipple.attachTo(pages.publicsets.btnCollectionsMenu);
-    MDCRipple.attachTo(pages.publicsets.btnClearFilters);
-    MDCRipple.attachTo(pages.publicsets.btnSearchGo);
-    MDCRipple.attachTo(pages.admin.btn);
-    MDCRipple.attachTo(document.querySelector(".btn-change-hue")).listen("click", () => pages.modals.changeHue.open());
+    document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();
 });
-addEventListener("load", () => pages.publicsets.searchInput.value = pages.publicsets.searchInput.root.querySelector("input").value);
 window.addEventListener("hashchange", () => {
     if (!auth.currentUser && restrictedUrls.includes(location.hash)) {
         localStorage.setItem("redirect_after_login", location.href);

@@ -53,25 +53,25 @@ block content
                     span.button__label Delete Account
     .page#mysets(data-nosnippet)
         h1 My Sets:
-            .mdc-menu-surface--anchor(style="position: absolute;right: 0;top: 0;")
-                button.button.button--leading.btn-create(style="color: white; cursor: pointer;")
-                    span.button__ripple
-                    i.material-symbols-rounded.button__icon(aria-hidden="true") add_circle_outline
-                    span.button__label Create
-                .mdc-menu.mdc-menu-surface
-                    ul.mdc-list(role="menu" aria-orientation="vertical" tabindex="-1")
-                        li
-                            a.mdc-list-item(role="menuitem" href="/set/new/edit/")
-                                span.mdc-list-item__ripple
-                                span.mdc-list-item__text Set
-                        li
-                            a.mdc-list-item(role="menuitem" href="/set/new-timeline/edit/")
-                                span.mdc-list-item__ripple
-                                span.mdc-list-item__text Timeline
-                        li
-                            a.mdc-list-item(role="menuitem" href="/set/new-guide/edit/")
-                                span.mdc-list-item__ripple
-                                span.mdc-list-item__text Guide
+            .dropdown.is-active
+                .dropdown-trigger
+                    button.button.btn-create(aria-haspopup="true" aria-controls="dropdown-menu")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                        span Create
+                        span.icon.is-small
+                            i.material-symbols-rounded(aria-hidden="true") arrow_drop_down
+                .dropdown-menu.menu-create(role="menu")
+                    .dropdown-content
+                        a.dropdown-item(href="/set/new/edit/")
+                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                            span Set
+                        a.dropdown-item(href="/set/new-timeline/edit/")
+                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                            span Timeline
+                        a.dropdown-item(href="/set/new-guide/edit/")
+                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                            span Guide
         .set-container(data-empty="You don't have any sets. Create one!")
         button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
             span.button__ripple
@@ -106,28 +106,28 @@ block content
             .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
         h2.title.is-size-4.mb-0 Search:
         p.block Most sets are created by CVMS students for CVMS students
-        div.field-search-container.box.level
-            .column.is-four-fifths-fullhd.is-three-quarters-widescreen.is-two-thirds-desktop.is-half-tablet
-                input.input(placeholder="Search" type="text" autocomplete="off")
-            .column.field.has-addons
-                .control
-                    button.button.is-outlined.is-info.btn-collections-menu(type="button")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_list
-                        span Collections
-                .control
-                    button.button.is-outlined.is-danger.btn-clear-filters(type="button")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_list_off
-                        span Clear
-                .control
-                    button.button.is-primary.btn-search-go(type="button")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") search
-                        span Search
-        .mdc-text-field-helper-line
-            .mdc-text-field-helper-text.mdc-text-field-helper-text--persistent#field-search-helper Maximum 10 Words - Collections: 
-                span.list-collections
+        div.field-search-container.box
+            .level
+                .column.is-four-fifths-fullhd.is-three-quarters-widescreen.is-two-thirds-desktop.is-half-tablet
+                    input.input.field-search(placeholder="Search" type="text" autocomplete="off")
+                .column.field.has-addons
+                    .control
+                        button.button.is-outlined.is-info.btn-collections-menu(type="button")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_list
+                            span Collections
+                    .control
+                        button.button.is-outlined.is-danger.btn-clear-filters(type="button")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_list_off
+                            span Clear
+                    .control
+                        button.button.is-primary.btn-search-go(type="button")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") search
+                            span Search
+            p Maximum 10 Words - Collections: 
+                span.field-search-collections-list
         .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
         button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
             span.button__ripple
