@@ -1,5 +1,8 @@
 @import "styles.scss";
 .realhome {
+    .list-item {
+        border: 0 !important;
+    }
     background: url("../hero-background.svg") no-repeat center center;
     background-size: 100% 100%;
     position: absolute;
