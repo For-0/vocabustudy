@@ -97,13 +97,7 @@ $theme-color: #795548;
     .mdc-text-field--filled:not(.mdc-text-field--disabled) {
         background: #0a0a0a;
     }
-    a:not([class]) {
-        color: lighten($theme-color, 30%);
-        &:visited {
-            color: lighten($theme-color, 10%);
-        }
-    }
-    body > footer, header, .realhome {
+    body > footer, nav, .realhome {
         &::after {
             backdrop-filter: brightness(65%) saturate(110%);
             content: "";
@@ -209,12 +203,6 @@ a.mdc-list-item__text {
     display: none !important;
 }
 
-a:not([class]) {
-    color: $theme-color;
-    &:visited {
-        color: darken($theme-color, 20%);
-    }
-}
 
 main {
     margin-left: 1rem;
@@ -237,7 +225,7 @@ main {
         color: white;
         top: 64px;
         margin-top: 0;
-        z-index: 2;
+        z-index: 5;
         margin-bottom: 16px;
         &::after {
             content: "";
@@ -257,30 +245,10 @@ main {
 }
 
 body > footer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
     font-size: smaller;
-    background-color: $theme-color;
-    color: white;
     margin-top: 1rem;
+    margin-bottom: 0 !important;
     height: 43px;
-    a {
-        color: white;
-    }
-    > div, > p {
-        max-width: 50%;
-        > :last-child {display: none;}
-        @media(max-width: 650px) {
-            > :first-child {display: none;}
-            > :last-child {display: block;}
-        }
-        .mdc-icon-button {
-            height: 32px;
-            vertical-align: super;
-        }
-    }
 }
 
 .mdc-text-field--focused:not(.mdc-text-field--disabled):not(.mdc-text-field--invalid) .mdc-floating-label {
@@ -296,9 +264,6 @@ body > footer {
     line-height: 1.25rem;
     font-weight: 400;
     opacity: 0.6;
-}
-.mdc-dialog {
-    z-index: 1000;
 }
 .list-parent-item .mdc-checkbox {
     display: none;

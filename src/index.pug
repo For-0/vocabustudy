@@ -1,7 +1,7 @@
 extends includes/layout.pug
-
+block variables
+    - var title = "Home";
 block main-stylesheet
-    - var title = "Homes";
     link(rel="stylesheet" href="css/home.scss")
     link(rel="stylesheet" href="npm:firebaseui/dist/firebaseui.css" disabled id="firebaseui-css")
 block extrahead

@@ -1,18 +1,15 @@
-- var showBack = true;
-- var title = "Sets by User";
-- var description = "View Created by This User";
-doctype html
-html(lang="en")
-    include includes/head
-    body.mdc-typography
-        include includes/navbar
-        main
-            div#home.page
-                h1 Sets by User - 
-                    span.field-user-name(style="word-break: break-word; --studymode-header-width: 240px;")
-                .set-container(data-empty="This user has not made any sets")
-                button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-                    span.button__ripple
-                    span.button__label Load More
-        include includes/footer
-        script(src="js/user-sets.js" type="module")
+extends includes/layout.pug
+block variables
+    - var title = "Sets by User";
+    - var description = "View Created by This User";
+    - var showBack = true;
+block content
+    div#home.page
+        h1 Sets by User - 
+            span.field-user-name(style="word-break: break-word; --studymode-header-width: 240px;")
+        .set-container(data-empty="This user has not made any sets")
+        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
+            span.button__ripple
+            span.button__label Load More
+append scripts-footer
+    script(src="js/user-sets.js" type="module")

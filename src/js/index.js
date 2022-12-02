@@ -7,8 +7,9 @@
 import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
+// eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
-import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile, User } from "firebase/auth";
+import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import * as firebaseui from "firebaseui";
@@ -166,7 +167,7 @@ async function changeName() {
 }
 /**
  * Show account info
- * @param {User} param0
+ * @param {import("firebase/auth").User} param0
  */
 function showAccountInfo({ displayName, email, emailVerified, metadata: { creationTime } }) {
     pages.account.name.innerText = displayName;
@@ -464,7 +465,7 @@ window.addEventListener("hashchange", () => {
         case "#search":
             loadPreviousSearch();
             break;
-    };
+    }
     document.title = `${hashTitles[location.hash] || "Home"} - Vocabustudy`;
 });
 document.title = `${hashTitles[location.hash] || "Home"} - Vocabustudy`;

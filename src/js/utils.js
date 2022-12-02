@@ -187,7 +187,7 @@ export async function parseCollections(collections, allCollections=null) {
             return "Unknown Collection";
         }
     });
-    return collectionNames.map(el => createElement("span", ["tag", "is-primary"], {innerText: el || "Unknown Collection"}));
+    return collectionNames.map(el => createElement("span", ["tag", "is-primary", "mr-2"], {innerText: el || "Unknown Collection"}));
 }
 /**
  * Create a text field with an optional helper
@@ -272,22 +272,34 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     let collectionLabels = await parseCollections(collections);
     let textEls = [];
     if (relevance !== null) {
-        textEls.push(createElement("a", [], { innerText: `Created by ${creator}`, href: `/user/${uid}/` }));
-        textEls.push(createElement("div", [], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
+        textEls.push(createElement("p", ["m-0", "has-text-weight-medium"], { innerText: `Created by ${creator}`}));
+        textEls.push(createElement("p", ["m-0"], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
     } else textEls.push(createElement("div", [], { innerText: `Created by ${creator}` }));
     let setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
-    let primaryAction = createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/${setType}/${id}/view/` }, [
-        createElement("div", ["card-content"], {}, [
-            createElement("div", ["title.is-size-5", "fw-bold"], { innerText: name }),
-            createElement("div", [], { innerText: `${numTerms} terms - ${likes || "0"} likes` })
+    let cardEl = createElement("div", ["card"], {}, [/*createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/${setType}/${id}/view/` }, [*/
+        createElement("header", ["card-header"], {}, [
+            createElement("p", ["card-header-title"], { innerText: name }),
+            createElement("a", ["card-header-icon", "has-tooltip-arrow"], {href: `/user/${uid}/`}, [
+                createElement("span", ["icon"], {}, [
+                    createElement("i", ["is-filled", "material-symbols-rounded"], {innerText: "person"})
+                ])
+            ])
         ]),
-        createElement("div", ["card-content"], {}, textEls),
-        createElement("div", ["card-content"], {}, collectionLabels),
-        createElement("div", ["mdc-card__ripple"])
+        createElement("div", ["card-content"], {}, [
+            createElement("div", ["content"], {innerText: `${numTerms} terms - ${likes || "0"} likes`}, [
+                createElement("br"),
+                ...textEls,
+                createElement("br"),
+                ...collectionLabels
+        ])
+        ]),
+        createElement("footer", ["card-footer"], {}, [
+            createElement("a", ["card-footer-item"], {href: `/${setType}/${id}/view/`, innerText: "View"}),
+            createElement("a", ["card-footer-item"], {href: `/user/${uid}/`, innerText: "More By User"})
+        ])
     ]);
-    let cardEl = createElement("div", ["mdc-card"], {}, [primaryAction])
-    MDCRipple.attachTo(primaryAction);
-    return { card: cardEl, primaryAction };
+    cardEl.querySelector("a.has-tooltip-arrow").dataset.tooltip = `Created by ${creator}`;
+    return { card: cardEl };
 }
 export function createCustomCollectionCard(collection, id) {
     let buttons = [

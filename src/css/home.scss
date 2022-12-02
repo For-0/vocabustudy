@@ -114,6 +114,17 @@
             height: 100%;
         }
     }
+    .field-search-container .has-addons span {
+        @media (max-width: 380px) {
+            &:not(.icon) {
+                display: none;
+            }
+            &.icon {
+                margin-left: calc(-.5em - 1px);
+                margin-right: calc(-.5em - 1px);
+            }
+        }
+    }
 }
 @supports selector(has) {
     main:not(:has(.page:not(#home):target)) ~ footer {
