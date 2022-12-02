@@ -32,13 +32,14 @@ $fourth: #280000;
 @import "@creativebulma/bulma-divider/src/sass";
 @import "bulma-list/sass/bulma-list";
 
+// NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
 .button.is-floating {
     width: 60px;
     height: 60px;
     border-radius: 100px;
     text-align: center;
     font-size: 1.6rem;
-    box-shadow: 0 .0625em .125em rgba($scheme-invert,.05);
+    box-shadow: $box-shadow;
     z-index: 3;
     padding: 0;
     &.is-large {
@@ -97,4 +98,8 @@ strong {
 }
 .button {
     transition: 0.1s all;
+}
+.dropdown-item i {
+    vertical-align: bottom;
+    margin-right: 4px;
 }
