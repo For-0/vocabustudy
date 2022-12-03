@@ -47,7 +47,14 @@ const hashTitles = {
     "#saved-sets": "Saved Sets",
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
-    "#account": "My Account"
+    "#account": "My Account",
+    "#Privacy Policy": "Privacy Policy",
+    "Discord":"Discord",
+    "Feedback": "Feedback"
+    "Nightly Build": "Nightly Build"
+    "Leaderboard": "Leaderboard"
+    "Donate": "Donate"
+    "Youtube": "Youtube"
 };
 const pages = {
     home: {
