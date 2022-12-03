@@ -48,9 +48,9 @@ const hashTitles = {
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
     "#account": "My Account",
-    "#Discord":"Discord",
-    "#Donate": "Donate"
-    "#Youtube": "Youtube"
+    "#discord":"Discord",
+    "#donate": "Donate",
+    "#youtube": "Youtube"
 };
 const pages = {
     home: {
