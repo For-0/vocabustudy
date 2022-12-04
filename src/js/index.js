@@ -50,7 +50,8 @@ const hashTitles = {
     "#account": "My Account",
     "#discord":"Discord",
     "#donate": "Donate",
-    "#youtube": "Youtube"
+    "#youtube": "Youtube",
+    "#credits": "Credits"
 };
 const pages = {
     home: {
