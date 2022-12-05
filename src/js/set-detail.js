@@ -37,6 +37,7 @@ class AccentKeyboard extends HTMLElement {
     showButtons() {
         for (let specialChar of this.accents) {
             let btn = this.fieldset.appendChild(document.createElement("button"));
+            btn.tabIndex = -1;
             btn.classList.add("mdc-button", "mdc-button--outlined");
             btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
             btn.appendChild(document.createElement("span")).classList.add("mdc-button__label");
@@ -273,7 +274,7 @@ const pages = {
                 if (this.index < this.numTerms) {
                     this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => {
                         el.style.fontSize = "100px";
-                        resizeText(el);
+                        resizeText(el); // TODO migrate to fitty
                     });
                 }
                 this.nextCard();
