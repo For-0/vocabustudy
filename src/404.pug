@@ -1,16 +1,17 @@
 extends includes/layout.pug
 block variables
     - var title = "404 Not Found";
-    - var description = "The page you were looking for could not be found";
+    - var description = "The page you were looking for could not be found.";
     - var showBack = true;
 block extrahead
     meta(name="robots" content="noindex")
 block content
+    link(rel="stylesheet" href="css/404.scss")
     .page#home
         section.hero.is-primary.is-medium.is-bold.is-fullheight(style="width: 100%; top: 0; left: 0; position: absolute; z-index: 100;")
             .hero-body
                 .container.has-text-centered
-                    h1.title Oops! We couldn't find that page
+                    h1.title.nohuechange Oops! That page is #[span.rainbow_text_animated.nohuechange imaginary.]
                     h2.subtitle
-                        a.is-underlined(href="https://vocabustudy.org/set/0jYMZFlYRWZER2eIzYeY/view/") However, we did find this.
-                        // TODO make "flashcard" 404 page
+                        a.is-underlined(href="https://vocabustudy.org/set/0jYMZFlYRWZER2eIzYeY/view/") But... we did find this.
+            p(style="margin-bottom: 5px; text-align: center; color: grey; z-index: 1000;") (Error: 404) - #[a(href="/#" style="text-decoration: underline;") Return to Vocabustudy]
