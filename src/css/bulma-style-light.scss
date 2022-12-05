@@ -8,6 +8,7 @@ $fourth: #280000;
 $footer-background-color: $primary;
 $footer-color: #fff;
 $footer-padding: 1rem;
+$family-primary: "Raleway";
 
 // Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
 @import "bulma/sass/utilities/_all";
@@ -17,6 +18,7 @@ $footer-padding: 1rem;
 @import "bulma/sass/elements/content";
 @import "bulma/sass/elements/tag";
 @import "bulma/sass/elements/title";
+@import "bulma/sass/elements/notification";
 @import "bulma/sass/elements/other";
 @import "bulma/sass/components/navbar";
 @import "bulma/sass/components/card";
@@ -24,6 +26,7 @@ $footer-padding: 1rem;
 @import "bulma/sass/components/modal";
 @import "bulma/sass/components/dropdown";
 @import "bulma/sass/components/level";
+@import "bulma/sass/components/menu";
 @import "bulma/sass/grid/_all";
 @import "bulma/sass/helpers/_all";
 @import "bulma-slider/src/sass";
@@ -105,4 +108,17 @@ strong {
 .dropdown-item i {
     vertical-align: bottom;
     margin-right: 4px;
+}
+.menu-list li > a {
+    &:not(.is-active) + ul {
+        display: none;
+    }
+    &.is-active {
+        @extend .has-background-primary;
+    }
+    &.field > label {
+        width: 100%;
+        display: inline-block;
+        margin: 0;
+    }
 }

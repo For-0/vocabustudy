@@ -14,14 +14,14 @@ prepend navbar
             i.material-symbols-rounded palette
 block content
     .page#login(data-nosnippet)
-        h1.title.is1 Log In  
+        h1 Log In  
         div
             div
-                p.title.is4 Log In / Sign Up:
+                p.title.is-size-3.has-text-white Log In / Sign Up:
                 p(style="margin: 0;") You must be at least 13 years old to sign up, or have permission from a parent/guardian.
                 #firebaseui-auth-container
         div
-            p.title.is-size-5 Create sets and make assignments with a 
+            p.title.is-size-5 Create sets and study together with a 
                 strong(style="display: block;") free account.
                 img(src="pencil.png" alt="image of pencil.")
     .page#account(data-nosnippet)
@@ -29,28 +29,24 @@ block content
         p Only your display name is public.
         .card 
             .card-content
-                .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
-                .supporting-text
-                    span.field-email
-                    span.field-email-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: red; border: 0.2rem solid; border-radius: 0.3rem; border-color: red;" hidden) Email Not Verified
-                    span.field-email-not-verified.fw-bold.nohuechange(style="margin-left: 0.3rem; color: white; background: green; border: 0.2rem solid; border-radius: 0.3rem; border-color: green;" hidden) Email Verified
-            .card-content
-                .supporting-text 
-                    strong Account Created: 
-                    span.field-created
-            .card-footer
-                button.button.mdc-card__action.mdc-card__action--button.btn-verify-email(hidden)
-                    .button__ripple
-                    span.button__label Verify Email
-                button.button.mdc-card__action.mdc-card__action--button.btn-change-name
-                    .button__ripple
-                    span.button__label Change Display Name
-                button.button.mdc-card__action.mdc-card__action--button.btn-change-password
-                    .button__ripple
-                    span.button__label Change Password
-                button.button.mdc-card__action.mdc-card__action--button.btn-delete-account(style="color: #b30000;")
-                    .button__ripple
-                    span.button__label Delete Account
+                .content
+                    .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
+                    .supporting-text
+                        span.field-email
+                        span.field-email-not-verified.fw-bold.nohuechange.tag.ml-1.is-danger(hidden) Email Not Verified
+                        span.field-email-verified.fw-bold.nohuechange.tag.ml-1.is-success(hidden) Email Verified
+                    .supporting-text 
+                        strong Account Created: 
+                        span.field-created
+            footer.card-footer
+                p.card-footer-item(hidden)
+                    button.button.is-ghost.has-text-primary.btn-verify-email Verify Email
+                p.card-footer-item
+                    button.button.is-ghost.has-text-primary.btn-change-name Change Display Name
+                p.card-footer-item
+                    button.button.is-ghost.has-text-primary.btn-change-password Change Password
+                p.card-footer-item
+                    button.button.is-ghost.btn-delete-account.has-text-danger Delete Account
     .page#mysets(data-nosnippet)
         h1 My Sets:
             .dropdown.is-active.is-pulled-right
@@ -107,7 +103,7 @@ block content
         h2.title.is-size-4.mb-0 Search:
         p.block Most sets are created by CVMS students for CVMS students
         div.field-search-container.box
-            .level
+            .level.mb-1
                 .column.is-four-fifths-fullhd.is-three-quarters-widescreen.is-two-thirds-desktop.is-half-tablet
                     input.input.field-search(placeholder="Search" type="text" autocomplete="off")
                 .column.field.has-addons
@@ -278,11 +274,13 @@ append scripts-footer
             header.modal-card-head
                 p.modal-card-title Filter by Collection
                 button.delete(aria-label="close")
-            section.modal-card-body
+            section.modal-card-body.custom-scrollbar.is-thumb-only
                 p(style="margin: 0") You can choose a maximum of 10 collections to filter by
-                    ul.mdc-list(data-evolution="true")
+                aside.menu
+                    p.menu-label Collections
+                    ul.menu-list
             footer.modal-card-foot
-                button.button.is-success(type="button") OK
+                button.button.is-success.action-close(type="button") OK
     .modal#modal-change-hue
         .modal-background
         .modal-card

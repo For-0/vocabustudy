@@ -62,7 +62,7 @@ const pages = {
         email: document.querySelector("#account .field-email"),
         created: document.querySelector("#account .field-created"),
         emailVerified: document.querySelector("#account .field-email-verified"),
-        emailNotVerified: !document.querySelector("#account .field-email-not-verified"),
+        emailNotVerified: document.querySelector("#account .field-email-not-verified"),
         btnVerifyEmail: document.querySelector("#account .btn-verify-email"),
         btnChangePassword: document.querySelector("#account .btn-change-password"),
         btnChangeName: document.querySelector("#account .btn-change-name"),
@@ -92,7 +92,7 @@ const pages = {
         changeName: new Modal("#modal-change-name").modal(),
         changeNameInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-name input"))),
         filterCollection: new Modal("#modal-filter-collection").modal(),
-        filterCollectionList: document.querySelector("#modal-filter-collection .mdc-list"),
+        filterCollectionList: document.querySelector("#modal-filter-collection .menu > ul"),
         changeHue: new Modal("#modal-change-hue").modal(),
         changeHueInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-hue input")))
     },
@@ -172,9 +172,9 @@ async function changeName() {
 function showAccountInfo({ displayName, email, emailVerified, metadata: { creationTime } }) {
     pages.account.name.innerText = displayName;
     pages.account.email.innerText = email;
-    pages.account.emailVerified.hidden = emailVerified;
-    pages.account.emailNotVerified.hidden = !emailVerified;
-    pages.account.btnVerifyEmail.hidden = emailVerified;
+    pages.account.emailVerified.hidden = !emailVerified;
+    pages.account.emailNotVerified.hidden = emailVerified;
+    pages.account.btnVerifyEmail.parentElement.hidden = emailVerified;
     if (creationTime) pages.account.created.innerText = toLocaleDate(creationTime);
     else if (auth.currentUser)
         auth.currentUser.reload().then(() => pages.account.created.innerText = toLocaleDate(auth.currentUser.metadata.creationTime));
@@ -333,30 +333,29 @@ async function verifyAdmin() {
 }
 function verifyEmail() {
     if (auth.currentUser) {
-        new Alert({
-            type: "info",
+        new Alert().alert({
+            type: "warning",
             title: "Verify Email Address",
             body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address:\nNote: If it does not work, contact Omkar Patil (Vocabustudy Co-Admin) or Nikhil Gupta (Server Owner + Co-Admin) on Discord in order to get your email verified manually.",
             confirm: {
                 label: "Send Verification Email",
                 onClick: () => 
-                    sendEmailVerification(auth.currentUser).then(() => toast({message: "Verification email sent. Reload once you have verified your email.", type: "is-success", dismissible: true, position: "bottom-center"}))
+                    sendEmailVerification(auth.currentUser).then(() => toast({message: "Verification email sent. Reload once you have verified your email.", type: "is-success", dismissible: true, position: "bottom-center", duration: 7000}))
             },
             cancel: {
                 label: "Not Now"
-            }
+            },
         });
     }
 }
 addEventListener("DOMContentLoaded", () => {
     // MDC Instantiation and Events
-    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName]);
     pages.modals.filterCollection.onclose = () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
-        console.log(collections);
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
     };
+    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName]);
     pages.modals.reauthenticatePassword.validateInput = async () => {
         pages.modals.reauthenticatePasswordInput.setCustomValidity("");
         if (pages.modals.reauthenticatePasswordInput.reportValidity()) {

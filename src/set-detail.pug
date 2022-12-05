@@ -1,446 +1,444 @@
-- var styleFile = "set-detail.scss";
-- var showBack = true;
-- var title = "Set Detail";
-- var description = "Study a set, using one or more of our modes";
-doctype html
-html.custom-scrollbar(lang="en")
-    include includes/head
-    body.mdc-typography
-        include includes/navbar
-        main
-            .page#flashcards
-                h1 Flashcards - 
-                    span
-                    p.mdc-typography--subtitle1(style="margin: 0;")
-                        span 0
-                        |  / 
-                        span 0
-                        |  terms
+extends includes/layout.pug
+block variables
+    - var title = "Set Detail";
+    - var description = "Study a set, using one or more of our modes";
+    - var showBack = true;
+block main-stylesheet
+    link(rel="stylesheet" href="css/set-detail.scss")
+block content
+    .page#flashcards
+        h1 Flashcards - 
+            span
+            p.mdc-typography--subtitle1(style="margin: 0;")
+                span 0
+                |  / 
+                span 0
+                |  terms
+        div
+            div
+                p
+                    strong Answer With:
                 div
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-flashcards-answer-term.mdc-radio__native-control(type='radio', name='radio-flashcards-answer-with')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        label(for='radio-flashcards-answer-term') Term
+                div
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-flashcards-answer-definition.mdc-radio__native-control(type='radio', name='radio-flashcards-answer-with', checked='')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        label(for='radio-flashcards-answer-definition') Definition
+                div
+                    .mdc-form-field.check-starred
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-flashcard-starred")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-flashcard-starred") Only Starred
+                button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
+                    span.button__ripple
+                    i.material-symbols-rounded.button__icon(aria-hidden='true') loop
+                    span.button__label Shuffle
+            div
+        div
+            button#btn-previous-flashcard.button.button--icon-leading.button--outlined
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_back
+                span.button__label Previous (Left Arrow)
+            button#btn-flip-flashcard.button.button--icon-leading.button--raised
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden='true') change_circle
+                span.button__label Flip (Space)
+            button#btn-next-flashcard.button.button--icon-trailing.button--outlined
+                span.button__ripple
+                span.button__label Next (Right Arrow)
+                i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_forward
+    .page#learn
+        h1.title.is4
+            | Learn - 
+            span
+        div
+            div(style='flex-shrink: 0;')
+                p(style='margin: 0;')
+                    strong Answer With:
+                div
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-learn-answer-term.mdc-radio__native-control(type='radio', name='radio-learn-answer-with', checked='')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        label(for='radio-learn-answer-term') Term
+                div
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-learn-answer-definition.mdc-radio__native-control(type='radio', name='radio-learn-answer-with')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        label(for='radio-learn-answer-definition') Definition
+                div
+                    .mdc-form-field.check-starred
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-learn-starred")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-learn-starred") Only Starred
+                p(style='margin-bottom: 0;')
+                    strong Progress:
+                em(style='padding: 0;')
+                    span#learn-num-terms
+                    |    terms
+                p(style='margin: 0; margin-top: 8px;') Multiple Choice:
+                .mdc-circular-progress(style='width:48px;height:48px;', role='progressbar', aria-label='Multiple Choice Progress', aria-valuemin='0', aria-valuemax='1')
+                    .mdc-circular-progress__determinate-container
+                        svg.mdc-circular-progress__determinate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                            circle.mdc-circular-progress__determinate-track(cx='24', cy='24', r='18', stroke-width='4')
+                            circle.mdc-circular-progress__determinate-circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='113.097', stroke-width='4')
+                    .mdc-circular-progress__indeterminate-container
+                        .mdc-circular-progress__spinner-layer
+                            .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-left
+                                svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                                    circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
+                            .mdc-circular-progress__gap-patch
+                                svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                                    circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='3.2')
+                            .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-right
+                                svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                                    circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
+                p(style='margin: 0;') Short Answer:
+                .mdc-circular-progress(style='width:48px;height:48px;', role='progressbar', aria-label='Short Answer Progress', aria-valuemin='0', aria-valuemax='1')
+                    .mdc-circular-progress__determinate-container
+                        svg.mdc-circular-progress__determinate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                            circle.mdc-circular-progress__determinate-track(cx='24', cy='24', r='18', stroke-width='4')
+                            circle.mdc-circular-progress__determinate-circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='113.097', stroke-width='4')
+                    .mdc-circular-progress__indeterminate-container
+                        .mdc-circular-progress__spinner-layer
+                            .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-left
+                                svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                                    circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
+                            .mdc-circular-progress__gap-patch
+                                svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                                    circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='3.2')
+                            .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-right
+                                svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
+                                    circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
+            div(style="overflow-x: auto;")
+                p.title.is3
+                div
+                    p.mdc-typography--body1(style="font-size: 8px;") Tip: Use the number keys 1-4 to answer multiple choice questions
+                    p(hidden='')
+                        button.button.button--icon-trailing(type='button')
+                            span.button__ripple
+                            span.button__label Most Missed Questions
+                            i.material-symbols-rounded.button__icon(aria-hidden='true') open_in_new
+                    p.answer-correct.mdc-typography-button(hidden='')
+                        | Correct!
+                        br
+                        strong correct answer
+                        br
+                        | Press 
+                        kbd Enter
+                        |    or click here to move on
+                    p.answer-incorrect.mdc-typography-button(hidden='')
+                        | Incorrect - the correct answer is:
+                        br
+                        strong correct answer
+                        br
+                        | Press 
+                        kbd Enter
+                        |    or click here to move on
+                        button.button(type='button')
+                            span.button__ripple
+                            span.button__label Override - Correct
+                div
+                    accent-keyboard.custom-scrollbar
+                    label.mdc-text-field.mdc-text-field--outlined(style='width: calc(97% - 85px);')
+                        span.mdc-notched-outline
+                            span.mdc-notched-outline__leading
+                            span.mdc-notched-outline__notch
+                                span#learn-inputbox-label.mdc-floating-label Your Answer
+                            span.mdc-notched-outline__trailing
+                        input.mdc-text-field__input(type='text' aria-labelledby='learn-inputbox-label' required)
+                    button.button.button--raised(type='button')
+                        span.button__ripple
+                        span.button__label Check
+                fieldset
+                    button.button.button--outlined.button--icon-leading(data-answerindex='0')
+                        span.button__ripple
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') filter_1
+                        span.button__label Option 1
+                    button.button.button--outlined.button--icon-leading(data-answerindex='1')
+                        span.button__ripple
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') filter_2
+                        span.button__label Option 2
+                    button.button.button--outlined.button--icon-leading(data-answerindex='3')
+                        span.button__ripple
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') filter_3
+                        span.button__label Option 3
+                    button.button.button--outlined.button--icon-leading(data-answerindex='4')
+                        span.button__ripple
+                        i.material-symbols-rounded.button__icon(aria-hidden='true') filter_4
+                        span.button__label Option 4
+    .page#test.is-thumb-only
+        h1.title.is4
+            | Test - 
+            span
+        div
+            div.custom-scrollbar(style='width: 16%; overflow-x: auto;')
+                p(style="margin: 0;")
+                    strong Answer With:
+                div
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-test-answer-term.mdc-radio__native-control(type='radio', name='radio-test-answer-with', checked='')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        wbr
+                        label(for='radio-test-answer-term') Term
+                div
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-test-answer-definition.mdc-radio__native-control(type='radio', name='radio-test-answer-with')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        wbr
+                        label(for='radio-test-answer-definition') Definition
+                p(style="margin: 0;")
+                    strong Question Types:
+                div
+                    .mdc-form-field.check-test-question-types
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-sa")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-test-question-sa") Short Answer
+                div
+                    .mdc-form-field.check-test-question-types
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-mc")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-test-question-mc") Multiple Choice
+                div
+                    .mdc-form-field.check-test-question-types
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-mt")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-test-question-mt") Matching
+                div
+                    .mdc-form-field.check-test-question-types
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-tf")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-test-question-tf") True/False
+                div
+                    .mdc-form-field.check-starred
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-test-starred")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-test-starred") Only Starred
+                label.mdc-text-field.mdc-text-field--filled.field-max-terms(style="width: 100%; margin-bottom: 4px;")
+                    span.mdc-text-field__ripple
+                    span.mdc-floating-label Max Terms
+                    input.mdc-text-field__input(type="number" min="0")
+                    span.mdc-line-ripple
+                button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
+                    span.button__ripple
+                    i.material-symbols-rounded.button__icon(aria-hidden='true') loop
+                    span.button__label New Test
+                button.button.button--icon-leading.button--raised
+                    span.button__ripple
+                    i.material-symbols-rounded.button__icon(aria-hidden='true') check_circle
+                    span.button__label Check Answers
+            fieldset.custom-scrollbar
+                h2.title.is4(data-count='0')  Short Answer Questions
+                div
+                h2.title.is4(data-count='0')  Multiple Choice Questions
+                div
+                h2.title.is4(data-count='0')
+                    |  Matching Questions 
+                    p.mdc-typography--body1(style='margin:0;') Select an item on the left, then choose the matching item on the right
+                div(style='display:flex;flex-direction:row;gap:20%;position:relative')
                     div
-                        p
-                            strong Answer With:
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-flashcards-answer-term.mdc-radio__native-control(type='radio', name='radio-flashcards-answer-with')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                label(for='radio-flashcards-answer-term') Term
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-flashcards-answer-definition.mdc-radio__native-control(type='radio', name='radio-flashcards-answer-with', checked='')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                label(for='radio-flashcards-answer-definition') Definition
-                        div
-                            .mdc-form-field.check-starred
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-flashcard-starred")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-flashcard-starred") Only Starred
-                        button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
-                            span.button__ripple
-                            i.material-symbols-rounded.button__icon(aria-hidden='true') loop
-                            span.button__label Shuffle
                     div
+                    .matches-container
+                h2.title.is4(data-count='0')  True/False Questions
                 div
-                    button#btn-previous-flashcard.button.button--icon-leading.button--outlined
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_back
-                        span.button__label Previous (Left Arrow)
-                    button#btn-flip-flashcard.button.button--icon-leading.button--raised
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden='true') change_circle
-                        span.button__label Flip (Space)
-                    button#btn-next-flashcard.button.button--icon-trailing.button--outlined
-                        span.button__ripple
-                        span.button__label Next (Right Arrow)
-                        i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_forward
-            .page#learn
-                h1.title.is4
-                    | Learn - 
-                    span
+    .page#match
+        h1.title.is4
+            | Match - 
+            span
+        div
+            div(style='width: 16%; overflow-x: auto;')
+                p(style="margin:0; padding:0;")
+                    strong Answer With:
                 div
-                    div(style='flex-shrink: 0;')
-                        p(style='margin: 0;')
-                            strong Answer With:
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-learn-answer-term.mdc-radio__native-control(type='radio', name='radio-learn-answer-with', checked='')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                label(for='radio-learn-answer-term') Term
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-learn-answer-definition.mdc-radio__native-control(type='radio', name='radio-learn-answer-with')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                label(for='radio-learn-answer-definition') Definition
-                        div
-                            .mdc-form-field.check-starred
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-learn-starred")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-learn-starred") Only Starred
-                        p(style='margin-bottom: 0;')
-                            strong Progress:
-                        em(style='padding: 0;')
-                            span#learn-num-terms
-                            |    terms
-                        p(style='margin: 0; margin-top: 8px;') Multiple Choice:
-                        .mdc-circular-progress(style='width:48px;height:48px;', role='progressbar', aria-label='Multiple Choice Progress', aria-valuemin='0', aria-valuemax='1')
-                            .mdc-circular-progress__determinate-container
-                                svg.mdc-circular-progress__determinate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                    circle.mdc-circular-progress__determinate-track(cx='24', cy='24', r='18', stroke-width='4')
-                                    circle.mdc-circular-progress__determinate-circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='113.097', stroke-width='4')
-                            .mdc-circular-progress__indeterminate-container
-                                .mdc-circular-progress__spinner-layer
-                                    .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-left
-                                        svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                            circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
-                                    .mdc-circular-progress__gap-patch
-                                        svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                            circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='3.2')
-                                    .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-right
-                                        svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                            circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
-                        p(style='margin: 0;') Short Answer:
-                        .mdc-circular-progress(style='width:48px;height:48px;', role='progressbar', aria-label='Short Answer Progress', aria-valuemin='0', aria-valuemax='1')
-                            .mdc-circular-progress__determinate-container
-                                svg.mdc-circular-progress__determinate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                    circle.mdc-circular-progress__determinate-track(cx='24', cy='24', r='18', stroke-width='4')
-                                    circle.mdc-circular-progress__determinate-circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='113.097', stroke-width='4')
-                            .mdc-circular-progress__indeterminate-container
-                                .mdc-circular-progress__spinner-layer
-                                    .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-left
-                                        svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                            circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
-                                    .mdc-circular-progress__gap-patch
-                                        svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                            circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='3.2')
-                                    .mdc-circular-progress__circle-clipper.mdc-circular-progress__circle-right
-                                        svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
-                                            circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
-                    div(style="overflow-x: auto;")
-                        p.title.is3
-                        div
-                            p.mdc-typography--body1(style="font-size: 8px;") Tip: Use the number keys 1-4 to answer multiple choice questions
-                            p(hidden='')
-                                button.button.button--icon-trailing(type='button')
-                                    span.button__ripple
-                                    span.button__label Most Missed Questions
-                                    i.material-symbols-rounded.button__icon(aria-hidden='true') open_in_new
-                            p.answer-correct.mdc-typography-button(hidden='')
-                                | Correct!
-                                br
-                                strong correct answer
-                                br
-                                | Press 
-                                kbd Enter
-                                |    or click here to move on
-                            p.answer-incorrect.mdc-typography-button(hidden='')
-                                | Incorrect - the correct answer is:
-                                br
-                                strong correct answer
-                                br
-                                | Press 
-                                kbd Enter
-                                |    or click here to move on
-                                button.button(type='button')
-                                    span.button__ripple
-                                    span.button__label Override - Correct
-                        div
-                            accent-keyboard.custom-scrollbar
-                            label.mdc-text-field.mdc-text-field--outlined(style='width: calc(97% - 85px);')
-                                span.mdc-notched-outline
-                                    span.mdc-notched-outline__leading
-                                    span.mdc-notched-outline__notch
-                                        span#learn-inputbox-label.mdc-floating-label Your Answer
-                                    span.mdc-notched-outline__trailing
-                                input.mdc-text-field__input(type='text' aria-labelledby='learn-inputbox-label' required)
-                            button.button.button--raised(type='button')
-                                span.button__ripple
-                                span.button__label Check
-                        fieldset
-                            button.button.button--outlined.button--icon-leading(data-answerindex='0')
-                                span.button__ripple
-                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_1
-                                span.button__label Option 1
-                            button.button.button--outlined.button--icon-leading(data-answerindex='1')
-                                span.button__ripple
-                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_2
-                                span.button__label Option 2
-                            button.button.button--outlined.button--icon-leading(data-answerindex='3')
-                                span.button__ripple
-                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_3
-                                span.button__label Option 3
-                            button.button.button--outlined.button--icon-leading(data-answerindex='4')
-                                span.button__ripple
-                                i.material-symbols-rounded.button__icon(aria-hidden='true') filter_4
-                                span.button__label Option 4
-            .page#test
-                h1.title.is4
-                    | Test - 
-                    span
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-match-answer-term.mdc-radio__native-control(type='radio' name='radio-match-answer-with')
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        label(for='radio-match-answer-term') Term
                 div
-                    div.custom-scrollbar(style='width: 16%; overflow-x: auto;')
-                        p(style="margin: 0;")
-                            strong Answer With:
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-test-answer-term.mdc-radio__native-control(type='radio', name='radio-test-answer-with', checked='')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                wbr
-                                label(for='radio-test-answer-term') Term
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-test-answer-definition.mdc-radio__native-control(type='radio', name='radio-test-answer-with')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                wbr
-                                label(for='radio-test-answer-definition') Definition
-                        p(style="margin: 0;")
-                            strong Question Types:
-                        div
-                            .mdc-form-field.check-test-question-types
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-sa")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-test-question-sa") Short Answer
-                        div
-                            .mdc-form-field.check-test-question-types
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-mc")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-test-question-mc") Multiple Choice
-                        div
-                            .mdc-form-field.check-test-question-types
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-mt")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-test-question-mt") Matching
-                        div
-                            .mdc-form-field.check-test-question-types
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-tf")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-test-question-tf") True/False
-                        div
-                            .mdc-form-field.check-starred
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-starred")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-test-starred") Only Starred
-                        label.mdc-text-field.mdc-text-field--filled.field-max-terms(style="width: 100%; margin-bottom: 4px;")
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Max Terms
-                            input.mdc-text-field__input(type="number" min="0")
-                            span.mdc-line-ripple
-                        button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
-                            span.button__ripple
-                            i.material-symbols-rounded.button__icon(aria-hidden='true') loop
-                            span.button__label New Test
-                        button.button.button--icon-leading.button--raised
-                            span.button__ripple
-                            i.material-symbols-rounded.button__icon(aria-hidden='true') check_circle
-                            span.button__label Check Answers
-                    fieldset.custom-scrollbar
-                        h2.title.is4(data-count='0')  Short Answer Questions
-                        div
-                        h2.title.is4(data-count='0')  Multiple Choice Questions
-                        div
-                        h2.title.is4(data-count='0')
-                            |  Matching Questions 
-                            p.mdc-typography--body1(style='margin:0;') Select an item on the left, then choose the matching item on the right
-                        div(style='display:flex;flex-direction:row;gap:20%;position:relative')
-                            div
-                            div
-                            .matches-container
-                        h2.title.is4(data-count='0')  True/False Questions
-                        div
-            .page#match
-                h1.title.is4
-                    | Match - 
-                    span
+                    .mdc-form-field.answer-with
+                        .mdc-radio.mdc-radio--touch
+                            input#radio-match-answer-definition.mdc-radio__native-control(type='radio' name='radio-match-answer-with' checked)
+                            .mdc-radio__background
+                                .mdc-radio__outer-circle
+                                .mdc-radio__inner-circle
+                            .mdc-radio__ripple
+                        label(for='radio-match-answer-definition') Definition
                 div
-                    div(style='width: 16%; overflow-x: auto;')
-                        p(style="margin:0; padding:0;")
-                            strong Answer With:
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-match-answer-term.mdc-radio__native-control(type='radio' name='radio-match-answer-with')
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                label(for='radio-match-answer-term') Term
-                        div
-                            .mdc-form-field.answer-with
-                                .mdc-radio.mdc-radio--touch
-                                    input#radio-match-answer-definition.mdc-radio__native-control(type='radio' name='radio-match-answer-with' checked)
-                                    .mdc-radio__background
-                                        .mdc-radio__outer-circle
-                                        .mdc-radio__inner-circle
-                                    .mdc-radio__ripple
-                                label(for='radio-match-answer-definition') Definition
-                        div
-                            .mdc-form-field.check-starred
-                                .mdc-checkbox
-                                    input.mdc-checkbox__native-control(type="checkbox" id="check-match-starred")
-                                    .mdc-checkbox__background
-                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                        .mdc-checkbox__mixedmark
-                                    .mdc-checkbox__ripple
-                                label(for="check-match-starred") Only Starred
-                        p(style="margin: 0;") Time: 
-                            span.field-time 0.0
-                            | s
-                        button.button.button--icon-leading.button--outlined.btn-refresh(style='margin-bottom: 8px;')
-                            span.button__ripple
-                            i.material-symbols-rounded.button__icon(aria-hidden='true') loop
-                            span.button__label Restart
-                        button.mdc-icon-button.btn-refresh(style='margin-bottom: 8px')
-                            .mdc-icon-button__ripple
-                            span.mdc-icon-button__focus-ring
-                            i.material-symbols-rounded loop
-                        h2.title.is6(style="margin-bottom: 0; padding-bottom: 0;") Help:
-                        p(style="margin: 0; font-size: small;")
-                            strong Mouse:
-                            br
-                            | Drag the items from left to right
-                            br
-                            strong Touch:
-                            br
-                            | Tap a left item, then tap a right item
-                    div
-                        .custom-scrollbar
-                        .custom-scrollbar
-            .page#home
-                h1
-                    span.field-name
-                    button.button.button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden="true") favorite_border
-                        span.button__label Like
-                    p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
-                        span.field-num-terms
-                        |  terms
-                p.field-description
-                .field-terms
-                .study-modes
-                    a.button.button--raised.button--leading(style="--mdc-typography-button-font-size: .85rem;" href="#flashcards")
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden="true") collections
-                        span.button__label Flashcards
-                    a.button.button--outlined.button--leading(href="#learn")
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden="true") quiz
-                        span.button__label Learn
-                    a.button.button--outlined.button--leading(href="#test")
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden="true") assignment
-                        span.button__label Test
-                    a.button.button--outlined.button--leading(href="#match")
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden="true") attach_file
-                        span.button__label Match
-                    button.button.button--outlined.button--leading.btn-export-terms
-                        span.button__ripple
-                        i.material-symbols-rounded.button__icon(aria-hidden="true") file_download
-                        span.button__label Export
-                details(style="margin-top: 1rem; float: left; width: 100%;")
-                    summary
-                        h2.title.is6(style="display: inline;") Comments
-                    .comments-container.set-container(data-empty="No Comments. Post one!")
-                    .field-comment(hidden)
-                        label.mdc-text-field.mdc-text-field--filled
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Comment
-                            input.mdc-text-field__input(type="text" required maxlength="500")
-                            span.mdc-line-ripple
-                        button.button.button--outlined(type="button" style="display: block;" disabled)
-                            span.button__ripple
-                            span.button__label Save
-        include includes/footer
-        aside.mdc-snackbar#snackbar-comment-saved
-            .mdc-snackbar__surface(role="status" aria-relevant="additions")
-                .mdc-snackbar__label(aria-atomic="false") Comment saved!
-        .mdc-dialog#modal-match-done
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title All Done!
-                    .mdc-dialog__content
-                        p(style="margin: 0;") You took 
-                            strong.field-time-taken
-                            |  seconds to finish
-                            br
-                            strong Leaderboard:
-                        ul.mdc-list(data-evolution="true")
-                    .mdc-dialog__actions
-                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .button__ripple
-                            span.button__label Back
-                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
-                            .button__ripple
-                            span.button__label Restart
-        .mdc-dialog#modal-export-terms
-            .mdc-dialog__container
-                .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Export Terms
-                    .mdc-dialog__content.custom-scrollbar(style="--track: transparent;")
-                        p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
-                        pre
-                    .mdc-dialog__actions
-                        button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                            .button__ripple
-                            span.button__label Close
-        script(src="js/set-detail.js" type="module")
+                    .mdc-form-field.check-starred
+                        .mdc-checkbox
+                            input.mdc-checkbox__native-control(type="checkbox" id="check-match-starred")
+                            .mdc-checkbox__background
+                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                .mdc-checkbox__mixedmark
+                            .mdc-checkbox__ripple
+                        label(for="check-match-starred") Only Starred
+                p(style="margin: 0;") Time: 
+                    span.field-time 0.0
+                    | s
+                button.button.button--icon-leading.button--outlined.btn-refresh(style='margin-bottom: 8px;')
+                    span.button__ripple
+                    i.material-symbols-rounded.button__icon(aria-hidden='true') loop
+                    span.button__label Restart
+                button.mdc-icon-button.btn-refresh(style='margin-bottom: 8px')
+                    .mdc-icon-button__ripple
+                    span.mdc-icon-button__focus-ring
+                    i.material-symbols-rounded loop
+                h2.title.is6(style="margin-bottom: 0; padding-bottom: 0;") Help:
+                p(style="margin: 0; font-size: small;")
+                    strong Mouse:
+                    br
+                    | Drag the items from left to right
+                    br
+                    strong Touch:
+                    br
+                    | Tap a left item, then tap a right item
+            div
+                .custom-scrollbar
+                .custom-scrollbar
+    .page#home
+        h1
+            span.field-name
+            button.button.button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") favorite_border
+                span.button__label Like
+            p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
+                span.field-num-terms
+                |  terms
+        p.field-description
+        .field-terms
+        .study-modes
+            a.button.button--raised.button--leading(style="--mdc-typography-button-font-size: .85rem;" href="#flashcards")
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") collections
+                span.button__label Flashcards
+            a.button.button--outlined.button--leading(href="#learn")
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") quiz
+                span.button__label Learn
+            a.button.button--outlined.button--leading(href="#test")
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") assignment
+                span.button__label Test
+            a.button.button--outlined.button--leading(href="#match")
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") attach_file
+                span.button__label Match
+            button.button.button--outlined.button--leading.btn-export-terms
+                span.button__ripple
+                i.material-symbols-rounded.button__icon(aria-hidden="true") file_download
+                span.button__label Export
+        details(style="margin-top: 1rem; float: left; width: 100%;")
+            summary
+                h2.title.is6(style="display: inline;") Comments
+            .comments-container.set-container(data-empty="No Comments. Post one!")
+            .field-comment(hidden)
+                label.mdc-text-field.mdc-text-field--filled
+                    span.mdc-text-field__ripple
+                    span.mdc-floating-label Comment
+                    input.mdc-text-field__input(type="text" required maxlength="500")
+                    span.mdc-line-ripple
+                button.button.button--outlined(type="button" style="display: block;" disabled)
+                    span.button__ripple
+                    span.button__label Save
+append scripts-footer
+    aside.mdc-snackbar#snackbar-comment-saved
+        .mdc-snackbar__surface(role="status" aria-relevant="additions")
+            .mdc-snackbar__label(aria-atomic="false") Comment saved!
+    .mdc-dialog#modal-match-done
+        .mdc-dialog__container
+            .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                h2.mdc-dialog__title All Done!
+                .mdc-dialog__content
+                    p(style="margin: 0;") You took 
+                        strong.field-time-taken
+                        |  seconds to finish
+                        br
+                        strong Leaderboard:
+                    ul.mdc-list(data-evolution="true")
+                .mdc-dialog__actions
+                    button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                        .button__ripple
+                        span.button__label Back
+                    button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
+                        .button__ripple
+                        span.button__label Restart
+    .mdc-dialog#modal-export-terms
+        .mdc-dialog__container
+            .mdc-dialog__surface(role="alertdialog" aria-modal="true")
+                h2.mdc-dialog__title Export Terms
+                .mdc-dialog__content.custom-scrollbar(style="--track: transparent;")
+                    p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
+                    pre
+                .mdc-dialog__actions
+                    button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                        .button__ripple
+                        span.button__label Close
+    script(src="js/set-detail.js" type="module")

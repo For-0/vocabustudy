@@ -1,6 +1,6 @@
 block variables
 doctype html
-html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;")
+html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; overflow-y: auto;")
     head
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
@@ -70,13 +70,13 @@ html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;
                                 a.navbar-item.loggedin.adminonly(hidden href="/#admin") Admin Portal
                                 hr.navbar-divider
                                 a.navbar-item.loggedin(hidden href="/#account") My Account
-                                span#btn-logout.navbar-item.loggedin(hidden) Log Out
+                                span#btn-logout.navbar-item.is-clickable.loggedin(hidden) Log Out
                                 a.navbar-item.loggedout(hidden href="/#login") Log In
         main
             block content
         div.fab-theme-container
             button.button.is-primary.fab-theme.is-floating.is-light(aria-label="Theme" title="Change Theme")
-                i(style="font-size:2rem;").material-symbols-rounded brightness_high
+                i(style="font-size: 1.5rem;").material-symbols-rounded brightness_high
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
                     i.material-symbols-rounded.is-filled settings_brightness
@@ -86,7 +86,7 @@ html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;
                     i.material-symbols-rounded brightness_high
         // TODO change to bulma responsive design
         footer.footer.level.is-mobile(style="position: relative;")
-            p.level-item.is-narrow
+            p.level-item
                 span.mr-1 v#{process.env.npm_package_version}
                 span.is-hidden-mobile.mr-1  | &copy; 2022 Siddhant K. All Rights Reserved
                 | - 
@@ -112,6 +112,7 @@ html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;
                         i.material-symbols-rounded leaderboard
         block scripts-footer
             script.
+                console.info("%cOrchestra is better than Band*\n%c*But Art is the best", "background-color: #795548; color: white; font-size: 96px; font-weight: bold; border-radius: 4px; font-style: italic;", "font-size: 12px; font-style: italic;");
                 if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) location.host = "vocabustudy.org";
                 const navbar = {
                     btnLogout: document.getElementById("btn-logout"),
@@ -159,7 +160,7 @@ html.has-navbar-fixed-top(lang="en" style="overflow-x: hidden; overflow-y: auto;
                             localStorage.setItem("theme", themes[i]);
                         });
                     });
-                    navbar.btnLogout.addEventListener("click", () => auth.signOut());
+                    navbar.btnLogout.addEventListener("click", () => window.signOut());
                 });
                 fabs.theme.addEventListener("click", e => {
                     e.stopPropagation();

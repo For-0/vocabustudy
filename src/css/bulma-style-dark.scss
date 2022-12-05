@@ -1,5 +1,5 @@
 @charset "utf-0";
 
+$scheme-main: hsl(0, 0%, 21%);
+$scheme-invert: hsl(0, 0%, 96%);
 @import "./bulma-style-light.scss";
-$scheme-main: $black;
-$scheme-invert: $white;

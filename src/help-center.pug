@@ -1,214 +1,210 @@
-- var showBack = true;
-- var styleFile = "help-center.scss"; 
-- var showBack = true;
-- var title = "Help Center";
-- var description = "Vocabustudy Help Center";
-doctype html
-html(lang="en")
-    include includes/head
-    body.mdc-typography.theme-system
-        include includes/navbar
-        main
-            .page#home
-                h1 Vocabustudy Help Center
-                p.title.is-size-5 How-tos, tips, and instructions!
-                button.collapsible Creating an account
-                .content
-                    h2 Creating an account gives you the ability to:
-                    ul
-                        li Create sets
-                        br
-                        li Save sets
-                        br
-                        li Comment on sets
-                        br
-                        li Like sets
-                        br
-                        li And more!
-                    h2 How to create an account
-                    p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login")] vocabustudy.org/#login].
-                    p 2. Click "log in" in the menu that appears.
-                    p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email. 
-                        | We recommend signing in with Google, because it is much easier to create your account and login to it. 
-                        | However, if you want to create your account with email, here are the steps:
+extends includes/layout.pug
+block variables
+    - var title = "Help Center";
+    - var description = "Vocabustudy Help Center";
+    - var showBack = true;
+block main-stylesheet
+    link(rel="stylesheet" href="css/help-center.scss")
+block content
+    .page#home
+        h1 Vocabustudy Help Center
+        p.title.is-size-5 How-tos, tips, and instructions!
+        button.collapsible Creating an account
+        .content
+            h2 Creating an account gives you the ability to:
+            ul
+                li Create sets
+                br
+                li Save sets
+                br
+                li Comment on sets
+                br
+                li Like sets
+                br
+                li And more!
+            h2 How to create an account
+            p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login")] vocabustudy.org/#login].
+            p 2. Click "log in" in the menu that appears.
+            p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email. 
+                | We recommend signing in with Google, because it is much easier to create your account and login to it. 
+                | However, if you want to create your account with email, here are the steps:
+            ol
+                li Press the button that says "Sign in with email".
+                br
+                li Enter your email in the menu that appears.
+                br
+                li Enter your name and the password that you want to use for your new account.
+                br
+                li It will bring up information about email verification. Press "Send Verification Email" when you are ready.
+                br
+                li You will get a message at the bottom of the screen when the email has been sent.
+                br
+                li Open your email.
+                br
+                li Look for an email from noreply@vocabustudy.org (such a cool, professional email, I know!!!!) titled "Verify your email for Vocabustudy".
+                br
+                li Open it and click the link.
+                br
+                li It will tell you when your email is verified.
+                br
+                li Close the tab with the email verification link.
+                br
+                li Reload the My Account page on Vocabustudy. 
+                br
+            h3 Your Account has been verified!
+            p You can now use your account when you are using Vocabustudy.
+        br
+        br
+        button.collapsible Creating a set
+        .content
+            h2 Here's how to create a set:
+            ol
+                li Open Vocabustudy and make sure that you are logged in.
+                br
+                li Then, click the account icon on the top right and go to "My Sets", or go to "https://vocabustudy.org/#mysets".
+                br
+                li You will see buttons that will allow you to create sets, study guides, and timelines. In this tutorial, we will create a mew set.
+                br
+                li Click on "Add/+ set".
+                br
+                li Add a title. You can also add an optional description, if you like.
+                br
+                li Make the set either public or private.
+                br
+                li Add terms using the "add" button.
+                br
+                li You can also import terms from Quizlet or Blooket. You can also just copy and paste terms from a vocabulary list, Kahoot, etc.
+                br
+                li Add your set to the collections/subjects that it falls under, so that people can find it easily.
+                br
+                li Make sure that your set has at least four terms and a title.
+                br
+                li Click "save set".
+            h4 Congratulations, you have created a set!
+            p There are some guidelines for sets:
+            ol
+                br
+                li Your sets cannot have offensive, harmful, or explicit content. 
+                    | If your set meets the criteria listed, your set will at the very least be made private or deleted, and at worst, your account will be restricted.
+                br
+                li Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
+                br
+                li Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
+            p Have fun making useful sets!
+        br
+        br
+        button.collapsible Editing a set
+        .content
+            h2 Here's how to edit a set:
+            ol
+                li Open Vocabustudy and make sure that you are logged in.
+                br
+                li Then, click the account icon on the top right and go to "My Sets", or go to "https://vocabustudy.org/#mysets".
+                br
+                li All the sets that you created will be under the "My Sets:" heading. Find the set that you want to edit.
+                br
+                li Click on "edit" under the set that you want to edit.
+                br
+                li Edit the fields that you want to change. 
+                    | You can edit the title, description, and terms in the set. 
+                    | You can also make the set public or private and change the collections that the set is in.
+                br
+                br
+                button.collapsible How to change the title of the set
+                .content(class='nested')
+                    h3 Here's how to change the title of the set:
                     ol
-                        li Press the button that says "Sign in with email".
+                        li Click on the title of the set.
                         br
-                        li Enter your email in the menu that appears.
+                        li Type in the new title.
                         br
-                        li Enter your name and the password that you want to use for your new account.
+                        li Click away from the title input box.
                         br
-                        li It will bring up information about email verification. Press "Send Verification Email" when you are ready.
-                        br
-                        li You will get a message at the bottom of the screen when the email has been sent.
-                        br
-                        li Open your email.
-                        br
-                        li Look for an email from noreply@vocabustudy.org (such a cool, professional email, I know!!!!) titled "Verify your email for Vocabustudy".
-                        br
-                        li Open it and click the link.
-                        br
-                        li It will tell you when your email is verified.
-                        br
-                        li Close the tab with the email verification link.
-                        br
-                        li Reload the My Account page on Vocabustudy. 
-                        br
-                    h3 Your Account has been verified!
-                    p You can now use your account when you are using Vocabustudy.
+                    h3 The title of your set has been changed!
                 br
                 br
-                button.collapsible Creating a set
-                .content
-                    h2 Here's how to create a set:
+                button.collapsible How to change the description of the set
+                .content(class='nested')
+                    h3 Here's how to change the description of the set:
                     ol
-                        li Open Vocabustudy and make sure that you are logged in.
+                        li Click on the description of the set.
                         br
-                        li Then, click the account icon on the top right and go to "My Sets", or go to "https://vocabustudy.org/#mysets".
+                        li Type in the new description.
                         br
-                        li You will see buttons that will allow you to create sets, study guides, and timelines. In this tutorial, we will create a mew set.
+                        li Click away from the description input box.
                         br
-                        li Click on "Add/+ set".
+                    h3 The description of your set has been changed!
+                br
+                br
+                button.collapsible How to change the terms in the set
+                .content(class='nested')
+                    h3 Here's how to change the terms in the set:
+                    ol How to add a term: 
+                        li Click on the "Add/+" button next to "Vocabulary Words".
                         br
-                        li Add a title. You can also add an optional description, if you like.
+                        li A new term will be added to the end of the set. Type in the term and its definition.
                         br
-                        li Make the set either public or private.
+                        li Click away from the term you added.".
+                    ol How to delete a term in the set:
+                        li Click on the Trash can button next to the term that you want to delete.
                         br
-                        li Add terms using the "add" button.
+                        li The term will be deleted.
+                    ol How to edit a term and/or definition in the set:
+                        li Click on the term that you want to edit.
                         br
-                        li You can also import terms from Quizlet or Blooket. You can also just copy and paste terms from a vocabulary list, Kahoot, etc.
+                        li Type in the new term.
                         br
-                        li Add your set to the collections/subjects that it falls under, so that people can find it easily.
+                        li Click away from the term input box.
                         br
-                        li Make sure that your set has at least four terms and a title.
+                        li Click on the definition that you want to edit.
                         br
-                        li Click "save set".
-                    h4 Congratulations, you have created a set!
-                    p There are some guidelines for sets:
+                        li Type in the new definition.
+                        br
+                        li Click away from the definition input box.
+                br
+                br
+                button.collapsible How to make the set public or private
+                .content(class='nested')
+                    h3 Here's how to make the set public or private:
                     ol
+                        li Go to the top of the page.
                         br
-                        li Your sets cannot have offensive, harmful, or explicit content. 
-                         | If your set meets the criteria listed, your set will at the very least be made private or deleted, and at worst, your account will be restricted.
+                        li Under the set description, there is a toggle button next to the word "Public".
                         br
-                        li Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
-                        br
-                        li Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
-                    p Have fun making useful sets!
+                        li Click on the toggle button to change the set from public to private or vice versa.
                 br
-                br
-                button.collapsible Editing a set
-                .content
-                    h2 Here's how to edit a set:
+                br 
+                button.collapsible How to change the collections that the set is in
+                .content(class='nested')
+                    h3 Here's how to change the collections that the set is in:
                     ol
-                        li Open Vocabustudy and make sure that you are logged in.
+                        li Go down to the bottom of the page to the "Collections" section.
                         br
-                        li Then, click the account icon on the top right and go to "My Sets", or go to "https://vocabustudy.org/#mysets".
+                        li Use the dropdowns to find the collection that you want to add the set to or remove it from.
                         br
-                        li All the sets that you created will be under the "My Sets:" heading. Find the set that you want to edit.
-                        br
-                        li Click on "edit" under the set that you want to edit.
-                        br
-                        li Edit the fields that you want to change. 
-                         | You can edit the title, description, and terms in the set. 
-                         | You can also make the set public or private and change the collections that the set is in.
-                        br
-                        br
-                        button.collapsible How to change the title of the set
-                        .content(class='nested')
-                            h3 Here's how to change the title of the set:
-                            ol
-                                li Click on the title of the set.
-                                br
-                                li Type in the new title.
-                                br
-                                li Click away from the title input box.
-                                br
-                            h3 The title of your set has been changed!
-                        br
-                        br
-                        button.collapsible How to change the description of the set
-                        .content(class='nested')
-                            h3 Here's how to change the description of the set:
-                            ol
-                                li Click on the description of the set.
-                                br
-                                li Type in the new description.
-                                br
-                                li Click away from the description input box.
-                                br
-                            h3 The description of your set has been changed!
-                        br
-                        br
-                        button.collapsible How to change the terms in the set
-                        .content(class='nested')
-                            h3 Here's how to change the terms in the set:
-                            ol How to add a term: 
-                                li Click on the "Add/+" button next to "Vocabulary Words".
-                                br
-                                li A new term will be added to the end of the set. Type in the term and its definition.
-                                br
-                                li Click away from the term you added.".
-                            ol How to delete a term in the set:
-                                li Click on the Trash can button next to the term that you want to delete.
-                                br
-                                li The term will be deleted.
-                            ol How to edit a term and/or definition in the set:
-                                li Click on the term that you want to edit.
-                                br
-                                li Type in the new term.
-                                br
-                                li Click away from the term input box.
-                                br
-                                li Click on the definition that you want to edit.
-                                br
-                                li Type in the new definition.
-                                br
-                                li Click away from the definition input box.
-                        br
-                        br
-                        button.collapsible How to make the set public or private
-                        .content(class='nested')
-                            h3 Here's how to make the set public or private:
-                            ol
-                                li Go to the top of the page.
-                                br
-                                li Under the set description, there is a toggle button next to the word "Public".
-                                br
-                                li Click on the toggle button to change the set from public to private or vice versa.
-                        br
-                        br 
-                        button.collapsible How to change the collections that the set is in
-                        .content(class='nested')
-                            h3 Here's how to change the collections that the set is in:
-                            ol
-                                li Go down to the bottom of the page to the "Collections" section.
-                                br
-                                li Use the dropdowns to find the collection that you want to add the set to or remove it from.
-                                br
-                                li Check the box to add the set to the collection or uncheck the box to remove the set from the collection.
-                            h3 Your set has been added to the collections that you selected!
-                        br
-                        br
-                        li When you are done making the changes that you want, 
-                         | click "save set" or press the "Enter" key on your keyboard to save the changes that you made.
-                    h4 Congratulations, you have edited a set!
-                    p Make sure that your edited set still complies with the guidelines for sets:
-                    ol
-                        br
-                        li Your sets cannot have offensive, harmful, or explicit content.
-                         | If your set meets the criteria listed, your set will at the very least be made private or deleted, and at worst, your account will be restricted.
-                        br
-                        li Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
-                        br
-                        li Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
-                    p Have fun making useful sets!
+                        li Check the box to add the set to the collection or uncheck the box to remove the set from the collection.
+                    h3 Your set has been added to the collections that you selected!
                 br
                 br
-                //h3
-                 | If you have any feedback or questions, please use #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
-                h3 Please give us your feedback and report any bugs that you find here:
-                iframe(src='https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform?embedded=true', width='640', height='1300', frameborder='0', marginheight='0', marginwidth='0') Loading...
-                h3 You can contact us with any questions that you have at #[a(href='mailto:management@vocabustudy.org') management@vocabustudy.org]. Thank you!
-
-        include includes/footer
+                li When you are done making the changes that you want, 
+                    | click "save set" or press the "Enter" key on your keyboard to save the changes that you made.
+            h4 Congratulations, you have edited a set!
+            p Make sure that your edited set still complies with the guidelines for sets:
+            ol
+                br
+                li Your sets cannot have offensive, harmful, or explicit content.
+                    | If your set meets the criteria listed, your set will at the very least be made private or deleted, and at worst, your account will be restricted.
+                br
+                li Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
+                br
+                li Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
+            p Have fun making useful sets!
+        br
+        br
+        //h3
+            | If you have any feedback or questions, please use #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
+        h3 Please give us your feedback and report any bugs that you find here:
+        iframe(src='https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform?embedded=true', width='640', height='1300', frameborder='0', marginheight='0', marginwidth='0') Loading...
+        h3 You can contact us with any questions that you have at #[a(href='mailto:management@vocabustudy.org') management@vocabustudy.org]. Thank you!
+append scripts-footer
         script(src="js/help-center.js" type="module")
