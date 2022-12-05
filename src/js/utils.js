@@ -1,17 +1,7 @@
-import { MDCCheckbox } from "@material/checkbox/index";
-import { matches } from '@material/dom/ponyfill';
-import { strings as MDCListStrings } from "@material/list/constants";
-import { MDCList } from "@material/list/index";
 import { MDCRipple } from "@material/ripple/index";
 import { MDCTextField } from "@material/textfield/index";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
-MDCList.prototype.handleClickEvent = function (evt) {
-    var index = this.getListItemIndex(evt.target);
-    var target = evt.target;
-    var toggleCheckbox = !matches(target, MDCListStrings.CHECKBOX_RADIO_SELECTOR);
-    this.foundation.handleClick(index, !toggleCheckbox, evt); // FIXME MANUAL HACK material-components/material-components-web#7618
-};
-const checkboxBackground = '<svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24"><path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" /></svg><div class="mdc-checkbox__mixedmark"></div>';
+
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
 /**
@@ -65,7 +55,6 @@ export async function loadCollections() {
         let cachedItem = JSON.parse(possibleCachedItem);
         if (cachedItem.expiration && cachedItem.data && cachedItem.expiration > currentTime) return cachedItem.data;
     }
-    //let {default: newCollections} = await import("../collections.json").;
     let newCollections = await import("../collections.json");
     let newExpiration = currentTime + 604800000; // number of milliseconds in a week
     localStorage.setItem("collections_cache", JSON.stringify({ data: newCollections, expiration: newExpiration }));
@@ -76,34 +65,17 @@ export async function showCollections(listEl) {
     for (let [i, collection] of c.entries()) {
         if (typeof collection === "string") listEl.appendChild(createCollectionListItem(collection, i));
         else if (typeof collection === "object") {
-            let groupEl = listEl.appendChild(createCollectionParentListItem(collection.n));
-            /** @type {HTMLLIElement[]} */
-            let subEls = [];
-            subEls.push(listEl.appendChild(createCollectionListItem("General", i)));
-            groupEl.addEventListener("click", () => subEls.forEach(el => {
-                let hidden = el.classList.toggle("width-only");
-                if (el.options && hidden) el.options.forEach(el2 => el2.classList.add("width-only"));
-            }));
+            let groupEl = createCollectionParentListItem(collection.n);
+            listEl.appendChild(groupEl.listItem);
+            groupEl.childList.appendChild(createCollectionListItem("General", i));
             if (collection.o) for (let [j, subCollection] of collection.s.entries()) {
-                let subEl = listEl.appendChild(createCollectionParentListItem(subCollection));
-                subEls.push(subEl);
-                subEl.options = [];
-                subEl.addEventListener("click", () => subEl.options.forEach(el => el.classList.toggle("width-only")));
-                subEl.options.push(listEl.appendChild(createCollectionListItem("General", `${i}:${j}`)));
-                for (let [k, option] of collection.o.entries()) subEl.options.push(listEl.appendChild(createCollectionListItem(option, `${i}:${j}:${k}`)));
-                subEl.options.forEach(el => {
-                    el.classList.add("width-only");
-                    el.style.marginLeft = "32px";
-                });
-            } else for (let [j, subCollection] of collection.s.entries()) subEls.push(listEl.appendChild(createCollectionListItem(subCollection, `${i}:${j}`)));
-            subEls.forEach(el => {
-                el.classList.add("width-only");
-                el.style.marginLeft = "16px";
-            });
+                let subEl = createCollectionParentListItem(subCollection);
+                groupEl.childList.appendChild(subEl.listItem);
+                subEl.childList.appendChild(createCollectionListItem("General", `${i}:${j}`));
+                for (let [k, option] of collection.o.entries()) subEl.childList.appendChild(createCollectionListItem(option, `${i}:${j}:${k}`));
+            } else for (let [j, subCollection] of collection.s.entries()) groupEl.childList.appendChild(createCollectionListItem(subCollection, `${i}:${j}`));
         }
     }
-    let list = new MDCList(listEl);
-    list.listElements.forEach(el => MDCRipple.attachTo(el));
     return c;
 }
 /**
@@ -112,49 +84,31 @@ export async function showCollections(listEl) {
  * @param {String} i Collection id
  * @returns {HTMLElement} the list item
  */
-export function createCollectionListItem(name, i) {
-    let checkboxEl = createElement("div", ["mdc-checkbox"], {}, [
-        createElement("input", ["mdc-checkbox__native-control"], { type: "checkbox", name: "collections-filter" }),
-        createElement("div", ["mdc-checkbox__background"], { innerHTML: checkboxBackground }),
-        createElement("div", ["mdc-checkbox__ripple"])
-    ]);
-    checkboxEl.setAttribute("tabindex", "-1");
-    let listItem = createElement("li", ["mdc-list-item", "mdc-list-item--with-leading-checkbox"], {}, [
-        createElement("span", ["mdc-list-item__ripple"]),
-        createElement("span", ["mdc-list-item__start"], {}, [checkboxEl]),
-        createElement("span", ["mdc-list-item__content"], {}, [
-            createElement("span", ["mdc-list-item__primary-text"], { innerText: name })
+function createCollectionListItem(name, i) {
+    let inputId = `_${crypto.randomUUID()}`;
+    let listItem = createElement("li", [], {}, [
+        createElement("a", ["field"], {}, [
+            createElement("input", ["is-checkradio"], {id: inputId, type: "checkbox", value: i}),
+            createElement("label", [], {htmlFor: inputId, innerText: name})
         ])
     ]);
-    listItem.setAttribute("tabindex", "-1");
-    let checkbox = new MDCCheckbox(checkboxEl);
-    checkbox.value = i;
     return listItem;
 }
 /**
  * Creates a collection parent list item for putting in a multiselect list
  * @param {String} name Collection name
- * @param {String} i Collection id
- * @returns {HTMLElement} the list item
+ * @returns the list item and the child list
  */
-export function createCollectionParentListItem(name) {
-    let checkboxEl = createElement("div", ["mdc-checkbox"], {}, [
-        createElement("input", ["mdc-checkbox__native-control"], { type: "checkbox", name: "collections-filter", value: "" }),
-        createElement("div", ["mdc-checkbox__background"], { innerHTML: checkboxBackground }),
-        createElement("div", ["mdc-checkbox__ripple"])
+function createCollectionParentListItem(name) {
+    let childList = createElement("ul");
+    let listText = createElement("a", [], {innerText: name}, [
+        createElement("span", ["icon", "is-pulled-right"], {}, [
+            createElement("i", ["material-symbols-rounded"], {innerText: "expand_more"})
+        ])
     ]);
-    let listItem = createElement("li", ["mdc-list-item", "mdc-list-item--with-trailing-icon", "list-parent-item"], {}, [
-        createElement("span", ["mdc-list-item__ripple"]),
-        createElement("span", ["mdc-list-item__start"], {}, [checkboxEl]),
-        createElement("span", ["mdc-list-item__content"], {}, [
-            createElement("span", ["mdc-list-item__primary-text"], { innerText: name })
-        ]),
-        createElement("span", ["mdc-list-item__end"], {}, [
-            createElement("i", ["material-symbols-rounded"], { innerText: "expand_more" })
-        ]),
-    ]);
-    listItem.setAttribute("tabindex", "-1");
-    return listItem;
+    let listItem = createElement("li", [], {}, [listText, childList]);
+    listText.addEventListener("click", () => listText.classList.toggle("is-active"));
+    return {listItem, childList};
 }
 
 export function getBlooketSet(setId, setType) {
@@ -272,14 +226,14 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     let collectionLabels = await parseCollections(collections);
     let textEls = [];
     if (relevance !== null) {
-        textEls.push(createElement("p", ["m-0", "has-text-weight-medium"], { innerText: `Created by ${creator}`}));
+        textEls.push(createElement("p", ["m-0", "has-text-weight-bold"], { innerText: `Created by ${creator}`}));
         textEls.push(createElement("p", ["m-0"], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
-    } else textEls.push(createElement("div", [], { innerText: `Created by ${creator}` }));
+    } else textEls.push(createElement("div", ["has-text-weight-bold"], { innerText: `Created by ${creator}` }));
     let setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
-    let cardEl = createElement("div", ["card"], {}, [/*createElement("a", ["mdc-card__primary-action"], { tabindex: 0, href: `/${setType}/${id}/view/` }, [*/
+    let cardEl = createElement("div", ["card"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], { innerText: name }),
-            createElement("a", ["card-header-icon", "has-tooltip-arrow"], {href: `/user/${uid}/`}, [
+            createElement("a", ["card-header-icon", "has-tooltip-arrow", "link-user"], {href: `/user/${uid}/`}, [
                 createElement("span", ["icon"], {}, [
                     createElement("i", ["is-filled", "material-symbols-rounded"], {innerText: "person"})
                 ])
@@ -289,16 +243,17 @@ export async function createSetCard({ name, creator, numTerms, collections, like
             createElement("div", ["content"], {innerText: `${numTerms} terms - ${likes || "0"} likes`}, [
                 createElement("br"),
                 ...textEls,
-                createElement("br"),
                 ...collectionLabels
         ])
         ]),
         createElement("footer", ["card-footer"], {}, [
-            createElement("a", ["card-footer-item"], {href: `/${setType}/${id}/view/`, innerText: "View"}),
-            createElement("a", ["card-footer-item"], {href: `/user/${uid}/`, innerText: "More By User"})
+            createElement("a", ["card-footer-item", "has-text-primary"], {href: `/${setType}/${id}/view/`, innerText: "View"}),
+            createElement("a", ["card-footer-item", "has-text-primary", "link-user"], {href: `/user/${uid}/`, innerText: "More By User"})
         ])
     ]);
-    cardEl.querySelector("a.has-tooltip-arrow").dataset.tooltip = `Created by ${creator}`;
+    if (!uid) cardEl.querySelectorAll(".link-user").forEach(el => el.remove());
+    else cardEl.querySelector("a.has-tooltip-arrow").dataset.tooltip = `Created by ${creator}`;
+    cardEl.querySelector("footer").style.whiteSpace = "nowrap";
     return { card: cardEl };
 }
 export function createCustomCollectionCard(collection, id) {
@@ -365,9 +320,11 @@ export async function paginateQueries(queries, btnMore, onResults, startAfterN =
 }
 
 export async function initBulmaModals(modals) {
-    modals.forEach(modal => 
+    modals.forEach(modal => {
+        // If a modal is close-only (there is no accept/deny and it will not be used with bulmaModalPromise) then do this
+        if (modal.onclose) modal.root.querySelectorAll(".action-close").forEach(el => el.addEventListener("click", () => modal.close()));
         modal.on("close", () => modal.onclose && modal.onclose())
-    );
+    });
 }
 /**
  * Wait for a BulmaJS Modal to close, whether by button press or other close method
@@ -378,6 +335,7 @@ export async function bulmaModalPromise(modal) {
         modal.onclose = () => resolve(false);
         modal.root.querySelector("footer button").onclick = async () => {
             if (!modal.validateInput || await modal.validateInput()) {
+                modal.onclose = null;
                 modal.close();
                 resolve(true);
             }

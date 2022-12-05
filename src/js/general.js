@@ -17,7 +17,6 @@ const firebaseConfig = {
     storageBucket: "vocab-u-study.appspot.com",
     messagingSenderId: "230085427328",
     appId: "1:230085427328:web:9eed7902aab4c8eb49e665"
-
 };
 
 /**
@@ -54,7 +53,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         connectAuthEmulator(auth, `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`, {disableWarnings: true});
         connectFirestoreEmulator(db, `${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`, 443);
     }
-    
+    window.signOut = () => auth.signOut(); // TODO move all to SW, as this will not work on some pages. ALso may disable tree shaking
     auth.onAuthStateChanged(async user => {
         window.sentrySetUser?.call(window, user);
         if (user) setLoginButtonsState(true, (await user.getIdTokenResult()).claims.admin); else setLoginButtonsState(false, false);

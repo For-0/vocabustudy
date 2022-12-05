@@ -133,12 +133,14 @@ $theme-color: #795548;
         border-radius: 20px;
         border: transparent;
     }
+    .is-thumb-only {
+        --track: transparent;
+        --thumb: #6b473c;
+    }
 }
 
 body {
     margin: 0;
-    --mdc-typography-button-font-weight: 400;
-    --mdc-typography-font-family: Raleway;
     &.theme-dark {
         @include theme-dark;
     }
@@ -226,7 +228,7 @@ main {
         top: 64px;
         margin-top: 0;
         z-index: 5;
-        margin-bottom: 16px;
+        margin-bottom: 2rem;
         &::after {
             content: "";
             background: url("../hero-background.svg") no-repeat center center;
@@ -314,10 +316,6 @@ body > footer {
     to {
         transform: scale(0.8);
     }
-}
-.width-only {
-    visibility: hidden;
-    height: 0;
 }
 .bg-green {
     background-color: #4CAF50;
