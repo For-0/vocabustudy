@@ -321,14 +321,112 @@ block content
                             .mdc-radio__ripple
                         label(for='radio-match-answer-term') Term
                 div
-                    .mdc-form-field.answer-with
-                        .mdc-radio.mdc-radio--touch
-                            input#radio-match-answer-definition.mdc-radio__native-control(type='radio' name='radio-match-answer-with' checked)
-                            .mdc-radio__background
-                                .mdc-radio__outer-circle
-                                .mdc-radio__inner-circle
-                            .mdc-radio__ripple
-                        label(for='radio-match-answer-definition') Definition
+                    div.custom-scrollbar(style='width: 16%; overflow-x: auto;')
+                        p(style="margin: 0;")
+                            strong Answer With:
+                        div
+                            .mdc-form-field.answer-with
+                                .mdc-radio.mdc-radio--touch
+                                    input#radio-test-answer-term.mdc-radio__native-control(type='radio', name='radio-test-answer-with', checked='')
+                                    .mdc-radio__background
+                                        .mdc-radio__outer-circle
+                                        .mdc-radio__inner-circle
+                                    .mdc-radio__ripple
+                                wbr
+                                label(for='radio-test-answer-term') Term
+                        div
+                            .mdc-form-field.answer-with
+                                .mdc-radio.mdc-radio--touch
+                                    input#radio-test-answer-definition.mdc-radio__native-control(type='radio', name='radio-test-answer-with')
+                                    .mdc-radio__background
+                                        .mdc-radio__outer-circle
+                                        .mdc-radio__inner-circle
+                                    .mdc-radio__ripple
+                                wbr
+                                label(for='radio-test-answer-definition') Definition
+                        p(style="margin: 0;")
+                            strong Question Types:
+                        div
+                            .mdc-form-field.check-test-question-types
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-sa")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-test-question-sa") Short Answer
+                        div
+                            .mdc-form-field.check-test-question-types
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-mc")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-test-question-mc") Multiple Choice
+                        div
+                            .mdc-form-field.check-test-question-types
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-mt")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-test-question-mt") Matching
+                        div
+                            .mdc-form-field.check-test-question-types
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-question-tf")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-test-question-tf") True/False
+                        div
+                            .mdc-form-field.check-starred
+                                .mdc-checkbox
+                                    input.mdc-checkbox__native-control(type="checkbox" id="check-test-starred")
+                                    .mdc-checkbox__background
+                                        svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
+                                            path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
+                                        .mdc-checkbox__mixedmark
+                                    .mdc-checkbox__ripple
+                                label(for="check-test-starred") Only Starred
+                        label.mdc-text-field.mdc-text-field--filled.field-max-terms(style="width: 100%; margin-bottom: 4px;")
+                            span.mdc-text-field__ripple
+                            span.mdc-floating-label Max Terms
+                            input.mdc-text-field__input(type="number" min="0")
+                            span.mdc-line-ripple
+                        button.mdc-button.mdc-button--icon-leading.mdc-button--outlined(style='display: block; margin-bottom: 8px')
+                            span.mdc-button__ripple
+                            i.material-icons.mdc-button__icon(aria-hidden='true') loop
+                            span.mdc-button__label New Test
+                        button.mdc-button.mdc-button--icon-leading.mdc-button--raised
+                            span.mdc-button__ripple
+                            i.material-icons.mdc-button__icon(aria-hidden='true') check_circle
+                            span.mdc-button__label Check Answers
+                    fieldset.custom-scrollbar
+                        h2.mdc-typography--headline4(data-count='0')  Short Answer Question
+                        div
+                        h2.mdc-typography--headline4(data-count='0')  Multiple Choice Question
+                        div
+                        h2.mdc-typography--headline4(data-count='0')
+                            |  Matching Question
+                            p.mdc-typography--body1(style='margin:0;') Select an item on the left, then choose the matching item on the right
+                        div(style='display:flex;flex-direction:row;gap:20%;position:relative')
+                            div
+                            div
+                            .matches-container
+                        h2.mdc-typography--headline4(data-count='0')  True/False Question
+                        div
+            .page#match
+                h1.mdc-typography--headline4
+                    | Match - 
+                    span
                 div
                     .mdc-form-field.check-starred
                         .mdc-checkbox

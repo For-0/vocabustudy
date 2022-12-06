@@ -67,7 +67,7 @@
     justify-content: space-between;
     float: left;
     width: 85%;
-    align-items: baseline;
+    align-items: stretch;
     overflow-wrap: break-word;
     &:empty::after {
         content: "Loading set...";
@@ -218,6 +218,10 @@
             }
         }
     }
+    img {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 #learn {
@@ -313,6 +317,9 @@
             > h2 {
                 &::before {
                     content: attr(data-count);
+                }
+                &:not([data-count="1"])::after {
+                    content: "s";
                 }
                 &[data-count="0"] {
                     display: none;

@@ -273,7 +273,7 @@ const pages = {
                 if (this.index < this.numTerms) {
                     this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => {
                         el.style.fontSize = "100px";
-                        resizeText(el);
+                        resizeText(el); // TODO migrate to fitty
                     });
                 }
                 this.nextCard();
