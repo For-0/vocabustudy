@@ -129,6 +129,7 @@ block content
             span.button__ripple
             span.button__label Load More
     .page#credits(data-nosnippet)
+        // TODO: Revamp Credits Page
         h1 Credits - Vocabustudy
         p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
         p.title.is-size-5 For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
@@ -184,9 +185,9 @@ block content
                             li 100% Free
                             li No Ads
                             li Relevant Vocab
-                    p(style="margin-bottom: 0; font-size: 1.25rem; font-weight: bold;") Created/developed by Siddhant Kameswar
+                    p(style="margin-bottom: 0; margin-top: 2rem; font-size: 1.25rem; font-weight: bold;") Created/developed by Siddhant Kameswar
                     p(style="margin-bottom: 0; margin-top: 0; font-size: 1rem;") #[a(href="/#credits" style="color: white; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid white;") Credits]
-                    p.mdc-typography--overline(style="margin-bottom: 0;") VOCABUSTUDY - U STUDY VOCAB
+                    p.mdc-typography--overline(style="margin-bottom: 0; font-size: 0.8rem; margin-top: 0.3rem;") VOCABUSTUDY - U STUDY VOCAB
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
@@ -289,10 +290,10 @@ append scripts-footer
         .modal-background
         .modal-card
             header.modal-card-head
-                p.modal-card-title Change Theme
+                p.modal-card-title Change Color
                 button.delete(aria-label="close")
             section.modal-card-body
-                p Set Hue:
+                p Set Color:
                 input.slider.is-fullwidth.is-primary(min="0" max="360" type="range" value="0")
             footer.modal-card-foot
                 button.button.is-success(type="button") OK

@@ -48,14 +48,14 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
         block navbar
             nav.navbar.is-primary.is-fixed-top(role="navigation" aria-label="main navigation")
                 .navbar-brand.is-justify-content-space-between
-                    a.navbar-item(href="/#")
-                        img.nohuechange(src="icons/icon-192.png" height="28" style="border: 1px solid #fff8; border-radius: 0.5rem;")
                     a.navbar-burger(role="button" aria-label="menu" aria-expanded="false" data-target="main-navbar")
                         span(aria-hidden="true")
                         span(aria-hidden="true")
                         span(aria-hidden="true")
                 #main-navbar.navbar-menu
                     .navbar-start
+                        a.navbar-item(href="/#")
+                            img.nohuechange(src="icons/icon-192.png" height="28" style="border: 1px solid #fff8; border-radius: 0.5rem;")
                         a.navbar-item(href="/#") Home
                         a.navbar-item(href="/#search") Browse Sets
                         a.navbar-item(href="/#donate") Donate
@@ -63,7 +63,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     .navbar-end
                         .navbar-item.has-dropdown.is-hoverable
                             a.navbar-link.is-arrowless #[i.material-symbols-rounded.is-filled account_circle] #[i.material-symbols-rounded arrow_drop_down]
-                            .navbar-dropdown
+                            .navbar-dropdown.is-right.is-centered
                                 a.navbar-item(href="/#saved-sets") Saved Sets
                                 a.navbar-item.loggedin(hidden href="/#mysets") My Sets
                                 a.navbar-item.loggedin.adminonly(hidden href="/#admin") Admin Portal
