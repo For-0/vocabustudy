@@ -16,9 +16,7 @@ Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created
 
 [Vocabustudy's nightly build](https://nightly.vocabustudy.org/) includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or [here.](https://vocabustudy.org/)
 
--------------------
-
-## Contributing:
+## Contributing!
 Follow these steps to run Vocabustudy locally:
 1. Clone the repo locally (I recommend using the [Github CLI](https://cli.github.com/manual/) if you're brand new to Git)
     `gh repo clone For-0/vocabustudy`
