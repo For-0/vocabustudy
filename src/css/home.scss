@@ -225,6 +225,10 @@
         opacity: 1;
     }
 }
+.button {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
 .firebaseui-idp-icon, .nohuechange {
     filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg))
 }
