@@ -1,9 +1,9 @@
-import { MDCDialog } from "@material/dialog/index";
-import { MDCRipple } from "@material/ripple/index";
-import { MDCFormField } from "@material/form-field/index";
-import { MDCRadio } from "@material/radio/index";
-import { MDCSwitch } from "@material/switch/index";
-import { MDCTextField } from "@material/textfield/index";
+// import { MDCDialog } from "@material/dialog/index";
+// import { MDCRipple } from "@material/ripple/index";
+// import { MDCFormField } from "@material/form-field/index";
+// import { MDCRadio } from "@material/radio/index";
+// import { MDCSwitch } from "@material/switch/index";
+// import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
