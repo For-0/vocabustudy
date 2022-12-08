@@ -132,17 +132,21 @@ block content
     .page#credits(data-nosnippet)
         h1 Credits - Vocabustudy
         p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
-        button(data-target="contrib1" class="js-modal-trigger").button.is-primary.creditbutton #[p(style="color:white;").subtitle.is-5 Siddhant Kameswar]
+        button.button.is-primary.creditbutton.contrib1 #[p(style="color:white;").subtitle.is-5 Siddhant Kameswar]
         .modal#contrib1
             .modal-background
+            .modal-card(hidden)
             .modal-content
                 .box
                     .modal-card-title
                         p(style="margin-bottom: 0.4rem;") Siddhant Kameswar
                     p For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
-        button(data-target="contrib2" class="js-modal-trigger").button.is-primary.creditbutton #[p(style="color:white;").subtitle.is-5 Ruhan Gupta]
+                    br
+                    button(style="margin-right: 0.3rem" onclick="location.href='https://github.com/grimsteel';").button.is-small.is-github.nohuechange #[a(href="https://github.com/grimsteel" style="color:white;") #[i.fab.fa-github.fa-lg]]
+        button.button.is-primary.creditbutton.contrib2 #[p(style="color:white;").subtitle.is-5 Ruhan Gupta]
         .modal#contrib2
                 .modal-background
+                .modal-card(hidden)
                 .modal-content
                     .box
                         .modal-card-title
@@ -151,25 +155,28 @@ block content
                         br
                         button(style="margin-right: 0.3rem" onclick="location.href='https://github.com/IMGROOT2';").button.is-small.is-github.nohuechange #[a(href="https://github.com/IMGROOT2" style="color:white;") #[i.fab.fa-github.fa-lg]]
                         button(style="margin-right: 0.3rem" onclick="location.href='https://discordapp.com/users/698961308506390568';").button.is-small.is-discord.nohuechange #[a(href="https://discordapp.com/users/698961308506390568" style="color:white;") #[i.fab.fa-discord.fa-lg]]
-        button(data-target="contrib3" class="js-modal-trigger").button.is-primary.creditbutton #[p(style="color:white;").subtitle.is-5 Omkar Patil]
+        button.button.is-primary.creditbutton.contrib3 #[p(style="color:white;").subtitle.is-5 Omkar Patil]
         .modal#contrib3
                 .modal-background
+                .modal-card(hidden)
                 .modal-content
                     .box
                         .modal-card-title
                             p(style="margin-bottom: 0.4rem;") Omkar Patil
                         p #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing and minor bug fixes] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
-        button(data-target="contrib4" class="js-modal-trigger").button.is-primary.creditbutton #[p(style="color:white;").subtitle.is-5 Nikhil Gupta]
+        button.button.is-primary.creditbutton.contrib4 #[p(style="color:white;").subtitle.is-5 Nikhil Gupta]
         .modal#contrib4
                 .modal-background
+                .modal-card(hidden)
                 .modal-content
                     .box
                         .modal-card-title
                             p(style="margin-bottom: 0.4rem;") Nikhil Gupta
                         p #[strong Nikhil Gupta] (not Ruhan's brother) has also been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong requested features] to make Vocabustudy better. He #[strong created the Discord server], #[strong invited people], and #[moderates it]. He and Omkar have #[strong shared Vocabustudy with the world], which has helped grow it along the way.
-        button(data-target="contrib5" class="js-modal-trigger").button.is-primary.creditbutton #[p(style="color:white;").subtitle.is-5 Michael Zhao]
+        button.button.is-primary.creditbutton.contrib5 #[p(style="color:white;").subtitle.is-5 Michael Zhao]
         .modal#contrib5
                 .modal-background
+                .modal-card(hidden)
                 .modal-content
                     .box
                         .modal-card-title
