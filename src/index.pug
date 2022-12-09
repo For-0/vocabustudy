@@ -69,7 +69,7 @@ block content
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
                             span Guide
         .set-container(data-empty="You don't have any sets. Create one!")
-        button.button.is-primary.is-outlined.mt-2.is-block(hidden) Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
         h2.title.is-size-5 My Custom Collections:
             button.button.button--leading.btn-create-collection(style="float: right")
                 span.button__ripple
@@ -82,12 +82,12 @@ block content
             span.button__ripple
             span.button__label Load All Sets
         .set-container(data-empty="No Sets")
-        button.button.is-primary.is-outlined.mt-2.is-block(hidden) Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#saved-sets(data-nosnippet)
         h1 Saved Sets
         h2 Liked Sets:
         .liked-container.set-container(data-empty="No Sets")
-        button.button.is-primary.is-outlined.mt-2.is-block(hidden) Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#search(data-nosnippet)
         h1 Browse Sets:
         details.box.block.mt-5
@@ -119,7 +119,7 @@ block content
             p Maximum 10 Words - Collections: 
                 span.field-search-collections-list
         .set-container.mt-4(data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
-        button.button.is-primary.is-outlined.mt-2.is-block(hidden) Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#credits(data-nosnippet)
         // TODO: Revamp Credits Page
         h1 Credits - Vocabustudy

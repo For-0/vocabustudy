@@ -184,17 +184,17 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
         createElement("button", ["card-footer-item", "has-text-danger"], {innerText: "Delete"})
     ];
     buttons.forEach(el => MDCRipple.attachTo(el));
-    if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${uid}/`, innerText: "More by User"}));
+    if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${set.uid}/`, innerText: "More by User"}));
     let likeText = set.public ? ` - ${set.likes || "0"} likes` : "";
     let cardEl = createElement("div", ["card"], {}, [
         createElement("header", ["card-header"], {}, [
-            createElement("p", ["card-header-title"], { innerText: name }),
+            createElement("p", ["card-header-title"], { innerText: set.name }),
             createElement("span", ["card-header-icon"], {}, [
                 createElement("span", ["tag", set.public ? "is-success" : "is-warning"], {innerText: set.public ? "Public" : "Private"})
             ])
         ]),
         createElement("div", ["card-content"], {}, [
-            createElement("div", ["content"], {innerText: `${numTerms} terms - ${likeText}`}, [
+            createElement("div", ["content"], {innerText: `${set.numTerms} terms - ${likeText}`}, [
                 createElement("br"),
                 createElement("span", [], {innerText: `Created by ${set.creator}`}),
                 ...collectionLabels
