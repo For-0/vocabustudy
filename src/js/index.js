@@ -98,6 +98,11 @@ const pages = {
         filterCollection: new Modal("#modal-filter-collection").modal(),
         filterCollectionList: document.querySelector("#modal-filter-collection .menu > ul"),
         changeHue: new Modal("#modal-change-hue").modal(),
+        contrib1: new Modal("#contrib1").modal(),
+        contrib2: new Modal("#contrib2").modal(),
+        contrib3: new Modal("#contrib3").modal(),
+        contrib4: new Modal("#contrib4").modal(),
+        contrib5: new Modal("#contrib5").modal(),
         changeHueInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-hue input")))
     },
     admin: {
@@ -359,7 +364,7 @@ addEventListener("DOMContentLoaded", () => {
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
     };
-    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName]);
+    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, pages.modals.contrib1, pages.modals.contrib2, pages.modals.contrib3, pages.modals.contrib4, pages.modals.contrib5]);
     pages.modals.reauthenticatePassword.validateInput = async () => {
         pages.modals.reauthenticatePasswordInput.setCustomValidity("");
         if (pages.modals.reauthenticatePasswordInput.reportValidity()) {
@@ -442,6 +447,11 @@ addEventListener("DOMContentLoaded", () => {
         }
     });
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
+    document.querySelector(".contrib1").addEventListener("click", () => pages.modals.contrib1.open());
+    document.querySelector(".contrib2").addEventListener("click", () => pages.modals.contrib2.open());
+    document.querySelector(".contrib3").addEventListener("click", () => pages.modals.contrib3.open());
+    document.querySelector(".contrib4").addEventListener("click", () => pages.modals.contrib4.open());
+    document.querySelector(".contrib5").addEventListener("click", () => pages.modals.contrib5.open());
     document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();

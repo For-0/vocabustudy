@@ -121,23 +121,64 @@ block content
         .set-container.mt-4(data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#credits(data-nosnippet)
-        // TODO: Revamp Credits Page
         h1 Credits - Vocabustudy
         p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
-        p.title.is-size-5 For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
-        h3 The following people have also contributed to the project:
-        ul
-            li #[strong Ruhan Gupta] (not Nikhil's brother) helped #[strong co-found] For Zero and has contributed to the #[strong design] of the applications, like Vocabustudy. He has #[strong helped with design, testing, and bug fixes], created the #[strong For Zero logo], and helped design the #[strong Vocabustudy Discord Server]. He also helped set up the #[strong GitHub Page] for For Zero.
-            li #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing and minor bug fixes] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
-            li #[strong Nikhil Gupta] (not Ruhan's brother) has also been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong requested features] to make Vocabustudy better. He #[strong created the Discord server], #[strong invited people], and #[moderates it]. He and Omkar have #[strong shared Vocabustudy with the world], which has helped grow it along the way.
-            li #[strong Michael Zhao], once told about Vocabustudy, started stress testing it. The amount of bugs he found and helped fix cannot be counted.*
-        h3 Honorable Mentions:
-        ul(style="margin-bottom: 2rem;")
+        button.button.is-primary.creditbutton.contrib1 #[p(style="color:white;").subtitle.is-5 Siddhant Kameswar]
+        .modal#contrib1
+            .modal-background
+            .modal-card(hidden)
+            .modal-content
+                .box
+                    .modal-card-title
+                        p(style="margin-bottom: 0.4rem;") Siddhant Kameswar
+                    p For Zero Applications is headed by #[strong Siddhant Kameswar]. The amount of work and contribution given by Siddhant outstrips all other contributors.
+                    br
+                    a(style="margin-right: 0.3rem" href="https://github.com/grimsteel").button.is-small.is-github.nohuechange #[img(src="icons/brands/github.svg").credits-brandicons]
+        button.button.is-primary.creditbutton.contrib2 #[p(style="color:white;").subtitle.is-5 Ruhan Gupta]
+        .modal#contrib2
+                .modal-background
+                .modal-card(hidden)
+                .modal-content
+                    .box
+                        .modal-card-title
+                            p(style="margin-bottom: 1rem;") Ruhan Gupta
+                        p #[strong Ruhan Gupta] (not Nikhil's brother) helped #[strong co-found] For Zero and has contributed to the #[strong design] of the applications, like Vocabustudy. He has #[strong helped with design, testing, and bug fixes], created the #[strong For Zero logo], and helped design the #[strong Vocabustudy Discord Server]. He also helped set up the #[strong GitHub Page] for For Zero.
+                        br
+                        a(style="margin-right: 0.3rem" href="https://github.com/IMGROOT2").button.is-small.is-github.nohuechange #[img(src="icons/brands/github.svg").credits-brandicons]
+                        a(style="margin-right: 0.3rem" href="https://discordapp.com/users/698961308506390568").button.is-small.is-discord.nohuechange #[img(src="icons/brands/discord.svg").credits-brandicons]
+        button.button.is-primary.creditbutton.contrib3 #[p(style="color:white;").subtitle.is-5 Omkar Patil]
+        .modal#contrib3
+                .modal-background
+                .modal-card(hidden)
+                .modal-content
+                    .box
+                        .modal-card-title
+                            p(style="margin-bottom: 0.4rem;") Omkar Patil
+                        p #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing and minor bug fixes] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
+        button.button.is-primary.creditbutton.contrib4 #[p(style="color:white;").subtitle.is-5 Nikhil Gupta]
+        .modal#contrib4
+                .modal-background
+                .modal-card(hidden)
+                .modal-content
+                    .box
+                        .modal-card-title
+                            p(style="margin-bottom: 0.4rem;") Nikhil Gupta
+                        p #[strong Nikhil Gupta] (not Ruhan's brother) has also been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong requested features] to make Vocabustudy better. He #[strong created the Discord server], #[strong invited people], and #[moderates it]. He and Omkar have #[strong shared Vocabustudy with the world], which has helped grow it along the way.
+        button.button.is-primary.creditbutton.contrib5 #[p(style="color:white;").subtitle.is-5 Michael Zhao]
+        .modal#contrib5
+                .modal-background
+                .modal-card(hidden)
+                .modal-content
+                    .box
+                        .modal-card-title
+                            p(style="margin-bottom: 0.4rem;") Michael Zhao
+                        p #[strong Michael Zhao], once told about Vocabustudy, started stress testing it. The amount of bugs he found and helped fix cannot be counted.*
+                        p(style="margin-top: 2rem; font-size: 8px;") *Maybe they can be??????????
+        ul(style="margin-bottom: 2rem; margin-top: 1rem;")
             li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
-            li Thank you to all moderators and helpers on the Vocabustudy Discord Server. You help make the server a better place.
+            li Thank you to all moderators and helpers on the Vocabustudy Discord Server.
         p #[strong If you need help with anything For Zero or Vocabustudy related, these people are a great place to start. You can also join the Vocabustudy Discord Server and ask for help there.]
             p Thank you to everyone who has helped spread the word, used the app, and made sets! We hope Vocabustudy has been a great help to you.
-        p(style="margin-top: 2rem; font-size: 8px;") *Maybe they can be??????????
     .page#donate(data-nosnippet)
         h1 Donate
         p.title.is-size-3 Your donations help!
@@ -179,7 +220,7 @@ block content
                             li Relevant Vocab
                     p.mb-0.is-size-5.has-text-weight-bold(style="margin-top: 2rem;") Created/developed by Siddhant Kameswar
                     p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-bold(href="/#credits" style="border-bottom: 1px solid white;") Credits]
-                    p.mb-0.mt-1.mdc-typography--overline.is-size-7 VOCABUSTUDY - U STUDY VOCAB
+                    p.mb-0.mt-4.mdc-typography--overline.is-size-7 VOCABUSTUDY - U STUDY VOCAB
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
