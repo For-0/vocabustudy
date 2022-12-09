@@ -18,7 +18,7 @@ block content
         div
             div
                 p.title.is-size-3.has-text-white Log In / Sign Up:
-                p(style="margin: 0;") You must be at least 13 years old to sign up, or have permission from a parent/guardian.
+                p.m-0 You must be at least 13 years old to sign up, or have permission from a parent/guardian.
                 #firebaseui-auth-container
         div
             p.title.is-size-5 Create sets and study together with a 
@@ -69,9 +69,7 @@ block content
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
                             span Guide
         .set-container(data-empty="You don't have any sets. Create one!")
-        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-            span.button__ripple
-            span.button__label Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
         h2.title.is-size-5 My Custom Collections:
             button.button.button--leading.btn-create-collection(style="float: right")
                 span.button__ripple
@@ -80,26 +78,22 @@ block content
         .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
     .page#admin(data-nosnippet)
         h1 Admin Portal
-        button.button.button--raised.btn-get-all(style="display: block; margin-bottom: 1rem;")
+        button.button.button--raised.btn-get-all.is-block.mb-4
             span.button__ripple
             span.button__label Load All Sets
         .set-container(data-empty="No Sets")
-        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-            span.button__ripple
-            span.button__label Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#saved-sets(data-nosnippet)
         h1 Saved Sets
         h2 Liked Sets:
         .liked-container.set-container(data-empty="No Sets")
-        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-            span.button__ripple
-            span.button__label Load More
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#search(data-nosnippet)
         h1 Browse Sets:
         details.box.block.mt-5
             summary
                 h2.title.is-size-4(style="display: inline;") Featured Sets
-            .set-container(style="margin-top: 1rem; cursor: auto;" data-empty="No featured sets") Loading featured sets...
+            .set-container.mt-4(style="cursor: auto;" data-empty="No featured sets") Loading featured sets...
         h2.title.is-size-4.mb-0 Search:
         p.block Most sets are created by CVMS students for CVMS students
         div.field-search-container.box
@@ -124,10 +118,8 @@ block content
                             span Search
             p Maximum 10 Words - Collections: 
                 span.field-search-collections-list
-        .set-container(style="margin-top: 1rem;" data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
-        button.button.button--outlined(style="display: block; margin-top: 0.5rem;" hidden)
-            span.button__ripple
-            span.button__label Load More
+        .set-container.mt-4(data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
+        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#credits(data-nosnippet)
         h1 Credits - Vocabustudy
         p.title.is-size-5 Vocabustudy is part of a group of applications called the For Zero Applications. For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
@@ -226,9 +218,9 @@ block content
                             li 100% Free
                             li No Ads
                             li Relevant Vocab
-                    p(style="margin-bottom: 0; margin-top: 2rem; font-size: 1.25rem; font-weight: bold;") Created/developed by Siddhant Kameswar
-                    p(style="margin-bottom: 0; margin-top: 0; font-size: 1rem;") #[a(href="/#credits" style="color: white; font-size: 1.25rem; font-weight: bold; border-bottom: 1px solid white;") Credits]
-                    p.mdc-typography--overline(style="margin-bottom: 0; font-size: 0.8rem; margin-top: 0.5rem;") VOCABUSTUDY - U STUDY VOCAB
+                    p.mb-0.is-size-5.has-text-weight-bold(style="margin-top: 2rem;") Created/developed by Siddhant Kameswar
+                    p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-bold(href="/#credits" style="border-bottom: 1px solid white;") Credits]
+                    p.mb-0.mt-4.mdc-typography--overline.is-size-7 VOCABUSTUDY - U STUDY VOCAB
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
@@ -272,12 +264,12 @@ block content
                             div.list-item-content
                                 div.list-item-title Assignments (Coming Soon)
                                 div.list-item-description Transform learning at home and in the classroom.
-                    div.buttons.has-addons.is-centered(style="margin-top: 1rem;")
-                        a.button.is-primary.is-rounded(href="/#search" style="margin:0.2rem;")
+                    div.buttons.has-addons.is-centered.mt-4
+                        a.button.is-primary.is-rounded.m-1(href="/#search")
                             span.icon
                                 i.material-symbols-rounded(aria-hidden="true") search
                             span Browse Sets
-                        a.button.is-light.is-rounded(href="/#login" style="margin:0.2rem;")
+                        a.button.is-light.is-rounded.m-1(href="/#login")
                             span.icon
                                 i.material-symbols-rounded.is-filled(aria-hidden="true") account_circle
                             span Sign Up
@@ -321,7 +313,7 @@ append scripts-footer
                 p.modal-card-title Filter by Collection
                 button.delete(aria-label="close")
             section.modal-card-body.custom-scrollbar.is-thumb-only
-                p(style="margin: 0") You can choose a maximum of 10 collections to filter by
+                p.m-0 You can choose a maximum of 10 collections to filter by
                 aside.menu
                     p.menu-label Collections
                     ul.menu-list

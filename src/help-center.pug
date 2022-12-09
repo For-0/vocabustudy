@@ -7,6 +7,52 @@ block main-stylesheet
     link(rel="stylesheet" href="css/help-center.scss")
 block content
     .page#home
+        section.hero.is-medium
+            .hero-body.has-text-centered
+                h1.title.is-2 Vocabustudy Help Center
+                p.is-size-5 How-tos, tips, and instructions!
+        .container.is-max-desktop
+            section.featured
+                h2.subtitle Featured Articles
+                .columns
+                    .column.is-3
+                        article
+                            h2.subtitle Creating a Set
+                            span.tag.is-rounded Set Editor
+                    .column.is-3
+                        article
+                            h2.subtitle Editing a Set
+                            span.tag.is-rounded Set Editor
+                    .column.is-3
+                        article
+                            h2.subtitle Creating an Account
+                            span.tag.is-rounded Accounts and Interactions
+        section.categories
+            .columns.is-multiline
+                .column.is-6
+                    .category
+                        h1.title.is-5 Set Editor
+                            span 2 articles
+                        hr
+                        ul
+                            li
+                                span.icon
+                                    i.mr-1.material-symbols-round arrow_right
+                                | Creating a Set
+                            li
+                                span.icon
+                                    i.mr-1.material-symbols-round arrow_right
+                                | Editing a Set
+                .column.is-6
+                    .category
+                        h1.title.is-5 Accounts and Interactions
+                            span 1 article
+                        hr
+                        ul
+                            li
+                                span.icon
+                                    i.mr-1.material-symbols-round arrow_right
+                                | Creating an Account
         h1 Vocabustudy Help Center
         p.title.is-size-5 How-tos, tips, and instructions!
         button.collapsible Creating an account
@@ -204,7 +250,7 @@ block content
         //h3
             | If you have any feedback or questions, please use #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
         h3 Please give us your feedback and report any bugs that you find here:
-        iframe(src='https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform?embedded=true', width='640', height='1300', frameborder='0', marginheight='0', marginwidth='0') Loading...
+        iframe(src='https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform?embedded=true', width='640', height='70', frameborder='0', marginheight='0', marginwidth='0') Loading...
         h3 You can contact us with any questions that you have at #[a(href='mailto:management@vocabustudy.org') management@vocabustudy.org]. Thank you!
 append scripts-footer
         script(src="js/help-center.js" type="module")
