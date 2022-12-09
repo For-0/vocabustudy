@@ -452,6 +452,7 @@ addEventListener("DOMContentLoaded", () => {
     document.querySelector(".contrib3").addEventListener("click", () => pages.modals.contrib3.open());
     document.querySelector(".contrib4").addEventListener("click", () => pages.modals.contrib4.open());
     document.querySelector(".contrib5").addEventListener("click", () => pages.modals.contrib5.open());
+    document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();
 });
