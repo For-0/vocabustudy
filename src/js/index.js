@@ -48,7 +48,6 @@ const hashTitles = {
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
     "#account": "My Account"
-    "#youtube": "Youtube"
 };
 const pages = {
     home: {
