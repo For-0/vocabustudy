@@ -442,6 +442,7 @@ addEventListener("DOMContentLoaded", () => {
         }
     });
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
+    document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();
 });
