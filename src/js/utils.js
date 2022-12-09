@@ -179,35 +179,28 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
     let collectionLabels = await parseCollections(set.collections);
     let setType = set.collections.includes("-:0") ? "timeline" : (set.collections.includes("-:1") ? "guide" : "set");
     let buttons = [
-        createElement("a", ["button", "mdc-card__action", "mdc-card__action--button"], {href: `/${setType}/${id}/view/`}, [
-            createElement('div', ["button__ripple"]),
-            createElement("div", ["button__label"], {innerText: "View"})
-        ]),
-        createElement("a", ["button", "mdc-card__action", "mdc-card__action--button"], {href: `/set/${id}/edit/`}, [
-            createElement('div', ["button__ripple"]),
-            createElement("div", ["button__label"], {innerText: "Edit"})
-        ]),
-        createElement("button", ["button", "mdc-card__action", "mdc-card__action--button"], {}, [
-            createElement('div', ["button__ripple"]),
-            createElement("div", ["button__label"], {innerText: "Delete"})
-        ])
+        createElement("a", ["card-footer-item", "has-text-primary"], {href: `/${setType}/${id}/view/`, innerText: "View"}),
+        createElement("a", ["card-footer-item", "has-text-primary"], {href: `/set/${id}/edit/`, innerText: "Edit"}),
+        createElement("button", ["card-footer-item", "has-text-danger"], {innerText: "Delete"})
     ];
     buttons.forEach(el => MDCRipple.attachTo(el));
+    if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${uid}/`, innerText: "More by User"}));
     let likeText = set.public ? ` - ${set.likes || "0"} likes` : "";
-    let creatorLink = linkCreator ? createElement("a", [], {href: `/user/${set.uid}/`, innerText: `Created by ${set.creator}`}) : createElement("div", [], {innerText: `Created by ${set.creator}`});
-    let cardEl = createElement("div", ["mdc-card"], {}, [
-        createElement("div", ["card-content"], {}, [
-            createElement("div", ["title.is-size-5", "fw-bold"], { innerText: set.name }),
-            createElement("div", [], { innerText: `${set.numTerms} terms${likeText}` }),
-            creatorLink
-        ]),
-        createElement("div", ["card-content"], {}, [
-            createElement("div", [], { innerText: "Visibility: " }, [
-                createElement("span", [`bg-${set.public ? "green" : "yellow"}`], {innerText: set.public ? "Public" : "Private"})
+    let cardEl = createElement("div", ["card"], {}, [
+        createElement("header", ["card-header"], {}, [
+            createElement("p", ["card-header-title"], { innerText: name }),
+            createElement("span", ["card-header-icon"], {}, [
+                createElement("span", ["tag", set.public ? "is-success" : "is-warning"], {innerText: set.public ? "Public" : "Private"})
             ])
         ]),
-        createElement("div", ["card-content"], {}, collectionLabels),
-        createElement("div", ["mdc-card__actions"], {}, buttons)
+        createElement("div", ["card-content"], {}, [
+            createElement("div", ["content"], {innerText: `${numTerms} terms - ${likeText}`}, [
+                createElement("br"),
+                createElement("span", [], {innerText: `Created by ${set.creator}`}),
+                ...collectionLabels
+            ])
+        ]),
+        createElement("footer", ["card-footer"], {}, buttons)
     ]);
     return { card: cardEl, buttons };
 }
@@ -244,7 +237,7 @@ export async function createSetCard({ name, creator, numTerms, collections, like
                 createElement("br"),
                 ...textEls,
                 ...collectionLabels
-        ])
+            ])
         ]),
         createElement("footer", ["card-footer"], {}, [
             createElement("a", ["card-footer-item", "has-text-primary"], {href: `/${setType}/${id}/view/`, innerText: "View"}),
