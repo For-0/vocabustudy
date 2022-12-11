@@ -120,6 +120,9 @@
             position: relative;
             &.flipped > div > div {
                 transform: rotateY(180deg);
+                .star-button {
+                    left: 1rem;
+                }
             }
             &.switching {
                 > div.show {
@@ -152,9 +155,22 @@
                 height: 95%;
                 perspective: 2000px;
                 display: none;
-                transition: left 0.4s;
                 width: 75%;
                 overflow-wrap: break-word;
+                transition: left 0.4s, 0.1s color linear;
+                &.is-starred {
+                    color: goldenrod;
+                    > div {
+                        box-shadow: 0 0 4px #d7a21faa;
+                    }
+                }
+                .star-button {
+                    position: absolute;
+                    top: 1rem;
+                    right: 1rem;
+                    display: none;
+                    z-index: 1000;
+                }
                 p {
                     max-width: 100%;
                 }
@@ -168,6 +184,9 @@
                         display: block;
                         position: absolute;
                     }
+                    .star-button {
+                        display: inline-block;
+                    }
                 }
                 &:not(.show):has(+ .show) {
                     left: -150%;
@@ -178,7 +197,7 @@
                     position: relative;
                     width: 100%;
                     height: 100%;
-                    transition: transform 0.3s;
+                    transition: transform 0.3s, box-shadow 0.1s;
                     transform-style: preserve-3d;
                     background-color: white;
                     box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
@@ -196,7 +215,7 @@
                         ul, li {
                             text-align: left;
                         }
-                        &:last-child {
+                        &:last-of-type {
                             transform: rotateY(180deg);
                         }
                     }
@@ -289,6 +308,10 @@
                 display: table-cell;
             }
         }
+    }
+    img {
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 

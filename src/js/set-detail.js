@@ -67,17 +67,18 @@ class StarButton extends HTMLButtonElement {
     initialValue = false
     initialized = false
     /** @type {MDCIconButtonToggle?} */
-    obj = null
+    obj = null;
     connectedCallback() {
         if (this.isConnected && !this.initialized) {
             this.initialized = true;
-            this.classList.add("mdc-icon-button");
+            this.classList.add("mdc-icon-button", "star-button");
             this.ariaPressed = this.initialValue;
             this.appendChild(createElement("div", ["mdc-icon-button__ripple"]));
             this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], { innerText: "star" }));
             this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon"], { innerText: "star_border" }));
             this.obj = new MDCIconButtonToggle(this);
             this.obj.on = this.initialValue;
+            this.addEventListener("MDCIconButtonToggle:change", e => window.StarredTerms.setStar(parseInt(this.dataset.termIndex), e.detail.isOn));
         }
     }
 }
@@ -111,9 +112,9 @@ window.StarredTerms = {
     getAllStarred() {
         return JSON.parse(localStorage.getItem("starred_terms")) || {};
     },
-    getStarredTermList() {
+    getStarredTermList(initialList=null) {
         let starredIndices = this.getCurrentSet();
-        return currentSet.terms.filter((_, i) => starredIndices.includes(i));
+        return (initialList || currentSet.terms).filter((_, i) => starredIndices.includes(i));
     },
     /**
      * @returns {Number[]} Indexes of starred terms
@@ -125,6 +126,7 @@ window.StarredTerms = {
         let orig = this.getAllStarred();
         orig[setId] = starList;
         localStorage.setItem("starred_terms", JSON.stringify(orig));
+        document.querySelectorAll(".star-button").forEach(sb => sb.obj.on = starList.includes(parseInt(sb.dataset.termIndex)));
     },
     /**
      * Find out if a term in the current set is starred
@@ -225,7 +227,7 @@ const pages = {
                 this.btnFlip.click();
             }
         },
-        createFlashcard({ term, definition, i }) {
+        createFlashcard({ term, definition, i }, isStarred) {
             let cardEl = document.createElement("div");
             let cardInner = cardEl.appendChild(document.createElement("div"));
             let cardFront = cardInner.appendChild(document.createElement("div"));
@@ -233,15 +235,20 @@ const pages = {
             cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
             if (setType === "timeline" && definition.includes("\x00")) cardBack.appendChild(document.createElement("p")).appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
             else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
-            if (this.checkOnlyStarred.checked || window.StarredTerms.isStarred(i)) {
-                cardEl.style.color = "goldenrod";
-                cardEl.firstElementChild.style.boxShadow = "0 0 4px #d7a21faa";
+            if (isStarred) cardEl.classList.add("is-starred");
+            if (i >= 0) {
+                let starButton = (/** @type {StarButton} */ (cardInner.appendChild(document.createElement("button", { is: "star-button" }))));
+                starButton.initialValue = isStarred;
+                starButton.dataset.termIndex = i;
+                starButton.addEventListener("click", e => e.stopPropagation());
+                starButton.addEventListener("MDCIconButtonToggle:change", e => cardEl.classList.toggle("is-starred", e.detail.isOn));
             }
             return this.terms.appendChild(cardEl);
         },
         show(shuffleA=false) {
             let terms = currentSet.terms.map((el, i) => ({i, ...el}));
-            if (this.checkOnlyStarred.checked) terms = window.StarredTerms.getStarredTermList();
+            let onlyStarred = this.checkOnlyStarred.checked;
+            if (onlyStarred) terms = window.StarredTerms.getStarredTermList(terms);
             this.numTerms = terms.length;
             this.setName.innerText = currentSet.name;
             this.terms.textContent = "";
@@ -249,8 +256,9 @@ const pages = {
                 terms = [...terms];
                 shuffle(terms);
             }
-            for (let term of terms) this.createFlashcard(term);
-            this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards." }, -1);
+            let starredList = window.StarredTerms.getCurrentSet();
+            for (let term of terms) this.createFlashcard(term, onlyStarred || starredList.includes(term.i));
+            this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
             this.terms.children[0].querySelectorAll("p").forEach(el => {
                 el.style.fontSize = "100px";
@@ -1107,7 +1115,7 @@ function shuffle(arr) {
 // #endregion UTILITIES
 
 // #region CARD GENERATION
-function createTermCard({ term, definition }, index) {
+function createTermCard({ term, definition }, index, isStarred) {
     let cardEl = document.createElement("div");
     cardEl.classList.add("mdc-card", "mdc-card--outlined");
     let cardHeading = cardEl.appendChild(document.createElement("div"));
@@ -1117,13 +1125,13 @@ function createTermCard({ term, definition }, index) {
     cardTitle.style.fontWeight = "600";
     applyStyling(term.replace("\x00", " - "), cardTitle);
     let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", { is: "star-button" }))));
-    starButton.initialValue = window.StarredTerms.isStarred(index);
+    starButton.initialValue = isStarred;
+    starButton.dataset.termIndex = index;
     if (setType === "timeline") {
         cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
         cardEl.classList.add("timeline-piece")
     } else applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
     pages.setOverview.terms.appendChild(cardEl);
-    starButton.obj.listen("MDCIconButtonToggle:change", e => window.StarredTerms.setStar(index, e.detail.isOn));
     return cardEl;
 }
 function createCommentCard({ name, comment, like }, id) {
@@ -1241,7 +1249,8 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
-        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i);
+        let starredList = window.StarredTerms.getCurrentSet();
+        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i, starredList.includes(i));
         navigate();
         pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
