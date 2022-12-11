@@ -394,6 +394,7 @@
                 width: 48%;
                 overflow-y: auto;
                 --track: transparent;
+                align-items: start;
                 .dropzone-card {
                     background-color: lighten($theme-color, 50%);
                     max-width: 48%;
@@ -437,6 +438,10 @@
                     &.selected {
                         background-color: darken($theme-color, 10%);
                     }
+                }
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
                 }
             }
         }
