@@ -620,3 +620,12 @@ img {
         border-color: rgba(75, 21, 4, 0.8);
     }
 }
+#modal-export-terms h3 {
+    position: relative;
+    margin-bottom: 0;
+    .mdc-icon-button {
+        position: absolute;
+        right: 0;
+        top: -12px;
+    }
+}

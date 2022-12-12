@@ -103,7 +103,7 @@ const accentsRE = /[^a-zA-Z0-9\s_\(\)\[\]!'"\.\/\\,-]/ig;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
 /**
- * @type {{name: string, public: true, terms: {term: string, definition: string}[], uid: string}?}
+ * @type {{name: string, public: true, terms: {term: string, definition: string}[], uid: string, description: string?}?}
  */
 let currentSet = null;
 let specialCharCollator = new Intl.Collator().compare;
@@ -164,7 +164,11 @@ const pages = {
         commentsContainer: document.querySelector(".comments-container"),
         fieldComment: document.querySelector("#home .field-comment"),
         snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved")),
-        modalExportTerms: new MDCDialog(document.querySelector("#modal-export-terms"))
+        modalExportTerms: new MDCDialog(document.querySelector("#modal-export-terms")),
+        btnCopyTerms: document.querySelector("#modal-export-terms .btn-copy"),
+        btnShare: document.querySelector("#modal-export-terms .btn-share"),
+        shareLink: document.querySelector("#modal-export-terms .share-link"),
+        btnShorten: document.querySelector("#modal-export-terms .btn-shorten-link")
     },
     flashcards: {
         el: document.getElementById("flashcards"),
@@ -1178,6 +1182,28 @@ function showLikeStatus(likeStatus) {
     }
 }
 
+async function getShortenedSetUrl() {
+    let longDynamicLinkObj = new URL("https://set.vocabustudy.org/");
+    longDynamicLinkObj.searchParams.set("link", `https://vocabustudy.org${location.pathname}`);
+    longDynamicLinkObj.searchParams.set("st", `${currentSet.name} - Vocabustudy`);
+    longDynamicLinkObj.searchParams.set("sd", currentSet.description || `Study this set with ${currentSet.terms.length} terms on Vocabustudy`);
+    let longDynamicLink = longDynamicLinkObj.href;
+    let res = await fetch("https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDU-lvyggKhMHuEllAEpXZ3y_TyPOGfXBM", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            longDynamicLink,
+            suffix: {
+                option: "SHORT"
+            }
+        })
+    });
+    let { shortLink } = await res.json();
+    return shortLink;
+}
+
 addEventListener("DOMContentLoaded", async () => {
     pages.flashcards.init();
     pages.learn.init();
@@ -1185,6 +1211,9 @@ addEventListener("DOMContentLoaded", async () => {
     pages.match.init();
     pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
+    MDCRipple.attachTo(pages.setOverview.btnCopyTerms).unbounded = true;
+    MDCRipple.attachTo(pages.setOverview.btnShare).unbounded = true;
+    MDCRipple.attachTo(pages.setOverview.btnShorten);
     if (setType === "timeline") {
         pages.setOverview.terms.style.justifyContent = "left";
         document.querySelectorAll(".study-modes :is(a, button):not([href='#flashcards'])").forEach(el => {
@@ -1278,10 +1307,23 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
-        pages.setOverview.btnExportTerms.addEventListener("click", () => {
-            pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
-            pages.setOverview.modalExportTerms.open();
+        pages.setOverview.btnExportTerms.addEventListener("click", () => pages.setOverview.modalExportTerms.open());
+        pages.setOverview.btnCopyTerms.addEventListener("click", async () => {
+            await navigator.clipboard.writeText(pages.setOverview.modalExportTerms.root.querySelector("pre").innerText);
+            pages.setOverview.btnCopyTerms.childNodes[1].textContent = "inventory";
+            setTimeout(() => pages.setOverview.btnCopyTerms.childNodes[1].textContent = "content_paste", 500);
         });
+        pages.setOverview.btnShorten.addEventListener("click", async () => {
+            let shortLink = await getShortenedSetUrl();
+            pages.setOverview.btnShorten.disabled = true;
+            pages.setOverview.shareLink.innerText = shortLink;
+            pages.setOverview.shareLink.href = shortLink;
+        });
+        pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
+        pages.setOverview.shareLink.innerText = `https://vocabustudy.org${location.pathname}`;
+        pages.setOverview.shareLink.href = `https://vocabustudy.org${location.pathname}`;
+        if (!navigator.share) pages.setOverview.btnShare.hidden = true;
+        else pages.setOverview.btnShare.addEventListener("click", () => navigator.share({title: `${currentSet.name} - Vocabustudy`, text: currentSet.description || `Study this set with ${currentSet.terms.length} terms on Vocabustudy`, url: pages.setOverview.shareLink.href}));
     } catch (err) {
         if (err.message.includes("Forbidden")) {
             localStorage.setItem("redirect_after_login", location.href);
