@@ -389,3 +389,8 @@ footer {
     max-width: calc(100% - var(--studymode-header-width));
     vertical-align: middle;
 }
+.fit {
+    display: inline-block;
+    white-space: normal !important;
+    max-width: 100%;
+}

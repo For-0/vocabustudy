@@ -2,17 +2,18 @@ import { MDCCheckbox } from "@material/checkbox/index";
 import { MDCCircularProgress } from "@material/circular-progress/index";
 import { MDCDialog } from "@material/dialog/index";
 import { MDCFormField } from "@material/form-field/index";
+import { MDCIconButtonToggle } from "@material/icon-button";
 import { MDCList } from "@material/list/index";
 import { MDCRadio } from "@material/radio/index";
 import { MDCRipple } from "@material/ripple/index";
-import { MDCTextField } from "@material/textfield/index";
 import { MDCSnackbar } from "@material/snackbar/index";
+import { MDCTextField } from "@material/textfield/index";
+import { sanitize } from "dompurify";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
+import { marked } from "marked";
 import initialize from "./general.js";
 import { createElement, normalizeAnswer } from "./utils.js";
-import { sanitize } from "dompurify";
-import { marked } from "marked";
-import { MDCIconButtonToggle } from "@material/icon-button";
+import fitty from "fitty";
 
 class AccentKeyboard extends HTMLElement {
     constructor() {
@@ -236,9 +237,12 @@ const pages = {
             let cardInner = cardEl.appendChild(document.createElement("div"));
             let cardFront = cardInner.appendChild(document.createElement("div"));
             let cardBack = cardInner.appendChild(document.createElement("div"));
-            cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
-            if (setType === "timeline" && definition.includes("\x00")) cardBack.appendChild(document.createElement("p")).appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
-            else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
+            cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p"))).classList.add("fit");
+            if (setType === "timeline" && definition.includes("\x00")) {
+                let p = cardBack.appendChild(document.createElement("p"));
+                p.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+                p.classList.add("fit");
+            } else cardBack.appendChild(applyStyling(definition, document.createElement("p"))).classList.add("fit");
             if (isStarred) cardEl.classList.add("is-starred");
             if (i >= 0) {
                 let starButton = (/** @type {StarButton} */ (cardInner.appendChild(document.createElement("button", { is: "star-button" }))));
@@ -265,8 +269,9 @@ const pages = {
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
             this.terms.children[0].querySelectorAll("p").forEach(el => {
-                el.style.fontSize = "100px";
-                resizeText(el);
+                //el.style.fontSize = "100px";
+                //resizeText(el);
+                fitty(el, {maxSize: 100});
             });
         },
         init() {
@@ -284,10 +289,7 @@ const pages = {
             this.btnNext.addEventListener("click", () => {
                 this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
                 if (this.index < this.numTerms) {
-                    this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => {
-                        el.style.fontSize = "100px";
-                        resizeText(el); // TODO migrate to fitty
-                    });
+                    this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100}));
                 }
                 this.nextCard();
             });
@@ -506,6 +508,7 @@ const pages = {
                 e.stopPropagation();
                 this.overrideCorrect()
             });
+            //fitty(this.question); TODO finish migration
         }
     },
     test: {
@@ -1036,11 +1039,6 @@ const pages = {
 };
 
 // #region UTILITIES
-function resizeText(textEl) {
-    let fontSize = parseFloat(getComputedStyle(textEl).fontSize);
-    while (fontSize > 0 && (textEl.clientHeight >= textEl.parentElement.clientHeight)) textEl.style.fontSize = `${fontSize--}px`;
-    textEl.style.fontSize = `${Math.max(fontSize - 5, 5)}px`;
-}
 function resizeButtonText(button, minSize = 1) {
     button.style.removeProperty("--mdc-outlined-button-label-text-size");
     let i = parseFloat(getComputedStyle(button)["font-size"]);
@@ -1062,6 +1060,13 @@ function resizeTextToMaxHeight(textEl, maxHeight, minSize = 1) {
         i++;
     }
 }
+/**
+ * Apply inline styling of text to an element
+ * @template {keyof HTMLElementTagNameMap} T
+ * @param {string} text Text to style with markdown and sanitize
+ * @param {HTMLElementTagNameMap[T]} el The element to put the styled text in
+ * @returns {HTMLElementTagNameMap[T]} The element with the text
+ */
 function applyStyling(text, el) {
     el.innerHTML = sanitize(marked.parseInline(text), setId === "ZEAuZPbTS5JlB1goITO5" ? {} : sanitizerOpts);
     return el;
