@@ -140,7 +140,7 @@ block content
                                 svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
                                     circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
             div(style="overflow-x: auto;")
-                p.title.is3
+                p.title.is3.fit
                 div
                     p.mdc-typography--body1(style="font-size: 8px;") Tip: Use the number keys 1-4 to answer multiple choice questions
                     p(hidden='')
@@ -183,19 +183,19 @@ block content
                     button.button.button--outlined.button--icon-leading(data-answerindex='0')
                         span.button__ripple
                         i.material-symbols-rounded.button__icon(aria-hidden='true') filter_1
-                        span.button__label Option 1
+                        span.fit.button__label Option 1
                     button.button.button--outlined.button--icon-leading(data-answerindex='1')
                         span.button__ripple
                         i.material-symbols-rounded.button__icon(aria-hidden='true') filter_2
-                        span.button__label Option 2
+                        span.fit.button__label Option 2
                     button.button.button--outlined.button--icon-leading(data-answerindex='3')
                         span.button__ripple
                         i.material-symbols-rounded.button__icon(aria-hidden='true') filter_3
-                        span.button__label Option 3
+                        span.fit.button__label Option 3
                     button.button.button--outlined.button--icon-leading(data-answerindex='4')
                         span.button__ripple
                         i.material-symbols-rounded.button__icon(aria-hidden='true') filter_4
-                        span.button__label Option 4
+                        span.fit.button__label Option 4
     .page#test.is-thumb-only
         h1.title.is4
             | Test - 
@@ -433,12 +433,26 @@ append scripts-footer
     .mdc-dialog#modal-export-terms
         .mdc-dialog__container
             .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                h2.mdc-dialog__title Export Terms
+                h2.mdc-dialog__title Share
                 .mdc-dialog__content.custom-scrollbar(style="--track: transparent;")
+                    h3.mdc-typography--overline Set URL
+                        button.mdc-icon-button.mdc-icon-button--touch.material-icons-round.btn-share(title="Share")
+                            .mdc-icon-button__ripple
+                            | share
+                            .mdc-icon-button__touch
+                    a.share-link(target="_blank" style="max-width: calc(100% - 91px);display: inline-block;word-break: break-all;")
+                    button.mdc-button.btn-shorten-link(type="button" style="float: right;")
+                        span.mdc-button__ripple
+                        span.mdc-button__label Shorten
+                    h3.mdc-typography--overline Export
+                        button.mdc-icon-button.mdc-icon-button--touch.material-icons-round.btn-copy(title="Copy Terms")
+                            .mdc-icon-button__ripple
+                            | content_paste
+                            .mdc-icon-button__touch
                     p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
-                    pre
+                    pre.custom-scrollbar(style="max-width: 100%;overflow:auto;")
                 .mdc-dialog__actions
-                    button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                        .button__ripple
-                        span.button__label Close
+                    button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
+                        .mdc-button__ripple
+                        span.mdc-button__label Close
     script(src="js/set-detail.js" type="module")

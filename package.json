@@ -1,6 +1,6 @@
 {
   "name": "vocabustudy",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "A free tool for studying vocab",
   "source": [
     "src/index.pug",
@@ -66,6 +66,7 @@
     "dompurify": "^2.4.1",
     "firebase": "^9.14.0",
     "firebaseui": "^6.0.2",
+    "fitty": "^2.3.6",
     "fscreen": "^1.2.0",
     "marked": "^4.2.3"
   },

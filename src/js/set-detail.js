@@ -2,17 +2,18 @@ import { MDCCheckbox } from "@material/checkbox/index";
 import { MDCCircularProgress } from "@material/circular-progress/index";
 import { MDCDialog } from "@material/dialog/index";
 import { MDCFormField } from "@material/form-field/index";
+import { MDCIconButtonToggle } from "@material/icon-button";
 import { MDCList } from "@material/list/index";
 import { MDCRadio } from "@material/radio/index";
 import { MDCRipple } from "@material/ripple/index";
-import { MDCTextField } from "@material/textfield/index";
 import { MDCSnackbar } from "@material/snackbar/index";
+import { MDCTextField } from "@material/textfield/index";
+import { sanitize } from "dompurify";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
+import { marked } from "marked";
 import initialize from "./general.js";
 import { createElement, normalizeAnswer } from "./utils.js";
-import { sanitize } from "dompurify";
-import { marked } from "marked";
-import { MDCIconButtonToggle } from "@material/icon-button";
+import fitty from "fitty";
 
 class AccentKeyboard extends HTMLElement {
     constructor() {
@@ -66,17 +67,18 @@ class StarButton extends HTMLButtonElement {
     initialValue = false
     initialized = false
     /** @type {MDCIconButtonToggle?} */
-    obj = null
+    obj = null;
     connectedCallback() {
         if (this.isConnected && !this.initialized) {
             this.initialized = true;
-            this.classList.add("mdc-icon-button");
+            this.classList.add("mdc-icon-button", "star-button");
             this.ariaPressed = this.initialValue;
             this.appendChild(createElement("div", ["mdc-icon-button__ripple"]));
             this.appendChild(createElement("i", ["material-symbols-rounded", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], { innerText: "star" }));
             this.appendChild(createElement("i", ["material-symbols-rounded", "mdc-icon-button__icon"], { innerText: "star_border" }));
             this.obj = new MDCIconButtonToggle(this);
             this.obj.on = this.initialValue;
+            this.addEventListener("MDCIconButtonToggle:change", e => window.StarredTerms.setStar(parseInt(this.dataset.termIndex), e.detail.isOn));
         }
     }
 }
@@ -101,7 +103,7 @@ const accentsRE = /[^a-zA-Z0-9\s_\(\)\[\]!'"\.\/\\,-]/ig;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
 /**
- * @type {{name: string, public: true, terms: {term: string, definition: string}[], uid: string}?}
+ * @type {{name: string, public: true, terms: {term: string, definition: string}[], uid: string, description: string?}?}
  */
 let currentSet = null;
 let specialCharCollator = new Intl.Collator().compare;
@@ -110,9 +112,9 @@ window.StarredTerms = {
     getAllStarred() {
         return JSON.parse(localStorage.getItem("starred_terms")) || {};
     },
-    getStarredTermList() {
+    getStarredTermList(initialList=null) {
         let starredIndices = this.getCurrentSet();
-        return currentSet.terms.filter((_, i) => starredIndices.includes(i));
+        return (initialList || currentSet.terms).filter((_, i) => starredIndices.includes(i));
     },
     /**
      * @returns {Number[]} Indexes of starred terms
@@ -124,6 +126,7 @@ window.StarredTerms = {
         let orig = this.getAllStarred();
         orig[setId] = starList;
         localStorage.setItem("starred_terms", JSON.stringify(orig));
+        document.querySelectorAll(".star-button").forEach(sb => sb.obj.on = starList.includes(parseInt(sb.dataset.termIndex)));
     },
     /**
      * Find out if a term in the current set is starred
@@ -161,7 +164,11 @@ const pages = {
         commentsContainer: document.querySelector(".comments-container"),
         fieldComment: document.querySelector("#home .field-comment"),
         snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved")),
-        modalExportTerms: new MDCDialog(document.querySelector("#modal-export-terms"))
+        modalExportTerms: new MDCDialog(document.querySelector("#modal-export-terms")),
+        btnCopyTerms: document.querySelector("#modal-export-terms .btn-copy"),
+        btnShare: document.querySelector("#modal-export-terms .btn-share"),
+        shareLink: document.querySelector("#modal-export-terms .share-link"),
+        btnShorten: document.querySelector("#modal-export-terms .btn-shorten-link")
     },
     flashcards: {
         el: document.getElementById("flashcards"),
@@ -224,23 +231,31 @@ const pages = {
                 this.btnFlip.click();
             }
         },
-        createFlashcard({ term, definition, i }) {
+        createFlashcard({ term, definition, i }, isStarred) {
             let cardEl = document.createElement("div");
             let cardInner = cardEl.appendChild(document.createElement("div"));
             let cardFront = cardInner.appendChild(document.createElement("div"));
             let cardBack = cardInner.appendChild(document.createElement("div"));
-            cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p")));
-            if (setType === "timeline" && definition.includes("\x00")) cardBack.appendChild(document.createElement("p")).appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
-            else cardBack.appendChild(applyStyling(definition, document.createElement("p")));
-            if (this.checkOnlyStarred.checked || window.StarredTerms.isStarred(i)) {
-                cardEl.style.color = "goldenrod";
-                cardEl.firstElementChild.style.boxShadow = "0 0 4px #d7a21faa";
+            cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p"))).classList.add("fit");
+            if (setType === "timeline" && definition.includes("\x00")) {
+                let p = cardBack.appendChild(document.createElement("p"));
+                p.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+                p.classList.add("fit");
+            } else cardBack.appendChild(applyStyling(definition, document.createElement("p"))).classList.add("fit");
+            if (isStarred) cardEl.classList.add("is-starred");
+            if (i >= 0) {
+                let starButton = (/** @type {StarButton} */ (cardInner.appendChild(document.createElement("button", { is: "star-button" }))));
+                starButton.initialValue = isStarred;
+                starButton.dataset.termIndex = i;
+                starButton.addEventListener("click", e => e.stopPropagation());
+                starButton.addEventListener("MDCIconButtonToggle:change", e => cardEl.classList.toggle("is-starred", e.detail.isOn));
             }
             return this.terms.appendChild(cardEl);
         },
         show(shuffleA=false) {
             let terms = currentSet.terms.map((el, i) => ({i, ...el}));
-            if (this.checkOnlyStarred.checked) terms = window.StarredTerms.getStarredTermList();
+            let onlyStarred = this.checkOnlyStarred.checked;
+            if (onlyStarred) terms = window.StarredTerms.getStarredTermList(terms);
             this.numTerms = terms.length;
             this.setName.innerText = currentSet.name;
             this.terms.textContent = "";
@@ -248,12 +263,14 @@ const pages = {
                 terms = [...terms];
                 shuffle(terms);
             }
-            for (let term of terms) this.createFlashcard(term);
-            this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards." }, -1);
+            let starredList = window.StarredTerms.getCurrentSet();
+            for (let term of terms) this.createFlashcard(term, onlyStarred || starredList.includes(term.i));
+            this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
             this.terms.children[0].querySelectorAll("p").forEach(el => {
-                el.style.fontSize = "100px";
-                resizeText(el);
+                //el.style.fontSize = "100px";
+                //resizeText(el);
+                fitty(el, {maxSize: 100});
             });
         },
         init() {
@@ -271,10 +288,7 @@ const pages = {
             this.btnNext.addEventListener("click", () => {
                 this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
                 if (this.index < this.numTerms) {
-                    this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => {
-                        el.style.fontSize = "100px";
-                        resizeText(el); // TODO migrate to fitty
-                    });
+                    this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100}));
                 }
                 this.nextCard();
             });
@@ -493,6 +507,7 @@ const pages = {
                 e.stopPropagation();
                 this.overrideCorrect()
             });
+            //fitty(this.question); TODO finish migration
         }
     },
     test: {
@@ -1023,11 +1038,6 @@ const pages = {
 };
 
 // #region UTILITIES
-function resizeText(textEl) {
-    let fontSize = parseFloat(getComputedStyle(textEl).fontSize);
-    while (fontSize > 0 && (textEl.clientHeight >= textEl.parentElement.clientHeight)) textEl.style.fontSize = `${fontSize--}px`;
-    textEl.style.fontSize = `${Math.max(fontSize - 5, 5)}px`;
-}
 function resizeButtonText(button, minSize = 1) {
     button.style.removeProperty("--mdc-outlined-button-label-text-size");
     let i = parseFloat(getComputedStyle(button)["font-size"]);
@@ -1049,6 +1059,13 @@ function resizeTextToMaxHeight(textEl, maxHeight, minSize = 1) {
         i++;
     }
 }
+/**
+ * Apply inline styling of text to an element
+ * @template {keyof HTMLElementTagNameMap} T
+ * @param {string} text Text to style with markdown and sanitize
+ * @param {HTMLElementTagNameMap[T]} el The element to put the styled text in
+ * @returns {HTMLElementTagNameMap[T]} The element with the text
+ */
 function applyStyling(text, el) {
     el.innerHTML = sanitize(marked.parseInline(text), setId === "ZEAuZPbTS5JlB1goITO5" ? {} : sanitizerOpts);
     return el;
@@ -1106,7 +1123,7 @@ function shuffle(arr) {
 // #endregion UTILITIES
 
 // #region CARD GENERATION
-function createTermCard({ term, definition }, index) {
+function createTermCard({ term, definition }, index, isStarred) {
     let cardEl = document.createElement("div");
     cardEl.classList.add("mdc-card", "mdc-card--outlined");
     let cardHeading = cardEl.appendChild(document.createElement("div"));
@@ -1116,13 +1133,13 @@ function createTermCard({ term, definition }, index) {
     cardTitle.style.fontWeight = "600";
     applyStyling(term.replace("\x00", " - "), cardTitle);
     let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", { is: "star-button" }))));
-    starButton.initialValue = window.StarredTerms.isStarred(index);
+    starButton.initialValue = isStarred;
+    starButton.dataset.termIndex = index;
     if (setType === "timeline") {
         cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
         cardEl.classList.add("timeline-piece")
     } else applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
     pages.setOverview.terms.appendChild(cardEl);
-    starButton.obj.listen("MDCIconButtonToggle:change", e => window.StarredTerms.setStar(index, e.detail.isOn));
     return cardEl;
 }
 function createCommentCard({ name, comment, like }, id) {
@@ -1169,6 +1186,28 @@ function showLikeStatus(likeStatus) {
     }
 }
 
+async function getShortenedSetUrl() {
+    let longDynamicLinkObj = new URL("https://set.vocabustudy.org/");
+    longDynamicLinkObj.searchParams.set("link", `https://vocabustudy.org${location.pathname}`);
+    longDynamicLinkObj.searchParams.set("st", `${currentSet.name} - Vocabustudy`);
+    longDynamicLinkObj.searchParams.set("sd", currentSet.description || `Study this set with ${currentSet.terms.length} terms on Vocabustudy`);
+    let longDynamicLink = longDynamicLinkObj.href;
+    let res = await fetch("https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyDU-lvyggKhMHuEllAEpXZ3y_TyPOGfXBM", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            longDynamicLink,
+            suffix: {
+                option: "SHORT"
+            }
+        })
+    });
+    let { shortLink } = await res.json();
+    return shortLink;
+}
+
 addEventListener("DOMContentLoaded", async () => {
     pages.flashcards.init();
     pages.learn.init();
@@ -1176,6 +1215,9 @@ addEventListener("DOMContentLoaded", async () => {
     pages.match.init();
     pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
     pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
+    MDCRipple.attachTo(pages.setOverview.btnCopyTerms).unbounded = true;
+    MDCRipple.attachTo(pages.setOverview.btnShare).unbounded = true;
+    MDCRipple.attachTo(pages.setOverview.btnShorten);
     if (setType === "timeline") {
         pages.setOverview.terms.style.justifyContent = "left";
         document.querySelectorAll(".study-modes :is(a, button):not([href='#flashcards'])").forEach(el => {
@@ -1240,7 +1282,8 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
-        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i);
+        let starredList = window.StarredTerms.getCurrentSet();
+        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i, starredList.includes(i));
         navigate();
         pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
@@ -1268,10 +1311,23 @@ addEventListener("DOMContentLoaded", async () => {
                 pages.setOverview.fieldComment.button.disabled = true;
             }
         });
-        pages.setOverview.btnExportTerms.addEventListener("click", () => {
-            pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
-            pages.setOverview.modalExportTerms.open();
+        pages.setOverview.btnExportTerms.addEventListener("click", () => pages.setOverview.modalExportTerms.open());
+        pages.setOverview.btnCopyTerms.addEventListener("click", async () => {
+            await navigator.clipboard.writeText(pages.setOverview.modalExportTerms.root.querySelector("pre").innerText);
+            pages.setOverview.btnCopyTerms.childNodes[1].textContent = "inventory";
+            setTimeout(() => pages.setOverview.btnCopyTerms.childNodes[1].textContent = "content_paste", 500);
         });
+        pages.setOverview.btnShorten.addEventListener("click", async () => {
+            let shortLink = await getShortenedSetUrl();
+            pages.setOverview.btnShorten.disabled = true;
+            pages.setOverview.shareLink.innerText = shortLink;
+            pages.setOverview.shareLink.href = shortLink;
+        });
+        pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
+        pages.setOverview.shareLink.innerText = `https://vocabustudy.org${location.pathname}`;
+        pages.setOverview.shareLink.href = `https://vocabustudy.org${location.pathname}`;
+        if (!navigator.share) pages.setOverview.btnShare.hidden = true;
+        else pages.setOverview.btnShare.addEventListener("click", () => navigator.share({title: `${currentSet.name} - Vocabustudy`, text: currentSet.description || `Study this set with ${currentSet.terms.length} terms on Vocabustudy`, url: pages.setOverview.shareLink.href}));
     } catch (err) {
         if (err.message.includes("Forbidden")) {
             localStorage.setItem("redirect_after_login", location.href);

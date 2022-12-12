@@ -11,6 +11,7 @@ const firestore = {
         if (field.stringValue) return field.stringValue;
         if (field.mapValue) return firestore.parseMap(field.mapValue);
         if (field.arrayValue?.values) return field.arrayValue.values.map(firestore.parseField);
+        if (field.arrayValue) return [];
         return null;
     },
     createField: value => {
@@ -18,10 +19,12 @@ const firestore = {
         if (typeof value === "number") return { doubleValue: value.toString() };
         if (typeof value === "boolean") return { booleanValue: value };
         if (typeof value === "string") return { stringValue: value };
+        if (value instanceof FSDocument) return { referenceValue: `${firestore.projectPrefix}/${value.constructor.collectionKey}/${value.id}` };
         if (value instanceof Array) return { arrayValue: { values: value.map(firestore.createField) } };
-        if (value instanceof Object) return { mapValue: { fields: Object.fromEntries(Object.entries(value).map(([key, value]) => [key, firestore.createField(value)])) } };
+        if (value instanceof Object) return { mapValue: { fields: firestore.specifyFields(value) } };
         return null;
     },
+    specifyFields: obj => Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, firestore.createField(value)])),
     parseMap: map => {
         const result = {};
         for (const key in map.fields) result[key] = firestore.parseField(map.fields[key]);
@@ -45,12 +48,16 @@ const firestore = {
             body: JSON.stringify({ structuredQuery })
         });
         let json = await res.json();
-        return json.map(({document: doc}) => ({
-            id: doc.name.split("/").pop(),
-            ...firestore.parseMap(doc),
-            createTime: new Date(Date.parse(doc.createTime)),
-            updateTime: new Date(Date.parse(doc.updateTime))
-        }));
+        return json.map(info => {
+            let docObj = {
+                id: info.document.name.split("/").pop(),
+                ...firestore.parseMap(info.document),
+                createTime: new Date(Date.parse(info.document.createTime)),
+                updateTime: new Date(Date.parse(info.document.updateTime))
+            };
+            if (info.done) docObj.last = true;
+            return docObj
+        });
     },
     getDocumentsForIds: async function (collection, documentIds) {
         let res = await fetch(`${this.baseUrl}:batchGet`, {
@@ -65,33 +72,104 @@ const firestore = {
             createTime: new Date(Date.parse(doc.createTime)),
             updateTime: new Date(Date.parse(doc.updateTime))
         }));
+    },
+    createDocument: async function (collection, fields, idToken) {
+        let res = await fetch(`${this.baseUrl}/${collection.collectionKey}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+            body: JSON.stringify({ fields: this.specifyFields(fields) })
+        });
+        let json = await res.json();
+        return {
+            id: json.name.split("/").pop(),
+            ...fields,
+            createTime: new Date(Date.parse(json.createTime)),
+            updateTime: new Date(Date.parse(json.updateTime))
+        };
+    },
+    deleteDocument: async function (collection, documentId, idToken) {
+        await fetch(`${this.baseUrl}/${collection.collectionKey}/${documentId}`, { 
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` }
+        });
+    },
+    updateDocument: async function (collection, documentId, fields, idToken) {
+        await fetch(`${this.baseUrl}/${collection.collectionKey}/${documentId}?updateMask.fieldPaths=${Object.keys(fields).join(",")}&currentDocument.exists=true`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+            body: JSON.stringify({ fields: this.specifyFields(fields) })
+        });
+    },
+    /**
+     * @template {FSDocument} T
+     * @param {{document: T, fields: T}[]} writes
+     */
+    commitWrites: async function (writes, idToken) {
+        await fetch(`${this.baseUrl}:commit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+            body: JSON.stringify({
+                writes: writes.map(({document, fields}) => ({
+                    update: {
+                        name: `${this.projectPrefix}/${document.constructor.collectionKey}/${document.id}`,
+                        fields: this.specifyFields(fields)
+                    },
+                    updateMask: { fieldPaths: Object.keys(fields) }
+                }))
+            })
+        });
     }
 };
 
 if (location.hostname === "localhost")
     firestore.dbServer = "http://localhost:8080/v1/";
 
-class Document {
-    constructor({id, createTime, updateTime}) {
+function getIdToken() {
+    return JSON.parse(localStorage.getItem("firebase:authUser:AIzaSyCsDuM2jx3ZqccS8MS5aumkOKaV2LiVwZk:[DEFAULT]")).stsTokenManager.accessToken;
+}
+
+class FSDocument {
+    constructor({id, createTime, updateTime, last}) {
         /** @type {String} */
         this.id = id;
         /** @type {Date} */
         this.createTime = createTime;
         /** @type {Date} */
         this.updateTime = updateTime;
+        /** @type {Boolean} */
+        if (last) this.last = true;
     }
     static async get(id) {
         return new this(await firestore.getDocument(this, id));
     }
+    /**
+     * @returns {Promise<this[]>}
+     */
     static async getDocuments(structuredQuery) {
         return (await firestore.getDocuments(this, structuredQuery)).map(doc => new this(doc));
     }
+    /**
+     * @returns {Promise<this[]>}
+     */
     static async getDocumentsForIds(documentIds) {
         return (await firestore.getDocumentsForIds(this, documentIds)).map(doc => new this(doc));
     }
+    /**
+     * @param {this} fields
+     * @returns {Promise<this>}
+     */
+    static async create(fields) {
+        return new this(await firestore.createDocument(this, fields, getIdToken()));
+    }
+    static async delete(documentId) {
+        await firestore.deleteDocument(this, documentId, getIdToken());
+    }
+    static async update(documentId, fields) {
+        await firestore.updateDocument(this, documentId, fields, getIdToken());
+    }
 }
 
-class MetaSet extends Document {
+class MetaSet extends FSDocument {
     static collectionKey = "meta_sets";
     constructor(data) {
         super(data)
@@ -114,7 +192,7 @@ class MetaSet extends Document {
     }
 }
 
-class CustomCollection extends Document {
+class CustomCollection extends FSDocument {
     static collectionKey = "collections";
     constructor(data) {
         super(data);
@@ -127,7 +205,7 @@ class CustomCollection extends Document {
     }
 }
 
-class VocabSet extends Document {
+class VocabSet extends FSDocument {
     static collectionKey = "sets";
     constructor(data) {
         super(data)
@@ -187,7 +265,42 @@ class QueryBuilder {
         this.query.offset = offset;
         return this;
     }
+    /**
+     * @param {(Number|FSDocument)[]} offsets 
+     * @param {Boolean} before
+     * @returns {this}
+     */
+    startAt(offsets, before) {
+        this.query.startAt = {
+            values: offsets.map(el => firestore.createField(el)),
+            before
+        };
+        return this;
+    }
     build() {
         return this.query;
+    }
+}
+
+class WriteTransaction {
+    constructor() {
+        this.writes = [];
+    }
+    /**
+     * @template {extends FSDocument} T
+     * @param {T} doc
+     * @param {T} fields
+     * @returns {this}
+     */
+    update(doc, fields) {
+        this.writes.push({
+            collection: doc.constructor.collectionKey,
+            document: doc.id,
+            update: fields,
+        });
+        return this;
+    }
+    commit() {
+        return firestore.commit(this.writes, getIdToken());
     }
 }
