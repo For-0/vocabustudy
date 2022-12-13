@@ -345,3 +345,6 @@ body > footer {
     white-space: normal !important;
     max-width: 100%;
 }
+.nohuechange {
+    filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg)) !important;
+}
