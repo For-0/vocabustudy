@@ -142,7 +142,7 @@ html.custom-scrollbar(lang="en")
                                         svg.mdc-circular-progress__indeterminate-circle-graphic(viewBox='0 0 48 48', xmlns='http://www.w3.org/2000/svg')
                                             circle(cx='24', cy='24', r='18', stroke-dasharray='113.097', stroke-dashoffset='56.549', stroke-width='4')
                     div(style="overflow-x: auto;")
-                        p.mdc-typography--headline3
+                        p.mdc-typography--headline3.fit
                         div
                             p.mdc-typography--body1(style="font-size: 8px;") Tip: Use the number keys 1-4 to answer multiple choice questions
                             p(hidden='')
@@ -185,19 +185,19 @@ html.custom-scrollbar(lang="en")
                             button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='0')
                                 span.mdc-button__ripple
                                 i.material-icons.mdc-button__icon(aria-hidden='true') filter_1
-                                span.mdc-button__label Option 1
+                                span.fit.mdc-button__label Option 1
                             button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='1')
                                 span.mdc-button__ripple
                                 i.material-icons.mdc-button__icon(aria-hidden='true') filter_2
-                                span.mdc-button__label Option 2
+                                span.fit.mdc-button__label Option 2
                             button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='3')
                                 span.mdc-button__ripple
                                 i.material-icons.mdc-button__icon(aria-hidden='true') filter_3
-                                span.mdc-button__label Option 3
+                                span.fit.mdc-button__label Option 3
                             button.mdc-button.mdc-button--outlined.mdc-button--icon-leading(data-answerindex='4')
                                 span.mdc-button__ripple
                                 i.material-icons.mdc-button__icon(aria-hidden='true') filter_4
-                                span.mdc-button__label Option 4
+                                span.fit.mdc-button__label Option 4
             .page#test
                 h1.mdc-typography--headline4
                     | Test - 
@@ -292,18 +292,18 @@ html.custom-scrollbar(lang="en")
                             i.material-icons.mdc-button__icon(aria-hidden='true') check_circle
                             span.mdc-button__label Check Answers
                     fieldset.custom-scrollbar
-                        h2.mdc-typography--headline4(data-count='0')  Short Answer Questions
+                        h2.mdc-typography--headline4(data-count='0')  Short Answer Question
                         div
-                        h2.mdc-typography--headline4(data-count='0')  Multiple Choice Questions
+                        h2.mdc-typography--headline4(data-count='0')  Multiple Choice Question
                         div
                         h2.mdc-typography--headline4(data-count='0')
-                            |  Matching Questions 
+                            |  Matching Question
                             p.mdc-typography--body1(style='margin:0;') Select an item on the left, then choose the matching item on the right
                         div(style='display:flex;flex-direction:row;gap:20%;position:relative')
                             div
                             div
                             .matches-container
-                        h2.mdc-typography--headline4(data-count='0')  True/False Questions
+                        h2.mdc-typography--headline4(data-count='0')  True/False Question
                         div
             .page#match
                 h1.mdc-typography--headline4
@@ -435,10 +435,24 @@ html.custom-scrollbar(lang="en")
         .mdc-dialog#modal-export-terms
             .mdc-dialog__container
                 .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                    h2.mdc-dialog__title Export Terms
+                    h2.mdc-dialog__title Share
                     .mdc-dialog__content.custom-scrollbar(style="--track: transparent;")
+                        h3.mdc-typography--overline Set URL
+                            button.mdc-icon-button.mdc-icon-button--touch.material-icons-round.btn-share(title="Share")
+                                .mdc-icon-button__ripple
+                                | share
+                                .mdc-icon-button__touch
+                        a.share-link(target="_blank" style="max-width: calc(100% - 91px);display: inline-block;word-break: break-all;")
+                        button.mdc-button.btn-shorten-link(type="button" style="float: right;")
+                            span.mdc-button__ripple
+                            span.mdc-button__label Shorten
+                        h3.mdc-typography--overline Export
+                            button.mdc-icon-button.mdc-icon-button--touch.material-icons-round.btn-copy(title="Copy Terms")
+                                .mdc-icon-button__ripple
+                                | content_paste
+                                .mdc-icon-button__touch
                         p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
-                        pre
+                        pre.custom-scrollbar(style="max-width: 100%;overflow:auto;")
                     .mdc-dialog__actions
                         button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
                             .mdc-button__ripple

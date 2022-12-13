@@ -139,6 +139,15 @@ function checkAnswers(answer, correct) {
     return possibleCorrect.includes(cleanAnswer);
 }
 
+function selectNavButton(btn) {
+    pages.setOverview.termNav.querySelectorAll(".mdc-button--raised").forEach(el => {
+        el.classList.remove("mdc-button--raised", "mdc-button--unelevated");
+        el.classList.add("mdc-button--outlined");
+    });
+    btn.classList.add("mdc-button--raised", "mdc-button--unelevated");
+    btn.classList.remove("mdc-button--outlined");
+}
+
 function createItem(item, index) {
     let itemId = `item-${index}`;
     let navBtn = pages.setOverview.termNav.appendChild(createElement("a", ["mdc-button", "mdc-button--outlined"], {href: `#${itemId}`}, [
@@ -147,12 +156,7 @@ function createItem(item, index) {
     ]));
     let navRipple = MDCRipple.attachTo(navBtn);
     navBtn.addEventListener("click", () => {
-        pages.setOverview.termNav.querySelectorAll(".mdc-button--raised").forEach(el => {
-            el.classList.remove("mdc-button--raised", "mdc-button--unelevated");
-            el.classList.add("mdc-button--outlined");
-        });
-        navBtn.classList.add("mdc-button--raised", "mdc-button--unelevated");
-        navBtn.classList.remove("mdc-button--outlined");
+        selectNavButton(navBtn);
         navRipple.layout();
     });
     if (index === 0) navBtn.click();
@@ -279,4 +283,8 @@ addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-addEventListener("hashchange", () => document.documentElement.scrollTo(0, 0));
+addEventListener("hashchange", () => {
+    let possibleBtn = document.querySelector(`a[href="${location.hash}"]`);
+    if (possibleBtn) selectNavButton(possibleBtn);
+    document.documentElement.scrollTo(0, 0);
+});

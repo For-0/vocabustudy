@@ -8,6 +8,7 @@ import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
 import { MDCSnackbar } from "@material/snackbar/component.js";
+import { map } from "@firebase/util";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -207,9 +208,23 @@ const fields = {
     collections: document.querySelector(".field-collections"),
     btnImportBlooket: document.querySelector(".btn-import-blooket"),
     fieldImportBlooket: new MDCTextField(document.querySelector(".field-import-blooket")),
-    snackbarCantSave: new MDCSnackbar(document.getElementById("snackbar-cant-save"))
+    snackbarCantSave: new MDCSnackbar(document.getElementById("snackbar-cant-save")),
+    warningDuplicateTerms: document.querySelector(".warning-duplicate"),
 };
 let changesSaved = true;
+function checkInputDuplicates() {
+    let terms = [];
+    let definitions = [];
+    fields.terms.querySelectorAll(":scope > div").forEach(el => {
+        let inps = el.querySelectorAll("input");
+        terms.push(inps[0].value);
+        definitions.push(inps[1].value);
+    });
+    terms = terms.filter(el => el);
+    definitions = definitions.filter(el => el);
+    let isDup = terms.some((item, index) => terms.indexOf(item) != index) || definitions.some((item, index) => definitions.indexOf(item) != index);
+    fields.warningDuplicateTerms.hidden = !isDup;
+}
 function createTermInput(term) {
     /** @type {HTMLDivElement?} */
     let termInput;
@@ -230,6 +245,8 @@ function createTermInput(term) {
         MDCRipple.attachTo(termInput.children[2]).unbounded = true;
         termField.obj.value = term.term;
         definitionField.obj.value = term.definition;
+        termField.obj.listen("change", () => checkInputDuplicates());
+        definitionField.obj.listen("change", () => checkInputDuplicates());
         termInput.children[2].addEventListener("click", () => termInput.remove());
     } else if (setType === 1) {
         let inputName = createTextFieldWithHelper("Event", null, {required: true, maxLength: 500});

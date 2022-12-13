@@ -2,8 +2,7 @@
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version)](https://vocabustudy.org/)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&label=latest%20nightly)](https://nightly.vocabustudy.org/)
-[![Automated Release Notes by gren](https://img.shields.io/badge/%F0%9F%A4%96-release%20notes-00B2EE.svg)](https://github-tools.github.io/github-release-notes/)
-[![Editable on Chromebooks](https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen)](https://vscode.dev/)
+[![Editable on Chromebooks](https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen)](https://gitpod.io/)
 
 Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created by students, for students.
 
@@ -16,11 +15,7 @@ Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created
 
 [Vocabustudy's nightly build](https://nightly.vocabustudy.org/) includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or [here.](https://vocabustudy.org/)
 
-## Now Editable on Chromebooks via Gitpod!
-
--------------------
-
-## Contributing:
+## Contributing!
 Follow these steps to run Vocabustudy locally:
 1. Clone the repo locally (I recommend using the [Github CLI](https://cli.github.com/manual/) if you're brand new to Git)
     `gh repo clone For-0/vocabustudy`

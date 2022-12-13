@@ -38,6 +38,7 @@ Examples of unacceptable behavior include:
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
 * Gambling (unless you are the owner)
+* Whining
 
 ## Enforcement Responsibilities
 
