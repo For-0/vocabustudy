@@ -1,4 +1,4 @@
-@charset "utf-0";
+@charset "utf-8";
 /*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
 
 $primary: #795548;
@@ -122,4 +122,7 @@ strong {
         display: inline-block;
         margin: 0;
     }
+}
+.control.help-not-persistent:not(:focus-within) + .help {
+    visibility: hidden;
 }
