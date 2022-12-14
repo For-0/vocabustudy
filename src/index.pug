@@ -49,7 +49,7 @@ block content
                     button.button.is-ghost.btn-delete-account.has-text-danger.nohuechange Delete Account
     .page#mysets(data-nosnippet)
         h1 My Sets:
-            .dropdown.is-active.is-pulled-right
+            .dropdown.is-pulled-right
                 .dropdown-trigger
                     button.button.btn-create.has-text-white.is-ghost(aria-haspopup="true" aria-controls="dropdown-menu")
                         span.icon
@@ -78,9 +78,7 @@ block content
         .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
     .page#admin(data-nosnippet)
         h1 Admin Portal
-        button.button.button--raised.btn-get-all.is-block.mb-4
-            span.button__ripple
-            span.button__label Load All Sets
+        button.button.is-warning.mb-4.btn-get-all.is-block Load All Sets
         .set-container(data-empty="No Sets")
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#saved-sets(data-nosnippet)

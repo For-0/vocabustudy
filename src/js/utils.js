@@ -154,12 +154,12 @@ export function createTextFieldWithHelper(innerText, helperText=null, extraPrope
     let textField = createElement("div", ["field"], {}, [
         createElement("label", ["label"], {innerText: "Username"}),
         createElement("div", ["control", "help-not-persistent"], {}, [
-            createElement("label", ["input"], {type: "text", ...extraProperties}),
+            createElement("input", ["input"], {type: "text", ...extraProperties}),
         ])
     ]);
     textField.style.width = "100%";
     let helperLine = helperText ? createElement("p", ["help"], {innerText: helperText}) : null;
-    return {textField, helperLine}
+    return {textField, helperLine, input: textField.querySelector("")}
 }
 
 export async function createSetCardOwner(set, id, linkCreator=false) {
@@ -208,10 +208,10 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     let textEls = [];
     if (relevance !== null) {
         textEls.push(createElement("p", ["m-0", "has-text-weight-bold"], { innerText: `Created by ${creator}`}));
-        textEls.push(createElement("p", ["m-0"], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
-    } else textEls.push(createElement("div", ["has-text-weight-bold"], { innerText: `Created by ${creator}` }));
+        textEls.push(createElement("p", ["mt-0", "mb-1"], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`}))
+    } else textEls.push(createElement("p", ["has-text-weight-bold", "mt-0", "mb-1"], { innerText: `Created by ${creator}` }));
     let setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
-    let cardEl = createElement("div", ["card"], {}, [
+    let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], { innerText: name }),
             createElement("a", ["card-header-icon", "has-tooltip-arrow", "link-user"], {href: `/user/${uid}/`}, [
@@ -224,7 +224,6 @@ export async function createSetCard({ name, creator, numTerms, collections, like
             createElement("div", ["content"], {innerText: `${numTerms} terms - ${likes || "0"} likes`}, [
                 createElement("br"),
                 ...textEls,
-                createElement("br"),
                 ...collectionLabels
             ])
         ]),
@@ -248,12 +247,12 @@ export function createCustomCollectionCard(collection, id) {
     /** @type {MDCTextField[]} */
     let textFields = [];
     let textEls = collection.sets.flatMap(setId => {
-        let {textField, helperLine, obj} = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
-        obj.value = setId;
-        textFields.push(obj);
+        let {textField, helperLine, input} = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
+        input.value = setId;
+        textFields.push(textField);
         return [textField, helperLine];
     })
-    let cardEl = createElement("div", ["mdc-card"], {}, [
+    let cardEl = createElement("div", ["card"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], {innerText: collection.name}),
             createElement("span", ["card-header-icon"], {}, [

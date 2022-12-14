@@ -126,3 +126,8 @@ strong {
 .control.help-not-persistent:not(:focus-within) + .help {
     visibility: hidden;
 }
+.card.has-spreaded-content {
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+}
