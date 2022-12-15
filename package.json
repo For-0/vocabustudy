@@ -61,7 +61,7 @@
     "bulma-list": "^1.2.0",
     "bulma-slider": "^2.0.5",
     "bulma-social": "^2.1.0",
-    "bulma-switch": "^2.0.4",
+    "bulma-switch": "github:wikiki/bulma-switch",
     "bulma-toast": "^2.4.1",
     "dompurify": "^2.4.1",
     "firebase": "^9.14.0",

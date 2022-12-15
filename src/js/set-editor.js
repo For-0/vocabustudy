@@ -8,7 +8,6 @@ import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
 import { MDCSnackbar } from "@material/snackbar/component.js";
-import { map } from "@firebase/util";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -351,6 +350,7 @@ fields.btnAddQuiz.addEventListener("click", () => createTermInput({title: "", qu
 fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
+    if (!fields.formEdit.reportValidity()) return fields.formEdit.classList.add("has-validated-inputs");
     let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
     if (terms.length < 4 && setType !== 2) return alert("You must have at least 4 terms in a set");
     let setName = fields.setName.value;

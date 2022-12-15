@@ -149,9 +149,12 @@ strong {
 .firebaseui-idp-icon, .nohuechange {
     filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg))
 }
-.input:invalid {
+.has-validated-inputs .input:invalid {
     @extend .is-danger;
 }
-.field:has(input.input:invalid) + .help {
+.has-validated-inputs .field:has(input.input:invalid) + .help {
     color: #f14668;
+}
+.switch[type="checkbox"].is-thin + label::before {
+    top: calc(50% - .25rem);
 }

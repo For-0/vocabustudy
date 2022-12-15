@@ -249,7 +249,7 @@ export function createCustomCollectionCard(collection, id) {
         textField.querySelector("input").value = setId;
         return [textField, helperLine];
     })
-    let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
+    let cardEl = createElement("div", ["card", "has-spreaded-content", "has-validated-inputs"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], {innerText: collection.name}),
             createElement("span", ["card-header-icon"], {}, [
