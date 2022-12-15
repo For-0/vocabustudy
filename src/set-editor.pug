@@ -9,10 +9,37 @@ block content
     #home.page
         h1 Edit Set
         p(style="opacity: 0.7;")
-            a(href="https://www.markdownguide.org/cheat-sheet" target="_blank" rel="noreferrer noopener") 
+            a(href="https://www.markdownguide.org/cheat-sheet" target="_blank" rel="noreferrer noopener" class="has-text-primary") 
                 span.material-symbols-rounded(style="vertical-align: middle;") text_format
                 | Markdown is supported
         p(style="opacity: 0.7;") Please make sure to keep sets relevant
+        form
+            .field.field-name
+                label.label Set Name
+                .control
+                    input.input(text="text" required maxlength="500")
+            .field.field-description
+                label.label Set Description
+                .control
+                    input.input(text="text" required maxlength="5000")
+            .mt-4
+                .field
+                    input#field-public.switch(type="checkbox")
+                    label(for="field-public") Public
+            h2.title.is-size-5 Vocabulary Words
+                button.button.is-outlined.is-primary.btn-add-term.ml-4(type="button")
+                    span.icon
+                        i.material-symbols-rounded add_circle_outlined
+                    span Add
+                button.button.is-outlined.is-primary.btn-add-quiz.ml-4(type="button" hidden)
+                    span.icon
+                        i.material-symbols-rounded add_circle_outlined
+                    span Add Quiz
+                button.button.is-outlined.is-primary.ml-4.btn-import-terms(type="button")
+                    span.icon
+                        i.material-symbols-rounded upload_file
+                    span Import Items
+            .field-terms-edit.set-container(data-empty="There are no items. Add some!")
         form
             label.mdc-text-field.mdc-text-field--outlined.field-name(style="width: 100%;")
                 span.mdc-notched-outline
