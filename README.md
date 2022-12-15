@@ -1,8 +1,10 @@
 # Vocabustudy - Study Vocab, For Free.
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version)](https://vocabustudy.org/)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&label=latest%20nightly)](https://nightly.vocabustudy.org/)
-[![Editable on Chromebooks](https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen)](https://gitpod.io/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version&style=for-the-badge)](https://vocabustudy.org/)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&label=latest%20nightly&style=for-the-badge)](https://nightly.vocabustudy.org/)
+[![Editable on Chromebooks](https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen?style=for-the-badge)](https://gitpod.io/)
+[![Editable on Chromebooks](https://img.shields.io/badge/PWA-Coming%20Soon-yellow?style=for-the-badge)](https://web.dev/pwa/)
+![Editable on Chromebooks](https://img.shields.io/badge/Offline-In%20Progress-yellow?style=for-the-badge)
 
 Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created by students, for students.
 
