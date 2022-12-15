@@ -1,5 +1,3 @@
-import { MDCRipple } from "@material/ripple/index";
-import { MDCTextField } from "@material/textfield/index";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
 
 const ignoredCharsRE = /[*_.]/g;
@@ -148,18 +146,18 @@ export async function parseCollections(collections, allCollections=null) {
  * @param {String} innerText Label text
  * @param {String?} helperText Helper text
  * @param {HTMLInputElement} extraProperties Properties for the input el
- * @returns {{textField: HTMLLabelElement, helperLine: HTMLParagraphElement?}}
+ * @returns {{textField: HTMLDivElement, helperLine: HTMLParagraphElement?}}
  */
 export function createTextFieldWithHelper(innerText, helperText=null, extraProperties={}) {
     let textField = createElement("div", ["field"], {}, [
-        createElement("label", ["label"], {innerText: "Username"}),
+        createElement("label", ["label"], {innerText}),
         createElement("div", ["control", "help-not-persistent"], {}, [
             createElement("input", ["input"], {type: "text", ...extraProperties}),
         ])
     ]);
     textField.style.width = "100%";
     let helperLine = helperText ? createElement("p", ["help"], {innerText: helperText}) : null;
-    return {textField, helperLine, input: textField.querySelector("")}
+    return {textField, helperLine}
 }
 
 export async function createSetCardOwner(set, id, linkCreator=false) {
@@ -170,10 +168,10 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
         createElement("a", ["card-footer-item", "has-text-warning-dark"], {href: `/set/${id}/edit/`, innerText: "Edit"}),
         createElement("a", ["card-footer-item", "has-text-danger"], {href: "#", innerText: "Delete"})
     ];
-    buttons.forEach(el => MDCRipple.attachTo(el));
+    buttons[2].addEventListener("click", e => e.preventDefault());
     if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${set.uid}/`, innerText: "More by User"}));
     let likeText = set.public ? ` - ${set.likes || "0"} likes` : "";
-    let cardEl = createElement("div", ["card"], {}, [
+    let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], { innerText: set.name }),
             createElement("span", ["card-header-icon"], {}, [
@@ -241,22 +239,21 @@ export function createCustomCollectionCard(collection, id) {
     let buttons = [
         createElement("a", ["card-footer-item", "has-text-primary"], {href: `/collection/${id}/`, innerText: "View"}),
         createElement("a", ["card-footer-item", "has-text-primary"], {href: "#", innerText: "Add Set"}),
-        createElement("a", ["card-footer-item", "has-text-primary"], {disabled: true, innerText: "Save"}),
-        createElement("a", ["card-footer-item", "has-text-danger"], {innerText: "Delete"})
+        createElement("a", ["card-footer-item", "has-text-primary"], {href: "#", disabled: true, innerText: "Save"}),
+        createElement("a", ["card-footer-item", "has-text-danger"], {href: "#", innerText: "Delete"})
     ];
-    /** @type {MDCTextField[]} */
-    let textFields = [];
+    buttons[1].style.minWidth = "calc(60px + 1.5rem)";
+    buttons.slice(1).forEach(el => el.addEventListener("click", e => e.preventDefault()));
     let textEls = collection.sets.flatMap(setId => {
-        let {textField, helperLine, input} = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
-        input.value = setId;
-        textFields.push(textField);
+        let {textField, helperLine,} = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/", {pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"});
+        textField.querySelector("input").value = setId;
         return [textField, helperLine];
     })
-    let cardEl = createElement("div", ["card"], {}, [
+    let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], {innerText: collection.name}),
             createElement("span", ["card-header-icon"], {}, [
-                createElement("span", ["tags"], {innerText: `${collection.sets.length} sets`})
+                createElement("span", ["tag", "is-light"], {innerText: `${collection.sets.length} sets`})
             ])
         ]),
         createElement("div", ["card-content"], {}, [
@@ -264,7 +261,7 @@ export function createCustomCollectionCard(collection, id) {
         ]),
         createElement("footer", ["card-footer"], {}, buttons)
     ]);
-    return { card: cardEl, buttons, textFields };
+    return { card: cardEl, buttons };
 }
 
 /**

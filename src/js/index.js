@@ -98,11 +98,7 @@ const pages = {
         filterCollection: new Modal("#modal-filter-collection").modal(),
         filterCollectionList: document.querySelector("#modal-filter-collection .menu > ul"),
         changeHue: new Modal("#modal-change-hue").modal(),
-        contrib1: new Modal("#contrib1").modal(),
-        contrib2: new Modal("#contrib2").modal(),
-        contrib3: new Modal("#contrib3").modal(),
-        contrib4: new Modal("#contrib4").modal(),
-        contrib5: new Modal("#contrib5").modal(),
+        contributers: [...document.querySelectorAll(".modal.is-credit")].map(el => new Modal(el).modal()),
         changeHueInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-hue input")))
     },
     admin: {
@@ -198,7 +194,7 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
             let els = await createSetCardOwner(docSnap.data(), docSnap.id, showAll);
             el.appendChild(els.card);
             els.buttons[2].addEventListener("click", () => {
-                new Alert({
+                new Alert().alert({
                     type: "danger",
                     title: "Delete Set",
                     body: "Are you sure you would like to delete this set? This action cannot be undone.",
@@ -214,7 +210,7 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
                         label: "Cancel"
                     }
                 });
-            })
+            });
         });
     }, ...extraParams)
     el.textContent = "";
@@ -222,16 +218,12 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
 function registerCustomCollectionCard(docSnap) {
     let els = createCustomCollectionCard(docSnap.data(), docSnap.id);
     pages.mysets.collections.appendChild(els.card);
-    els.textFields.forEach(t => {
-        t.layout();
-        t.listen("change", () => els.buttons[2].disabled = false);
-    });
+    els.card.addEventListener("change", () => els.buttons[2].disabled = false);
+    //els.inputs.forEach(t => t.addEventListener("change", () => els.buttons[2].disabled = false));
     els.buttons[1].addEventListener("click", () => {
         if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
-        let cEls = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/");
+        let cEls = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/", {pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"});
         els.card.querySelector(".collection-sets").append(cEls.textField, cEls.helperLine);
-        cEls.obj.layout();
-        cEls.obj.listen("change", () => els.buttons[2].disabled = false);
     });
     els.buttons[2].addEventListener("click", async () => {
         els.buttons[2].disabled = true;
@@ -241,15 +233,15 @@ function registerCustomCollectionCard(docSnap) {
                 el.remove();
             }
         });
-        [...els.card.querySelectorAll(".collection-sets > label")].filter((el, i, self) => (i !== self.findIndex(t => t.querySelector("input").value === el.querySelector("input").value)) && (el.nextElementSibling.remove() || el.remove()));
-        if ([...els.card.querySelectorAll(".collection-sets > label > input")].every(el => el.reportValidity())) {
-            let sets = [...els.card.querySelectorAll(".collection-sets > label input")].map(el => el.value);
+        [...els.card.querySelectorAll(".collection-sets > .field")].filter((el, i, self) => (i !== self.findIndex(t => t.querySelector("input").value === el.querySelector("input").value)) && (el.nextElementSibling.remove() || el.remove()));
+        if ([...els.card.querySelectorAll(".collection-sets input.input")].every(el => el.reportValidity())) {
+            let sets = [...els.card.querySelectorAll(".collection-sets input.input")].map(el => el.value);
             await updateDoc(docSnap.ref, { sets });
-            els.card.querySelector(".card-content > div:last-child").innerText = `${sets.length} sets`;
+            els.card.querySelector(".tag").innerText = `${sets.length} sets`;
         }
     });
     els.buttons[3].addEventListener("click", () => {
-        new Alert({
+        new Alert().alert({
             type: "danger",
             title: "Delete Collection",
             body: "Are you sure you would like to delete this collection? This action cannot be undone.",
@@ -364,7 +356,7 @@ addEventListener("DOMContentLoaded", () => {
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
     };
-    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, pages.modals.contrib1, pages.modals.contrib2, pages.modals.contrib3, pages.modals.contrib4, pages.modals.contrib5]);
+    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, ...pages.modals.contributers]);
     pages.modals.reauthenticatePassword.validateInput = async () => {
         pages.modals.reauthenticatePasswordInput.setCustomValidity("");
         if (pages.modals.reauthenticatePasswordInput.reportValidity()) {
@@ -408,7 +400,7 @@ addEventListener("DOMContentLoaded", () => {
     pages.account.btnDeleteAccount.addEventListener("click", async () => {
         let result = await reauthenticateUser();
         if (result)
-            new Alert({
+            new Alert().alert({
                 type: "danger",
                 title: "Delete Account",
                 body: "Are you sure you would like to delete your account? Your sets will not be deleted.",
@@ -419,7 +411,7 @@ addEventListener("DOMContentLoaded", () => {
                 cancel: {
                     label: "Cancel"
                 }
-            })
+            });
     });
     pages.publicsets.btnSearchGo.addEventListener("click", () => search());
     pages.publicsets.searchInput.addEventListener("keyup", e => {
@@ -435,23 +427,17 @@ addEventListener("DOMContentLoaded", () => {
         if (await verifyAdmin()) showMySets(pages.admin.sets, true);
     });
     pages.mysets.btnCreateCollection.addEventListener("click", async () => {
-        let docRef = doc(collection(db, "collections"));
-        pages.modals.changeName.open();
         pages.modals.changeNameInput.value = "";
-        pages.modals.changeNameInput.valid = true;
-        let name = await (() => new Promise(resolve => pages.modals.changeName.listen("V:Result", e => resolve(e.detail.result), { once: true })))();
-        if (name !== null) {
-            await setDoc(docRef, {name, sets: [], uid: auth.currentUser.uid});
+        let result = await bulmaModalPromise(pages.modals.changeName);
+        if (result) {
+            let docRef = doc(collection(db, "collections"));
+            await setDoc(docRef, {name: pages.modals.changeNameInput.value, sets: [], uid: auth.currentUser.uid});
             let docSnap = await getDoc(docRef);
             registerCustomCollectionCard(docSnap);
         }
     });
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
-    document.querySelector(".contrib1").addEventListener("click", () => pages.modals.contrib1.open());
-    document.querySelector(".contrib2").addEventListener("click", () => pages.modals.contrib2.open());
-    document.querySelector(".contrib3").addEventListener("click", () => pages.modals.contrib3.open());
-    document.querySelector(".contrib4").addEventListener("click", () => pages.modals.contrib4.open());
-    document.querySelector(".contrib5").addEventListener("click", () => pages.modals.contrib5.open());
+    document.querySelectorAll(".button.is-credit").forEach((el, i) => el.addEventListener("click", () => pages.modals.contributers[i].open()))
     document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") showAuthUI();

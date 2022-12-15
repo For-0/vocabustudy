@@ -127,7 +127,31 @@ strong {
     visibility: hidden;
 }
 .card.has-spreaded-content {
-    justify-content: space-between;
     display: flex;
     flex-direction: column;
+    .card-footer {
+        margin-top: auto;
+    }
+}
+.button.is-credit {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+.credits-brandicons {
+    filter: invert(100%) sepia(13%) saturate(2258%) hue-rotate(123deg) brightness(116%) contrast(106%);
+    width: 1.2rem;
+    padding-top: 0.1rem;
+}
+.button.is-vocabustudy {
+    @extend .has-background-primary;
+    border-color: transparent;
+}
+.firebaseui-idp-icon, .nohuechange {
+    filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg))
+}
+.input:invalid {
+    @extend .is-danger;
+}
+.field:has(input.input:invalid) + .help {
+    color: #f14668;
 }
