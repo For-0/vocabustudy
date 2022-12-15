@@ -97,6 +97,9 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     } else if (process.env.CODESPACES) {
         connectAuthEmulator(auth, `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`, {disableWarnings: true});
         connectFirestoreEmulator(db, `${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`, 443);
+    } else if (process.env.GITPOD_WORKSPACE_URL) {
+        connectAuthEmulator(auth, `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`, {disableWarnings: true});
+        connectFirestoreEmulator(db, `${8080}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}`, 443);
     }
     addEventListener("DOMContentLoaded", () => {
         MDCTooltip.attachTo(navbar.tooltipAccountMenu);
