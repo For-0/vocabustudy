@@ -300,6 +300,7 @@ export async function initBulmaModals(modals) {
  */
 export async function bulmaModalPromise(modal) {
     return new Promise(resolve => {
+        document.documentElement.scrollTo({top: 0});
         modal.open();
         modal.onclose = () => resolve(false);
         modal.root.querySelector("footer button").onclick = async () => {

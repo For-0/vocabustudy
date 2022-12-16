@@ -2,40 +2,14 @@
 
 #home .field-terms-edit {
     margin-bottom: 2rem;
-    > div {
-        margin-top: 2rem;
-        > label {
-            &:first-child {
-                width: 34%;
-            }
-            &:nth-child(2) {
-                width: 52%;
-            }
-            margin-left: 2%;
-            margin-right: 2%;
-        }
-        @media (max-width: 830px) {
-            position: relative;
-            > label:first-of-type {
-                width: calc(100% - 64px - 2rem);
-            }
-            > label:last-of-type {
-                display: block;
-                width: calc(100% - 2rem);
-                margin-top: 1rem;
-            }
-            > button {
-                position: absolute;
-                top: 0;
-                right: 2rem;
-            }
-        }
-    }
     .btn-delete {
         color: darkred;
     }
     .editor-term {
         width: 100%;
+        @media screen and (max-width: 768px) {
+            border-bottom: 1px solid #0004;
+        }
     }
     .editor-timeline-piece {
         width: calc(100% - 10px);
@@ -88,11 +62,17 @@
     }
 }
 
-#home > form > h2:first-of-type {
+.vocab-words-controls.level.box {
+    top: calc(120px + 1rem);
     position: sticky;
-    top: 120px;
-    padding: 1rem 0;
     z-index: 1;
-    background-color: var(--mdc-theme-surface, white);
-    margin: 0;
+    @media screen and (min-width: 500px) {
+        display: flex;
+        > .level-left, .level-right {
+            display: flex;
+        }
+        > .level-left + .level-right {
+            margin-top: 0;
+        }
+    }
 }

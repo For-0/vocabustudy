@@ -6,8 +6,10 @@
 // import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
+import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals } from "./utils.js";
 import { MDCSnackbar } from "@material/snackbar/component.js";
+import { map } from "@firebase/util";
+import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -106,21 +108,21 @@ const {db, auth} = initialize(async user => {
             case "new":
                 document.title = "New Set - Vocabustudy";
                 document.querySelector("h1").innerText = "New Set";
-                document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+                document.querySelector("h2").innerText = "Vocabulary Words";
                 setType = 0;
                 fields.btnAddQuiz.hidden = true;
                 break;
             case "new-timeline":
                 document.title = "New Timeline - Vocabustudy";
                 document.querySelector("h1").innerText = "New Timeline";
-                document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
+                document.querySelector("h2").innerText = "Timeline Items";
                 fields.btnAddQuiz.hidden = true;
                 setType = 1;
                 break;
             case "new-guide":
                 document.title = "New Guide - Vocabustudy";
                 document.querySelector("h1").innerText = "New Study Guide";
-                document.querySelector("h2").childNodes[0].textContent = "Guide Items";
+                document.querySelector("h2").innerText = "Guide Items";
                 setType = 2;
                 fields.btnAddQuiz.hidden = true;
                 break;
@@ -153,17 +155,17 @@ const {db, auth} = initialize(async user => {
         if (currentSetMeta.collections.includes("-:0")) {
             setType = 1;
             document.querySelector("h1").innerText = "Edit Timeline";     
-            document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
+            document.querySelector("h2").innerText = "Timeline Items";
             fields.btnAddQuiz.hidden = true;
         } else if (currentSetMeta.collections.includes("-:1")) {
             setType = 2;
             document.querySelector("h1").innerText = "Edit Study Guide";     
-            document.querySelector("h2").childNodes[0].textContent = "Guide Items"
+            document.querySelector("h2").innerText = "Guide Items"
             fields.btnAddQuiz.hidden = false;
         } else {
             setType = 0;
             document.querySelector("h1").innerText = "Edit Set";
-            document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+            document.querySelector("h2").innerText = "Vocabulary Words";
             fields.btnAddQuiz.hidden = true;
         }
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
@@ -193,21 +195,20 @@ const savingFunctions = {
     }
 };
 const fields = {
-    setName: new MDCTextField(document.querySelector(".field-name")),
-    setDescription: new MDCTextField(document.querySelector(".field-description")),
-    public: new MDCSwitch(document.getElementById("field-public")),
+    setName: document.querySelector(".field-name"),
+    setDescription: document.querySelector(".field-description"),
+    public: document.getElementById("field-public"),
     terms: document.querySelector(".field-terms-edit"),
     btnCancel: document.querySelector(".btn-cancel"),
     btnAddTerm: document.querySelector(".btn-add-term"),
     btnAddQuiz: document.querySelector(".btn-add-quiz"),
     btnImportTerms: document.querySelector(".btn-import-terms"),
     formEdit: document.querySelector("form"),
-    importDialog: new MDCDialog(document.querySelector("#dialog-import-terms")),
-    importDialogInput: new MDCTextField(document.querySelector("#dialog-import-terms .mdc-text-field--textarea")),
+    importDialog: new Modal("#dialog-import-terms").modal(),
+    importDialogInput: document.querySelector("#dialog-import-terms textarea"),
     collections: document.querySelector(".field-collections"),
     btnImportBlooket: document.querySelector(".btn-import-blooket"),
-    fieldImportBlooket: new MDCTextField(document.querySelector(".field-import-blooket")),
-    snackbarCantSave: new MDCSnackbar(document.getElementById("snackbar-cant-save")),
+    fieldImportBlooket:document.querySelector(".field-import-blooket"),
     warningDuplicateTerms: document.querySelector(".warning-duplicate"),
 };
 let changesSaved = true;
@@ -232,21 +233,27 @@ function createTermInput(term) {
         let definitionField = createTextFieldWithHelper("Definition", null, {required: true, maxLength: 500});
         termField.textField.style.width = "";
         definitionField.textField.style.width = "";
-        termInput = createElement("div", ["editor-term"], {}, [
-            termField.textField,
-            definitionField.textField,
-            createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
-                createElement("div", ["mdc-icon-button__ripple"]),
-                createElement("span", ["mdc-icon-button__focus-ring"]),
-                createElement("i", ["material-symbols-rounded"], {innerText: "delete"})
+        let deleteButton = createElement("button", ["button", "btn-delete", "is-danger", "is-inverted"], {type: "button"}, [
+            createElement("span", ["icon"], {}, [
+                createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "delete"})
             ])
         ]);
-        MDCRipple.attachTo(termInput.children[2]).unbounded = true;
-        termField.obj.value = term.term;
-        definitionField.obj.value = term.definition;
-        termField.obj.listen("change", () => checkInputDuplicates());
-        definitionField.obj.listen("change", () => checkInputDuplicates());
-        termInput.children[2].addEventListener("click", () => termInput.remove());
+        let deleteButtonMobile = deleteButton.cloneNode(true);
+        termInput = createElement("div", ["editor-term", "columns"], {}, [
+            createElement("div", ["column", "is-one-third"], {}, [
+                createElement("div", ["columns", "is-mobile"], {}, [
+                    createElement("div", ["column"], {}, [termField.textField]),
+                    createElement("div", ["column", "is-narrow", "is-hidden-tablet", "is-align-self-flex-end"], {}, [deleteButtonMobile])
+                ]),
+            ]),
+            createElement("div", ["column"], {}, [definitionField.textField]),
+            createElement("div", ["column", "is-narrow", "is-align-self-flex-end", "is-hidden-mobile"], {}, [deleteButton])
+        ]);
+        termField.textField.querySelector("input").value = term.term;
+        definitionField.textField.querySelector("input").value = term.definition;
+        termInput.addEventListener("change", () => checkInputDuplicates());
+        deleteButton.addEventListener("click", () => termInput.remove());
+        deleteButtonMobile.addEventListener("click", () => termInput.remove());
     } else if (setType === 1) {
         let inputName = createTextFieldWithHelper("Event", null, {required: true, maxLength: 500});
         let inputDate = createTextFieldWithHelper("Date", null, {required: true, maxLength: 500});
@@ -381,13 +388,10 @@ fields.formEdit.addEventListener("submit", async e => {
     }
 });
 async function importTerms() {
-    fields.importDialog.open();
     fields.importDialogInput.value = "";
-    fields.importDialogInput.valid = true;
-    /** @type {string?} */
-    let result = await (() => new Promise(resolve => fields.importDialog.listen("V:Result", e => resolve(e.detail.result), { once: true })))();
-    if (result !== null) {
-        let terms = result.split("\n").filter(el => el).map(el => {
+    let result = await bulmaModalPromise(fields.importDialog)
+    if (result) {
+        let terms = fields.importDialogInput.value.split("\n").filter(el => el).map(el => {
             let splitted = el.split("  ");
             return {term: splitted.shift().trim(), definition: splitted.join("  ").trim()};
         });
@@ -397,17 +401,9 @@ async function importTerms() {
 onbeforeunload = () => {
     if (!changesSaved) return " ";
 };
-fields.importDialog.root.querySelector(".btn-submit").addEventListener("click", () => {
-    if (fields.importDialogInput.valid = fields.importDialogInput.valid) {
-        fields.importDialog.emit("V:Result", { result: fields.importDialogInput.value });
-        fields.importDialog.close("success");
-    }
-});
-fields.importDialog.listen("MDCDialog:closing", e => {
-    if (e.detail.action === "close") fields.importDialog.emit("V:Result", { result: null });
-});
+fields.importDialog.validateInput = () => fields.importDialogInput.reportValidity();
 fields.btnImportBlooket.addEventListener("click", async () => {
-    if (fields.fieldImportBlooket.root.querySelector("input").reportValidity()) {
+    if (fields.fieldImportBlooket.reportValidity()) {
         let dashRes = fields.fieldImportBlooket.value.match(blooketDashboardRe);
         let hwRe = fields.fieldImportBlooket.value.match(blooketHwRe);
         if (dashRes) {
@@ -424,3 +420,4 @@ fields.btnImportBlooket.addEventListener("click", async () => {
     }
 });
 showCollections(fields.collections);
+initBulmaModals([fields.importDialog]);
