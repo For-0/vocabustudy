@@ -1,27 +1,28 @@
-# Vocabustudy - Study Vocab, For Free.
-
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version&style=for-the-badge)](https://vocabustudy.org/)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&label=latest%20nightly&style=for-the-badge)](https://nightly.vocabustudy.org/)
-[![Editable on Chromebooks](https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen?style=for-the-badge)](https://gitpod.io/)
-[![Editable on Chromebooks](https://img.shields.io/badge/PWA-Coming%20Soon-yellow?style=for-the-badge)](https://web.dev/pwa/)
-![Editable on Chromebooks](https://img.shields.io/badge/Offline-In%20Progress-yellow?style=for-the-badge)
-
-Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created by students, for students.
-
-- No ads!
-- Always completely free!
-- Creating an account is completely optional.
-- Any and all feedback is welcome!
-
-## What is Nightly?
-
-[Vocabustudy's nightly build](https://nightly.vocabustudy.org/) includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or [here.](https://vocabustudy.org/)
-
-## Contributing!
-Follow these steps to run Vocabustudy locally:
-1. Clone the repo locally (I recommend using the [Github CLI](https://cli.github.com/manual/) if you're brand new to Git)
-    `gh repo clone For-0/vocabustudy`
-2. Install NPM packages: `npm install` (Make sure you have [Node.JS](https://nodejs.org/en/) installed)
-3. Install `firebase-tools` **globally**: `npm install -g firebase-tools`
-4. Start [Parcel](https://parceljs.org): `npm run watch`
-5. Start the Firebase Emulator (Make sure you have Java installed and on your path): `npm run emulator`
+<h1 id="vocabustudy-study-vocab-for-free-">Vocabustudy - Study Vocab, For Free.</h1>
+<p>
+    <a href="https://vocabustudy.org/"><img src="https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version&amp;style=for-the-badge" alt="GitHub  release (latest by date)"></a>
+   <a href="https://nightly.vocabustudy.org/"><img src="https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&amp;label=latest%20nightly&amp;style=for-the-badge" alt="GitHub release (latest by date including pre-releases)"></a>
+   <a href="https://gitpod.io/"><img src="https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen?style=for-the-badge" alt="Editable on Chromebooks"></a>
+   <a href="https://web.dev/pwa/"><img src="https://img.shields.io/badge/PWA-Coming%20Soon-yellow?style=for-the-badge" alt="Editable on Chromebooks"></a>
+   <img src="https://img.shields.io/badge/Offline-In%20Progress-yellow?style=for-the-badge" alt="Editable on Chromebooks">
+</p>
+<p>Vocabustudy is a simplistic tool for studying Vocabulary. Vocabustudy is created by students, for students.</p>
+<ul>
+   <li>No ads!</li>
+   <li>Always completely free!</li>
+   <li>Creating an account is completely optional.</li>
+   <li>Any and all feedback is welcome!</li>
+</ul>
+<h2 id="what-is-nightly-">What is Nightly?</h2>
+<p><a href="https://nightly.vocabustudy.org/">Vocabustudy&#39;s nightly build</a> includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or <a href="https://vocabustudy.org/">here.</a></p>
+<h2 id="contributing-">Contributing!</h2>
+<p>Follow these steps to run Vocabustudy locally:</p>
+<ol>
+   <li>Clone the repo locally (I recommend using the <a href="https://cli.github.com/manual/">Github CLI</a> if you&#39;re brand new to Git)
+      <code>gh repo clone For-0/vocabustudy</code>
+   </li>
+   <li>Install NPM packages: <code>npm install</code> (Make sure you have <a href="https://nodejs.org/en/">Node.JS</a> installed)</li>
+   <li>Install <code>firebase-tools</code> <strong>globally</strong>: <code>npm install -g firebase-tools</code></li>
+   <li>Start <a href="https://parceljs.org">Parcel</a>: <code>npm run watch</code></li>
+   <li>Start the Firebase Emulator (Make sure you have Java installed and on your path): <code>npm run emulator</code></li>
+</ol>
