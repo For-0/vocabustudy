@@ -98,7 +98,7 @@ const pages = {
         filterCollection: new Modal("#modal-filter-collection").modal(),
         filterCollectionList: document.querySelector("#modal-filter-collection .menu > ul"),
         changeHue: new Modal("#modal-change-hue").modal(),
-        contributers: [...document.querySelectorAll(".modal.is-credit")].map(el => new Modal(el).modal()),
+        contributers: [...document.querySelectorAll(".modal.is-credit")].map(el => new Modal(el).modal({style: "image"})),
         changeHueInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-hue input")))
     },
     admin: {

@@ -145,6 +145,10 @@ strong {
 .button.is-vocabustudy {
     @extend .has-background-primary;
     border-color: transparent;
+    img {
+        transform: scale(1.6);
+        filter: unset;
+    }
 }
 .firebaseui-idp-icon, .nohuechange {
     filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg)) !important;
@@ -157,4 +161,7 @@ strong {
 }
 .switch[type="checkbox"].is-thin + label::before {
     top: calc(50% - .25rem);
+}
+.modal > .modal-close {
+    transform: translateX(100%);
 }
