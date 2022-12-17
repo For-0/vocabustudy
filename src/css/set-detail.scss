@@ -610,6 +610,7 @@ accent-keyboard {
     }
 }
 img {
+    @extend .nohuechange;
     max-width: 25%;
     max-height: 25%;
     border-radius: 10px;
