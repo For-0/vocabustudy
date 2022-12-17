@@ -607,7 +607,7 @@ accent-keyboard {
         }
     }
 }
-img {
+img:not([style]) {
     @extend .nohuechange;
     max-width: 25%;
     max-height: 25%;

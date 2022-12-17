@@ -5,6 +5,8 @@ block variables
     - var showBack = true;
 block main-stylesheet
     link(rel="stylesheet" href="css/set-detail.scss")
+block extrahead
+    script(src="js/qrcode.min.js")
 block content
     .page#flashcards
         h1 Flashcards - 
@@ -451,6 +453,9 @@ append scripts-footer
                             .mdc-icon-button__touch
                     p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
                     pre.custom-scrollbar(style="max-width: 100%;overflow:auto;")
+                    h3.mdc-typography--overline QR Code
+                    #set-qrcode
+                    // TODO qr code copy
                 .mdc-dialog__actions
                     button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
                         .mdc-button__ripple
