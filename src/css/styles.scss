@@ -345,6 +345,6 @@ body > footer {
     white-space: normal !important;
     max-width: 100%;
 }
-.nohuechange {
-    filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg)) !important;
+.firebaseui-idp-icon, .nohuechange {
+    filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg)) !important; // TODO after bulma rename to ignore-user-hue
 }
