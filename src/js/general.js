@@ -133,6 +133,9 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     remoteConfig.defaultConfig = {
         featuredSets: []
     };
-    fetchAndActivate(remoteConfig).then(() => remoteConfigActivatedCallback(remoteConfig));
+    fetchAndActivate(remoteConfig).then(() => remoteConfigActivatedCallback(remoteConfig)).catch(err => {
+        console.log(`Error while activating Remote Config: ${err}`);
+        remoteConfigActivatedCallback(null);
+    });
     return {app, db, auth};
 }

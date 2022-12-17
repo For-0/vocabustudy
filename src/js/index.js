@@ -34,12 +34,14 @@ const { db, auth } = initialize(async user => {
         showAccountInfo({displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
     }
 }, async remoteConfig => {
-    let featuredSets = JSON.parse(getValue(remoteConfig, "featuredSets").asString());
-    pages.publicsets.sets[0].textContent = "";
-    for (let set of featuredSets) {
-        let els = await createSetCard(set, set.id);
-        pages.publicsets.sets[0].appendChild(els.card);
-    }
+    if (remoteConfig) {
+        let featuredSets = JSON.parse(getValue(remoteConfig, "featuredSets").asString());
+        pages.publicsets.sets[0].textContent = "";
+        for (let set of featuredSets) {
+            let els = await createSetCard(set, set.id);
+            pages.publicsets.sets[0].appendChild(els.card);
+        }
+    } else pages.publicsets.sets[0].textContent = "Failed to load featured sets";
 });
 const hashTitles = {
     "#login": "Log In",
