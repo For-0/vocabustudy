@@ -7,9 +7,8 @@
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals } from "./utils.js";
-import { MDCSnackbar } from "@material/snackbar/component.js";
-import { map } from "@firebase/util";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
+import { toast } from "bulma-toast";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -109,6 +108,7 @@ const {db, auth} = initialize(async user => {
                 document.title = "New Set - Vocabustudy";
                 document.querySelector("h1").innerText = "New Set";
                 document.querySelector("h2").innerText = "Vocabulary Words";
+                fields.terms.classList.remove("columns");
                 setType = 0;
                 fields.btnAddQuiz.hidden = true;
                 break;
@@ -116,6 +116,7 @@ const {db, auth} = initialize(async user => {
                 document.title = "New Timeline - Vocabustudy";
                 document.querySelector("h1").innerText = "New Timeline";
                 document.querySelector("h2").innerText = "Timeline Items";
+                fields.terms.classList.add("columns");
                 fields.btnAddQuiz.hidden = true;
                 setType = 1;
                 break;
@@ -123,6 +124,7 @@ const {db, auth} = initialize(async user => {
                 document.title = "New Guide - Vocabustudy";
                 document.querySelector("h1").innerText = "New Study Guide";
                 document.querySelector("h2").innerText = "Guide Items";
+                fields.terms.classList.remove("columns");
                 setType = 2;
                 fields.btnAddQuiz.hidden = true;
                 break;
@@ -154,18 +156,21 @@ const {db, auth} = initialize(async user => {
         fields.terms.textContent = "";
         if (currentSetMeta.collections.includes("-:0")) {
             setType = 1;
-            document.querySelector("h1").innerText = "Edit Timeline";     
+            document.querySelector("h1").innerText = "Edit Timeline";
             document.querySelector("h2").innerText = "Timeline Items";
+            fields.terms.classList.add("columns");
             fields.btnAddQuiz.hidden = true;
         } else if (currentSetMeta.collections.includes("-:1")) {
             setType = 2;
-            document.querySelector("h1").innerText = "Edit Study Guide";     
+            document.querySelector("h1").innerText = "Edit Study Guide";
             document.querySelector("h2").innerText = "Guide Items"
+            fields.terms.classList.remove("columns");
             fields.btnAddQuiz.hidden = false;
         } else {
             setType = 0;
             document.querySelector("h1").innerText = "Edit Set";
             document.querySelector("h2").innerText = "Vocabulary Words";
+            fields.terms.classList.remove("columns");
             fields.btnAddQuiz.hidden = true;
         }
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
@@ -225,6 +230,23 @@ function checkInputDuplicates() {
     let isDup = terms.some((item, index) => terms.indexOf(item) != index) || definitions.some((item, index) => definitions.indexOf(item) != index);
     fields.warningDuplicateTerms.hidden = !isDup;
 }
+function createTimelineDetail(detailContent) {
+    let detailInput = createTextFieldWithHelper("Detail", null, {maxLength: 500});
+    detailInput.textField.querySelector("input").value = detailContent;
+    detailInput.textField.querySelector("input").style.width = "90%";
+    let listItem = createElement("div", ["list-item"], {}, [
+        createElement("div", ["list-item-content"], {}, [detailInput.textField]),
+        createElement("div", ["list-item-controls"], {}, [
+            createElement("div", ["buttons", "is-right"], {}, [
+                createElement("button", ["delete"], {type: "button"})
+            ])
+        ])
+    ]);
+    listItem.style.width = "100%";
+    listItem.querySelector("button").addEventListener("click", () => listItem.remove());
+    listItem.querySelector(".buttons").style.marginTop = "1.15em";
+    return listItem;
+}
 function createTermInput(term) {
     /** @type {HTMLDivElement?} */
     let termInput;
@@ -259,37 +281,42 @@ function createTermInput(term) {
         let inputDate = createTextFieldWithHelper("Date", null, {required: true, maxLength: 500});
         let [name, date] = term.term.split("\x00");
         let details = term.definition.split("\x00");
-        let detailInputs = details.map(el => {
-            let detailInput = createTextFieldWithHelper("Detail", null, {maxLength: 500});
-            detailInput.obj.value = el;
-            return detailInput.textField;
-        });
-        termInput = createElement("div", ["mdc-card", "editor-timeline-piece"], {}, [
-            createElement("div", ["card-content"], {}, [
-                inputName.textField,
-                inputDate.textField
-            ]),
-            createElement("div", ["card-content", "details-container"], {}, [...detailInputs, 
-                createElement("p", [], {innerText: "Leave a detail blank to delete"})
-            ]),
-            createElement("div", ["mdc-card__actions"], {}, [
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Add Detail", type: "button", innerText: "add"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-symbols-rounded"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+        let detailInputs = details.map(createTimelineDetail);
+        let deleteButton = createElement("button", ["delete"], {type: "button"});
+        deleteButton.addEventListener("click", () => termInput.remove())
+        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column"], {}, [
+            createElement("div", ["panel", "editor-timeline-piece"], {}, [
+                createElement("p", ["panel-heading"], {}, [
+                    createElement("div", ["columns"], {}, [
+                        createElement("div", ["column", "is-two-thirds"], {}, [inputName.textField]),
+                        createElement("div", ["column", "is-one-third"], {}, [inputDate.textField])
+                    ])
+                ]),
+                createElement("div", ["panel-block", "list", "details-container"], {}, detailInputs),
+                createElement("div", ["panel-block", "is-flex", "is-justify-content-space-between"], {}, [
+                    createElement("button", ["button"], {title: "Move Left", type: "button"}, [
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_before"})])
+                    ]),
+                    createElement("button", ["button"], {title: "Add Detail", type: "button"}, [
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "add"})])
+                    ]),
+                    createElement("button", ["button"], {title: "Move Right", type: "button"}, [
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_next"})])
+                    ])
+                ]),
+                deleteButton
             ])
         ]);
-        inputName.obj.value = name || "";
-        inputDate.obj.value = date || "";
-        let actionButtons = [...termInput.querySelectorAll('.mdc-card__actions > button')].map(el => MDCRipple.attachTo(el).root);
+        inputName.textField.querySelector("input").value = name || "";
+        inputDate.textField.querySelector("input").value = date || "";
+        let actionButtons = [...termInput.querySelectorAll('.panel-block > button')];
         actionButtons[0].addEventListener("click", () => {
             if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
         });
         actionButtons[1].addEventListener("click", () => {
-            termInput.querySelector(".details-container").insertBefore(createTextFieldWithHelper("Detail", null, {maxLength: 500}).textField, termInput.querySelector(".details-container").lastElementChild);
+            termInput.querySelector(".details-container").insertBefore(createTimelineDetail(""), termInput.querySelector(".details-container").lastElementChild);
         });
-        actionButtons[2].addEventListener("click", () => termInput.remove());
-        actionButtons[3].addEventListener("click", () => {
+        actionButtons[2].addEventListener("click", () => {
             if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
             else fields.terms.appendChild(termInput);
         });
@@ -359,7 +386,7 @@ fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
     if (!fields.formEdit.reportValidity()) return fields.formEdit.classList.add("has-validated-inputs");
     let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
-    if (terms.length < 4 && setType !== 2) return alert("You must have at least 4 terms in a set");
+    if (terms.length < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
     let nameWords = getWords(setName.normalize("NFD").replace(/\p{Diacritic}/gu, ""));
@@ -384,7 +411,7 @@ fields.formEdit.addEventListener("submit", async e => {
         await batch.commit();
         goBack();
     } catch {
-        fields.snackbarCantSave.open();
+        toast({message: "We weren't able to save your set. This may be caused by a recent Display Name change.", type: "is-danger", dismissible: true, position: "bottom-center"})
     }
 });
 async function importTerms() {

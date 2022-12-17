@@ -115,12 +115,7 @@ async function showAuthUI() {
     authUI.reset();
     authUI.start("#firebaseui-auth-container", {
         signInOptions: [
-            {
-                provider: GoogleAuthProvider.PROVIDER_ID,
-                customParameters: {
-                    prompt: "select_account"
-                }
-            },
+            GoogleAuthProvider.PROVIDER_ID,
             {
                 provider: EmailAuthProvider.PROVIDER_ID,
                 requireDisplayName: true

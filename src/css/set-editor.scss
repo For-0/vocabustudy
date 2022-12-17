@@ -12,12 +12,11 @@
         }
     }
     .editor-timeline-piece {
-        width: calc(100% - 10px);
-        @media (min-width: 500px) {
-            width: calc(50% - 10px);
-        }
-        @media (min-width: 900px) {
-            width: calc(25% - 10px);
+        position: relative;
+        > .delete {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
         }
         .mdc-text-field {
             margin-bottom: 1rem;

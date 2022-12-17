@@ -14,7 +14,7 @@ $family-primary: "Raleway";
 @import "bulma/sass/utilities/_all";
 @import "bulma/sass/base/_all";
 @import "bulma/sass/elements/box";
-@import "bulma/sass/elements/button";
+@import "bulma-social/css/all";
 @import "bulma/sass/elements/content";
 @import "bulma/sass/elements/tag";
 @import "bulma/sass/elements/title";
@@ -27,6 +27,7 @@ $family-primary: "Raleway";
 @import "bulma/sass/components/dropdown";
 @import "bulma/sass/components/level";
 @import "bulma/sass/components/menu";
+@import "bulma/sass/components/panel";
 @import "bulma/sass/grid/_all";
 @import "bulma/sass/helpers/_all";
 @import "bulma-slider/src/sass";
@@ -37,7 +38,7 @@ $family-primary: "Raleway";
 @import "@creativebulma/bulma-tooltip/src/sass";
 @import "@creativebulma/bulma-divider/src/sass";
 @import "bulma-list/sass/bulma-list";
-@import "bulma-social/css/all";
+@import "bulma/sass/elements/button";
 
 // NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
 .button.is-floating {
