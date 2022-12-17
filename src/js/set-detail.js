@@ -1327,6 +1327,7 @@ addEventListener("DOMContentLoaded", async () => {
         pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
         pages.setOverview.shareLink.innerText = `https://vocabustudy.org${location.pathname}`;
         pages.setOverview.shareLink.href = `https://vocabustudy.org${location.pathname}`;
+        new QRCode(document.getElementById("set-qrcode"), `https://vocabustudy.org${location.pathname}`);
         if (!navigator.share) pages.setOverview.btnShare.hidden = true;
         else pages.setOverview.btnShare.addEventListener("click", () => navigator.share({title: `${currentSet.name} - Vocabustudy`, text: currentSet.description || `Study this set with ${currentSet.terms.length} terms on Vocabustudy`, url: pages.setOverview.shareLink.href}));
     } catch (err) {
