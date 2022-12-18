@@ -49,7 +49,7 @@ const hashTitles = {
     "#account": "My Account",
     "#discord":"Discord",
     "#donate": "Donate",
-    "#youtube": "Youtube",
+    "#youtube": "YouTube",
     "#credits": "Credits"
 };
 const pages = {
