@@ -15,7 +15,7 @@
     <br>
     <br>
 <p>Vocabustudy is a <b>simplistic tool</b> for <b>studying Vocabulary</b>. Vocabustudy is created <b>by students, for students</b>.</p>
-    <p>NO ADS - ALWAYS FREE - NO ACCOUNT NEEDED - FEEDBACK IS WELCOME!</p>
+    <p>No Ads - Always Free - No Account Needed - Feedback is Welcome!</p>
 </div>
 <h2>What is Nightly?</h2>
 <p><a href="https://nightly.vocabustudy.org/">Vocabustudy&#39;s nightly build</a> includes new, not-yet-released experimental features and design elements which have not yet been fully tested and launched. Although we try to make sure our nightly builds have no bugs, a few are sure to sneak in! We recommend you study on the main website, or <a href="https://vocabustudy.org/">here.</a></p>
