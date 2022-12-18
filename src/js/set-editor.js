@@ -298,7 +298,8 @@ function createTermInput(term) {
                         createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_before"})])
                     ]),
                     createElement("button", ["button"], {title: "Add Detail", type: "button"}, [
-                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "add"})])
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "add"})]),
+                        createElement("span", [], {innerText: "Detail"})
                     ]),
                     createElement("button", ["button"], {title: "Move Right", type: "button"}, [
                         createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_next"})])

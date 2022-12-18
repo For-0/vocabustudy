@@ -66,7 +66,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                                 i.material-symbols-rounded.is-filled.is-hidden-touch account_circle
                                 span.is-hidden-desktop Account
                                 i.material-symbols-rounded.is-hidden-touch arrow_drop_down
-                            .navbar-dropdown.is-right.is-centered
+                            .navbar-dropdown.is-right.is-centered(style="border-top-left-radius: 6px;")
                                 a.navbar-item(href="/#saved-sets") Saved Sets
                                 a.navbar-item.loggedin(hidden href="/#mysets") My Sets
                                 a.navbar-item.loggedin.adminonly(hidden href="/#admin") Admin Portal
@@ -81,11 +81,13 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 i(style="font-size: 1.5rem;").material-symbols-rounded brightness_high
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
-                    i.material-symbols-rounded.is-filled settings_brightness
+                    i.material-symbols-rounded brightness_medium
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="Dark")
-                    i.material-symbols-rounded.is-filled dark_mode
+                    i.material-symbols-rounded brightness_low
                 button.button.is-primary.fab-theme.is-floating(aria-label="Light" title="Light")
                     i.material-symbols-rounded brightness_high
+                button.button.is-primary.fab-theme.is-floating.btn-change-hue(hidden aria-label="Hue" title="Set Hue")
+                    i.material-symbols-rounded.is-filled palette
         // TODO change to bulma responsive design
         footer.footer.level.is-mobile(style="position: relative;")
             p.level-item
@@ -101,20 +103,15 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     |  | 
                     a.has-text-white.is-underlined(href="/#discord") Discord
                     |  | 
-                    a.has-text-white.is-underlined(href="https://nightly.vocabustudy.org/" target="_blank") Nightly 
-                    a.has-text-white.is-underlined(href="https://github.com/For-0/vocabustudy/blob/main/README.md#what-is-nightly") (?)
-                    |  | 
-                    a.has-text-white.is-underlined(href="https://github.com/orgs/For-0/projects/2/insights/1" target="_blank") Leaderboard
+                    a.has-text-white.is-underlined(href="https://github.com/orgs/For-0/projects/2/insights/1" target="_blank") Bug Leaderboard
                 div.is-hidden-tablet(style="transform: scale(0.8);")
                     a.has-text-white.mr-3.is-filled.icon(href="/privacy/" title="Privacy")
-                        i.material-symbols-rounded security
+                        i.material-symbols-rounded verified_user
                     a.has-text-white.mr-3.is-filled.icon(href="/#youtube" title="Youtube")
-                        i.material-symbols-rounded youtube_activity
+                        i.material-symbols-rounded subscriptions
                     a.has-text-white.mr-3.is-filled.icon(href="/#discord" title="Discord")
-                        i.material-symbols-rounded question_answer
-                    a.has-text-white.mr-3.is-filled.icon(href="https://nightly.vocabustudy.org/" target="_blank" title="Nightly")
-                        i.material-symbols-rounded bug_report
-                    a.has-text-white.mr-3.is-filled.icon(href="https://github.com/orgs/For-0/projects/2/insights/1" title="Leaderboard")
+                        img.credits-brandicons(src="icons/brands/discord.svg" style="height: 1.5rem; width: 1.5rem;")
+                    a.has-text-white.mr-3.is-filled.icon(href="https://github.com/orgs/For-0/projects/2/insights/1" title="Bug Leaderboard")
                         i.material-symbols-rounded leaderboard
         block scripts-footer
             script.
@@ -128,7 +125,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 const fabs = {
                     theme: document.querySelector(".fab-theme"),
                     themeContainer: document.querySelector(".fab-theme-container"),
-                    themeOptions: document.querySelectorAll(".fab-theme-container > div button")
+                    themeOptions: document.querySelectorAll(".fab-theme-container > div button:not(:last-child)")
                 };
                 showTheme(localStorage.getItem("theme"));
                 setHue(localStorage.getItem("theme_hue"));
@@ -137,11 +134,11 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     document.body.classList.remove("theme-dark", "theme-system");
                     switch(theme) {
                         case "dark":
-                            fabs.theme.querySelector("i").innerText = "brightness_4";
+                            fabs.theme.querySelector("i").innerText = "brightness_low";
                             document.body.classList.add("theme-dark");
                             break;
                         case "system":
-                            fabs.theme.querySelector("i").innerText = "settings_brightness";
+                            fabs.theme.querySelector("i").innerText = "brightness_medium";
                             document.body.classList.add("theme-system");
                             break;
                         case "light":
@@ -153,7 +150,10 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     if (parseInt(hue) > 0) {
                         document.documentElement.style.setProperty("--hue-rotated", hue)
                         document.documentElement.style.filter = `hue-rotate(calc(var(--hue-rotated) * 1deg))`;
-                    } else document.documentElement.style.filter = "none";
+                    } else {
+                        document.documentElement.style.removeProperty("--hue-rotated");
+                        document.documentElement.style.filter = "none";
+                    }
                 }
                 addEventListener("DOMContentLoaded", () => {
                     navbar.burger.addEventListener("click", () => {

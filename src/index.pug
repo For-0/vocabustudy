@@ -6,12 +6,6 @@ block main-stylesheet
     link(rel="stylesheet" href="npm:firebaseui/dist/firebaseui.css" disabled id="firebaseui-css")
 block extrahead
     link(rel="preload" href="./hero-background.svg" as="image")
-prepend navbar
-    .change-hue-container
-        button.mdc-icon-button.btn-change-hue
-            .mdc-icon-button__ripple
-            span.mdc-icon-button__focus-ring
-            i.material-symbols-rounded palette
 block content
     .page#login(data-nosnippet)
         h1 Log In  
@@ -70,11 +64,16 @@ block content
                             span Guide
         .set-container(data-empty="You don't have any sets. Create one!")
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
-        h2.title.is-size-5.my-3 My Custom Collections:
-            button.button.is-primary.is-outlined.is-pulled-right.btn-create-collection
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") add_circle_outline
-                span Create Custom Collection
+        .box.level.mt-3
+            .level-left
+                .level-item
+                    h2.title.is-5 My Custom Collections:
+            .level-right
+                .level-item
+                    button.button.is-primary.is-outlined.btn-create-collection
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                        span Create Custom Collection
         .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
     .page#admin(data-nosnippet)
         h1 Admin Portal
@@ -218,7 +217,7 @@ block content
         h1 YouTube:
         p That's right, we have a YouTube channel!
         P You can find our channel #[a(href="https://www.youtube.com/@forzero") here].
-    .page.realhome#home
+    .page.homepage-lead#home
         div.custom-scrollbar
             div
                 div

@@ -97,7 +97,7 @@ $theme-color: #795548;
     .mdc-text-field--filled:not(.mdc-text-field--disabled) {
         background: #0a0a0a;
     }
-    body > footer, nav, .realhome {
+    body > footer, nav, .homepage-lead {
         &::after {
             backdrop-filter: brightness(65%) saturate(110%);
             content: "";
@@ -303,6 +303,7 @@ body > footer {
                 &:nth-of-type(1) {animation-delay: 0.1s;}
                 &:nth-of-type(2) {animation-delay: 0.2s;}
                 &:nth-of-type(3) {animation-delay: 0.3s;}
+                &:nth-of-type(4) {animation-delay: 0.4s;}
             }
         }
         > button span {

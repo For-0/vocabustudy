@@ -434,6 +434,7 @@ addEventListener("DOMContentLoaded", () => {
         }
     });
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
+    document.querySelector(".btn-change-hue").hidden = false;
     document.querySelectorAll(".button.is-credit").forEach((el, i) => el.addEventListener("click", () => pages.modals.contributers[i].open()))
     document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
