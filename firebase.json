@@ -42,6 +42,10 @@
           "destination": "/privacy-policy.html"
         },
         {
+            "source": "/terms/",
+            "destination": "/tos.html"
+        },
+        {
           "source": "/help-center/",
           "destination": "/help-center.html"
         }
@@ -84,6 +88,10 @@
           {
             "source": "/privacy/",
             "destination": "/privacy-policy.html"
+          },
+          {
+            "source": "/terms/",
+            "destination": "/tos.html"
           },
           {
             "source": "/help-center/",

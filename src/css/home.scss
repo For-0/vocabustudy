@@ -147,7 +147,7 @@
         background: url("../login-background.svg") no-repeat center center;
         background-size: 100% 100%;
     }
-    .column.is-8 {
+    .column.is-8:first-child {
         background-color: white;
         border-radius: 10px;
     }

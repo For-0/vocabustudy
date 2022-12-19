@@ -13,7 +13,8 @@
     "src/custom-collections.pug",
     "src/404.pug",
     "src/google867623008d63d621.html",
-    "src/help-center.pug"
+    "src/help-center.pug",
+    "src/tos.pug"
   ],
   "browserslist": "> 0.1% and last 2 versions and not dead",
   "scripts": {

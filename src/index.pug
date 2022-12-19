@@ -7,15 +7,15 @@ block extrahead
     link(rel="preload" href="./hero-background.svg" as="image")
 block content
     .page#login(data-nosnippet)
-        .container
+        .container.is-multiline
             .columns
                 .column.is-8.is-offset-2
                     .columns
-                        .column.p-6
+                        .column.p-6.is-hidden-touch
                             h1(style="text-align: center;").title.is-3.has-text-primary Free, Fast, Simple, and Effective.
                             h1(style="text-align: center;").title.is-4 That's the kind of studying you get when you join Vocabustudy.
                             br
-                            img(src="./icons/icon-192.png" style="display: block; margin-left: auto; margin-right: auto; width: 8rem; height: 8rem")
+                            img.nohuechange.is-block.mx-auto(src="./icons/icon-192.png" style="width: 8rem; height: 8rem")
                         .column.has-text-centered.p-6
                             h1.title.is-4 Log In
                             form
@@ -26,7 +26,7 @@ block content
                                     .control
                                         input.input.is-medium(type="password" placeholder="Password" id="login-password" required)
                                 button.button.is-primary.is-medium.is-fullwidth(type="submit") Log In
-                                button.button.is-light.is-medium.is-fullwidth.mt-3(type="submit")
+                                button.button.is-light.is-medium.is-fullwidth.mt-3(type="button")
                                     span.icon.nohuechange
                                         svg.mr-3(version='1.1' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 48 48' height="24" width="24" style="vertical-align: middle")
                                             g
@@ -35,12 +35,17 @@ block content
                                                 path(fill='#FBBC05', d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z')
                                                 path(fill='#34A853', d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z')
                                                 path(fill='none', d='M0 0h48v48H0z')
-                                    span Sign in with Google
+                                    span Continue with Google
                                 br
                                 small
                                     em You must be at least 13 years old to use an account, or you must have permission from a parent/guardian.
                             // TODO add other links here
-        img(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
+                .column.is-8.is-offset-2
+                    br
+                    .level
+                        .level-left
+                        
+        img.nohuechange.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     .page#account(data-nosnippet)
         h1 My Account
         p Only your display name is public.
