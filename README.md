@@ -2,6 +2,7 @@
 <html lang="en">
 <body>
 <p align="center">
+<br>
 <a href="https://vocabustudy.org/"><img src="https://raw.githubusercontent.com/For-0/vocabustudy/main/src/icons/icon-192.png" align="center"></a>
 </p>
 <h1 align="center">Vocabustudy - Study Vocab, For Free.</h1>
