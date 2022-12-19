@@ -136,67 +136,33 @@
     margin-bottom: 1rem;
 }
 #login {
-    position: relative;
-    > div:nth-child(2) {
+    &::after {
+        content: "";
         position: absolute;
-        top: 1rem;
-        left: -1rem;
-        width: calc(50% + 1rem);
-        height: calc(100%);
-        &::after {
-            width: 100%;
-            height: 100%;
-            display: inline-block;
-            background: url("../hero-background.svg") no-repeat center center;
-            background-size: 100% 100%;
-            z-index: -1;
-            content: "";
-            position: absolute;
-        }
-        > div {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            background-color: #ffffff1c;
-            padding: 2rem;
-            border-radius: 20px;
-        }
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        display: inline-block;
+        background: url("../login-background.svg") no-repeat center center;
+        background-size: 100% 100%;
     }
-    > div:last-child {
+    .column.is-8 {
+        background-color: white;
+        border-radius: 10px;
+    }
+    .container {
+        top: 40%;
+        position: relative;
+        transform: translateY(-50%);
+        z-index: 2;
+    }
+    background-color: #795548;
+    > img {
         position: absolute;
-        top: 1rem;
-        left: 50%;
-        width: calc(50% + 1rem);
-        height: calc(100%);
-        &::after {
-            width: 100%;
-            height: 100%;
-            display: inline-block;
-            background: url("../login-background.svg") no-repeat center center;
-            background-size: 100% 100%;
-            z-index: -1;
-            content: "";
-            position: absolute;
-        }
-        p {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            background-color: #ffffff1c;
-            padding: 2rem;
-            padding-bottom: 0;
-            border-radius: 20px;
-            img {
-                width: 50%;
-                margin-top: 2rem;
-            }
-        }
+        right: 1rem;
+        bottom: calc(43px + 2rem);
+        z-index: 2;
     }
 }
 .change-hue-container {

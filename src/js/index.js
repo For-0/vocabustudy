@@ -6,7 +6,6 @@ import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
 import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
-import * as firebaseui from "firebaseui";
 import initialize from "./general";
 import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise } from "./utils";
 
@@ -103,12 +102,12 @@ const pages = {
     }
 };
 window.pages = pages;
-const authUI = new firebaseui.auth.AuthUI(auth);
+//const authUI = new firebaseui.auth.AuthUI(auth);
 async function showAuthUI() {
     if (auth.currentUser) 
         return location.hash = "#account";
     document.getElementById("firebaseui-css").disabled = false;
-    authUI.reset();
+    /*authUI.reset();
     authUI.start("#firebaseui-auth-container", {
         signInOptions: [
             GoogleAuthProvider.PROVIDER_ID,
@@ -129,7 +128,7 @@ async function showAuthUI() {
         signInFlow: "popup",
         privacyPolicyUrl: "https://vocabustudy.org/privacy",
         siteName: "Vocabustudy"
-    });
+    });*/
 }
 async function reauthenticateUser() {
     switch (auth.currentUser.providerData[0].providerId) {
