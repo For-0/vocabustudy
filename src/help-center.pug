@@ -7,54 +7,67 @@ block main-stylesheet
     link(rel="stylesheet" href="css/help-center.scss")
 block content
     .page#home
-        section.hero.is-medium
+        section(style="padding-bottom: 3rem; padding-top: 4rem;").hero.is-primary.is-small
             .hero-body.has-text-centered
-                h1.title.is-2 Vocabustudy Help Center
-                p.is-size-5 How-tos, tips, and instructions!
+                h1.title.is-2(style="margin-bottom: 0.5rem;") Vocabustudy Help Center
+                p.is-size-4(style="margin-top: 0.5rem;") How-tos, tips, and instructions!
+                br
+                p.is-size-6 #[a(href="https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform?embedded=true" style="text-decoration: underline; font-weight: 500;") Bugs and Feedback Form] · #[a(href='mailto:management@vocabustudy.org' style="text-decoration: underline; font-weight: 500;") management@vocabustudy.org]
         .container.is-max-desktop
             section.featured
-                h2.subtitle Featured Articles
+                h2.title(style="text-align: center; margin-top: 3rem;") Featured Articles
                 .columns
                     .column.is-3
                         article
-                            h2.subtitle Creating a Set
+                            figure.image.is-5by3
+                                img.nohuechange(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png')
+                            h2(style="margin-bottom: 0.5rem;").subtitle Creating a Set
                             span.tag.is-rounded Set Editor
                     .column.is-3
                         article
-                            h2.subtitle Editing a Set
+                            figure.image.is-5by3
+                                img.nohuechange(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png')
+                            h2(style="margin-bottom: 0.5rem;").subtitle Editing a Set
                             span.tag.is-rounded Set Editor
                     .column.is-3
                         article
-                            h2.subtitle Creating an Account
+                            figure.image.is-5by3
+                                img.nohuechange(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png')
+                            h2(style="margin-bottom: 0.5rem;").subtitle Creating an Account
                             span.tag.is-rounded Accounts and Interactions
-        section.categories
-            .columns.is-multiline
-                .column.is-6
-                    .category
-                        h1.title.is-5 Set Editor
-                            span 2 articles
-                        hr
-                        ul
-                            li
-                                span.icon
-                                    i.mr-1.material-symbols-round arrow_right
-                                | Creating a Set
-                            li
-                                span.icon
-                                    i.mr-1.material-symbols-round arrow_right
-                                | Editing a Set
-                .column.is-6
-                    .category
-                        h1.title.is-5 Accounts and Interactions
-                            span 1 article
-                        hr
-                        ul
-                            li
-                                span.icon
-                                    i.mr-1.material-symbols-round arrow_right
-                                | Creating an Account
-        h1 Vocabustudy Help Center
-        p.title.is-size-5 How-tos, tips, and instructions!
+                    .column.is-3
+                        article
+                            figure.image.is-5by3
+                                img.nohuechange(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png')
+                            h2(style="margin-bottom: 0.5rem;").subtitle Coming Soon!
+                            span.tag.is-rounded Coming Soon!
+            section(style="margin-top: 2rem; margin-bottom: 2rem;").categories
+                    .columns.is-multiline
+                        .column.is-6
+                            .category
+                                h1.title.is-5(style="margin-bottom: 0.5rem;") Set Editor
+                                    span(style="font-size: 1rem; color: gray; margin-left: 1rem;") 2 articles
+                                hr(style="margin-bottom: 0.5rem; margin-top: 0.5rem;")
+                                ul
+                                    li
+                                        span.icon
+                                            i.mr-1.material-symbols-rounded(style="display: inline; position: relative; top: 5px;") arrow_right
+                                        | Creating a Set
+                                    li
+                                        span.icon
+                                            i.mr-1.material-symbols-rounded(style="display: inline; position: relative; top: 5px;") arrow_right
+                                        | Editing a Set
+                        .column.is-6
+                            .category
+                                h1.title.is-5(style="margin-bottom: 0.5rem;") Accounts and Interactions
+                                    span(style="font-size: 1rem; color: gray; margin-left: 1rem;") 1 article
+                                hr(style="margin-bottom: 0.5rem; margin-top: 0.5rem;")
+                                ul
+                                    li
+                                        span.icon
+                                            i.mr-1.material-symbols-rounded(style="display: inline; position: relative; top: 5px;") arrow_right
+                                        | Creating an Account
+        h2.title(style="text-align: center; margin-top: 3rem;") How-To Articles
         button.collapsible Creating an account
         .content
             h2 Creating an account gives you the ability to:
@@ -71,8 +84,8 @@ block content
             h2 How to create an account
             p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login")] vocabustudy.org/#login].
             p 2. Click "log in" in the menu that appears.
-            p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email. 
-                | We recommend signing in with Google, because it is much easier to create your account and login to it. 
+            p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email.
+                | We recommend signing in with Google, because it is much easier to create your account and login to it.
                 | However, if you want to create your account with email, here are the steps:
             ol
                 li Press the button that says "Sign in with email".
@@ -95,7 +108,7 @@ block content
                 br
                 li Close the tab with the email verification link.
                 br
-                li Reload the My Account page on Vocabustudy. 
+                li Reload the My Account page on Vocabustudy.
                 br
             h3 Your Account has been verified!
             p You can now use your account when you are using Vocabustudy.
@@ -130,7 +143,7 @@ block content
             p There are some guidelines for sets:
             ol
                 br
-                li Your sets cannot have offensive, harmful, or explicit content. 
+                li Your sets cannot have offensive, harmful, or explicit content.
                     | If your set meets the criteria listed, your set will at the very least be made private or deleted, and at worst, your account will be restricted.
                 br
                 li Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
@@ -151,8 +164,8 @@ block content
                 br
                 li Click on "edit" under the set that you want to edit.
                 br
-                li Edit the fields that you want to change. 
-                    | You can edit the title, description, and terms in the set. 
+                li Edit the fields that you want to change.
+                    | You can edit the title, description, and terms in the set.
                     | You can also make the set public or private and change the collections that the set is in.
                 br
                 br
@@ -185,7 +198,7 @@ block content
                 button.collapsible How to change the terms in the set
                 .content(class='nested')
                     h3 Here's how to change the terms in the set:
-                    ol How to add a term: 
+                    ol How to add a term:
                         li Click on the "Add/+" button next to "Vocabulary Words".
                         br
                         li A new term will be added to the end of the set. Type in the term and its definition.
@@ -219,7 +232,7 @@ block content
                         br
                         li Click on the toggle button to change the set from public to private or vice versa.
                 br
-                br 
+                br
                 button.collapsible How to change the collections that the set is in
                 .content(class='nested')
                     h3 Here's how to change the collections that the set is in:
@@ -232,7 +245,7 @@ block content
                     h3 Your set has been added to the collections that you selected!
                 br
                 br
-                li When you are done making the changes that you want, 
+                li When you are done making the changes that you want,
                     | click "save set" or press the "Enter" key on your keyboard to save the changes that you made.
             h4 Congratulations, you have edited a set!
             p Make sure that your edited set still complies with the guidelines for sets:
@@ -245,12 +258,5 @@ block content
                 br
                 li Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
             p Have fun making useful sets!
-        br
-        br
-        //h3
-            | If you have any feedback or questions, please use #[a(href='https://forms.gle/Lzk4cYu8AVA2XX1A6/') this form].
-        h3 Please give us your feedback and report any bugs that you find here:
-        iframe(src='https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform?embedded=true', width='640', height='70', frameborder='0', marginheight='0', marginwidth='0') Loading...
-        h3 You can contact us with any questions that you have at #[a(href='mailto:management@vocabustudy.org') management@vocabustudy.org]. Thank you!
-append scripts-footer
+        append scripts-footer
         script(src="js/help-center.js" type="module")
