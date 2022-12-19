@@ -8,11 +8,19 @@ block main-stylesheet
 block content
     #home.page
         h1 Edit Set
-        p(style="opacity: 0.7;")
-            a(href="https://www.markdownguide.org/cheat-sheet" target="_blank" rel="noreferrer noopener" class="has-text-primary") 
-                span.material-symbols-rounded(style="vertical-align: middle;") text_format
-                | Markdown is supported
-        p(style="opacity: 0.7;") Please make sure to keep sets relevant
+        .level
+            .level-left
+                .level-item
+                    a.tags.has-addons(href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noopener noreferrer")
+                        span.tag.is-primary
+                            span.material-symbols-rounded(style="font-size: 1rem;") text_format
+                        span.tag.is-primary.is-light Markdown is Supported
+            .level-right
+                .level-item
+                    span.tags.has-addons(href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noopener noreferrer")
+                        span.tag.is-info
+                            span.material-symbols-rounded(style="font-size: 1rem;") info
+                        span.tag.is-info.is-light Please make sure to keep sets relevant
         form(novalidate)
             .level.is-mobile
                 .level-left.is-flex-grow-1
@@ -36,18 +44,19 @@ block content
                         h2.title.is-size-5.mb-0 Vocabulary Words
                 .level-right
                     .level-item
-                        button.button.is-primary.btn-add-term.ml-4(type="button")
-                            span.icon
-                                i.material-symbols-rounded add_circle
-                            span Add
-                        button.button.is-outlined.is-primary.btn-add-quiz.ml-4(type="button" hidden)
-                            span.icon
-                                i.material-symbols-rounded add_circle
-                            span Add Quiz
-                        button.button.is-outlined.is-primary.ml-4.btn-import-terms(type="button")
-                            span.icon
-                                i.material-symbols-rounded.is-filled upload_file
-                            span Import Items
+                        .buttons
+                            button.button.is-primary.btn-add-term.ml-4(type="button")
+                                span.icon
+                                    i.material-symbols-rounded add_circle
+                                span Add
+                            button.button.is-light.is-primary.btn-add-quiz.ml-4(type="button" hidden)
+                                span.icon
+                                    i.material-symbols-rounded add_circle
+                                span Add Quiz
+                            button.button.is-outlined.is-primary.ml-4.btn-import-terms(type="button")
+                                span.icon
+                                    i.material-symbols-rounded.is-filled upload_file
+                                span Import Items
             .notification.is-warning.is-light.warning-duplicate(hidden)
                 span.icon.mr-3
                     i.material-symbols-rounded.is-filled(style="font-size: 1rem; vertical-align: middle;") warning

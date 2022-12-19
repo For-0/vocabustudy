@@ -61,11 +61,6 @@
                 }
             }
             &:last-child {
-                --mdc-theme-text-primary-on-background: white;
-                --mdc-theme-text-secondary-on-background: rgb(252, 227, 196);
-                --mdc-theme-text-icon-on-background: white;
-                --mdc-outlined-button-outline-color: #ffffff1f;
-                --mdc-outlined-button-label-text-color: white;
                 background: url("../features-background.svg") no-repeat center center;
                 background-size: auto;
                 h2 {
@@ -80,9 +75,6 @@
                     @media (max-height: 400px) {
                         transform: scale(0.6, 0.6);
                     }
-                }
-                .mdc-list-item__secondary-text {
-                    white-space: normal;
                 }
             }
         }
@@ -110,11 +102,11 @@
         .card-content:nth-last-child(2) {
             margin-top: 4px;
         }
-        .mdc-card__primary-action {
-            height: 100%;
+        .card {
+            max-width: 50%;
         }
     }
-    .field-search-container .has-addons span {
+    .field-search-container .buttons span {
         @media (max-width: 380px) {
             &:not(.icon) {
                 display: none;
@@ -126,7 +118,7 @@
         }
     }
 }
-@supports selector(has) {
+@supports selector(:has(.page:not(#home))) {
     main:not(:has(.page:not(#home):target)) ~ footer {
         z-index: 20;
         opacity: 0;

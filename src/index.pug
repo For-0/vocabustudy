@@ -32,7 +32,7 @@ block content
                     .supporting-text 
                         strong Account Created: 
                         span.field-created
-            footer.card-footer
+            footer.card-footer.is-flex-wrap-wrap
                 p.card-footer-item(hidden)
                     button.button.is-ghost.has-text-primary.btn-verify-email Verify Email
                 p.card-footer-item
@@ -94,25 +94,22 @@ block content
         h2.title.is-size-4.mb-0 Search:
         p.block Most sets are created by CVMS students for CVMS students
         div.field-search-container.box
-            .level.mb-1
+            .columns.mb-1
                 .column.is-four-fifths-fullhd.is-three-quarters-widescreen.is-two-thirds-desktop.is-half-tablet
                     input.input.field-search(placeholder="Search" type="text" autocomplete="off")
-                .column.field.has-addons
-                    .control
-                        button.button.is-outlined.is-info.btn-collections-menu(type="button")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") filter_list
-                            span Collections
-                    .control
-                        button.button.is-outlined.is-danger.btn-clear-filters(type="button")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") filter_list_off
-                            span Clear
-                    .control
-                        button.button.is-primary.btn-search-go(type="button")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") search
-                            span Search
+                .column.buttons
+                    button.button.is-outlined.is-info.btn-collections-menu(type="button")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_list
+                        span Collections
+                    button.button.is-outlined.is-danger.btn-clear-filters(type="button")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_list_off
+                        span Clear
+                    button.button.is-primary.btn-search-go(type="button")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") search
+                        span Search
             p Maximum 10 Words/Collections:
                 span.field-search-collections-list
         .set-container.mt-4(data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.

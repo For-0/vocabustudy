@@ -11,52 +11,50 @@
             border-bottom: 1px solid #0004;
         }
     }
-    .editor-timeline-piece {
+    :is(.editor-timeline-piece, .editor-study-piece) {
         position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        > div:last-of-type {
+            margin-top: auto;
+        }
         > .delete {
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
         }
-        .mdc-text-field {
-            margin-bottom: 1rem;
-        }
-        p {
-            margin: 0;
-        }
     }
     .editor-study-piece {
-        width: calc(100% - 10px);
-        @media (min-width: 500px) {
-            width: calc(75% - 10px);
-        }
-        @media (min-width: 900px) {
-            width: calc(50% - 10px);
-        }
-        .mdc-text-field {
-            margin-bottom: 1rem;
-            width: 100%;
-        }
-        p {
-            margin-top: 0;
-        }
-        quiz-question {
-            display: block;
-            border-bottom: 1px solid #0000009a;
-            padding-top: 1rem;
-            &:last-of-type {
-                border-bottom: none;
+        @supports selector(:has(input:first-child:checked)) {
+            .field:has(input:first-child:checked) ~ .answer-input {
+                &:nth-child(3) .label::after {
+                    content: "(correct)";
+                    float: right;
+                    color: hsl(141, 71%, 48%);
+                }
+                &:not(:nth-child(3)) .label::after {
+                    content: "(incorrect)";
+                    float: right;
+                    color: hsl(348, 100%, 61%);
+                }
             }
-            .btn-delete {
+            .field:has(input:last-of-type:checked) ~ .answer-input .label::after {
+                content: "(correct)";
                 float: right;
-                width: 10%;
+                color: hsl(141, 71%, 48%);
             }
-            > label:first-of-type {
-                margin-bottom: 0;
+            .has-workaround {
+                display: none;
             }
-            > div {
-                margin-bottom: 1rem;
-            }
+        }
+    }
+    &.columns > .column {
+        &:first-child button[title="Move Left"] {
+            visibility: hidden;
+        }
+        &:last-child button[title="Move Right"] {
+            visibility: hidden;
         }
     }
 }

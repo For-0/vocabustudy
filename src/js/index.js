@@ -1,9 +1,3 @@
-// import { MDCDialog } from "@material/dialog/index";
-// import { MDCRipple } from "@material/ripple/index";
-// import { MDCSlider } from "@material/slider";
-// import { MDCSnackbar } from "@material/snackbar/index";
-// import { MDCTextField } from "@material/textfield/index";
-// import { MDCMenu } from "@material/menu";
 import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
@@ -347,7 +341,6 @@ function verifyEmail() {
     }
 }
 addEventListener("DOMContentLoaded", () => {
-    // MDC Instantiation and Events
     pages.modals.filterCollection.onclose = () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})

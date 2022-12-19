@@ -159,7 +159,11 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     navbar.burger.addEventListener("click", () => {
                         navbar.burger.classList.toggle("is-active");
                         navbar.menu.classList.toggle("is-active");
-                    })
+                    });
+                    navbar.menu.addEventListener("click", () => {
+                        navbar.burger.classList.remove("is-active");
+                        navbar.menu.classList.remove("is-active");
+                    });
                     fabs.themeOptions.forEach((el, i) => {
                         el.addEventListener("click", () => {
                             showTheme(themes[i]);
