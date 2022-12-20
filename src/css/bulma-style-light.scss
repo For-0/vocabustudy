@@ -156,9 +156,6 @@ strong {
         filter: unset;
     }
 }
-.firebaseui-idp-icon, .nohuechange {
-    filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg)) !important;
-}
 .has-validated-inputs .input:invalid {
     @extend .is-danger;
 }
