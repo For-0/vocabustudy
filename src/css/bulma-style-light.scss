@@ -5,10 +5,14 @@ $primary: #795548;
 $secondary: #4F2B26;
 $third: #411E1C;
 $fourth: #280000;
+$primarylight: #8a6051;
+$secondarylight: #bda8a1;
 $footer-background-color: $primary;
 $footer-color: #fff;
 $footer-padding: 1rem;
 $family-primary: "Raleway";
+@import "bulma/sass/utilities/functions";
+$custom-colors: ("primary-light": ($primarylight, findColorInvert($primarylight)), "secondary-light": ($secondarylight, findColorInvert($secondarylight)));
 
 // Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
 @import "bulma/sass/utilities/_all";

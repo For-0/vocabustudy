@@ -21,10 +21,10 @@ block content
                             form(novalidate)
                                 .field
                                     .control
-                                        input.input.is-medium(type="email" placeholder="Email" id="login-email" required)
+                                        input.input.is-medium(type="text" placeholder="Display Name" id="login-display-name" required)
                                 .field
                                     .control
-                                        input.input.is-medium(type="text" placeholder="Display Name" id="login-display-name" required)
+                                        input.input.is-medium(type="email" placeholder="Email" id="login-email" required)
                                 .field
                                     .control
                                         input.input.is-medium(type="password" placeholder="Password" id="login-password" required)
@@ -49,12 +49,11 @@ block content
                     .level.mt-1.has-text-centered
                         .level-left
                             .level-item
-                                a.has-text-light.btn-switch-mode(role="button" tabindex="0")
-                                span.mx-3.has-text-light |
-                                a.has-text-light.btn-forgot-password(role="button" tabindex="0") Forgot Password?
+                                a.has-text-light.btn-switch-mode.button.is-secondary-light(role="button" tabindex="0" style="margin-right: 1rem; background-color: #a67360;")
+                                a.has-text-light.btn-forgot-password.button.is-primary-light(role="button" tabindex="0") Forgot Password?
                         .level-right
                             .level-item
-                                a.has-text-light(href="/terms/") Terms of Service
+                                a.has-text-light.button.is-primary.btn-tos.is-primary-light(href="/terms/") Terms of Service
         img.nohuechange.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     .page#account(data-nosnippet)
         h1 My Account
