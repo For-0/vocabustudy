@@ -1,0 +1,44 @@
+extends includes/layout.pug
+block variables
+    - var title = "Reset Password";
+    - var description = "This page should not show up in search results";
+block extrahead
+    meta(name="robots" content="noindex")
+    style.
+        #home::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            display: inline-block;
+            background: url("./login-background.svg") no-repeat center center;
+            background-size: 100% 100%;
+        }
+        .container {
+            top: 50%;
+            position: relative;
+            transform: translateY(-50%);
+            z-index: 2;
+            border-radius: 6px;
+        }
+block content
+    .page#home.has-background-primary
+        .container.has-background-white.has-text-centered.p-6
+            h1.title.is-3.has-text-primary Reset Password
+            span.loader.is-size-1.mx-auto.mt-3
+            .notification.is-danger.is-light(hidden) #[strong Invalid code!] This link might have expired or was already used. The associated account may also have been disabled. Raw Error Code:
+                br
+                span.field-raw-code
+            form(novalidate hidden)
+                p.mb-3 Reset password for #[span.field-email]
+                .field
+                    .control
+                        input.input.is-medium(type="password" placeholder="New Password" id="reset-new-password" required)
+                .field
+                    .control
+                        input.input.is-medium(type="password" placeholder="Confirm Password" id="reset-confirm-password" required)
+                button.button.is-primary.is-medium.is-fullwidth(type="submit") Change Password
+append scripts-footer
+     script(src="js/auth-action.js")

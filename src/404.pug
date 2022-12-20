@@ -2,10 +2,11 @@ extends includes/layout.pug
 block variables
     - var title = "404 Not Found";
     - var description = "The page you were looking for could not be found.";
+block main-stylesheet
+    link(rel="stylesheet" href="css/404.scss")
 block extrahead
     meta(name="robots" content="noindex")
 block content
-    link(rel="stylesheet" href="css/404.scss")
     .page#home
         section.hero.is-primary.is-medium.is-bold.is-fullheight(style="width: 100%; top: 0; left: 0; position: absolute; z-index: 100;")
             .hero-body

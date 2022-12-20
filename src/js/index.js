@@ -69,12 +69,13 @@ const pages = {
     login: {
         page: document.getElementById("login"),
         form: document.querySelector("#login form"),
-        btnSwitchMode: document.querySelector("#login .btn-switch-mode"),
+        btnsSwitchMode: document.querySelectorAll("#login .btn-switch-mode, #login .prompt-switch-mode a"),
         btnForgotPassword: document.querySelector("#login .btn-forgot-password"),
         inputEmail: document.querySelector("#login-email"),
         inputDisplayName: document.querySelector("#login-display-name"),
         inputPassword: document.querySelector("#login-password"),
         inputConfirmPassword: document.querySelector("#login-confirm-password"),
+        checkTos: document.querySelector("#login-accept-tos"),
         btnSubmit: document.querySelector("#login button[type=submit]"),
         btnContinueGoogle: document.querySelector("#login .btn-continue-google"),
         show(switchMode = true) {
@@ -430,7 +431,7 @@ addEventListener("DOMContentLoaded", () => {
         switch (pages.login.page.dataset.mode) {
             case "sign-up":
                 pages.login.inputPassword.setCustomValidity("");
-                if (pages.login.inputEmail.reportValidity() && pages.login.inputPassword.reportValidity() && pages.login.inputConfirmPassword.reportValidity() && pages.login.inputDisplayName.reportValidity()) {
+                if (pages.login.inputEmail.reportValidity() && pages.login.inputPassword.reportValidity() && pages.login.inputConfirmPassword.reportValidity() && pages.login.inputDisplayName.reportValidity() && pages.login.checkTos.reportValidity()) {
                     if (pages.login.inputPassword.value === pages.login.inputConfirmPassword.value) {
                         try {
                             await createUserWithEmailAndPassword(auth, pages.login.inputEmail.value, pages.login.inputPassword.value);
@@ -513,10 +514,10 @@ addEventListener("DOMContentLoaded", () => {
                 break;
         }
     });
-    pages.login.btnSwitchMode.addEventListener("click", () => {
+    pages.login.btnsSwitchMode.forEach(el => el.addEventListener("click", () => {
         if (pages.login.page.dataset.mode === "sign-up" || pages.login.page.dataset.mode === "forgot-password") pages.login.page.dataset.mode = "login";
         else pages.login.page.dataset.mode = "sign-up";
-    });
+    }));
     pages.login.btnForgotPassword.addEventListener("click", () => pages.login.page.dataset.mode = "forgot-password");
     pages.login.btnContinueGoogle.addEventListener("click", async () => {
         pages.login.btnContinueGoogle.disabled = true;

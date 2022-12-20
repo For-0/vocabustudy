@@ -11,11 +11,14 @@ block content
             .columns.is-multiline
                 .column.is-8.is-offset-2
                     .columns
-                        .column.p-6.is-hidden-touch
-                            h1(style="text-align: center;").title.is-3.has-text-primary Free, Fast, Simple, and Effective.
-                            h1(style="text-align: center;").title.is-4 That's the kind of studying you get when you join Vocabustudy.
+                        .column.p-6.is-hidden-touch.has-text-centered.is-relative
+                            h1.title.is-3.has-text-primary Free, Fast, Simple, and Effective.
+                            h1.title.is-4 That's the kind of studying you get when you join Vocabustudy.
                             br
                             img.nohuechange.is-block.mx-auto(src="./icons/icon-192.png" style="width: 8rem; height: 8rem")
+                            p.prompt-switch-mode(style="position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); width: 100%;")
+                                span.log-in Already have an account? #[a.has-text-primary.has-text-weight-bold(role="button" tabindex="0") Log in]
+                                span.sign-up Don't have an account? #[a.has-text-primary.has-text-weight-bold(role="button" tabindex="0") Sign up]
                         .column.has-text-centered.p-6
                             h1.title.is-4.form-title
                             form(novalidate)
@@ -31,6 +34,9 @@ block content
                                 .field
                                     .control
                                         input.input.is-medium(type="password" placeholder="Confirm Password" id="login-confirm-password" required)
+                                .field
+                                    input.is-checkradio.is-warning#login-accept-tos(type="checkbox" required)
+                                    label(for="login-accept-tos") I accept the #[a.has-text-primary(href="/terms/") Terms of Service] and #[a.has-text-primary(href="/privacy/") Privacy Policy]
                                 button.button.is-primary.is-medium.is-fullwidth(type="submit")
                             button.button.is-light.is-medium.is-fullwidth.mt-3.btn-continue-google(type="button")
                                 span.icon.nohuechange(style="width: 24px; height: 24px;")
@@ -49,8 +55,8 @@ block content
                     .level.mt-1.has-text-centered
                         .level-left
                             .level-item
-                                a.has-text-light.btn-switch-mode.button.is-secondary-light(role="button" tabindex="0" style="margin-right: 1rem; background-color: #a67360;")
-                                a.has-text-light.btn-forgot-password.button.is-primary-light(role="button" tabindex="0") Forgot Password?
+                                button.has-text-light.btn-switch-mode.button.is-secondary-light.mr-4
+                                button.has-text-light.btn-forgot-password.button.is-primary-light.mr-4 Forgot Password?
                         .level-right
                             .level-item
                                 a.has-text-light.button.is-primary.btn-tos.is-primary-light(href="/terms/") Terms of Service
