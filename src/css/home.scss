@@ -151,11 +151,26 @@
         background-color: white;
         border-radius: 10px;
     }
+    .column.is-8:last-child {
+        @media (max-width: 768px) {
+            .level-left, .level-right, .level-item {
+                display: inline;
+            }
+            .level-right::before {
+                content: "|";
+                margin: 0 0.75rem;
+                color: #f5f5f5 !important;
+            }
+        }
+    }
     .container {
         top: 40%;
         position: relative;
         transform: translateY(-50%);
         z-index: 2;
+        @media (max-height: 800px) or (max-width: 500px) {
+            top: 50%;
+        }
     }
     background-color: #795548;
     > img {
@@ -163,6 +178,54 @@
         right: 1rem;
         bottom: calc(43px + 2rem);
         z-index: 2;
+        height: 8rem;
+        width: 8rem;
+    }
+    &[data-mode="sign-up"] {
+        .btn-switch-mode::after {
+            content: "Log In";
+        }
+        :is(form button[type=submit], .form-title)::after {
+            content: "Sign Up";
+        }
+    }
+    &[data-mode="forgot-password"] {
+        .btn-switch-mode {
+            &::after {
+                content: "Log In";
+            }
+            + a, span {
+                display: none;
+            }
+        }
+        :is(form button[type=submit], .form-title)::after {
+            content: "Reset Password";
+        }
+        .btn-continue-google {
+            display: none;
+        }
+        #login-display-name, #login-password, #login-confirm-password {
+            display: none;
+        }
+    }
+    &:not([data-mode="sign-up"]):not([data-mode="forgot-password"]) {
+        .btn-switch-mode::after {
+            content: "Sign Up";
+        }
+        :is(form button[type=submit], .form-title)::after {
+            content: "Log In";
+        }
+        #login-display-name, #login-confirm-password {
+            display: none;
+        }
+    }
+    .btn-continue-google .icon {
+        @media (min-width: 769px) {
+            margin-right: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            margin: 0;
+        }
     }
 }
 .change-hue-container {

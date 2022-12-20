@@ -3,7 +3,7 @@ import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 // eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
-import { deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, updatePassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, updatePassword, updateProfile } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
@@ -12,9 +12,8 @@ import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleD
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth } = initialize(async user => {
     if (user) {
-        if (location.hash === "#login") {
-            await showAuthUI();
-        } else if (location.hash === "#saved-sets") showLikedSets();
+        if (location.hash === "#login") pages.login.show()
+        else if (location.hash === "#saved-sets") showLikedSets();
         else if (location.hash === "#mysets") {
             showMySets();
             showMyCollections();
@@ -32,12 +31,12 @@ const { db, auth } = initialize(async user => {
 }, async remoteConfig => {
     if (remoteConfig) {
         let featuredSets = JSON.parse(getValue(remoteConfig, "featuredSets").asString());
-        pages.publicsets.sets[0].textContent = "";
+        pages.search.sets[0].textContent = "";
         for (let set of featuredSets) {
             let els = await createSetCard(set, set.id);
-            pages.publicsets.sets[0].appendChild(els.card);
+            pages.search.sets[0].appendChild(els.card);
         }
-    } else pages.publicsets.sets[0].textContent = "Failed to load featured sets";
+    } else pages.search.sets[0].textContent = "Failed to load featured sets";
 });
 const hashTitles = {
     "#login": "Log In",
@@ -67,12 +66,40 @@ const pages = {
         btnChangeName: document.querySelector("#account .btn-change-name"),
         btnDeleteAccount: document.querySelector("#account .btn-delete-account")
     },
-    mysets: {
+    login: {
+        page: document.getElementById("login"),
+        form: document.querySelector("#login form"),
+        btnSwitchMode: document.querySelector("#login .btn-switch-mode"),
+        btnForgotPassword: document.querySelector("#login .btn-forgot-password"),
+        inputEmail: document.querySelector("#login-email"),
+        inputDisplayName: document.querySelector("#login-display-name"),
+        inputPassword: document.querySelector("#login-password"),
+        inputConfirmPassword: document.querySelector("#login-confirm-password"),
+        btnSubmit: document.querySelector("#login button[type=submit]"),
+        btnContinueGoogle: document.querySelector("#login .btn-continue-google"),
+        show(switchMode = true) {
+            this.btnSubmit.disabled = false;
+            this.btnContinueGoogle.disabled = false;
+            if (switchMode) this.page.dataset.mode = "login";
+            this.btnSubmit.classList.remove("is-loading");
+            this.btnContinueGoogle.classList.remove("is-loading");
+            this.form.reset();
+            this.form.classList.remove("has-validated-inputs");
+            if (auth.currentUser) 
+                return location.hash = "#account";
+        },
+        restoreState() {
+            let afterLogin = localStorage.getItem("redirect_after_login");
+            localStorage.removeItem("redirect_after_login");
+            location.href = afterLogin || "#account";
+        }
+    },
+    mySets: {
         sets: document.querySelector('#mysets .set-container'),
         collections: document.querySelector("#mysets .collection-container"),
         btnCreateCollection: document.querySelector("#mysets .btn-create-collection")
     },
-    publicsets: {
+    search: {
         sets: document.querySelectorAll("#search .set-container"),
         btnSearchGo: document.querySelector("#search .btn-search-go"),
         btnCollectionsMenu: document.querySelector("#search .btn-collections-menu"),
@@ -101,35 +128,7 @@ const pages = {
         sets: document.querySelector('#admin .set-container'),
     }
 };
-window.pages = pages;
-//const authUI = new firebaseui.auth.AuthUI(auth);
-async function showAuthUI() {
-    if (auth.currentUser) 
-        return location.hash = "#account";
-    document.getElementById("firebaseui-css").disabled = false;
-    /*authUI.reset();
-    authUI.start("#firebaseui-auth-container", {
-        signInOptions: [
-            GoogleAuthProvider.PROVIDER_ID,
-            {
-                provider: EmailAuthProvider.PROVIDER_ID,
-                requireDisplayName: true
-            }
-        ],
-        callbacks: {
-            signInSuccessWithAuthResult: () => {
-                let afterLogin = localStorage.getItem("redirect_after_login");
-                localStorage.removeItem("redirect_after_login");
-                location.href = afterLogin || "#account";
-                return false;
-            },
-            uiShown: () => console.log("[FirebaseUI] Auth UI Loaded")
-        },
-        signInFlow: "popup",
-        privacyPolicyUrl: "https://vocabustudy.org/privacy",
-        siteName: "Vocabustudy"
-    });*/
-}
+
 async function reauthenticateUser() {
     switch (auth.currentUser.providerData[0].providerId) {
         case GoogleAuthProvider.PROVIDER_ID: {
@@ -175,7 +174,7 @@ function showAccountInfo({ displayName, email, emailVerified, metadata: { creati
         auth.currentUser.reload().then(() => pages.account.created.innerText = toLocaleDate(auth.currentUser.metadata.creationTime));
 }
 
-async function showMySets(el = pages.mysets.sets, showAll = false) {
+async function showMySets(el = pages.mySets.sets, showAll = false) {
     el.textContent = "Loading sets...";
     let mQuery = showAll ? query(collection(db, "meta_sets")) : query(collection(db, "meta_sets"), where("uid", "==", auth.currentUser.uid));
     let extraParams = showAll ? [] : [[0], ["likes", "desc"]];
@@ -207,7 +206,7 @@ async function showMySets(el = pages.mysets.sets, showAll = false) {
 }
 function registerCustomCollectionCard(docSnap) {
     let els = createCustomCollectionCard(docSnap.data(), docSnap.id);
-    pages.mysets.collections.appendChild(els.card);
+    pages.mySets.collections.appendChild(els.card);
     els.card.addEventListener("change", () => els.buttons[2].disabled = false);
     //els.inputs.forEach(t => t.addEventListener("change", () => els.buttons[2].disabled = false));
     els.buttons[1].addEventListener("click", () => {
@@ -249,30 +248,30 @@ function registerCustomCollectionCard(docSnap) {
     });
 }
 async function showMyCollections() {
-    pages.mysets.collections.textContent = "Loading collections...";
+    pages.mySets.collections.textContent = "Loading collections...";
     let docs = await getDocs(query(collection(db, "collections"), where("uid", "==", auth.currentUser.uid)));
-    pages.mysets.collections.textContent = "";
+    pages.mySets.collections.textContent = "";
     docs.forEach(docSnap => registerCustomCollectionCard(docSnap));
 }
 function loadPreviousSearch(collections) {
     let previousSearch = JSON.parse(localStorage.getItem("previous_search"));
     if (!previousSearch) return;
-    pages.publicsets.searchInput.value = previousSearch.search;
+    pages.search.searchInput.value = previousSearch.search;
     pages.modals.filterCollectionList.querySelectorAll("input").forEach(el => el.checked = previousSearch.collections.includes(el.value));
     listPreviewCollections(previousSearch.collections, collections);
 }
 function saveSearch() {
-    let search = {search: pages.publicsets.searchInput.value, collections: [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el)};
+    let search = {search: pages.search.searchInput.value, collections: [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el)};
     localStorage.setItem("previous_search", JSON.stringify(search));
     return search.collections;
 }
 async function listPreviewCollections(collections, allCollections=null) {
     let collectionEls = await parseCollections(collections, (allCollections ? {c: allCollections} : null));
-    pages.publicsets.searchInputCollections.textContent = "";
-    pages.publicsets.searchInputCollections.append(...collectionEls);
+    pages.search.searchInputCollections.textContent = "";
+    pages.search.searchInputCollections.append(...collectionEls);
 }
 async function search() {
-    let searchTerm = pages.publicsets.searchInput.value;
+    let searchTerm = pages.search.searchInput.value;
     let selectedFilters = saveSearch().slice(0, 10);
     let words = [];
     let queries = [];
@@ -284,8 +283,8 @@ async function search() {
         queries.push(query(collection(db, "meta_sets"), where("public", "==", true), where("collections", "array-contains-any", selectedFilters)));
     if (!searchTerm && selectedFilters.length <= 0)
         queries.push(query(collection(db, "meta_sets"), where("public", "==", true)));
-    pages.publicsets.sets[1].textContent = "Loading Sets...";
-    await paginateQueries(queries, pages.publicsets.sets[1].nextElementSibling, results => {
+    pages.search.sets[1].textContent = "Loading Sets...";
+    await paginateQueries(queries, pages.search.sets[1].nextElementSibling, results => {
         let data = results.filter((val, index, self) => index === self.findIndex(t => t.id === val.id)).map(el => {
             let data = el.data();
             let relevance = 1;
@@ -296,10 +295,10 @@ async function search() {
         data.sort((a, b) => b.relevance - a.relevance);
         data.forEach(async docSnap => {
             let els = await createSetCard(docSnap.data, docSnap.id, docSnap.relevance);
-            pages.publicsets.sets[1].appendChild(els.card);
+            pages.search.sets[1].appendChild(els.card);
         });
     }, [0, 0], ["likes", "desc"]);
-    pages.publicsets.sets[1].textContent = "";
+    pages.search.sets[1].textContent = "";
 }
 async function showLikedSets() {
     if (auth.currentUser) {
@@ -402,12 +401,12 @@ addEventListener("DOMContentLoaded", () => {
                 }
             });
     });
-    pages.publicsets.btnSearchGo.addEventListener("click", () => search());
-    pages.publicsets.searchInput.addEventListener("keyup", e => {
+    pages.search.btnSearchGo.addEventListener("click", () => search());
+    pages.search.searchInput.addEventListener("keyup", e => {
         if (e.key === "Enter") search();
     })
-    pages.publicsets.btnCollectionsMenu.addEventListener("click", () => pages.modals.filterCollection.open());
-    pages.publicsets.btnClearFilters.addEventListener("click", () => {
+    pages.search.btnCollectionsMenu.addEventListener("click", () => pages.modals.filterCollection.open());
+    pages.search.btnClearFilters.addEventListener("click", () => {
         pages.modals.filterCollectionList.querySelectorAll("input:checked").forEach(el => el.checked = false);
         listPreviewCollections([]);
     });
@@ -415,7 +414,7 @@ addEventListener("DOMContentLoaded", () => {
     pages.admin.btn.addEventListener("click", async () => {
         if (await verifyAdmin()) showMySets(pages.admin.sets, true);
     });
-    pages.mysets.btnCreateCollection.addEventListener("click", async () => {
+    pages.mySets.btnCreateCollection.addEventListener("click", async () => {
         pages.modals.changeNameInput.value = "";
         let result = await bulmaModalPromise(pages.modals.changeName);
         if (result) {
@@ -425,12 +424,138 @@ addEventListener("DOMContentLoaded", () => {
             registerCustomCollectionCard(docSnap);
         }
     });
+    pages.login.form.addEventListener("submit", async e => {
+        e.preventDefault();
+        pages.login.form.classList.add("has-validated-inputs");
+        switch (pages.login.page.dataset.mode) {
+            case "sign-up":
+                pages.login.inputPassword.setCustomValidity("");
+                if (pages.login.inputEmail.reportValidity() && pages.login.inputPassword.reportValidity() && pages.login.inputConfirmPassword.reportValidity() && pages.login.inputDisplayName.reportValidity()) {
+                    if (pages.login.inputPassword.value === pages.login.inputConfirmPassword.value) {
+                        try {
+                            await createUserWithEmailAndPassword(auth, pages.login.inputEmail.value, pages.login.inputPassword.value);
+                            await updateProfile(auth.currentUser, { displayName: pages.login.inputDisplayName.value });
+                            pages.login.restoreState();
+                        } catch(err) {
+                            if (err.name !== "FirebaseError") throw err;
+                            switch(err.code) {
+                                case "auth/email-already-in-use":
+                                    toast({message: "An account with that email address already exists", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
+                                    break;
+                                case "auth/too-many-requests":
+                                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                    break;
+                                case "auth/weak-password":
+                                    toast({message: "That password is too weak", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                                    break;
+                            }
+                        } finally {
+                            pages.login.show(false);
+                        }
+                    } else {
+                        pages.login.inputPassword.setCustomValidity("Passwords do not match");
+                        pages.login.inputPassword.reportValidity();
+                    }
+                }
+                break;
+            case "forgot-password":
+                if (pages.login.inputEmail.reportValidity()) {
+                    pages.login.btnSubmit.disabled = true;
+                    pages.login.btnSubmit.classList.add("is-loading");
+                    try {
+                        await sendPasswordResetEmail(auth, pages.login.inputEmail.value);
+                        toast({message: "Email sent!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000});
+                    } catch(err) {
+                        if (err.name !== "FirebaseError") throw err;
+                        switch(err.code) {
+                            case "auth/user-not-found":
+                                toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
+                                break;
+                            case "auth/too-many-requests":
+                                toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                break;
+                        }
+                    } finally {
+                        pages.login.show(false);
+                    }
+                }
+                break;
+            default:
+                if (pages.login.inputEmail.reportValidity() && pages.login.inputPassword.reportValidity()) {
+                    try {
+                        pages.login.btnSubmit.disabled = true;
+                        pages.login.btnSubmit.classList.add("is-loading");
+                        await signInWithEmailAndPassword(auth, pages.login.inputEmail.value, pages.login.inputPassword.value);
+                        pages.login.restoreState();
+                    } catch(err) {
+                        if (err.name !== "FirebaseError") throw err;
+                        switch(err.code) {
+                            case "auth/user-not-found":
+                                toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
+                                break;
+                            case "auth/wrong-password":
+                                toast({message: "Incorrect password", type: "is-danger", dismissible: true, position: "bottom-center", duration: 5000});
+                                break;
+                            case "auth/too-many-requests":
+                                toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                break;
+                            case "auth/user-disabled":
+                                toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                                break;
+                            case "auth/account-exists-with-different-credential":
+                                toast({message: "Use Sign In with Google for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                break;
+                        }
+                    } finally {
+                        pages.login.show();
+                    }
+                }
+                break;
+        }
+    });
+    pages.login.btnSwitchMode.addEventListener("click", () => {
+        if (pages.login.page.dataset.mode === "sign-up" || pages.login.page.dataset.mode === "forgot-password") pages.login.page.dataset.mode = "login";
+        else pages.login.page.dataset.mode = "sign-up";
+    });
+    pages.login.btnForgotPassword.addEventListener("click", () => pages.login.page.dataset.mode = "forgot-password");
+    pages.login.btnContinueGoogle.addEventListener("click", async () => {
+        pages.login.btnContinueGoogle.disabled = true;
+        pages.login.btnContinueGoogle.classList.add("is-loading");
+        const provider = new GoogleAuthProvider();
+        try {
+            await signInWithPopup(auth, provider);
+            pages.login.restoreState();
+        } catch (err) {
+            switch(err.code) {
+                case "auth/popup-blocked":
+                    toast({message: "The popup was blocked", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
+                    break;
+                case "auth/popup-closed-by-user":
+                    toast({message: "Operation Cancelled", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
+                    break;
+                case "auth/too-many-requests":
+                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                    break;
+                case "auth/user-disabled":
+                    toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                    break;
+                case "auth/unauthorized-continue-uri":
+                    toast({message: "Invalid domain", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                    break;
+                case "auth/account-exists-with-different-credential":
+                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                    break;
+            }
+        } finally {
+            pages.login.show();
+        }
+    });
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
     document.querySelector(".btn-change-hue").hidden = false;
     document.querySelectorAll(".button.is-credit").forEach((el, i) => el.addEventListener("click", () => pages.modals.contributers[i].open()))
     document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
-    if (location.hash === "#login") showAuthUI();
+    if (location.hash === "#login") pages.login.show();
 });
 window.addEventListener("hashchange", () => {
     if (!auth.currentUser && restrictedUrls.includes(location.hash)) {
@@ -440,7 +565,7 @@ window.addEventListener("hashchange", () => {
     }
     switch (location.hash) {
         case "#login":
-            showAuthUI();
+            pages.login.show();
             break;
         case "#mysets":
             showMySets();
