@@ -26,13 +26,12 @@ block extrahead
 block content
     .page#home.has-background-primary
         .container.has-background-white.has-text-centered.p-6
-            h1.title.is-3.has-text-primary Reset Password
+            h1.title.is-3.has-text-primary #[span.field-mode]
+            p.mb-3 #[span.field-mode ...] #[strong.field-email ...]
             span.loader.is-size-1.mx-auto.mt-3
-            .notification.is-danger.is-light(hidden) #[strong Invalid code!] This link might have expired or was already used. The associated account may also have been disabled. Raw Error Code:
-                br
-                span.field-raw-code
+            .notification.is-danger.is-light(hidden)
+            .notification.is-success.is-light(hidden)
             form(novalidate hidden)
-                p.mb-3 Reset password for #[span.field-email]
                 .field
                     .control
                         input.input.is-medium(type="password" placeholder="New Password" id="reset-new-password" required)
@@ -41,4 +40,4 @@ block content
                         input.input.is-medium(type="password" placeholder="Confirm Password" id="reset-confirm-password" required)
                 button.button.is-primary.is-medium.is-fullwidth(type="submit") Change Password
 append scripts-footer
-     script(src="js/auth-action.js")
+     script(src="js/auth-action.js" type="module")
