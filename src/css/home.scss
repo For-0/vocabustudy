@@ -3,7 +3,7 @@
     .list-item {
         border: 0 !important;
     }
-    background: url("../hero-background.svg") no-repeat center center;
+    background: url("../images/hero-background.svg") no-repeat center center;
     background-size: 100% 100%;
     position: absolute;
     left: 0;
@@ -61,7 +61,7 @@
                 }
             }
             &:last-child {
-                background: url("../features-background.svg") no-repeat center center;
+                background: url("../images/features-background.svg") no-repeat center center;
                 background-size: auto;
                 h2 {
                     text-align: center;
@@ -144,7 +144,7 @@
         width: 100vw;
         height: 100vh;
         display: inline-block;
-        background: url("../login-background.svg") no-repeat center center;
+        background: url("../images/login-background.svg") no-repeat center center;
         background-size: 100% 100%;
     }
     .column.is-8:first-child {

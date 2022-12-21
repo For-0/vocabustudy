@@ -80,6 +80,7 @@
     "@parcel/transformer-webmanifest": "^2.8.0",
     "eslint": "^8.28.0",
     "parcel": "^2.8.0",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "sharp": "^0.31.2"
   }
 }

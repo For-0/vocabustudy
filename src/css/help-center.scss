@@ -1,57 +1,60 @@
 @import "styles.scss";
-.collapsible {
-    background-color: #795548;
-    color: white;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: #fff;
-    font-size: 20px;
-    text-align: center;
-    border-radius: 1rem;
-    &:hover {
-        background-color: #bda8a1;
+.featured .level {
+    border-bottom: 1px solid lightgrey;
+}
+
+.category {
+    .title span {
+        opacity: 0.5;
+        font-size: 1rem;
+        font-weight: 400;
+        margin-left: 1rem;
     }
-    &.active {
-        + .content {
-            display: block;
-            border-bottom-left-radius: 1rem;
-            border-bottom-right-radius: 1rem;
-        }
-        border-bottom-left-radius: 0rem;
-        border-bottom-right-radius: 0rem;
+    i {
+        font-size: inherit;
     }
-    &:not(.active) + .content {
-        border-bottom-left-radius: 0rem;
-        border-bottom-right-radius: 0rem;
+    .icon {
+        margin-right: 4px;
+        transition: 0.1s ease margin-right, 0.1s ease color;
+    }
+    li:hover .icon {
+        margin-right: 0;
+        color: #795548;
     }
 }
-.content {
-    padding: 0 18px;
-    display: none;
-    overflow: hidden;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-    &:not(.nested) {
-        background-color: #f1f1f1;
+.hero {
+    margin-left: -1rem;
+    width: calc(100% + 2rem);
+}
+#home .hero {
+    background-image: linear-gradient(to top, transparent, transparent, #795548), url('../images/nasa-space-background.jpg?as=webp&width=2000');
+    background-position: center center;
+    background-size: cover;
+    position: fixed;
+    top: 52px;
+    transition: 0.2s ease padding;
+    padding: 3rem 0;
+    z-index: 2;
+    h1 {
+        transition: 0.2s ease margin;
     }
-    &.nested {
-        background-color: #e5e5e5;
-    }
-    .content-inner {
-        padding: 0 18px;
+    p.is-size-4 {
+        height: 36px;
+        transition: 0.2s ease height, 0.2s ease opacity;
     }
 }
-.columns {
-    margin-left: auto;
-    margin-right: auto;
+.hero-small #home .hero {
+    padding: 0 !important;
+    h1 {
+        margin-bottom: 0 !important;
+    }
+    p.is-size-4 {
+        height: 0;
+        opacity: 0;
+    }
 }
-.column.is-3 {
-    background-color: lightgray;
-}
-.hero-body {
-    margin-left: 0!important;
-    margin-right: 0 !important;
+.page:not(#home) .hero {
+    top: 52px;
+    position: sticky;
+    z-index: 2;
 }

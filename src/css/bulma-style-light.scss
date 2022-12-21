@@ -5,14 +5,14 @@ $primary: #795548;
 $secondary: #4F2B26;
 $third: #411E1C;
 $fourth: #280000;
-$primary-light: #8a6051;
+$primary-alt: #8a6051;
 $secondary-light: #a67360;
 $footer-background-color: $primary;
 $footer-color: #fff;
 $footer-padding: 1rem;
 $family-primary: "Raleway";
 @import "bulma/sass/utilities/functions";
-$custom-colors: ("primary-light": ($primary-light, findColorInvert($primary-light)), "secondary-light": ($secondary-light, findColorInvert($secondary-light)));
+$custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "secondary-light": ($secondary-light, findColorInvert($secondary-light)));
 
 // Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
 @import "bulma/sass/utilities/_all";
@@ -33,6 +33,7 @@ $custom-colors: ("primary-light": ($primary-light, findColorInvert($primary-ligh
 @import "bulma/sass/components/level";
 @import "bulma/sass/components/menu";
 @import "bulma/sass/components/panel";
+@import "bulma/sass/components/message";
 @import "bulma/sass/grid/_all";
 @import "bulma/sass/helpers/_all";
 @import "bulma-slider/src/sass";

@@ -232,7 +232,7 @@ main {
         margin-bottom: 2rem;
         &::after {
             content: "";
-            background: url("../hero-background.svg") no-repeat center center;
+            background: url("../images/hero-background.svg") no-repeat center center;
             background-size: 100% 100%;
             position: absolute;
             width: calc(100% + 2rem);
@@ -276,7 +276,7 @@ body > footer {
     bottom: 10px;
     left: calc(100% - 78px);
     width: fit-content;
-    z-index: 2;
+    z-index: 21;
     position: fixed;
     > button span {
         transition: transform 0.3s linear;

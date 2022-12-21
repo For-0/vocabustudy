@@ -23,7 +23,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
         link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
         link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap")
         link(rel="manifest" href="./app.webmanifest")
-        script(src="js/sentry.js" type="module")
+        script(src="js/sentry.js" type="module" async)
         script(type="application/ld+json").
             {
                 "@context": "https://schema.org",
@@ -76,9 +76,9 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                                 a.navbar-item.loggedout(hidden href="/#login") Log In
         main
             block content
-        div.fab-theme-container
-            button.button.is-primary.fab-theme.is-floating.is-light(aria-label="Theme" title="Change Theme")
-                i(style="font-size: 1.5rem; color: white;").material-symbols-rounded.nohuechange brightness_high
+        .fab-theme-container
+            button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme")
+                i(style="font-size: 1.5rem; color: white;").material-symbols-rounded.has-text-white brightness_high
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
                     i.material-symbols-rounded brightness_medium
@@ -94,7 +94,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 span.is-hidden-mobile.mr-1  | &copy; 2022 Siddhant K. All Rights Reserved
                 | - 
                 a.has-text-white.is-underlined.ml-1(href="/#credits") Credits
-            div.level-item
+            .level-item
                 div.is-hidden-mobile
                     a.has-text-white.is-underlined(href="/privacy/") Privacy Policy
                     |  | 
@@ -103,7 +103,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.has-text-white.is-underlined(href="/#discord") Discord
                     |  | 
                     a.has-text-white.is-underlined(href="https://github.com/orgs/For-0/projects/2/insights/1" target="_blank") Bug Leaderboard
-                div.is-hidden-tablet(style="transform: scale(0.8);")
+                .is-hidden-tablet(style="transform: scale(0.8);")
                     a.has-text-white.mr-3.is-filled.icon(href="/privacy/" title="Privacy")
                         i.material-symbols-rounded verified_user
                     a.has-text-white.mr-3.is-filled.icon(href="/#youtube" title="YouTube")

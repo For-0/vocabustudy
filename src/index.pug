@@ -4,7 +4,7 @@ block variables
 block main-stylesheet
     link(rel="stylesheet" href="css/home.scss")
 block extrahead
-    link(rel="preload" href="./hero-background.svg" as="image")
+    link(rel="preload" href="./images/hero-background.svg" as="image")
 block content
     .page#login(data-nosnippet data-mode="login")
         .container
@@ -56,10 +56,10 @@ block content
                         .level-left
                             .level-item
                                 button.has-text-light.btn-switch-mode.button.is-secondary-light.mr-4
-                                button.has-text-light.btn-forgot-password.button.is-primary-light.mr-4 Forgot Password?
+                                button.has-text-light.btn-forgot-password.button.is-primary-alt.mr-4 Forgot Password?
                         .level-right
                             .level-item
-                                a.has-text-light.button.is-primary.btn-tos.is-primary-light(href="/terms/") Terms of Service
+                                a.has-text-light.button.is-primary.btn-tos.is-primary-alt(href="/terms/") Terms of Service
         img.nohuechange.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     .page#account(data-nosnippet)
         h1 My Account
@@ -228,6 +228,7 @@ block content
                 li Thank you to all moderators and helpers on the Vocabustudy Discord Server.
             p #[strong If you need help with anything For Zero or Vocabustudy related, these people are a great place to start. You can also join the Vocabustudy Discord Server and ask for help there.]
                 p Thank you to everyone who has helped spread the word, used the app, and made sets! We hope Vocabustudy has been a great help to you.
+            // TODO add software credits (bulma, Firebase, Raleway)
     .page#donate(data-nosnippet)
         h1 Donate
         p.title.is-size-3 Your donations help!
