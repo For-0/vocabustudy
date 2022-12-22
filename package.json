@@ -72,14 +72,14 @@
     "marked": "^4.2.3"
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "^2.8.0",
-    "@parcel/reporter-bundle-analyzer": "^2.8.0",
-    "@parcel/transformer-jsonld": "^2.8.0",
-    "@parcel/transformer-pug": "^2.8.0",
-    "@parcel/transformer-sass": "^2.8.0",
-    "@parcel/transformer-webmanifest": "^2.8.0",
+    "@parcel/packager-raw-url": "^2.8.2",
+    "@parcel/reporter-bundle-buddy": "^2.8.2",
+    "@parcel/transformer-jsonld": "^2.8.2",
+    "@parcel/transformer-pug": "^2.8.2",
+    "@parcel/transformer-sass": "^2.8.2",
+    "@parcel/transformer-webmanifest": "^2.8.2",
     "eslint": "^8.28.0",
-    "parcel": "^2.8.0",
+    "parcel": "^2.8.2",
     "process": "^0.11.10",
     "sharp": "^0.31.2"
   }
