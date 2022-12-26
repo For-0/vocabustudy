@@ -2,6 +2,22 @@ import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase
 
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
+/** @type {[Keyframe[], KeyframeAnimationOptions]} */
+export const cardSlideInAnimation = [
+    [
+        {opacity: 0, transform: "translateY(20px)"},
+        {opacity: 1, transform: "translateY(0)"},
+    ],
+    {easing: "ease", duration: 400}
+];
+const zoomOutAnimation = [
+    [
+        {transform: "scale(1)", opacity: 1, transformOrigin: "center"},
+        {transform: "scale(0)", opacity: 0},
+        {width: 0, minWidth: 0, transform: "scale(0)", opacity: 0, padding: 0,  margin: 0, height: 0, minHeight: 0}
+    ],
+    {easing: "ease", duration: 700}
+];
 /**
  * Remove ignored characters and markdown links from a string, and trim it
  * @param {string} answer The answer to normalize
@@ -31,6 +47,52 @@ export function createElement(type, classes = [], attrs = {}, children = []) {
     Object.keys(attrs).forEach(key => el[key] = attrs[key]);
     for (let child of children) el.appendChild(child);
     return el;
+}
+/**
+ * Animate an element only if the user does not prefer reduced motion
+ * @param {Animatable} element 
+ * @param {Keyframe[] | PropertyIndexedKeyframes | null} keyframes 
+ * @param {number | KeyframeAnimationOptions | undefined} options
+ * @returns {Animation?} The resulting animation, if it was applied
+ */
+export function optionalAnimate(element, keyframes, options) {
+    if (matchMedia("not (prefers-reduced-motion)").matches) return element.animate(keyframes, options);
+    else return null;
+}
+/**
+ * Make an element zoom out and then remove it.
+ * Skips animation if the user prefers reduced motion
+ * @param {HTMLElement} element 
+ */
+export async function zoomOutRemove(element) {
+    element.style.minHeight = element.style.height = `${element.clientHeight}px`;
+    element.style.minWidth = element.style.width = `${element.clientWidth}px`;
+    element.style.whiteSpace = "nowrap";
+    await optionalAnimate(element, ...zoomOutAnimation)?.finished;
+    element.remove();
+}
+/**
+ * Animate two elements to switch positions
+ * @param {HTMLElement} element1 
+ * @param {HTMLElement} element2 
+ */
+export async function switchElements(element1, element2, duration=700) {
+    element1.parentElement.style.maxHeight = `${element1.parentElement.clientHeight}px`;
+    let distanceHorizontal = element1.getBoundingClientRect().left - element2.getBoundingClientRect().left;
+    let distanceVertical = element1.getBoundingClientRect().top - element2.getBoundingClientRect().top;
+    await Promise.all([
+        optionalAnimate(element1, [{top: 0, left: 0, height: `${element1.clientHeight}px`}, {top: `${-distanceVertical}px`, left: `${-distanceHorizontal}px`, height: `${element2.clientHeight}px`}], {easing: "ease", duration})?.finished,
+        optionalAnimate(element2, [{top: 0, left: 0, height: `${element2.clientHeight}px`}, {top: `${distanceVertical}px`, left: `${distanceHorizontal}px`, height: `${element1.clientHeight}px`}], {easing: "ease", duration})?.finished,
+    ]); // visually animate elements to new position
+    let parentNode = element1.parentElement;
+    let nextElement = element1.nextElementSibling;
+    // Actually switch elements in the DOM. This will automagically clear the animation
+    if (element2 === nextElement) parentNode.insertBefore(element2, element1); // if they happen to be siblings, just insert 2 before 1
+    else {
+        parentNode.insertBefore(element1, element2); // insert 1 before 2
+        parentNode.insertBefore(element2, nextElement); // then move 2 to where 1 was. If nextElement is undefined (1 was the last child) then it just puts 2 at the end
+    }
+    element1.parentElement.style.removeProperty("max-height");
 }
 /**
  * Get a list of all alphanumeric words in a string
@@ -188,6 +250,7 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
         ]),
         createElement("footer", ["card-footer"], {}, buttons)
     ]);
+    optionalAnimate(cardEl, ...cardSlideInAnimation);
     return { card: cardEl, buttons };
 }
 /**
@@ -233,6 +296,7 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     if (!uid) cardEl.querySelectorAll(".link-user").forEach(el => el.remove());
     else cardEl.querySelector("a.has-tooltip-arrow").dataset.tooltip = `Created by ${creator}`;
     cardEl.querySelector("footer").style.whiteSpace = "nowrap";
+    optionalAnimate(cardEl, ...cardSlideInAnimation);
     return { card: cardEl };
 }
 export function createCustomCollectionCard(collection, id) {
@@ -261,6 +325,7 @@ export function createCustomCollectionCard(collection, id) {
         ]),
         createElement("footer", ["card-footer"], {}, buttons)
     ]);
+    optionalAnimate(cardEl, ...cardSlideInAnimation);
     return { card: cardEl, buttons };
 }
 
@@ -300,7 +365,6 @@ export async function initBulmaModals(modals) {
  */
 export async function bulmaModalPromise(modal) {
     return new Promise(resolve => {
-        document.documentElement.scrollTo({top: 0});
         modal.open();
         modal.onclose = () => resolve(false);
         modal.root.querySelector("footer button").onclick = async () => {

@@ -18,12 +18,12 @@ $custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "
 @import "bulma/sass/utilities/_all";
 @import "bulma/sass/base/_all";
 @import "bulma/sass/elements/box";
-@import "bulma-social/css/all";
 @import "bulma/sass/elements/content";
 @import "bulma/sass/elements/container";
 @import "bulma/sass/elements/tag";
 @import "bulma/sass/elements/title";
 @import "bulma/sass/elements/notification";
+@import "bulma/sass/elements/button";
 @import "bulma/sass/elements/other";
 @import "bulma/sass/components/navbar";
 @import "bulma/sass/components/card";
@@ -36,50 +36,16 @@ $custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "
 @import "bulma/sass/components/message";
 @import "bulma/sass/grid/_all";
 @import "bulma/sass/helpers/_all";
-@import "bulma-slider/src/sass";
-@import "bulma-checkradio/src/sass";
 @import "bulma/sass/form/_all";
 @import "bulma/sass/layout/_all";
+
+// extensions
 @import "bulma-switch/src/sass";
 @import "@creativebulma/bulma-tooltip/src/sass";
-@import "@creativebulma/bulma-divider/src/sass";
 @import "bulma-list/sass/bulma-list";
-@import "bulma/sass/elements/button";
+@import "bulma-extensions.scss";
 
 // NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
-.button.is-floating {
-    width: 60px;
-    height: 60px;
-    border-radius: 100px;
-    text-align: center;
-    font-size: 1.6rem;
-    box-shadow: $box-shadow;
-    z-index: 3;
-    padding: 0;
-    &.is-large {
-        width: 90px;
-        height: 90px;
-        font-size: 2.6rem;
-    }
-    &.is-medium {
-        width: 75px;
-        height: 75px;
-        font-size: 2.2rem;
-    }
-    &.is-small {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
-        border-radius: 50px;
-    }
-    i {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translateY(-50%) translateX(-50%);
-    }
-}
-
 .icon.is-large i {
     font-size: 36px;
     vertical-align: text-top;

@@ -134,10 +134,15 @@ $theme-color: #795548;
         border-radius: 20px;
         border: transparent;
     }
-    .is-thumb-only {
+    &.is-thumb-only {
         --track: transparent;
         --thumb: #6b473c;
     }
+}
+
+textarea {
+    @extend .custom-scrollbar;
+    @extend .is-thumb-only;
 }
 
 body {

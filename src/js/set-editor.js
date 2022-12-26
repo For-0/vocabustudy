@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals } from "./utils.js";
+import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements } from "./utils.js";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
 // TODO Add transitions for removal, reordering
@@ -205,6 +205,7 @@ function checkInputDuplicates() {
 }
 function createTimelineDetail(detailContent) {
     let detailInput = createTextFieldWithHelper("Detail", null, {maxLength: 500, value: detailContent, required: true});
+    detailInput.textField.style.width = "90%";
     let listItem = createElement("div", ["list-item"], {}, [
         createElement("div", ["list-item-content"], {}, [detailInput.textField]),
         createElement("div", ["list-item-controls"], {}, [
@@ -245,8 +246,8 @@ function createTermInput(term) {
         termField.textField.querySelector("input").value = term.term;
         definitionField.textField.querySelector("input").value = term.definition;
         termInput.addEventListener("change", () => checkInputDuplicates());
-        deleteButton.addEventListener("click", () => termInput.remove());
-        deleteButtonMobile.addEventListener("click", () => termInput.remove());
+        deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
+        deleteButtonMobile.addEventListener("click", () => zoomOutRemove(termInput));
     } else if (setType === 1) {
         let [name, date] = term.term.split("\x00");
         let inputName = createTextFieldWithHelper("Event", null, {required: true, maxLength: 500, value: name || ""});
@@ -254,9 +255,9 @@ function createTermInput(term) {
         let details = term.definition.split("\x00");
         let detailInputs = details.map(createTimelineDetail);
         let deleteButton = createElement("button", ["delete"], {type: "button"});
-        deleteButton.addEventListener("click", () => termInput.remove())
-        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column"], {}, [
-            createElement("div", ["panel", "editor-timeline-piece"], {}, [
+        deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
+        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column", "is-relative"], {}, [
+            createElement("div", ["panel", "editor-timeline-piece", "has-background-white"], {}, [
                 createElement("p", ["panel-heading"], {}, [
                     createElement("div", ["columns"], {}, [
                         createElement("div", ["column", "is-two-thirds"], {}, [inputName.textField]),
@@ -265,14 +266,14 @@ function createTermInput(term) {
                 ]),
                 createElement("div", ["panel-block", "list", "details-container"], {}, detailInputs),
                 createElement("div", ["panel-block", "is-flex", "is-justify-content-space-between"], {}, [
-                    createElement("button", ["button"], {title: "Move Left", type: "button"}, [
+                    createElement("button", ["button", "btn-move"], {title: "Move Left", type: "button"}, [
                         createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_before"})])
                     ]),
                     createElement("button", ["button"], {title: "Add Detail", type: "button"}, [
                         createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "add"})]),
                         createElement("span", [], {innerText: "Detail"})
                     ]),
-                    createElement("button", ["button"], {title: "Move Right", type: "button"}, [
+                    createElement("button", ["button", "btn-move"], {title: "Move Right", type: "button"}, [
                         createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_next"})])
                     ])
                 ]),
@@ -280,38 +281,51 @@ function createTermInput(term) {
             ])
         ]);
         let actionButtons = [...termInput.querySelectorAll('.panel-block > button')];
-        actionButtons[0].addEventListener("click", () => {
-            if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
+        actionButtons[0].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[2].disabled = true;
+            if (termInput.previousElementSibling) {
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.previousElementSibling);
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false);
+            }
+            actionButtons[0].disabled = actionButtons[2].disabled = false;
         });
         actionButtons[1].addEventListener("click", () => {
             termInput.querySelector(".details-container").insertBefore(createTimelineDetail(""), termInput.querySelector(".details-container").lastElementChild);
         });
-        actionButtons[2].addEventListener("click", () => {
-            if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
-            else fields.terms.appendChild(termInput);
+        actionButtons[2].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[2].disabled = true;
+            if (termInput.nextElementSibling) {
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.nextElementSibling);
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false);
+            }
+            actionButtons[0].disabled = actionButtons[2].disabled = false;
         });
     } else if (setType === 2) {
         let inputName = createTextFieldWithHelper("Title", null, {required: true, maxLength: 500, value: term.title || ""});
         /** @type {HTMLElement} */
         let bodyInput;
         let deleteButton = createElement("button", ["delete"], {type: "button"});
-        deleteButton.addEventListener("click", () => termInput.remove());
+        deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
         let actionButtons = [
-            createElement("button", ["button"], {title: "Move Left", type: "button"}, [
+            createElement("button", ["button", "btn-move"], {title: "Move Left", type: "button"}, [
                 createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_before"})])
             ]),
-            createElement("button", ["button"], {title: "Move Right", type: "button"}, [
+            createElement("button", ["button", "btn-move"], {title: "Move Right", type: "button"}, [
                 createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_next"})])
             ])
         ];
-        if (term.type === 0)
-            bodyInput = createElement("div", ["field"], {}, [
+        if (term.type === 0) {
+            bodyInput = createElement("div", ["field", "is-flex", "is-flex-direction-column"], {}, [
                 createElement("label", ["label"], {innerText: "Item Body:"}),
-                createElement("div", ["control"], {}, [
-                    createElement("textarea", ["textarea"], {required: true, rows: 3, cols: 40, value: term.body || ""})
+                createElement("div", ["control", "is-flex-grow-1"], {}, [
+                    createElement("textarea", ["textarea"], {required: true, cols: 40, rows:4, value: term.body || ""})
                 ])
             ]);
-        else if (term.type === 1) {
+            bodyInput.style.height = "100%";
+            bodyInput.querySelector("textarea").style.height = "100%";
+        } else if (term.type === 1) {
             bodyInput = createElement("div", ["list"], {}, [
                 ...term.questions.map(el => createElement("quiz-question", [], {initialQuestion: el})),
                 createElement("p", ["has-text-centered", "has-workaround"], {innerText: "MC: First is correct, SA: All are correct"})
@@ -323,24 +337,35 @@ function createTermInput(term) {
             actionButtons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [], type: 0}}), bodyInput.lastElementChild));
         } else return;
         bodyInput.style.width = "100%";
-        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column"], {}, [
-            createElement("div", ["panel", "editor-study-piece"], {}, [
+        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column", "is-relative"], {}, [
+            createElement("div", ["panel", "editor-study-piece", "has-background-white"], {}, [
                 createElement("p", ["panel-heading"], {}, [inputName.textField]),
-                createElement("div", ["panel-block", "details-container"], {}, [bodyInput]),
+                createElement("div", ["panel-block", "details-container", "is-flex-grow-1"], {}, [bodyInput]),
                 createElement("div", ["panel-block", "is-flex", "is-justify-content-space-between"], {}, actionButtons),
                 deleteButton
             ])
         ]);
-        actionButtons[0].addEventListener("click", () => {
-            if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
+        actionButtons[0].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = true;
+            if (termInput.previousElementSibling) {
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.previousElementSibling);
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false); // they've been switched so use nextElementSibling
+            }
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = false;
         });
-        actionButtons[1 + term.type].addEventListener("click", () => {
-            if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
-            else fields.terms.appendChild(termInput);
+        actionButtons[1 + term.type].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = true;
+            if (termInput.nextElementSibling) {
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.nextElementSibling);
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false);
+            }
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = false;
         });
         termInput.dataset.type = term.type;
     }
-    if (termInput) fields.terms.appendChild(termInput);
+    if (termInput) optionalAnimate(fields.terms.appendChild(termInput), ...cardSlideInAnimation);
 }
 document.addEventListener("change", () => changesSaved = false);
 function goBack() {
