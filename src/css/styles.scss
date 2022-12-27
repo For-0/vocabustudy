@@ -354,3 +354,17 @@ body > footer {
 .nohuechange {
     filter: hue-rotate(calc(var(--hue-rotated, 0) * -1deg)) !important; // TODO after bulma rename to ignore-user-hue
 }
+.page-loader {
+    background-color: white;
+    position: absolute;
+    top: 80px; // right below the styled header
+    width: 100%;
+    height: calc(100% - 80px);
+    z-index: 2;
+    .loader-container {
+        position: fixed;
+        top: 50vh;
+        left: 50vw;
+        transform: translateX(-50%) translateY(-50%);
+    }
+}

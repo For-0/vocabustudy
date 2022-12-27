@@ -43,6 +43,7 @@ $custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "
 @import "bulma-switch/src/sass";
 @import "@creativebulma/bulma-tooltip/src/sass";
 @import "bulma-list/sass/bulma-list";
+@import "bulma-quickview/src/sass";
 @import "bulma-extensions.scss";
 
 // NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
@@ -72,7 +73,7 @@ strong {
 .is-filled {
     --font-variation-fill: 1;
 }
-.button:not(.is-floating):not(.is-ghost):not(.is-inverted) .material-symbols-rounded {
+:is(.button:not(.is-floating):not(.is-ghost):not(.is-inverted), .tabs) .material-symbols-rounded {
     font-size: 1rem;
     vertical-align: sub;
 }
@@ -137,4 +138,11 @@ strong {
 }
 .navbar-divider:has(+ [hidden] + [hidden] + [hidden]) {
     display: none;
+}
+.tabs-content li {
+    display: none;
+    list-style: none;
+    &.is-active {
+        display: block;
+    }
 }

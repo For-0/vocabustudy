@@ -5,34 +5,48 @@ block variables
 block main-stylesheet
     link(rel="stylesheet" href="css/guide-detail.scss")
 block content
-    .page#home
+    .page.is-relative#home
         h1
             span.field-name
-            button.button.button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") favorite_border
-                span.button__label Like
-            p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
+            button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
+                span.icon
+                    i.material-symbols-rounded(aria-hidden="true") thumb_up
+                span.ml-1 Like
+            p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
                 span.field-num-terms
                 |  items
         p.field-description
-        .field-term-navigation.custom-scrollbar
-        .field-terms.nohuechange
-        details(style="margin-top: 1rem; float: left; width: 100%;")
-            summary
-                h2.title.is6(style="display: inline;") Comments
-            .comments-container.set-container(data-empty="No Comments. Post one!")
-            .field-comment(hidden)
-                label.mdc-text-field.mdc-text-field--filled
-                    span.mdc-text-field__ripple
-                    span.mdc-floating-label Comment
-                    input.mdc-text-field__input(type="text" required maxlength="500")
-                    span.mdc-line-ripple
-                button.button.button--outlined(type="button" style="display: block;" disabled)
-                    span.button__ripple
-                    span.button__label Save
+        .page-loader
+            .loader-container
+                span.loader.is-size-1
+        .tabs-wrapper
+            .tabs.is-boxed
+                ul
+            .tabs-content
+                ul
+        button.button.is-info.is-outlined.btn-show-comments(style="position: absolute; right: 1rem; bottom: 0;")
+            span.icon
+                i.material-symbols-rounded.is-filled forum
+            span Comments
+        .quickview(style="transition-duration: 0.1s;")
+            header.quickview-header
+                p.title 
+                    span.icon.mr-2.has-text-primary
+                        i.material-symbols-rounded.is-filled(style="font-size: 1rem; vertical-align: middle;") forum
+                    | Comments
+                span.delete
+            .quickview-body
+                .list.has-hoverable-list-items
+            footer.quickview-footer.py-3
+                .is-flex-grow-1.loggedin(hidden)
+                    label.label(for="input-user-comment") Your Comment
+                    .field.has-addons
+                        p.control.is-expanded
+                            input.input(type="text" required maxlength="500" id="input-user-comment")
+                        p.control
+                            button.button.is-success.is-outlined(type="button" disabled) Save
+                p.loggedout(hidden) Log in to comment on this set!
 append scripts-footer
-    aside.mdc-snackbar#snackbar-comment-saved
-        .mdc-snackbar__surface(role="status" aria-relevant="additions")
-            .mdc-snackbar__label(aria-atomic="false") Comment saved!
+    script.
+        window.bulmaOptions = {autoParseDocument: false}
     script(src="js/guide-detail.js" type="module")

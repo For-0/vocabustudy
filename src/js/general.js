@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
-import { fetchAndActivate, getRemoteConfig } from "firebase/remote-config";
 
 function setLoginButtonsState(state, isAdmin) {
     document.querySelectorAll(".loggedin").forEach(el => el.hidden = !state);
@@ -27,7 +26,7 @@ const firebaseConfig = {
 /**
  * Callback for when remote config has been activated
  * @callback remoteConfigActivatedCallback
- * @param {import("firebase/remote-config").RemoteConfig} remoteConfig The remote config instance
+ * @param {import("firebase/remote-config").RemoteConfig?} remoteConfig The remote config instance. Null if remote config is unavailable (like if indexeddb is not available)
  */
 
 /**
@@ -35,7 +34,7 @@ const firebaseConfig = {
  * @param {authStateChangedCallback} authStateChangedCallback 
  * @param {remoteConfigActivatedCallback} remoteConfigActivatedCallback 
  */
-export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = () => {}) {
+export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = null) {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = initializeAuth(app, {
@@ -43,8 +42,20 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         popupRedirectResolver: browserPopupRedirectResolver
     });
     auth.setPersistence(browserLocalPersistence);
-    //const analytics = getAnalytics(app);
-    const remoteConfig = getRemoteConfig(app);
+    if (remoteConfigActivatedCallback !== null) {
+        import("firebase/remote-config").then(async ({getRemoteConfig, fetchAndActivate}) => {
+            let remoteConfig = getRemoteConfig(app);
+            remoteConfig.settings.minimumFetchIntervalMillis = 172800000; //-> two days
+            remoteConfig.defaultConfig = {
+                featuredSets: []
+            };
+            await fetchAndActivate(remoteConfig)
+            remoteConfigActivatedCallback(remoteConfig);
+        }).catch(err => {
+            console.warn(`Error while activating Remote Config: ${err}`);
+            remoteConfigActivatedCallback(null);
+        });
+    }
     
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") {
         connectAuthEmulator(auth, "http://localhost:9099", {disableWarnings: true});
@@ -61,14 +72,6 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         window.sentrySetUser?.call(window, user);
         if (user) setLoginButtonsState(true, (await user.getIdTokenResult()).claims.admin); else setLoginButtonsState(false, false);
         authStateChangedCallback(user);
-    });
-    remoteConfig.settings.minimumFetchIntervalMillis = 172800000; //-> two days
-    remoteConfig.defaultConfig = {
-        featuredSets: []
-    };
-    fetchAndActivate(remoteConfig).then(() => remoteConfigActivatedCallback(remoteConfig)).catch(err => {
-        console.log(`Error while activating Remote Config: ${err}`);
-        remoteConfigActivatedCallback(null);
     });
     return {app, db, auth};
 }

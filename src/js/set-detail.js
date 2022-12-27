@@ -12,7 +12,7 @@ import { sanitize } from "dompurify";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import { marked } from "marked";
 import initialize from "./general.js";
-import { createElement, normalizeAnswer } from "./utils.js";
+import { createElement, normalizeAnswer, checkAnswers } from "./utils.js";
 import fitty from "fitty";
 
 class AccentKeyboard extends HTMLElement {
@@ -1097,11 +1097,6 @@ function makeRandomGroups(max, numGroups, aMax) {
     let extra = numIncluded % numGroups;
     let groups = Array(numGroups).fill(baseVal).fill(baseVal + 1, 0, extra).map(el => nums.splice(0, el));
     return groups;
-}
-function checkAnswers(answer, correct) {
-    let cleanAnswer = normalizeAnswer(answer).toUpperCase();
-    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
-    return possibleCorrect.includes(cleanAnswer);
 }
 function getOffset(el) {
     let rect = el.getBoundingClientRect();

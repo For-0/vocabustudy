@@ -260,7 +260,7 @@ block content
         .has-text-centered
             p.title.is-4 Check out our YouTube channel #[a(href="https://www.youtube.com/@forzero") here!]
             p Our channel is a work in progress, so we don't have much content as of now. However, we'll be adding more content soon, so #[b stay tuned]!
-            iframe(width="650" height="450" src="https://www.youtube.com/embed/vZMAcyIOIok" title="YouTube Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen).nohuechange
+            iframe(width="650" height="450" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/vZMAcyIOIok?autoplay=1><img src=https://img.youtube.com/vi/vZMAcyIOIok/hqdefault.jpg alt='What is Vocabustudy'><span>▶</span></a>" title="YouTube Video Player" frameborder="0" allow="autoplay; clipboard-write; picture-in-picture" allowfullscreen).nohuechange
     .page.homepage-lead#home
         div.custom-scrollbar
             div

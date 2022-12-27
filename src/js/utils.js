@@ -26,6 +26,11 @@ const zoomOutAnimation = [
 export function normalizeAnswer(answer) {
     return answer.replace(ignoredCharsRE, "").replace(mdLinkRE, "").trim();
 }
+export function checkAnswers(answer, correct) {
+    let cleanAnswer = normalizeAnswer(answer).toUpperCase();
+    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
+    return possibleCorrect.includes(cleanAnswer);
+}
 export function toLocaleDate(dateData) {
     switch (typeof dateData) {
         case "number": return new Date(dateData * 1000).toLocaleString();
@@ -44,7 +49,7 @@ export function toLocaleDate(dateData) {
 export function createElement(type, classes = [], attrs = {}, children = []) {
     let el = document.createElement(type);
     if (classes.length) el.classList.add(...classes);
-    Object.keys(attrs).forEach(key => el[key] = attrs[key]);
+    Object.keys(attrs).forEach(key => ["style", "dataset"].includes(key) ? Object.keys(attrs[key]).forEach(subkey => el[key][subkey] = attrs[key][subkey]) : el[key] = attrs[key]);
     for (let child of children) el.appendChild(child);
     return el;
 }
@@ -375,4 +380,13 @@ export async function bulmaModalPromise(modal) {
             }
         }
     });
+}
+/**
+ * Initialize click listeners for a quickview
+ * @param {HTMLDivElement} quickview 
+ * @param {HTMLButtonElement} toggleButton The button that will toggle the quickview visibility
+ */
+export function initQuickview(quickview, toggleButton) {
+    toggleButton.addEventListener("click", () => quickview.classList.toggle("is-active"));
+    quickview.querySelector(".delete").addEventListener("click", () => quickview.classList.remove("is-active"));
 }

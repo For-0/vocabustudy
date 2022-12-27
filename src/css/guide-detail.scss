@@ -7,22 +7,6 @@
     }
 }
 
-.field-terms {
-    overflow-wrap: break-word;
-    &:empty::after {
-        content: "Loading set...";
-        font-size: larger;
-    }
-}
-.field-term-navigation {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #00000088;
-    --track: transparent;
-    overflow-x: auto;
-    a {
-        margin-right: 1rem;
-    }
-}
 .field-description {
     word-break: break-word;
 }
@@ -35,10 +19,6 @@
 }
 .guide-item {
     width: 100%;
-    display: none;
-}
-.guide-item:target {
-    display: block;
 }
 .likes-badge {
     width: 100%;
@@ -50,7 +30,7 @@
     text-align: center;
     margin-top: .3rem;
 }
-img {
+.page img {
     max-width: 25%;
     max-height: 25%;
     border-radius: 10px;
@@ -59,39 +39,25 @@ img {
 }
 quiz-question {
     &.correct {
-        .mdc-text-field :is(.mdc-notched-outline__leading, .mdc-notched-outline__notch, .mdc-notched-outline__trailing) {
-            border-color: currentColor !important;
-            color: green !important;
+        .input {
+            border-color: #48c78e;
         }
-        .mdc-radio.option-correct +label {
-            color: green !important;
-        }
-        .mdc-radio.option-correct :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
-            border-color: green !important;
-        }
-        .mdc-text-field .mdc-floating-label {
-            color: inherit;
+        .is-checkradio.option-correct + label::after {
+            background-color: #48c78e;
         }
     }
     &.incorrect {
-        .mdc-text-field :is(.mdc-notched-outline__leading, .mdc-notched-outline__notch, .mdc-notched-outline__trailing) {
-            border-color: currentColor !important;
-            color: red !important;
+        .input {
+            border-color: #f14668;
         }
-        .mdc-text-field .mdc-floating-label {
-            color: inherit;
+        .help {
+            color: #f14668;
         }
-        .mdc-radio:has(input:checked) +label {
-            color: red !important;
+        .is-checkradio:checked + label::after {
+            background-color: #f14668;
         }
-        .mdc-radio input:checked + div :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
-            border-color: red !important;
-        }    
-        .mdc-radio.option-correct +label {
-            color: green !important;
+        .is-checkradio.option-correct + label::before {
+            border-color: #48c78e;
         }
-        .mdc-radio.option-correct :is(.mdc-radio__outer-circle, .mdc-radio__inner-circle) {
-            border-color: green !important;
-        }    
     }
 }
