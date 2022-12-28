@@ -132,8 +132,10 @@
     }
 }
 
-#credits ul > li {
-    margin-bottom: 1rem;
+#credits  {
+    ul > li {
+        margin-bottom: 1rem;
+    }
 }
 #login {
     &::after {
