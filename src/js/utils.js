@@ -1,4 +1,6 @@
+import { sanitize } from "dompurify";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
+import { marked } from "marked";
 
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
@@ -38,16 +40,25 @@ export function toLocaleDate(dateData) {
     }
 }
 /**
+ * Apply markdown styling 
+ * @param {string} text 
+ * @param {boolean} inline 
+ * @returns {string} The styled text, which can safely be applied to inner HTML
+ */
+export function styleAndSanitize(text, inline=false) {
+    return sanitize(marked[inline ? "parseInline" : "parse"](text), { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] });
+}
+/**
  * Creates an element
  * @template {keyof HTMLElementTagNameMap} T
- * @param {T} type The node type
+ * @param {T|[T, string]} type The node type
  * @param {String[]} classes Classes to apply to the element
  * @param {HTMLElementTagNameMap[T]} attrs Attributes on the element to apply
  * @param {HTMLElement[]} children Children of the element
  * @returns {HTMLElementTagNameMap[T]} The created element
  */
 export function createElement(type, classes = [], attrs = {}, children = []) {
-    let el = document.createElement(type);
+    let el = document.createElement(...(typeof type === "string") ? [type] : [type[0], {is: type[1]}]); // if it's a string, just pass it in. if it's not, assume it's a custom element
     if (classes.length) el.classList.add(...classes);
     Object.keys(attrs).forEach(key => ["style", "dataset"].includes(key) ? Object.keys(attrs[key]).forEach(subkey => el[key][subkey] = attrs[key][subkey]) : el[key] = attrs[key]);
     for (let child of children) el.appendChild(child);

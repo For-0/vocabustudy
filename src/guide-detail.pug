@@ -24,28 +24,7 @@ block content
                 ul
             .tabs-content
                 ul
-        button.button.is-info.is-outlined.btn-show-comments(style="position: absolute; right: 1rem; bottom: 0;")
-            span.icon
-                i.material-symbols-rounded.is-filled forum
-            span Comments
-        .quickview(style="transition-duration: 0.1s;")
-            header.quickview-header
-                p.title 
-                    span.icon.mr-2.has-text-primary
-                        i.material-symbols-rounded.is-filled(style="font-size: 1rem; vertical-align: middle;") forum
-                    | Comments
-                span.delete
-            .quickview-body
-                .list.has-hoverable-list-items
-            footer.quickview-footer.py-3
-                .is-flex-grow-1.loggedin(hidden)
-                    label.label(for="input-user-comment") Your Comment
-                    .field.has-addons
-                        p.control.is-expanded
-                            input.input(type="text" required maxlength="500" id="input-user-comment")
-                        p.control
-                            button.button.is-success.is-outlined(type="button" disabled) Save
-                p.loggedout(hidden) Log in to comment on this set!
+        include includes/comment-quickview
 append scripts-footer
     script.
         window.bulmaOptions = {autoParseDocument: false}

@@ -226,17 +226,16 @@ block content
             br
             p.title.is-size-5 Vocabustudy was built with the following:
             br
-            // TODO add software credits (bulma, Firebase, Raleway) -> Done?
-            .py-4.box.has-background-primary-light(style="text-align: center; height: auto;")
+            .py-4.box.has-background-primary-light.has-text-centered(style="height: auto;")
                 div.tile.is-ancestor.is-5
                     div.tile.is-vertical.is-parent
                         div.tile.is-child
-                            button.button(style="font-size: 4rem; background: white; border-radius: 6px; height: 100px; border-color: white;") Raleway Font
+                            button.button.has-background-white.is-static.has-text-black(style="font-size: 4rem; border-radius: 6px; height: 100px; border-color: white;") Raleway Font
                         div.tile.is-child
-                            img(src="https://bulma.bootcss.com/images/made-with-bulma--semiblack.png" style="height: 100px; margin-top: auto; margin-bottom: auto; background: white; border-radius: 6px;")
+                            img.my-auto.has-background-white(src="images/made-with-bulma.png?as=webp&height=100" style="border-radius: 6px; height: 100px;")
                     div.tile.is-parent
                         div.tile.is-child
-                            img(src="https://firebase.google.com/static/downloads/brand-guidelines/SVG/logo-built_white.svg" style="height: 220px; flex: none;")
+                            img(src="images/built-with-firebase.svg" style="height: 220px")
             ul(style="margin-bottom: 2rem; margin-top: 1rem;")
                 li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
                 li Thank you to all moderators and helpers on the Vocabustudy Discord Server.
@@ -393,5 +392,5 @@ append scripts-footer
                 p Set Color:
                 input.slider.is-fullwidth.is-primary(min="0" max="360" type="range" value="0")
             footer.modal-card-foot
-                button.button.is-primary.btn-change-hue-close(type="button") OK
+                button.button.is-primary.action-close(type="button") OK
     script(src="js/index.js" type="module")

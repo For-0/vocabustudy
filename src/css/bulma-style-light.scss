@@ -47,6 +47,7 @@ $custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "
 @import "bulma-extensions.scss";
 
 // NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
+// The only exception (for things like kbd) is for when something depends on a bulma variable;=
 .icon.is-large i {
     font-size: 36px;
     vertical-align: text-top;
@@ -74,8 +75,10 @@ strong {
     --font-variation-fill: 1;
 }
 :is(.button:not(.is-floating):not(.is-ghost):not(.is-inverted), .tabs) .material-symbols-rounded {
-    font-size: 1rem;
-    vertical-align: sub;
+    font-size: inherit;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%)translateX(-50%);
 }
 .button {
     transition: 0.1s all;
@@ -145,4 +148,22 @@ strong {
     &.is-active {
         display: block;
     }
+}
+.quickview {
+    max-width: unset;
+}
+kbd {
+    margin: 0px 0.1em;
+    padding: 0.1em 0.6em;
+    border-radius: 3px;
+    border: 1px solid rgb(204, 204, 204);
+    color: rgb(51, 51, 51);
+    line-height: 1.4;
+    font-family: $family-monospace;
+    font-size: 10px;
+    display: inline-block;
+    box-shadow: 0px 1px 0px rgba(0,0,0,0.2), inset 0px 0px 0px 2px #ffffff;
+    background-color: rgb(247, 247, 247);
+    text-shadow: 0 1px 0 #fff;
+    vertical-align: middle;
 }

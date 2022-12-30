@@ -1,8 +1,6 @@
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview } from "./utils.js";
-import { sanitize } from "dompurify";
-import { marked } from "marked";
+import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize } from "./utils.js";
 import { toast } from "bulma-toast";
 import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
 
@@ -43,7 +41,7 @@ class QuizQuestion extends HTMLElement {
         let optionId = `_${crypto.randomUUID()}`;
         let radioButton = this.appendChild(createElement("div", ["field"], {}, [
             createElement("input", ["is-checkradio"], {id: optionId, required: true, type: "radio", name: this.questionId}),
-            createElement("label", [], {htmlFor: optionId, innerHTML: sanitize(marked.parseInline(answer), sanitizerOpts)})
+            createElement("label", [], {htmlFor: optionId, innerHTML: styleAndSanitize(answer, true)})
         ]));
         return radioButton.firstElementChild;
     }
@@ -54,7 +52,7 @@ class QuizQuestion extends HTMLElement {
         return input.textField;
     }
     showQuestion() {
-        this.appendChild(createElement("p", ["is-size-5"], { innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`), sanitizerOpts) }));
+        this.appendChild(createElement("p", ["is-size-5"], { innerHTML: styleAndSanitize(`**${this.question.question}**`, true) }));
         if (this.question.type == 0) {
             let shuffledOptions = [...this.question.answers];
             shuffle(shuffledOptions);
@@ -82,8 +80,6 @@ const { db, auth } = initialize(async user => {
 });
 const [, setId] = decodeURIComponent(location.pathname).match(/\/guide\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
-/** @type {DOMPurify.Config} */
-const sanitizerOpts = { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] };
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
 /**
@@ -126,8 +122,8 @@ function createItem(item, index) {
     if (index === 0) navBtn.classList.add("is-active");
     if (item.type === 0) {
         let cardEl = createElement("li", ["guide-item"], {}, [
-            createElement("h2", ["title", "is-4"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
-            createElement("div", [], { innerHTML: sanitize(marked.parse(item.body), sanitizerOpts) })
+            createElement("h2", ["title", "is-4"], { innerHTML: styleAndSanitize("# " + item.title) }),
+            createElement("div", [], { innerHTML: styleAndSanitize(item.body) })
         ]);
         if (index === 0) cardEl.classList.add("is-active");
         return pages.setOverview.terms.appendChild(cardEl);
@@ -135,7 +131,7 @@ function createItem(item, index) {
         let questionEls = item.questions.map(question => createElement("quiz-question", [], { question }));
         let btnCheck = createElement("div", ["mt-4"], {}, [createElement("button", ["button", "is-primary"], {innerText: "Check"})]);
         let cardEl = createElement("li", ["guide-item"], {}, [
-            createElement("h2", ["title", "is-4"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
+            createElement("h2", ["title", "is-4"], { innerHTML: styleAndSanitize("# " + item.title) }),
             createElement("div", [], {}, [...questionEls, btnCheck])
         ]);
         btnCheck.firstElementChild.addEventListener("click", () => {
@@ -178,7 +174,7 @@ function createCommentCard({ name, comment, like }, id) {
                         ])] : [])
                     ])
                 ]),
-                createElement("div", ["list-item-description"], {innerHTML: sanitize(marked.parseInline(comment), sanitizerOpts)})
+                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment, true)})
             ])
         ]));
 }
@@ -204,7 +200,7 @@ addEventListener("DOMContentLoaded", async () => {
 
         // Events
         pages.setOverview.name.innerText = currentSet.name;
-        pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""), sanitizerOpts)
+        pages.setOverview.description.innerHTML = styleAndSanitize(currentSet.description || "");
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let [i, term] of currentSet.terms.entries()) createItem(term, i);
         new Tabs(document.querySelector("#home .tabs-wrapper")).tabs();

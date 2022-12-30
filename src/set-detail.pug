@@ -10,61 +10,41 @@ block content
     .page#flashcards
         h1 Flashcards - 
             span
-            p.mdc-typography--subtitle1(style="margin: 0;")
+            p.is-size-6.has-text-weight-bold(style="line-height: normal;")
                 span 0
                 |  / 
                 span 0
                 |  terms
-        div
-            div
-                p
-                    strong Answer With:
-                div
-                    .mdc-form-field.answer-with
-                        .mdc-radio.mdc-radio--touch
-                            input#radio-flashcards-answer-term.mdc-radio__native-control(type='radio', name='radio-flashcards-answer-with')
-                            .mdc-radio__background
-                                .mdc-radio__outer-circle
-                                .mdc-radio__inner-circle
-                            .mdc-radio__ripple
-                        label(for='radio-flashcards-answer-term') Term
-                div
-                    .mdc-form-field.answer-with
-                        .mdc-radio.mdc-radio--touch
-                            input#radio-flashcards-answer-definition.mdc-radio__native-control(type='radio', name='radio-flashcards-answer-with', checked='')
-                            .mdc-radio__background
-                                .mdc-radio__outer-circle
-                                .mdc-radio__inner-circle
-                            .mdc-radio__ripple
-                        label(for='radio-flashcards-answer-definition') Definition
-                div
-                    .mdc-form-field.check-starred
-                        .mdc-checkbox
-                            input.mdc-checkbox__native-control(type="checkbox" id="check-flashcard-starred")
-                            .mdc-checkbox__background
-                                svg.mdc-checkbox__checkmark(viewBox="0 0 24 24")
-                                    path.mdc-checkbox__checkmark-path(fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59")
-                                .mdc-checkbox__mixedmark
-                            .mdc-checkbox__ripple
-                        label(for="check-flashcard-starred") Only Starred
-                button.button.button--icon-leading.button--outlined(style='display: block; margin-bottom: 8px')
-                    span.button__ripple
-                    i.material-symbols-rounded.button__icon(aria-hidden='true') loop
-                    span.button__label Shuffle
-            div
-        div
-            button#btn-previous-flashcard.button.button--icon-leading.button--outlined
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_back
-                span.button__label Previous (Left Arrow)
-            button#btn-flip-flashcard.button.button--icon-leading.button--raised
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden='true') change_circle
-                span.button__label Flip (Space)
-            button#btn-next-flashcard.button.button--icon-trailing.button--outlined
-                span.button__ripple
-                span.button__label Next (Right Arrow)
-                i.material-symbols-rounded.button__icon(aria-hidden='true') arrow_forward
+        .columns.is-flex-touch
+            .is-flex.column.is-narrow
+                p.mb-2 #[strong Answer With:]
+                .field
+                    input#radio-flashcards-answer-term.is-checkradio(type="radio" name="radio-flashcards-answer-with")
+                    label(for="radio-flashcards-answer-term") Term
+                .field.mb-4
+                    input#radio-flashcards-answer-definition.is-checkradio(type="radio" name="radio-flashcards-answer-with")
+                    label(for="radio-flashcards-answer-definition") Definition
+                .field
+                    input#check-flashcard-starred.is-checkradio(type="checkbox")
+                    label(for="check-flashcard-starred") Only Starred
+                div.mt-auto
+                    button.button
+                        span.icon
+                            i.material-symbols-rounded loop
+                        span Shuffle
+            .column.is-flex.is-flex-direction-column
+                .is-flex-grow-1.is-clickable.is-relative
+                .is-flex.mt-5.is-justify-content-space-evenly
+                    button.button
+                        kbd.is-hidden-touch.mr-1 ←
+                        span Previous
+                    button.button.is-primary
+                        span.icon
+                            i.material-symbols-rounded.is-filled change_circle
+                        span Flip #[kbd.is-hidden-touch Space]
+                    button.button
+                        span Next
+                        kbd.is-hidden-touch.ml-1 →
     .page#learn
         h1.title.is4
             | Learn - 
@@ -363,56 +343,48 @@ block content
             div
                 .custom-scrollbar
                 .custom-scrollbar
-    .page#home
+    .page.is-relative#home.is-flex-direction-column(style="--page-display: flex;")
         h1
             span.field-name
-            button.button.button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") favorite_border
-                span.button__label Like
-            p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
+            button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
+                span.icon
+                    i.material-symbols-rounded(aria-hidden="true") thumb_up
+                span.ml-1 Like
+            p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
                 span.field-num-terms
                 |  terms
         p.field-description
-        .field-terms
-        .study-modes
-            a.button.button--raised.button--leading(style="--mdc-typography-button-font-size: .85rem;" href="#flashcards")
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") collections
-                span.button__label Flashcards
-            a.button.button--outlined.button--leading(href="#learn")
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") quiz
-                span.button__label Learn
-            a.button.button--outlined.button--leading(href="#test")
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") assignment
-                span.button__label Test
-            a.button.button--outlined.button--leading(href="#match")
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") attach_file
-                span.button__label Match
-            button.button.button--outlined.button--leading.btn-export-terms
-                span.button__ripple
-                i.material-symbols-rounded.button__icon(aria-hidden="true") file_download
-                span.button__label Export
-        details(style="margin-top: 1rem; float: left; width: 100%;")
-            summary
-                h2.title.is6(style="display: inline;") Comments
-            .comments-container.set-container(data-empty="No Comments. Post one!")
-            .field-comment(hidden)
-                label.mdc-text-field.mdc-text-field--filled
-                    span.mdc-text-field__ripple
-                    span.mdc-floating-label Comment
-                    input.mdc-text-field__input(type="text" required maxlength="500")
-                    span.mdc-line-ripple
-                button.button.button--outlined(type="button" style="display: block;" disabled)
-                    span.button__ripple
-                    span.button__label Save
+        hr.my-3
+        .columns.main-content.is-flex-direction-row-reverse.is-flex-grow-1.custom-scrollbar.is-thumb-only(style="overflow: auto; overflow-wrap: break-word;")
+            .column.is-narrow
+                .study-modes.box.buttons.are-medium.custom-scrollbar.is-thumb-only(style="width: min-content; height: 100%; overflow: auto;")
+                    a.button.is-primary.is-fullwidth(href="#flashcards")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") collections
+                        span Flashcards
+                    a.button.is-primary.is-outlined.is-fullwidth(href="#learn")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") quiz
+                        span Learn
+                    a.button.is-primary.is-outlined.is-fullwidth(href="#test")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") assignment
+                        span Test
+                    a.button.is-primary.is-outlined.is-fullwidth(href="#match")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") attach_file
+                        span Match
+                    button.button.is-normal.btn-export-terms.is-fullwidth
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") file_download
+                        span Export
+            .column.custom-scrollbar.is-thumb-only(style="overflow: auto;")
+                .field-terms.columns.is-multiline
+        .page-loader
+            .loader-container
+                span.loader.is-size-1
+        include includes/comment-quickview
 append scripts-footer
-    aside.mdc-snackbar#snackbar-comment-saved
-        .mdc-snackbar__surface(role="status" aria-relevant="additions")
-            .mdc-snackbar__label(aria-atomic="false") Comment saved!
     .mdc-dialog#modal-match-done
         .mdc-dialog__container
             .mdc-dialog__surface(role="alertdialog" aria-modal="true")
@@ -431,32 +403,51 @@ append scripts-footer
                     button.button.mdc-dialog__button(type="button" data-mdc-dialog-action="accept")
                         .button__ripple
                         span.button__label Restart
-    .mdc-dialog#modal-export-terms
-        .mdc-dialog__container
-            .mdc-dialog__surface(role="alertdialog" aria-modal="true")
-                h2.mdc-dialog__title Share
-                .mdc-dialog__content.custom-scrollbar(style="--track: transparent;")
-                    h3.mdc-typography--overline Set URL
-                        button.mdc-icon-button.mdc-icon-button--touch.material-icons-round.btn-share(title="Share")
-                            .mdc-icon-button__ripple
-                            | share
-                            .mdc-icon-button__touch
-                    a.share-link(target="_blank" style="max-width: calc(100% - 91px);display: inline-block;word-break: break-all;")
-                    button.mdc-button.btn-shorten-link(type="button" style="float: right;")
-                        span.mdc-button__ripple
-                        span.mdc-button__label Shorten
-                    h3.mdc-typography--overline Export
-                        button.mdc-icon-button.mdc-icon-button--touch.material-icons-round.btn-copy(title="Copy Terms")
-                            .mdc-icon-button__ripple
-                            | content_paste
-                            .mdc-icon-button__touch
-                    p(style="margin: 0;") Paste this into the #[code Import Terms] dialog to copy this set:
-                    pre.custom-scrollbar(style="max-width: 100%;overflow:auto;")
-                    h3.mdc-typography--overline QR Code
-                    #set-qrcode
-                    // TODO qr code copy
-                .mdc-dialog__actions
-                    button.mdc-button.mdc-dialog__button(type="button" data-mdc-dialog-action="close")
-                        .mdc-button__ripple
-                        span.mdc-button__label Close
+    .modal#modal-export-terms
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Share
+                button.delete(aria-label="close")
+            section.modal-card-body.custom-scrollbar.is-thumb-only
+                .list.has-hoverable-list-items
+                    .list-item
+                        .list-item-content
+                            .list-item-title Set URL
+                            .list-item-description
+                                a.share-link(target="_blank" style="word-break: break-all;")
+                        .list-item-controls
+                            .buttons
+                                button.button.btn-copy-link(type="button" title="Copy")
+                                    span.icon
+                                        i.material-symbols-rounded content_paste
+                                button.button.btn-shorten-link(type="button" title="Shorten")
+                                    span.icon
+                                        i.material-symbols-rounded app_shortcut
+                                button.button.btn-share(type="button" title="Share")
+                                    span.icon
+                                        i.material-symbols-rounded share
+                    .list-item
+                        .list-item-content
+                            .list-item-title Export
+                            .list-item-description
+                                p.m-0 Paste this into the #[code Import Terms] dialog to copy this set:
+                                pre.custom-scrollbar(style="max-width: 100%; overflow: auto;")
+                        .list-item-controls
+                            .buttons
+                                button.button.btn-copy(type="button" title="Copy Terms")
+                                    span.icon
+                                        i.material-symbols-rounded content_paste
+                    .list-item
+                        .list-item-content
+                            .list-item-title QR Code
+                            .list-item-description
+                               #set-qrcode
+                        .list-item-controls
+                            .buttons
+                                button.button.btn-copy-qrcode(type="button" title="Copy Terms")
+                                    span.icon
+                                        i.material-symbols-rounded content_paste
+            footer.modal-card-foot
+                button.button.is-success.action-close(type="button") OK
     script(src="js/set-detail.js" type="module")

@@ -249,7 +249,7 @@ main {
     }
 }
 #home, .page:target {
-    display: block;
+    display: var(--page-display, block);
 }
 
 body > footer {

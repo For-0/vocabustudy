@@ -345,6 +345,7 @@ addEventListener("DOMContentLoaded", () => {
         if (collections.length > 10) toast({message: "Warning: You can only choose up to 10 collections!", type: "is-warning", dismissible: true, position: "bottom-center"})
         listPreviewCollections(collections);
     };
+    pages.modals.changeHue.onclose = () => {};
     initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, ...pages.modals.contributers]);
     pages.modals.reauthenticatePassword.validateInput = async () => {
         pages.modals.reauthenticatePasswordInput.setCustomValidity("");
@@ -554,7 +555,6 @@ addEventListener("DOMContentLoaded", () => {
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
     document.querySelector(".btn-change-hue").hidden = false;
     document.querySelectorAll(".button.is-credit").forEach((el, i) => el.addEventListener("click", () => pages.modals.contributers[i].open()))
-    document.querySelector(".btn-change-hue-close").addEventListener("click", () => pages.modals.changeHue.close());
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") pages.login.show();
 });
