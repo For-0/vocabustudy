@@ -1,12 +1,4 @@
 @import "styles.scss";
-.comments-container > .mdc-card {
-    max-width: 25%;
-    .title.is6 {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
 .field-description {
     word-break: break-word;
 }
@@ -20,16 +12,7 @@
 .guide-item {
     width: 100%;
 }
-.likes-badge {
-    width: 100%;
-    color: darkgreen;
-    background-color: #90ee90;
-    border-radius: 5px;
-    padding: .3rem;
-    display: inline-block;
-    text-align: center;
-    margin-top: .3rem;
-}
+
 .page img {
     max-width: 25%;
     max-height: 25%;
@@ -40,24 +23,24 @@
 quiz-question {
     &.correct {
         .input {
-            border-color: #48c78e;
+            border-color: var(--success);
         }
         .is-checkradio.option-correct + label::after {
-            background-color: #48c78e;
+            background-color: var(--success);
         }
     }
     &.incorrect {
         .input {
-            border-color: #f14668;
+            border-color: var(--danger);
         }
         .help {
-            color: #f14668;
+            color: var(--danger);
         }
         .is-checkradio:checked + label::after {
-            background-color: #f14668;
+            background-color: var(--danger);
         }
         .is-checkradio.option-correct + label::before {
-            border-color: #48c78e;
+            border-color: var(--success);
         }
     }
 }

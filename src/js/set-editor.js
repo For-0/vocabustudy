@@ -3,7 +3,7 @@ import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements } from "./utils.js";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
-// TODO Add transitions for removal, reordering
+
 class QuizQuestion extends HTMLElement {
     constructor() {
         super();

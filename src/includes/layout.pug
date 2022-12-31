@@ -16,8 +16,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
         link(rel="apple-touch-icon" href="icons/apple-touch-icon.png")
         block main-stylesheet
             link(rel="stylesheet" href="css/styles.scss")
-        link(rel="stylesheet" href="css/bulma-style-light.scss" id="light-stylesheet")
-        link(rel="stylesheet" href="css/bulma-style-dark.scss" id="dark-stylesheet" disabled)
+        link(rel="stylesheet" href="css/bulma-styles.scss")
         link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200")
         link(rel="preconnect" href="https://fonts.googleapis.com")
         link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
@@ -81,11 +80,11 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 i(style="font-size: 1.5rem; ").material-symbols-rounded.has-text-white brightness_high
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
-                    i.material-symbols-rounded brightness_medium
+                    i.material-symbols-rounded brightness_4
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="Dark")
-                    i.material-symbols-rounded brightness_low
+                    i.material-symbols-rounded dark_mode
                 button.button.is-primary.fab-theme.is-floating(aria-label="Light" title="Light")
-                    i.material-symbols-rounded brightness_high
+                    i.material-symbols-rounded light_mode
                 button.button.is-primary.fab-theme.is-floating.btn-change-hue(hidden aria-label="Hue" title="Set Hue")
                     i.material-symbols-rounded.is-filled palette
         footer.footer.level.is-mobile(style="position: relative;")
@@ -130,18 +129,18 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 setHue(localStorage.getItem("theme_hue"));
                 const themes = ["system", "dark", "light"];
                 function showTheme(theme) {
-                    document.body.classList.remove("theme-dark", "theme-system");
+                    document.documentElement.classList.remove("theme-dark", "theme-system");
                     switch(theme) {
                         case "dark":
-                            fabs.theme.querySelector("i").innerText = "brightness_low";
-                            document.body.classList.add("theme-dark");
+                            fabs.theme.querySelector("i").innerText = "dark_mode";
+                            document.documentElement.classList.add("theme-dark");
                             break;
                         case "system":
-                            fabs.theme.querySelector("i").innerText = "brightness_medium";
-                            document.body.classList.add("theme-system");
+                            fabs.theme.querySelector("i").innerText = "brightness_4";
+                            document.documentElement.classList.add("theme-system");
                             break;
                         case "light":
-                            fabs.theme.querySelector("i").innerText = "brightness_high";
+                            fabs.theme.querySelector("i").innerText = "light_mode";
                             break;
                     }
                 }
@@ -171,6 +170,11 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     });
                     navbar.btnLogout.addEventListener("click", () => window.signOut());
                 });
+
+                let userPrefersDark = matchMedia("(prefers-color-scheme: dark)");
+                document.documentElement.classList.toggle("prefers-dark", userPrefersDark.matches);
+                userPrefersDark.addEventListener("change", e => document.documentElement.classList.toggle("prefers-dark", e.matches));
+
                 fabs.theme.addEventListener("click", e => {
                     e.stopPropagation();
                     fabs.themeContainer.classList.toggle("show")

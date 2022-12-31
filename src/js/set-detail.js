@@ -68,7 +68,7 @@ class StarButton extends HTMLButtonElement {
     connectedCallback() {
         if (this.isConnected && !this.initialized) {
             this.initialized = true;
-            this.classList.add("button", "star-button", "is-inverted", "is-dark");
+            this.classList.add("button", "star-button", "is-inverted", "is-gold");
             this.appendChild(createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "star"})]));
             this.addEventListener("click", () => {
                 this.toggleOn();

@@ -1,0 +1,150 @@
+@charset "utf-0";
+@use "@bulvar/bulma/sass/utilities";
+
+/*! bulmaswatch darkly theme | MIT License | github.com/jenil/bulmaswatch/blob/gh-pages/darkly */
+/* Modified to fit vocabustudy theme */
+html.theme-dark, html.theme-system.prefers-dark {
+    --grey-lighter: #dbdee0;
+    --grey-light: #8c9b9d;
+    --grey: #5e6d6f;
+    --grey-dark: #343c3d;
+    --grey-darker: #282f2f;
+    --white-ter: #ecf0f1;
+    --border: var(--grey);
+    --border-hover: var(--grey-light);
+
+    --body-background-color: #1f2424;
+    --scheme-main: #{utilities.$black};
+    --scheme-main-bis: #{utilities.$black-bis};
+    --scheme-main-ter: #{utilities.$black-ter};
+    --scheme-invert: #{utilities.$white};
+    --scheme-invert-rgb: #{utilities.bulmaToRGB(utilities.$white)};
+    --scheme-invert-bis: #{utilities.$white-bis};
+    --scheme-invert-ter: #{utilities.$white-ter};
+
+    --warning-h: 45deg;
+    --warning-s: 89%;
+    --warning-l: 50%;
+    --success-h: 145deg;
+    --success-s: 63%;
+    --success-l: 49%;
+    --danger-h: 6deg;
+    --danger-s: 78%;
+    --danger-l: 57%;
+    --dark-l: 91%;
+    --light-l: 21%;
+
+    --background: var(--grey-darker);
+    --button-background-color: var(--background);
+    --button-border-color: #4b5858;
+
+    --title-color: #fff;
+    --subtitle-color: var(--grey-light);
+    --subtitle-strong-color: var(--grey-light);
+
+    --text: #e6e4e4;
+    --text-light: #fff;
+    --text-strong: #f2f2f2;
+
+    --box-color: var(--text);
+    --box-background-color: var(--grey-dark);
+
+    --card-background-color: var(--scheme-main-bis);
+    --shadow: none;
+
+    --link: #{utilities.$turquoise};
+    --link-hover: #{utilities.bulmaVarLighten(utilities.$link, 5%)};
+    --link-focus: #{utilities.bulmaVarDarken(utilities.$link, 5)};
+    --link-active: #{utilities.bulmaVarDarken(utilities.$link, 5)};
+    --link-focus-border: var(--grey-light);
+
+    --button-hover-color: var(--text-strong);
+    --button-focus: var(--text-strong);
+    --button-active-color: var(--text-strong);
+    --button-disabled-background-color: var(--grey-light);
+    --input-color: var(--grey-lighter);
+    --input-icon-color: var(--grey);
+    --input-icon-active-color: var(--input-color);
+    --input-hover-color: var(--grey-light);
+    --input-disabled-background-color: var(--grey-dark);
+    --input-disabled-border: var(--grey-lighter);
+
+    --table-color: var(--text);
+    --table-head: var(--grey-lighter);
+    --table-background-color: var(--grey-dark);
+    --table-cell-border: 1px solid var(--grey);
+
+    --table-row-hover-background-color: var(--grey-darker);
+    --table-striped-row-even-background-color: var(--grey-darker);
+    --table-striped-row-even-hover-background-color: #2d3535;
+
+    --pagination-color: var(--link);
+    --pagination-border-color: var(--border);
+
+    --navbar-item-color: var(--text);
+    --navbar-item-hover-color: var(--link);
+    --navbar-item-hover-background-color: transparent;
+    --navbar-item-active-color: var(--link);
+    --navbar-dropdown-arrow: #fff;
+    --navbar-divider-background-color: rgba(255, 255, 255, 0.2);
+    --navbar-dropdown-border-top: 1px solid var(--navbar-divider-background-color);
+    --navbar-dropdown-item-hover-color: var(--grey-lighter);
+    --navbar-dropdown-item-hover-background-color: #000a;
+    --navbar-dropdown-item-active-background-color: transparent;
+    --navbar-dropdown-item-active-color: var(--link);
+
+    --dropdown-content-background-color: var(--background);
+    --dropdown-item-color: var(--text);
+
+    --progress-value-background-color: var(--grey-lighter);
+
+    --file-cta-background-color: var(--grey-darker);
+
+    --progress-bar-background-color: var(--grey-dark);
+
+    --panel-heading-background-color: var(--grey-dark);
+    --modal-background-background-color: rgba(10, 10, 10, .86);
+
+    .modal-close::before, .delete::before, .modal-close::after, .delete::after {
+        --scheme-main: var(--scheme-invert);
+    }
+
+    /*.has-text-dark {
+        --dark-h: var(--light-h);
+        --dark-s: var(--light-s);
+        --dark-l: var(--light-l);
+        --dark-a: var(--light-a);
+        --dark: var(--light);
+    }*/
+    
+    .has-text-primary, .button {
+        --primary: var(--primary-dark);
+    }
+    
+    body > footer, .navbar, .homepage-lead, #home > .hero:first-child {
+        &::after {
+            backdrop-filter: brightness(65%) saturate(110%);
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        > div, > p {
+            z-index: 1;
+            position: relative;
+        }
+    }
+    .page > h1:first-child::after, #login::after {
+        filter: brightness(65%) saturate(110%);
+    }
+    .navbar-dropdown {
+        box-shadow: none;
+    }
+    .btn-continue-google {
+        --light-l: 80%;
+        --light: hsla(var(--light-h), var(--light-s), var(--light-l), var(--light-a));
+    }
+}

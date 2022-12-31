@@ -150,7 +150,7 @@
         background-size: 100% 100%;
     }
     .column.is-8:first-child {
-        background-color: white;
+        background-color: var(--scheme-main-bis);
         border-radius: 10px;
     }
     .column.is-8:last-child {
@@ -169,7 +169,7 @@
             top: 50%;
         }
     }
-    background-color: #795548;
+    background-color: var(--primary);
     > img {
         position: absolute;
         left: 1rem;

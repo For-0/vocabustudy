@@ -156,8 +156,8 @@ block content
                 h2.title.is-4.mb-1(data-count='0')  Matching Question
                 p.mb-3 Select an item on the left, then choose the matching item on the right
                 .columns.is-relative.is-variable.is-mobile(style="--columnGap: 5%;")
-                    .column.is-half
-                    .column.is-half
+                    .column.is-half(style="z-index: 2;")
+                    .column.is-half(style="z-index: 2;")
                     .matches-container
                 h2.title.is-4(data-count='0')  True/False Question
                 div
@@ -183,7 +183,7 @@ block content
                 button.button.mb-3
                     span.icon
                         i.material-symbols-rounded help
-            .columns.column.is-mobile.is-gapless
+            .columns.column.is-mobile
                 .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
                 .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
     .page.is-relative#home.is-flex-direction-column(style="--page-display: flex;")

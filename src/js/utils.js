@@ -310,7 +310,7 @@ export async function createSetCard({ name, creator, numTerms, collections, like
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], { innerText: name }),
             createElement("a", ["card-header-icon", "has-tooltip-arrow", "link-user"], {href: `/user/${uid}/`}, [
-                createElement("span", ["icon"], {}, [
+                createElement("span", ["icon", "has-text-gold"], {}, [
                     createElement("i", ["is-filled", "material-symbols-rounded"], {innerText: "person"})
                 ])
             ])

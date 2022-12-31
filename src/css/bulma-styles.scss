@@ -1,54 +1,14 @@
 @charset "utf-8";
-/*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
 
-$primary: #795548;
-$secondary: #4F2B26;
-$third: #411E1C;
-$fourth: #280000;
-$primary-alt: #8a6051;
-$secondary-light: #a67360;
-$footer-background-color: $primary;
-$footer-color: #fff;
-$footer-padding: 1rem;
-$family-primary: "Raleway";
-@import "bulma/sass/utilities/functions";
-$custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "secondary-light": ($secondary-light, findColorInvert($secondary-light)), "gold": (goldenrod, findColorInvert(goldenrod)));
-
-// Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
-@import "bulma/sass/utilities/_all";
-@import "bulma/sass/base/_all";
-
-@import "bulma/sass/elements/box";
-@import "bulma/sass/elements/button";
-@import "bulma/sass/elements/content";
-@import "bulma/sass/elements/container";
-@import "bulma/sass/elements/tag";
-@import "bulma/sass/elements/title";
-@import "bulma/sass/elements/notification";
-@import "bulma/sass/elements/other";
-
-@import "bulma/sass/form/_all";
-
-@import "bulma/sass/components/card";
-@import "bulma/sass/components/dropdown";
-@import "bulma/sass/components/level";
-@import "bulma/sass/components/menu";
-@import "bulma/sass/components/message";
-@import "bulma/sass/components/modal";
-@import "bulma/sass/components/navbar";
-@import "bulma/sass/components/panel";
-@import "bulma/sass/components/tabs";
-
-@import "bulma/sass/grid/_all";
-@import "bulma/sass/helpers/_all";
-@import "bulma/sass/layout/_all";
+@use "bulma-modules" as *;
+@use "bulma-extensions";
+@use "@bulvar/bulma/themes/light";
+@use "dark-theme";
 
 // extensions
-@import "bulma-switch/src/sass";
 @import "@creativebulma/bulma-tooltip/src/sass";
 @import "bulma-list/sass/bulma-list";
 @import "bulma-quickview/src/sass";
-@import "bulma-extensions.scss";
 
 // NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
 // The only exception (for things like kbd) is for when something depends on a bulma variable;=
@@ -65,9 +25,7 @@ $custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "
         color: $grey-light;
     }
 }
-strong {
-    color: black;
-}
+
 .material-symbols-rounded {
     font-variation-settings:
         'FILL' var(--font-variation-fill, 0),
@@ -138,14 +96,14 @@ strong {
     @extend .is-danger;
     @extend .has-background-color;
     + label {
-        color: #f14668;
+        color: var(--danger);
     }
 }
 fieldset[disabled] .is-checkradio {
     @extend [disabled];
 }
 .has-validated-inputs .field:has(input.input:invalid) + .help {
-    color: #f14668;
+    color: var(--danger);
 }
 .switch[type="checkbox"].is-thin + label::before {
     top: calc(50% - .25rem);
@@ -180,4 +138,32 @@ kbd {
     background-color: rgb(247, 247, 247);
     text-shadow: 0 1px 0 #fff;
     vertical-align: middle;
+}
+a:visited.navbar-item {
+    color: var(--navbar-item-color);
+}
+a:visited.dropdown-item {
+    color: var(--dropdown-item-color);
+}
+.navbar-burger:focus {
+    color: revert;
+}
+.list-item-title {
+    color: var(--text-strong);
+}
+.list.has-hoverable-list-items .list-item:hover {
+    background-color: var(--scheme-main-ter);
+}
+
+.quickview {
+    background-color: var(--background);
+}
+
+.quickview-footer {
+    background-color: var(--scheme-main-ter);
+    border-top: 1px solid var(--light);
+}
+
+input[type=text] {
+    transition: 0.1s border-color;
 }

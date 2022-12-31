@@ -35,7 +35,7 @@ block content
                                     .control
                                         input.input.is-medium(type="password" placeholder="Confirm Password" id="login-confirm-password" required)
                                 .field
-                                    input.is-checkradio.is-warning#login-accept-tos(type="checkbox" required)
+                                    input.is-checkradio.is-gold#login-accept-tos(type="checkbox" required)
                                     label(for="login-accept-tos") I accept the #[a.has-text-primary(href="/terms/") Terms of Service] and #[a.has-text-primary(href="/privacy/") Privacy Policy]
                                 button.button.is-primary.is-medium.is-fullwidth(type="submit")
                             button.button.is-light.is-medium.is-fullwidth.mt-3.btn-continue-google(type="button")
@@ -55,11 +55,11 @@ block content
                     .level.mt-1.has-text-centered
                         .level-left
                             .level-item
-                                button.has-text-light.btn-switch-mode.button.is-secondary-light.mr-4
-                                button.has-text-light.btn-forgot-password.button.is-primary-alt.mr-4 Forgot Password?
+                                button.btn-switch-mode.button.is-secondary-light.mr-4
+                                button.btn-forgot-password.button.is-primary-alt.mr-4 Forgot Password?
                         .level-right
                             .level-item
-                                a.has-text-light.button.is-primary.btn-tos.is-primary-alt(href="/terms/") Terms of Service
+                                a.button.is-primary.btn-tos.is-primary-alt(href="/terms/") Terms of Service
         img.nohuechange.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     .page#account(data-nosnippet)
         h1 My Account
@@ -283,7 +283,7 @@ block content
                             li Relevant Vocab
                     p.mb-0.is-size-5.has-text-weight-bold(style="margin-top: 2rem;") Created/developed by Siddhant Kameswar
                     p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-bold(href="/#credits" style="border-bottom: 1px solid white;") Credits]
-                    p.mb-0.mt-4.mdc-typography--overline.is-size-7 VOCABUSTUDY - U STUDY VOCAB
+                    p.mb-0.mt-4.is-size-7 VOCABUSTUDY - U STUDY VOCAB
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
@@ -332,7 +332,7 @@ block content
                             span.icon
                                 i.material-symbols-rounded(aria-hidden="true") search
                             span Browse Sets
-                        a.button.is-light.is-rounded.m-1(href="/#login")
+                        a.button.is-white.is-rounded.m-1(href="/#login")
                             span.icon
                                 i.material-symbols-rounded.is-filled(aria-hidden="true") account_circle
                             span Sign Up

@@ -25,13 +25,6 @@ main,
     word-break: break-word;
     overflow-wrap: anywhere;
 }
-.comments-container > .mdc-card {
-    max-width: 25%;
-    .title.is6 {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
 
 @media (max-width: 768px) {
     #home > .main-content .study-modes {
@@ -65,7 +58,7 @@ main,
     }
     .timeline-piece {
         &::before {
-            border-bottom: 3px solid #795548;
+            border-bottom: 3px solid var(--primary);
             width: calc(100% + 20px);
             left: -10px;
             top: 3px;
@@ -96,6 +89,7 @@ main,
                     transform: rotateY(180deg);
                     .star-button {
                         left: 1rem;
+                        right: unset;
                     }
                 }
                 > div {
@@ -109,7 +103,7 @@ main,
                     transition: left 0.4s;
                     &.is-starred {
                         p {
-                            color: goldenrod;
+                            color: var(--gold);
                         }
                         > div {
                             box-shadow: 0 .5em 1em -.125em #d7a21f52, 0 0 0 1px #d7a21f2e;
@@ -142,7 +136,6 @@ main,
                         height: 100%;
                         transition: transform 0.3s, box-shadow 0.1s;
                         transform-style: preserve-3d;
-                        background-color: white;
                         border-radius: 10px;
                         padding: 0;
                         > div {
@@ -206,11 +199,12 @@ main,
             }
             > fieldset button {
                 width: 100%;
-                overflow-x: hidden;
+                overflow: hidden;
                 position: relative;
                 > span:last-child {
                     width: calc(100% - 36px);
                     display: inline-flex;
+                    justify-content: center;
                     > .fit {
                         max-width: unset;
                     }
@@ -369,17 +363,18 @@ main,
             flex-direction: column;
         }
         > div:last-child {
-            gap: 2%;
             > div {
                 gap: 2%;
                 overflow-y: auto;
                 --track: transparent;
                 .dropzone-card {
-                    background-color: lighten($theme-color, 50%);
+                    background-color: var(--secondary);
+                    color: var(--secondary-invert);
+                    --strong-color: var(--secondary-invert);
                     max-width: 48%;
                     overflow-wrap: break-word;
                     justify-content: space-between;
-                    box-shadow: 0 .5em 1em -.125em #e8dcd8aa;
+                    box-shadow: 0 .5em 1em -.125em hsla(var(--secondary-h), var(--secondary-s), var(--secondary-l), 75%);
                     padding: 1rem;
                     > div {
                         pointer-events: none;
@@ -445,6 +440,7 @@ main,
 .test-matching-box.box {
     opacity: 0.8;
     box-shadow: 0 .5em 1em -.125em #0a0a0a26, 0 0 0 1px #0a0a0a0f;
+    z-index: 2;
 }
 
 :is(fieldset:not(:disabled) .test-matching-box):hover, .test-matching-box.selected {
@@ -458,7 +454,7 @@ main,
 
 .matches-container>div {
     position: absolute;
-    background-color: #0a0a0a26;
+    background-color: rgba(var(--scheme-invert-rgb), 0.5);
     height: 4px;
     margin: 0;
     padding: 0;
@@ -469,50 +465,36 @@ main,
     transform: rotate(var(--angle));
     transition: 0.1s background-color;
     &.correct {
-        background-color: #46c471 !important;
+        background-color: var(--success) !important;
     }
     &.incorrect {
-        background-color: #f14668 !important;
-    }
-    &:hover {
-        background-color: #0a0a0a91;
+        background-color: var(--danger) !important;
     }
 }
 
 .field {
     &.correct {
         .input {
-            border-color: #48c78e;
+            border-color: var(--success);
         }
         .is-checkradio:checked + label::after {
-            background-color: #48c78e;
+            background-color: var(--success);
         }
         .is-checkradio:not(:checked) + label::before {
-            border-color: #48c78e;
+            border-color: var(--success);
         }
     }
     &.incorrect {
         .input {
-            border-color: #f14668;
+            border-color: var(--danger);
         }
         .help {
-            color: #f14668;
+            color: var(--danger);
         }
         .is-checkradio + label::after {
-            background-color: #f14668;
+            background-color: var(--danger);
         }
     }
-}
-
-.likes-badge {
-    width: 100%;
-    color: darkgreen;
-    background-color: #90ee90;
-    border-radius: 5px;
-    padding: .3rem;
-    display: inline-block;
-    text-align: center;
-    margin-top: .3rem;
 }
 
 accent-keyboard {
@@ -522,7 +504,6 @@ accent-keyboard {
         white-space: nowrap;
         margin: 0;
         margin-bottom: 8px;
-        --mdc-typography-button-text-transform: none;
         padding: 0;
         border: 0;
         > button.button {
@@ -544,12 +525,6 @@ accent-keyboard {
         border-color: rgba(75, 21, 4, 0.8);
     }
 }
-#modal-export-terms h3 {
-    position: relative;
-    margin-bottom: 0;
-    .mdc-icon-button {
-        position: absolute;
-        right: 0;
-        top: -12px;
-    }
+.star-button {
+    background-color: transparent !important;
 }

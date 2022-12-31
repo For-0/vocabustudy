@@ -34,6 +34,7 @@
   "author": "Siddhant Kameswar",
   "license": "GPL-3.0",
   "dependencies": {
+    "@bulvar/bulma": "^0.11.13",
     "@creativebulma/bulma-divider": "^1.1.0",
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "@material/button": "14.0.0",
