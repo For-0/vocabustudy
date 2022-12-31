@@ -49,6 +49,24 @@ export function styleAndSanitize(text, inline=false) {
     return sanitize(marked[inline ? "parseInline" : "parse"](text), { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] });
 }
 /**
+ * Make the content of a node only break on spaces
+ * @param {Node} node 
+ */
+export function preventBreaking(node) {
+    for (let childNode of [...node.childNodes]) {
+        if (childNode.nodeType === Node.ELEMENT_NODE) preventBreaking(childNode);
+        else if (childNode.nodeType === Node.TEXT_NODE) {
+            let nodesFragment = document.createDocumentFragment();
+            for (let textSegment of childNode.textContent.split(" ")) {
+                if (textSegment !== "") nodesFragment.appendChild(createElement("span", [], {innerText: textSegment, style: {whiteSpace: "nowrap"}}));
+                nodesFragment.appendChild(document.createTextNode(" "));
+            }
+            if (nodesFragment.childNodes.length > 1) nodesFragment.lastChild.remove();
+            node.replaceChild(nodesFragment, childNode);
+        }
+    }
+}
+/**
  * Creates an element
  * @template {keyof HTMLElementTagNameMap} T
  * @param {T|[T, string]} type The node type
@@ -372,7 +390,10 @@ export async function paginateQueries(queries, btnMore, onResults, startAfterN =
 export async function initBulmaModals(modals) {
     modals.forEach(modal => {
         // If a modal is close-only (there is no accept/deny and it will not be used with bulmaModalPromise) then do this
-        if (modal.onclose) modal.root.querySelectorAll(".action-close").forEach(el => el.addEventListener("click", () => modal.close()));
+        if (modal.onclose || modal.onuserclose) modal.root.querySelectorAll(".action-close").forEach(el => el.addEventListener("click", () => {
+            modal.close();
+            if (modal.onuserclose) modal.onuserclose(el.dataset.action);
+        }));
         modal.on("close", () => modal.onclose && modal.onclose())
     });
 }

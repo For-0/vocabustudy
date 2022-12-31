@@ -1196,3 +1196,50 @@ $pair in $button-colors {
         }
     }
 }
+//#endregion
+//#region Circular Progress
+$backColor: #d6d6d6;
+
+.progress-circle {
+    position: relative;
+    height: 48px;
+    width: 48px;
+    svg {
+        width: inherit;
+        height: inherit;
+        circle:first-child {
+            cx: 24px;
+            cy: 24px;
+            r: 20px;
+            fill: none;
+            stroke-width: var(--thickness, 5px);
+            stroke: $backColor;
+        }
+        circle:last-child {
+            cx: 24px;
+            cy: 24px;
+            r: 20px;
+            fill: none;
+            stroke-width: var(--thickness, 5px);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 360px;
+            stroke-dashoffset: calc(130px - var(--progress) * 130px + 230px); // don't quesiton the formula. I manipulated the numbers to make them work
+            transition: 0.1s stroke-dashoffset;
+        }
+    }
+    @each $name, $pair in $colors {
+        &.is-#{$name} circle:last-child {
+            stroke: nth($pair, 1);
+        }
+    }
+    &::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%)translateY(-50%);
+        text-align: center;
+        content: attr(data-progress)
+    }
+}
+//#endregion

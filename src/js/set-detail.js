@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate } from "./utils.js";
+import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate, preventBreaking, initBulmaModals } from "./utils.js";
 import fitty from "fitty";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal.js";
 import { toast } from "bulma-toast";
@@ -29,11 +29,8 @@ class AccentKeyboard extends HTMLElement {
     }
     showButtons() {
         for (let specialChar of this.accents) {
-            let btn = this.fieldset.appendChild(document.createElement("button"));
-            btn.classList.add("button", "button--outlined");
-            btn.appendChild(document.createElement("span")).classList.add("button__ripple");
-            btn.appendChild(document.createElement("span")).classList.add("button__label");
-            btn.lastElementChild.innerText = specialChar;
+            let btn = this.fieldset.appendChild(createElement("button", ["button"], {innerText: specialChar}));
+            btn.tabIndex = -1;
             btn.addEventListener("mousedown", e => {
                 e.preventDefault();
                 if (document.activeElement === this.input) {
@@ -194,7 +191,7 @@ const pages = {
             let nextFlashcard = this.terms.children[this.index + 1];
             currentFlashcard.style.position = "absolute";
             nextFlashcard.style.display = "block";
-            if (this.index < this.numTerms) nextFlashcard.querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100}));
+            if (this.index < this.numTerms) nextFlashcard.querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100, observeMutations: false}));
             await Promise.all([
                 optionalAnimate(currentFlashcard, [
                     {},
@@ -259,7 +256,7 @@ const pages = {
                         createElement("p", ["fit"], {innerHTML: styleAndSanitize(term.replace("\x00", " - "), true)})
                     ]),
                     createElement("div", [], {}, [
-                        createElement("p", ["fit"], {})
+                        createElement("p", ["fit", "content"], {})
                     ])
                 ])
             ]);
@@ -294,11 +291,7 @@ const pages = {
             for (let term of terms) this.createFlashcard(term, onlyStarred || starredList.includes(term.i));
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
-            this.terms.children[0].querySelectorAll("p").forEach(el => {
-                //el.style.fontSize = "100px";
-                //resizeText(el);
-                fitty(el, {maxSize: 100});
-            });
+            this.terms.children[0].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100, observeMutations: false}));
         },
         init() {
             this.checkOnlyStarred.addEventListener("change", () => this.show());
@@ -325,22 +318,26 @@ const pages = {
         },
         set progressMC(value) {
             this.progressMC_ = value;
-            this.progressIndicators[0].progress = value / this.numTerms;
-            this.progressIndicators[0].root.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.progressIndicator.style.setProperty("--progress", value / this.numTerms);
+            this.progressIndicator.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.currentQuestionType.children[0].hidden = false;
+            this.currentQuestionType.children[1].hidden = true;
         },
         get progressSA() {
             return this.progressSA_;
         },
         set progressSA(value) {
             this.progressSA_ = value;
-            this.progressIndicators[1].progress = value / this.numTerms;
-            this.progressIndicators[1].root.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.progressIndicator.style.setProperty("--progress", value / this.numTerms);
+            this.progressIndicator.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.currentQuestionType.children[0].hidden = true;
+            this.currentQuestionType.children[1].hidden = false;
         },
         get numTerms() {
-            return parseInt(document.getElementById("learn-num-terms").innerText);
+            return parseInt(document.querySelector("#learn .field-num-terms").innerText);
         },
         set numTerms(value) {
-            document.getElementById("learn-num-terms").innerText = value;
+            document.querySelector("#learn .field-num-terms").innerText = value;
         },
         get questionType() {
             return (this.radioBtns[0].checked) ? "definition" : "term";
@@ -348,39 +345,38 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#learn .check-starred"),
+        checkOnlyStarred: document.getElementById("check-learn-starred"),
         setName: document.querySelector("#learn h1 > span"),
         question: document.querySelector("#learn > div > div:last-child p"),
-        answerSA: document.querySelector("#learn .mdc-text-field"),
+        answerSA: document.querySelector("#learn .input[type=text]"),
         answerSABtns: (/** @type {AccentKeyboard} */ (document.querySelector("#learn accent-keyboard"))),
-        answerSACheck: document.querySelector("#learn .mdc-text-field + button"),
+        answerSACheck: document.querySelector("#learn .field.has-addons button"),
         answerMC: document.querySelector("#learn > div > div:last-child > fieldset"),
-        msgCorrect: document.querySelector("#learn .answer-correct"),
-        msgIncorrect: document.querySelector("#learn .answer-incorrect"),
-        msgIdle: document.querySelector("#learn > div > div:last-child > div:nth-child(2) > p"),
-        msgDone: document.querySelector("#learn > div > div:last-child > div:nth-child(2) > p:nth-child(2)"),
-        radioBtns: document.querySelectorAll("#learn .answer-with"),
-        progressIndicators: (/** @type {MDCCircularProgress[]} */ (document.querySelectorAll("#learn .mdc-circular-progress"))),
+        msgCorrect: document.querySelector("#learn .notification.is-success"),
+        msgIncorrect: document.querySelector("#learn .notification.is-danger"),
+        msgDone: document.querySelector("#learn > div > div:last-child > div:nth-child(2) > p:first-child"),
+        radioBtns: document.querySelectorAll("#learn [name='radio-learn-answer-with']"),
+        progressIndicator: document.querySelector("#learn .progress-circle"),
+        currentQuestionType: document.querySelector("#learn .field-current-type"),
         currentQuestionIndex: 0,
         /**
          * @param {KeyboardEvent} e
          */
         onKeyUp(e) {
-            if (this.msgIdle.hidden && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) this.generateQuestion();
+            if (["1", "2"].includes(this.msgDone.parentElement.dataset.mode) && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) this.generateQuestion();
             else if (!this.answerMC.hidden && !this.answerMC.disabled) this.answerMC.elements[parseInt(e.key) - 1]?.click();
         },
         show() {
             this.questionData = currentSet.terms.map((_, i) => ({ i, mc: 1, fmc: 0, sa: 1, fsa: 0 }));
             if (this.checkOnlyStarred.checked && window.StarredTerms.getCurrentSet().length) this.questionData = this.questionData.filter(({ i }) => window.StarredTerms.isStarred(i));
             this.setName.innerText = currentSet.name;
-            this.msgDone.hidden = true;
+            this.msgDone.parentElement.dataset.mode = "0";
             this.numTerms = this.questionData.length;
-            this.progressMC = 0;
             this.progressSA = 0;
+            this.progressMC = 0;
             this.generateQuestion();
             this.answerSABtns.clear();
-            this.answerSABtns.initialize(currentSet.specials, this.answerSA.root.querySelector("input"));
+            this.answerSABtns.initialize(currentSet.specials, this.answerSA);
         },
         generateQuestion() {
             let mcQuestions = this.questionData.filter(el => el.mc > 0);
@@ -399,89 +395,79 @@ const pages = {
             } else {
                 this.question.innerText = "All done!";
                 this.answerMC.hidden = true;
-                this.answerSA.root.hidden = true;
+                this.answerSA.hidden = true;
                 this.answerSABtns.hidden = true;
                 this.answerSACheck.hidden = true;
-                this.msgCorrect.hidden = true;
-                this.msgIncorrect.hidden = true;
-                this.msgIdle.hidden = true;
-                this.msgDone.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "3";
             }
         },
         showQuestion(term, answers = null) {
-            document.querySelectorAll(".mdc-ripple-upgraded--background-focused").forEach(el => el.classList.remove("mdc-ripple-upgraded--background-focused"));
             applyStyling(term[this.answerType], this.msgIncorrect.querySelector("strong"));
             applyStyling(term[this.answerType], this.msgCorrect.querySelector("strong"));
-            this.msgCorrect.hidden = true;
-            this.msgIncorrect.hidden = true;
-            this.msgIdle.hidden = false;
+            this.msgDone.parentElement.dataset.mode = "0";
             if (answers) {
                 this.answerMC.hidden = false;
-                this.answerSA.root.hidden = true;
+                this.answerSA.hidden = true;
                 this.answerSABtns.hidden = true;
                 this.answerSACheck.hidden = true;
                 this.answerMC.disabled = false;
                 answers.forEach((answer, i) => {
                     let btn = this.answerMC.elements[i];
                     let ansTerm = currentSet.terms[answer];
-                    applyStyling(ansTerm[this.answerType], btn.querySelector(".button__label"));
-                    resizeButtonText(btn);
+                    applyStyling(ansTerm[this.answerType], btn.querySelector(".fit"));
+                    preventBreaking(btn.querySelector(".fit"));
                     btn.dataset.answerindex = answer;
                 });
             } else {
                 this.answerMC.hidden = true;
-                this.answerSA.root.hidden = false;
+                this.answerSA.hidden = false;
                 this.answerSABtns.hidden = false;
                 this.answerSACheck.hidden = false;
                 this.answerSA.disabled = false;
                 this.answerSABtns.disabled = false;
                 this.answerSACheck.disabled = false;
                 this.answerSA.value = "";
-                this.answerSA.valid = true;
                 this.answerSA.focus();
             }
-
-            this.question.innerText = "";
-            let height = this.question.clientHeight;
             applyStyling(term[this.questionType], this.question);
-            resizeTextToMaxHeight(this.question, height);
+            resizeTextToMaxHeight(this.question, this.question.parentElement.clientHeight);
             this.question.style.color = (window.StarredTerms.isStarred(this.questionData[this.currentQuestionIndex].i)) ? "goldenrod" : "unset";
         },
         processMCResult(answer) {
             this.answerMC.disabled = true;
-            this.msgIdle.hidden = true;
             if (answer === this.questionData[this.currentQuestionIndex].i) {
-                this.msgCorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "1";
                 this.questionData[this.currentQuestionIndex].mc--;
                 this.progressMC++;
             } else {
-                this.msgIncorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "2";
                 if (++this.questionData[this.currentQuestionIndex].mc > 4) window.StarredTerms.setStar(this.currentQuestionIndex, true);
                 this.questionData[this.currentQuestionIndex].fmc++;
                 this.progressMC--;
             }
+            resizeTextToMaxHeight(this.question, this.question.parentElement.clientHeight);
         },
         processSAResult() {
-            if (!(this.answerSA.valid)) return;
+            if (!(this.answerSA.reportValidity())) return;
             let answer = this.answerSA.value;
             document.activeElement.blur();
             this.answerSA.disabled = true;
             this.answerSABtns.disabled = true;
             this.answerSACheck.disabled = true;
-            this.msgIdle.hidden = true;
             if (checkAnswers(answer, currentSet.terms[this.questionData[this.currentQuestionIndex].i][this.answerType])) {
-                this.msgCorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "1";
                 this.questionData[this.currentQuestionIndex].sa--;
                 this.progressSA++;
             } else {
-                this.msgIncorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "2";
                 if (++this.questionData[this.currentQuestionIndex].sa > 4) window.StarredTerms.setStar(this.currentQuestionIndex, true);
                 this.questionData[this.currentQuestionIndex].fsa++;
                 this.progressSA--;
             }
+            resizeTextToMaxHeight(this.question, this.question.parentElement.clientHeight);
         },
         overrideCorrect() {
-            if (this.answerSA.root.hidden) {
+            if (this.answerSA.hidden) {
                 this.questionData[this.currentQuestionIndex].mc -= 2;
                 this.questionData[this.currentQuestionIndex].fmc--;
                 this.progressMC += 2;
@@ -498,18 +484,17 @@ const pages = {
             open("/learn-results.html", "learn-results-context", "popup,width=900,height=500");
         },
         init() {
-            this.radioBtns = [...this.radioBtns].map(el => {
-                el.addEventListener("change", () => this.generateQuestion());
-                return el;
-            });
+            this.radioBtns.forEach(el => el.addEventListener("change", () => this.generateQuestion()));
             for (let btn of this.answerMC.elements) {
                 btn.addEventListener("click", () => this.processMCResult(parseInt(btn.dataset.answerindex)));
+                fitty(btn.querySelector(".fit"), {maxSize: 24, minSize: 4});
+                btn.querySelector(".fit").addEventListener("fit", () => resizeTextToMaxHeight(btn.querySelector(".fit"), 60, 4));
             }
             this.checkOnlyStarred.addEventListener("change", () => this.show());
             this.msgCorrect.addEventListener("click", () => this.generateQuestion());
             this.msgIncorrect.addEventListener("click", () => this.generateQuestion());
             this.answerSACheck.addEventListener("click", () => this.processSAResult());
-            this.answerSA.root.addEventListener("keyup", e => {
+            this.answerSA.addEventListener("keyup", e => {
                 if (e.key === "Enter") {
                     e.stopPropagation();
                     this.answerSACheck.click();
@@ -526,18 +511,16 @@ const pages = {
     test: {
         el: document.getElementById("test"),
         setName: document.querySelector("#test h1 > span"),
-        btnNew: document.querySelector("#test > div > div:first-child .button--outlined"),
-        btnCheck: document.querySelector("#test > div > div:first-child .button--raised"),
-        radioBtns: document.querySelectorAll("#test .answer-with"),
-        /** @type {MDCCheckbox[]} */
-        checkboxes: document.querySelectorAll("#test .check-test-question-types"),
+        btnToggleSettings: document.querySelector("#test > div > div:first-child .button"),
+        btnNew: document.querySelector("#test > div > div:first-child .button:not(.is-dark)"),
+        btnCheck: document.querySelector("#test > div > div:first-child .button.is-primary"),
+        radioBtns: document.querySelectorAll("#test input[name='radio-test-answer-with']"),
+        checkboxes: [...document.querySelectorAll("#test input[type=checkbox]:not(#check-test-starred)")],
         questionTypeHeaders: document.querySelectorAll("#test > div > fieldset > h2"),
         questionContainers: document.querySelectorAll("#test > div > fieldset > div"),
         questionsFieldset: document.querySelector("#test > div > fieldset"),
         currentMatchMode: 0,
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#test .check-starred"),
-        /** @type {MDCTextField} */
+        checkOnlyStarred: document.getElementById("check-test-starred"),
         fieldMaxTerms: document.querySelector("#test .field-max-terms"),
         get questionType() {
             return (this.radioBtns[0].checked) ? "definition" : "term";
@@ -559,67 +542,39 @@ const pages = {
         },
         makeSAQuestion(question) {
             let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
-            let helperTextId = `_${crypto.randomUUID()}`;
-            let questionEl = applyStyling(question[this.questionType], this.questionContainers[0].appendChild(createElement("p", ["mdc-typography--body1"])));
-            questionEl.style.margin = "0";
-            questionEl.style.marginBottom = "4px";
-            if (isStarred) questionEl.style.color = "goldenrod";
-            let textFieldEl = this.questionContainers[0].appendChild(createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
-                createElement("span", ["mdc-notched-outline"], {}, [
-                    createElement("span", ["mdc-notched-outline__leading"], {}, []),
-                    createElement("span", ["mdc-notched-outline__notch"], {}, [
-                        createElement("span", ["mdc-floating-label"], { innerText: "Answer" }, [])
-                    ]),
-                    createElement("span", ["mdc-notched-outline__trailing"], {}, [])
+            let questionEl = this.questionContainers[0].appendChild(createElement("div", ["field"], {}, [
+                createElement("label", ["label"], {innerHTML: styleAndSanitize(question[this.questionType], true)}),
+                createElement("div", ["control"], {}, [
+                    createElement("input", ["input"], {type: "text", placeholder: "Your Answer", required: true})
                 ]),
-                createElement("input", ["mdc-text-field__input"], { "aria-label": "Answer", type: "text", "aria-controls": helperTextId, "aria-describedby": helperTextId }, [])
+                createElement("p", ["help"])
             ]));
-            textFieldEl.style.marginBottom = "0";
-            this.questionContainers[0].appendChild(createElement("div", ["mdc-text-field-helper-line"], {}, [
-                createElement("div", ["mdc-text-field-helper-text", "mdc-text-field-helper-text--persistent"], { id: helperTextId }, [])
-            ])).style.marginBottom = "1rem";
+            if (isStarred) questionEl.querySelector("label").style.color = "goldenrod";
             let accentKeyboard = this.questionContainers[0].appendChild(document.createElement("accent-keyboard"));
-            accentKeyboard.initialize(currentSet.specials, textFieldEl.querySelector("input"))
-            let textField = new MDCTextField(textFieldEl);
-            textField.required = true;
-            return textField;
+            accentKeyboard.initialize(currentSet.specials, questionEl.querySelector("input"))
+            return questionEl;
         },
         makeMCQuestion(question, answers, container = 1, customQuestion = null) {
             let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let radioName = `_${crypto.randomUUID()}`;
-            let answerRadios = answers.map((answer, i) => {
-                let el = createElement("div", [], {}, [
-                    createElement("div", ["mdc-form-field"], {}, [
-                        createElement("div", ["mdc-radio", "mdc-radio--touch"], {}, [
-                            createElement("input", ["mdc-radio__native-control"], { type: "radio", id: `${radioName}-${i}`, name: radioName, required: true }, []),
-                            createElement("div", ["mdc-radio__background"], {}, [
-                                createElement("div", ["mdc-radio__outer-circle"], {}, []),
-                                createElement("div", ["mdc-radio__inner-circle"], {}, [])
-                            ]),
-                            createElement("div", ["mdc-radio__ripple"], {}, [])
-                        ]),
-                        createElement("label", [], { htmlFor: `${radioName}-${i}` }, [])
-                    ])
-                ]);
-                applyStyling(answer, el.querySelector("label"));
-                return el;
-            });
-            let questionContainer = this.questionContainers[container].appendChild(createElement("div", [], {}, [
-                createElement("h3", ["title.is-size-5"], {}, []),
+            let answerRadios = answers.map((answer, i) => createElement("div", ["field"], {}, [
+                createElement("input", ["is-checkradio"], {type: "radio", id: `${radioName}-${i}`, required: true, name: radioName}),
+                createElement("label", [], {htmlFor: `${radioName}-${i}`, innerHTML: styleAndSanitize(answer, true)})
+            ]));
+            let questionContainer = this.questionContainers[container].appendChild(createElement("div", ["mb-4"], {}, [
+                createElement("h3", ["title", "is-size-5", "mb-2"], {innerHTML: styleAndSanitize(customQuestion || question[this.questionType], true)}, []),
                 ...answerRadios
             ]));
             if (isStarred) questionContainer.querySelector("h3").style.color = "goldenrod";
-            applyStyling(customQuestion || question[this.questionType], questionContainer.querySelector("h3"));
-            questionContainer.firstElementChild.style.marginBottom = "0";
             return answerRadios;
         },
         makeMTQuestion(question) {
             let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let questionUUID = crypto.randomUUID();
-            let div1 = applyStyling(question[this.questionType], this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left"], {}, [])));
+            let div1 = applyStyling(question[this.questionType], this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left", "box"], {}, [])));
             div1.dataset.questionId = questionUUID;
             if (isStarred) div1.style.color = "goldenrod";
-            let div2 = applyStyling(question[this.answerType], this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right"], {}, [])));
+            let div2 = applyStyling(question[this.answerType], this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right", "box"], {}, [])));
             div2.dataset.questionId = questionUUID;
         },
         matchEls(div1, div2) {
@@ -656,8 +611,9 @@ const pages = {
             for (let i = container.children.length; i >= 0; i--) container.appendChild(container.children[Math.random() * i | 0]);
         },
         generateQuestions() {
+            this.questionsFieldset.classList.remove("has-validated-inputs");
             this.btnCheck.disabled = false;
-            this.btnCheck.querySelector(".button__label").innerText = "Check Answers";
+            this.btnCheck.querySelector("span:last-child").innerText = "Check Answers";
             this.questionContainers[0].textContent = this.questionContainers[1].textContent = this.questionContainers[3].textContent = "";
             this.questionContainers[2].querySelectorAll(":scope > div").forEach(el => el.textContent = "");
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
@@ -710,32 +666,30 @@ const pages = {
             this.currentMatchMode = 0;
         },
         checkAnswers() {
+            this.questionsFieldset.classList.add("has-validated-inputs");
             for (let sa of this.questionInputs.sa) {
-                if (!sa.input.valid) {
-                    sa.input.valid = false; //trigger :invalid psuedoclass
-                    return;
-                }
+                if (!sa.input.querySelector("input").reportValidity()) return;
             }
-            for (let mc of this.questionInputs.mc) if (!mc.inputs[0].nativeControl.reportValidity()) return;
-            for (let tf of this.questionInputs.tf) if (!tf.inputs[0].nativeControl.reportValidity()) return;
+            for (let mc of this.questionInputs.mc) if (!mc.inputs[0].querySelector("input").reportValidity()) return;
+            for (let tf of this.questionInputs.tf) if (!tf.inputs[0].querySelector("input").reportValidity()) return;
             this.questionsFieldset.disabled = true;
             document.querySelectorAll(".test-matching-box").forEach(box => box.removeEventListener("click", this.matchingBoxClickListener));
             let numCorrect = 0;
             for (let sa of this.questionInputs.sa) {
-                if (checkAnswers(sa.input.value, sa.answer)) {
-                    sa.input.root.classList.add("correct");
-                    sa.input.helperTextContent = "Correct!";
+                if (checkAnswers(sa.input.querySelector("input").value, sa.answer)) {
+                    sa.input.classList.add("correct");
+                    sa.input.querySelector(".help").innerText = "Correct!";
                     numCorrect++;
                 } else {
-                    sa.input.root.classList.add("incorrect");
-                    sa.input.helperTextContent = `Incorrect -> ${normalizeAnswer(sa.answer)}`;
+                    sa.input.classList.add("incorrect");
+                    sa.input.querySelector(".help").innerText = `Incorrect -> ${normalizeAnswer(sa.answer)}`;
                 }
             }
             for (let mc of this.questionInputs.mc) {
                 let correctAnswer = mc.inputs[mc.answer];
-                numCorrect += correctAnswer.checked; // implicit cast
-                mc.inputs.find(el => el.checked).root.classList.toggle("incorrect", !correctAnswer.checked);
-                correctAnswer.root.classList.add("correct");
+                numCorrect += correctAnswer.querySelector("input").checked; // implicit cast
+                mc.inputs.find(el => el.querySelector("input").checked).classList.toggle("incorrect", !correctAnswer.querySelector("input").checked);
+                correctAnswer.classList.add("correct");
             }
             for (let match of document.querySelectorAll(".matches-container > div")) {
                 let isCorrect = match.dataset.fromCard === match.dataset.toCard;
@@ -743,17 +697,17 @@ const pages = {
                 match.classList.add(isCorrect ? "correct" : "incorrect");
             }
             for (let tf of this.questionInputs.tf) {
-                let selectedInput = tf.inputs.find(el => el.checked);
+                let selectedInput = tf.inputs.find(el => el.querySelector("input").checked);
                 let correctAnswer = tf.inputs[tf.answer ? 0 : 1];
-                correctAnswer.root.classList.add("correct");
-                if (selectedInput !== correctAnswer) selectedInput.root.classList.add("incorrect");
+                correctAnswer.classList.add("correct");
+                if (selectedInput !== correctAnswer) selectedInput.classList.add("incorrect");
                 else numCorrect++;
             }
             let total = Math.max(Math.min(this.termList.length, this.userMaxQuestions), 1);
             let percentCorrect = Math.round(numCorrect * 100 / total);
             this.btnCheck.disabled = true;
-            this.btnCheck.classList.remove("mdc-ripple-upgraded--background-focused");
-            this.btnCheck.querySelector(".button__label").innerText = `${percentCorrect}%`;
+            this.btnCheck.querySelector("span:last-child").innerText = `${percentCorrect}%`;
+            this.questionsFieldset.classList.remove("has-validated-inputs");
         },
         matchingBoxClickListener(e) {
             switch (pages.test.currentMatchMode) {
@@ -830,16 +784,19 @@ const pages = {
             this.checkboxes.forEach(el => el.checked = true);
             this.btnNew.addEventListener("click", () => this.generateQuestions());
             this.btnCheck.addEventListener("click", () => this.checkAnswers());
+            this.btnToggleSettings.addEventListener("click", () => this.btnToggleSettings.nextElementSibling.classList.toggle("is-hidden-mobile"));
         }
     },
     match: {
         el: document.getElementById("match"),
         setName: document.querySelector("#match h1 > span"),
-        btnNew: document.querySelectorAll("#match .btn-refresh"),
-        radioBtns: document.querySelectorAll("#match .answer-with"),
+        btnNew: document.querySelector("#match .button"),
+        btnShowHelp: document.querySelector("#match .button:last-child"),
+        radioBtns: document.querySelectorAll("#match input[name='radio-match-answer-with']"),
         termsContainer: document.querySelector("#match > div > div:last-child"),
         completedDialog: new Modal("#modal-match-done").modal(),
-        completedDialogList: document.querySelector("#modal-match-done ul"),
+        helpDialog: new Modal("#modal-match-help").modal(),
+        completedDialogList: document.querySelector("#modal-match-done .list"),
         fieldTime: document.querySelector("#match .field-time"),
         get questionType() {
             return (this.radioBtns[0].checked) ? "definition" : "term";
@@ -847,8 +804,7 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#match .check-starred"),
+        checkOnlyStarred: document.getElementById("check-match-starred"),
         onlyStarred: false,
         interval: null,
         dragEvents: {
@@ -911,11 +867,7 @@ const pages = {
             this.generateCards();
         },
         makeDraggableCard(text, questionId, index) {
-            let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], { draggable: true }, [
-                createElement("div", ["card-content"])
-            ]);
-            applyStyling(text, card.firstElementChild);
-            card.dataset.questionId = questionId;
+            let card = createElement("div", ["draggable-card", "box", "mb-0", "notification", "is-primary", "p-4"], { draggable: true, innerHTML: styleAndSanitize(text, true), dataset: {questionId} });
             card.addEventListener("dragstart", this.dragEvents.start);
             card.addEventListener("dragend", this.dragEvents.end);
             card.addEventListener("click", this.dragEvents.dragClick, true);
@@ -923,12 +875,10 @@ const pages = {
             return card;
         },
         makeDropzoneCard(text, questionId) {
-            let card = createElement("div", ["mdc-card", "dropzone-card"], {}, [
-                createElement("div", ["card-content"]),
+            let card = createElement("div", ["dropzone-card", "box", "mb-0", "p-1"], {dataset: {questionId}}, [
+                createElement("div", ["p-4", "pb-1"], {innerHTML: styleAndSanitize(text, true)}),
                 createElement("div")
             ]);
-            applyStyling(text, card.firstElementChild);
-            card.dataset.questionId = questionId;
             card.addEventListener("dragover", this.dragEvents.over);
             card.addEventListener("dragenter", this.dragEvents.enter);
             card.addEventListener("dragleave", this.dragEvents.leave);
@@ -973,10 +923,8 @@ const pages = {
                 let id = child.dataset.questionId;
                 let dropzone = child.querySelector("div:last-child");
                 if (id && dropzone) {
-                    if (id !== dropzone.children[0]?.dataset?.questionId) {
-                        return;
-                    }
-                }
+                    if (id !== dropzone.children[0]?.dataset?.questionId) return;
+                } else return
             }
             this.clearTimer();
             let totalTime = (Date.now() - this.startTime) / 1000;
@@ -1004,16 +952,15 @@ const pages = {
             if (this.onlyStarred) actualLeaderboard.push({ name: "Play a full round to save!", time });
             else if (!auth.currentUser) actualLeaderboard.push({ name: "Sign in to save!", time });
             actualLeaderboard.sort((a, b) => a.time - b.time);
-            this.completedDialogList.root.textContent = "";
+            this.completedDialogList.textContent = "";
             for (let [i, item] of actualLeaderboard.entries()) {
-                this.completedDialogList.root.appendChild(createElement("li", ["mdc-list", "mdc-list-item--non-interactive", "mdc-list-item--with-two-lines"], {}, [
-                    createElement("span", ["mdc-list-item__content"], {}, [
-                        createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1} ${item.name}` }),
-                        createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${item.time.toFixed(2)}s` })
+                this.completedDialogList.appendChild(createElement("div", ["list-item"], {}, [
+                    createElement("div", ["list-item-content"], {}, [
+                        createElement("span", ["list-item-title"], { innerText: `#${i + 1} ${item.name}` }),
+                        createElement("span", ["list-item-description"], { innerText: `${item.time.toFixed(2)}s` })
                     ])
                 ]));
             }
-            this.completedDialogList.layout();
         },
         setTimer() {
             this.interval = setInterval(() => {
@@ -1027,36 +974,29 @@ const pages = {
             clearInterval(this.interval);
         },
         init() {
-            this.btnNew.forEach(el => el.addEventListener("click", () => this.generateCards()));
-            this.completedDialog.listen("MDCDialog:closing", e => {
-                if (e.detail.action === "accept") this.generateCards();
+            this.btnNew.addEventListener("click", () => this.generateCards());
+            this.btnShowHelp.addEventListener("click", () => this.helpDialog.open());
+            this.completedDialog.onuserclose = action => {
+                if (action === "restart") this.generateCards();
                 else history.back();
-            });
+            };
+            this.completedDialog.onclose = () => this.generateCards();
+            this.helpDialog.onclose = () => {};
+            initBulmaModals([this.completedDialog, this.helpDialog]);
         }
     }
 };
 
 // #region UTILITIES
-function resizeButtonText(button, minSize = 1) {
-    button.style.removeProperty("--mdc-outlined-button-label-text-size");
-    let i = parseFloat(getComputedStyle(button)["font-size"]);
-    let overflow = button.scrollHeight > button.getBoundingClientRect().height;
-    while (overflow && i > minSize) {
-        i--;
-        button.style.setProperty("--mdc-outlined-button-label-text-size", `${i}px`);
-        overflow = button.scrollHeight > button.getBoundingClientRect().height;
-    }
-}
 function resizeTextToMaxHeight(textEl, maxHeight, minSize = 1) {
     textEl.style.fontSize = "";
     let i = 0;
     let initialSize = parseInt(getComputedStyle(textEl).fontSize);
-    let currentHeight = null;
-    while (i < 100 && currentHeight !== textEl.clientHeight && textEl.clientHeight > maxHeight && initialSize > minSize) {
-        currentHeight = textEl.clientHeight;
+    while (i < 100 && textEl.clientHeight > maxHeight && initialSize > minSize) {
         textEl.style.fontSize = `${Math.max(initialSize -= 2, minSize)}px`;
         i++;
     }
+    textEl.style.fontSize = `${Math.max(initialSize, minSize)}px`;
 }
 /**
  * Apply inline styling of text to an element
@@ -1125,7 +1065,7 @@ function createTermCard({ term, definition }, index, isStarred) {
     ]);
     if (setType === "timeline") {
         cardEl.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
-        cardEl.classList.add("timeline-piece")
+        cardEl.classList.add("timeline-piece", "content");
     } else cardEl.appendChild(document.createElement("p")).innerHTML = styleAndSanitize(definition);
     pages.setOverview.terms.appendChild(createElement("div", ["column", "is-one-quarter-desktop", "is-half-tablet"], {}, [cardEl]));
 }
@@ -1195,15 +1135,12 @@ async function getShortenedSetUrl() {
 
 addEventListener("DOMContentLoaded", async () => {
     pages.flashcards.init();
-    //pages.learn.init();
-    //pages.test.init();
-    //pages.match.init();
+    pages.learn.init();
+    pages.test.init();
+    pages.match.init();
     if (setType === "timeline") {
         pages.setOverview.terms.style.justifyContent = "left";
-        document.querySelectorAll(".study-modes > :not([href='#flashcards'])").forEach(el => {
-            el.classList.add("is-static");
-            el.disabled = true;
-        });
+        document.querySelectorAll(".study-modes > :not([href='#flashcards'])").forEach(el => el.hidden = true);
     }
     try {
         let setSnap = await getDoc(setRef);
@@ -1238,7 +1175,6 @@ addEventListener("DOMContentLoaded", async () => {
         };
         document.head.appendChild(createElement("script", [], {type: "application/ld+json", innerText: JSON.stringify(quizJsonLD)}));
 
-        // Events
         pages.setOverview.name.innerText = currentSet.name;
         applyStyling(currentSet.description || "", pages.setOverview.description);
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
@@ -1246,6 +1182,8 @@ addEventListener("DOMContentLoaded", async () => {
         for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i, starredList.includes(i));
         navigate();
         initQuickview(pages.comment.quickview, pages.comment.btnShowComments);
+
+        // Events
         document.addEventListener("keyup", e => {
             if (location.hash === "#flashcards") pages.flashcards.onKeyUp(e);
             else if (location.hash === "#learn") pages.learn.onKeyUp(e);
@@ -1304,6 +1242,8 @@ addEventListener("DOMContentLoaded", async () => {
             pages.setOverview.shareLink.innerText = shortLink;
             pages.setOverview.shareLink.href = shortLink;
         });
+
+        // Share Modal
         pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
         pages.setOverview.shareLink.innerText = `https://vocabustudy.org${location.pathname}`;
         pages.setOverview.shareLink.href = `https://vocabustudy.org${location.pathname}`;
@@ -1319,6 +1259,7 @@ addEventListener("DOMContentLoaded", async () => {
         });
         document.querySelector(".page-loader").hidden = true;
     } catch (err) {
+        console.error(err);
         if (err.message.includes("Forbidden")) {
             localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();

@@ -22,15 +22,12 @@ append scripts-footer
                     row.appendChild(document.createElement("span")).innerText = el[2];
                 });
                 let btn = document.querySelector(".container-results").appendChild(document.createElement("button"));
-                btn.classList.add("button", "button--raised");
-                btn.appendChild(document.createElement("span")).classList.add("button__ripple");
-                let label = btn.appendChild(document.createElement("span"));
-                label.classList.add("button__label");
-                label.innerText = "Star All Terms";
+                btn.classList.add("button", "is-primary");
+                btn.innerText = "Star All Terms"
                 btn.addEventListener("click", () => {
                     opener.StarredTerms.setStars(learnResults.results.map(el => el[0]), true);
                     btn.disabled = true;
-                    btn.querySelector("span:last-child").innerText = "Starred";
+                    btn.innerText = "Starred";
                 });
             }
         }

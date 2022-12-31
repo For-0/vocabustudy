@@ -12,31 +12,35 @@ $footer-color: #fff;
 $footer-padding: 1rem;
 $family-primary: "Raleway";
 @import "bulma/sass/utilities/functions";
-$custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "secondary-light": ($secondary-light, findColorInvert($secondary-light)));
+$custom-colors: ("primary-alt": ($primary-alt, findColorInvert($primary-alt)), "secondary-light": ($secondary-light, findColorInvert($secondary-light)), "gold": (goldenrod, findColorInvert(goldenrod)));
 
 // Note: Colors are the four browns in the VUS Logo. Goes from lightest to darkest.
 @import "bulma/sass/utilities/_all";
 @import "bulma/sass/base/_all";
+
 @import "bulma/sass/elements/box";
+@import "bulma/sass/elements/button";
 @import "bulma/sass/elements/content";
 @import "bulma/sass/elements/container";
 @import "bulma/sass/elements/tag";
 @import "bulma/sass/elements/title";
 @import "bulma/sass/elements/notification";
-@import "bulma/sass/elements/button";
 @import "bulma/sass/elements/other";
-@import "bulma/sass/components/navbar";
+
+@import "bulma/sass/form/_all";
+
 @import "bulma/sass/components/card";
-@import "bulma/sass/components/tabs";
-@import "bulma/sass/components/modal";
 @import "bulma/sass/components/dropdown";
 @import "bulma/sass/components/level";
 @import "bulma/sass/components/menu";
-@import "bulma/sass/components/panel";
 @import "bulma/sass/components/message";
+@import "bulma/sass/components/modal";
+@import "bulma/sass/components/navbar";
+@import "bulma/sass/components/panel";
+@import "bulma/sass/components/tabs";
+
 @import "bulma/sass/grid/_all";
 @import "bulma/sass/helpers/_all";
-@import "bulma/sass/form/_all";
 @import "bulma/sass/layout/_all";
 
 // extensions
@@ -129,6 +133,16 @@ strong {
 }
 .has-validated-inputs .input:invalid {
     @extend .is-danger;
+}
+.has-validated-inputs .field:first-of-type .is-checkradio:invalid {
+    @extend .is-danger;
+    @extend .has-background-color;
+    + label {
+        color: #f14668;
+    }
+}
+fieldset[disabled] .is-checkradio {
+    @extend [disabled];
 }
 .has-validated-inputs .field:has(input.input:invalid) + .help {
     color: #f14668;

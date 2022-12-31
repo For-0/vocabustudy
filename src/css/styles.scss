@@ -279,10 +279,20 @@ body > footer {
 
 .fab-theme-container {
     bottom: 10px;
-    left: calc(100% - 78px);
+    right: 10px;
     width: fit-content;
     z-index: 21;
     position: fixed;
+    @media (max-width: 1023px) {
+        > button.is-floating, > &.show div button.is-floating {
+            width: 45px;
+            height: 45px;
+            border-radius: 50px;
+            i {
+                font-size: 1.2rem !important;
+            }
+        }
+    }
     > button span {
         transition: transform 0.3s linear;
     }
@@ -344,11 +354,14 @@ body > footer {
     display: inline-block;
     overflow: hidden;
     max-width: calc(100% - var(--studymode-header-width));
-    vertical-align: middle;
+    vertical-align: bottom;
 }
+
 .fit {
     display: inline-block;
-    white-space: normal !important;
+    white-space: pre-line !important;
+    overflow-wrap: break-word;
+    line-height: normal;
     max-width: 100%;
 }
 .nohuechange {
