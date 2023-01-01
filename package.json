@@ -56,6 +56,7 @@
     "@material/theme": "^14.0.0",
     "@material/tooltip": "^14.0.0",
     "@material/top-app-bar": "14.0.0",
+    "@parcel/service-worker": "^2.8.2",
     "@sentry/browser": "^7.21.1",
     "@sentry/tracing": "^7.21.1",
     "@vizuaalog/bulmajs": "^0.12.2",
@@ -75,7 +76,6 @@
   },
   "devDependencies": {
     "@parcel/packager-raw-url": "^2.8.2",
-    "@parcel/reporter-bundle-buddy": "^2.8.2",
     "@parcel/transformer-jsonld": "^2.8.2",
     "@parcel/transformer-pug": "^2.8.2",
     "@parcel/transformer-sass": "^2.8.2",

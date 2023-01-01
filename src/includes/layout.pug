@@ -77,7 +77,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
             block content
         .fab-theme-container
             button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme")
-                i(style="font-size: 1.5rem; ").material-symbols-rounded.has-text-white brightness_high
+                i(style="font-size: 1.5rem; ").material-symbols-rounded.has-text-white light_mode
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
                     i.material-symbols-rounded brightness_4
@@ -89,7 +89,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     i.material-symbols-rounded.is-filled palette
         footer.footer.level.is-mobile(style="position: relative;")
             p.level-item
-                span.mr-1 v#{process.env.npm_package_version}
+                span.mr-1 #[span.tag.is-secondary v#{process.env.npm_package_version}]
                 span.is-hidden-mobile.mr-1  | &copy; 2022 Siddhant K. All Rights Reserved
                 | - 
                 a.has-text-white.is-underlined.ml-1(href="/#credits") Credits
@@ -112,7 +112,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.has-text-white.mr-3.is-filled.icon(href="https://github.com/orgs/For-0/projects/2/insights/1" title="Bug Leaderboard")
                         i.material-symbols-rounded leaderboard
         block scripts-footer
-            script.
+            script(type="module").
                 console.info("%cOrchestra is better than Band*\n%c*But Art is the best", "background-color: #795548; color: white; font-size: 96px; font-weight: bold; border-radius: 4px; font-style: italic;", "font-size: 12px; font-style: italic;");
                 if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) location.host = "vocabustudy.org";
                 const navbar = {
@@ -153,6 +153,18 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                         document.documentElement.style.filter = "none";
                     }
                 }
+                function getRuntimeEnvironment() {
+                    if (location.hostname === "localhost" || location.hostname.includes("gitpod") || location.hostname.includes("github.dev")) return "dev";
+                    else {
+                        let possiblePreviewURL = location.hostname.match(/vocabustudyonline--([\d\w-]*)\.web\.app/);
+                        if (possiblePreviewURL) {
+                            let previewParts = possiblePreviewURL[1].split("-");
+                            previewParts.pop();
+                            return previewParts.join("-");
+                        }
+                    }
+                    return null;
+                }
                 addEventListener("DOMContentLoaded", () => {
                     navbar.burger.addEventListener("click", () => {
                         navbar.burger.classList.toggle("is-active");
@@ -169,6 +181,14 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                         });
                     });
                     navbar.btnLogout.addEventListener("click", () => window.signOut());
+                    let possibleRuntimeEnvironment = getRuntimeEnvironment();
+                    if (possibleRuntimeEnvironment) {
+                        let versionSpan = document.querySelector("body > footer.footer span");
+                        versionSpan.innerText = "";
+                        let tag = versionSpan.appendChild(document.createElement("span"));
+                        tag.classList.add("tag", possibleRuntimeEnvironment === "dev" ? "is-warning" : "is-info");
+                        tag.innerText = possibleRuntimeEnvironment;
+                    }
                 });
 
                 let userPrefersDark = matchMedia("(prefers-color-scheme: dark)");
@@ -180,4 +200,5 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     fabs.themeContainer.classList.toggle("show")
                 }, true);
                 document.addEventListener("click", () => fabs.themeContainer.classList.remove("show"));
-                document.querySelector("#btn-logout + a.loggedout").addEventListener("click", () => localStorage.removeItem("redirect_after_login"))
+                document.querySelector("#btn-logout + a.loggedout").addEventListener("click", () => localStorage.removeItem("redirect_after_login"));
+                navigator.serviceWorker.register(new URL("service-worker.js", import.meta.url), {type: "module", scope: "/"});
