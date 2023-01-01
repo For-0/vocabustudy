@@ -10,7 +10,18 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.16.0
-      - run: npm ci && npx parcel build --no-source-maps
+      - run: npm ci && npx parcel build
+      - name: Create Sentry Release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ SENTRY_RELEASES_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: 'production'
+          sourcemaps: './dist'
+          version: ${{ github.event.release.tag_name }}
+      - run: npm run delete-maps
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
