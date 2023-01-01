@@ -77,19 +77,19 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
             block content
         .fab-theme-container
             button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme")
-                i(style="font-size: 1.5rem; ").material-symbols-rounded.has-text-white light_mode
+                i(style="font-size: 1.5rem; ").material-symbols-rounded.has-text-white.is-filled light_mode
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
-                    i.material-symbols-rounded brightness_4
+                    i.material-symbols-rounded.is-filled brightness_4
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="Dark")
-                    i.material-symbols-rounded dark_mode
+                    i.material-symbols-rounded.is-filled dark_mode
                 button.button.is-primary.fab-theme.is-floating(aria-label="Light" title="Light")
-                    i.material-symbols-rounded light_mode
+                    i.material-symbols-rounded.is-filled light_mode
                 button.button.is-primary.fab-theme.is-floating.btn-change-hue(hidden aria-label="Hue" title="Set Hue")
                     i.material-symbols-rounded.is-filled palette
         footer.footer.level.is-mobile(style="position: relative;")
             p.level-item
-                span.mr-1 #[span.tag.is-secondary v#{process.env.npm_package_version}]
+                a(href="https://github.com/For-0/vocabustudy/releases") #[span.mr-1 #[span.tag.is-secondary v#{process.env.npm_package_version}]]
                 span.is-hidden-mobile.mr-1  | &copy; 2022 Siddhant K. All Rights Reserved
                 | - 
                 a.has-text-white.is-underlined.ml-1(href="/#credits") Credits
