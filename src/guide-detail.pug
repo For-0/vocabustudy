@@ -1,41 +1,31 @@
-- var styleFile = "guide-detail.scss";
-- var showBack = true;
-- var title = "Study Guide";
-- var description = "Learn more about this topic with a study guide";
-doctype html
-html.custom-scrollbar(lang="en")
-    include includes/head
-    body.mdc-typography
-        include includes/navbar
-        main.mdc-top-app-bar--fixed-adjust
-            .page#home
-                h1
-                    span.field-name
-                    button.mdc-button.mdc-button--leading.btn-like(style="float: right; color: white; margin-left: 1rem;" type="button")
-                        span.mdc-button__ripple
-                        i.material-icons-round.mdc-button__icon(aria-hidden="true") favorite_border
-                        span.mdc-button__label Like
-                    p.mdc-typography--subtitle1(style="float: right; margin: 0; margin-top: 4px;")
-                        span.field-num-terms
-                        |  items
-                p.field-description
-                .field-term-navigation.custom-scrollbar
-                .field-terms
-                details(style="margin-top: 1rem; float: left; width: 100%;")
-                    summary
-                        h2.mdc-typography--headline6(style="display: inline;") Comments
-                    .comments-container.set-container(data-empty="No Comments. Post one!")
-                    .field-comment(hidden)
-                        label.mdc-text-field.mdc-text-field--filled
-                            span.mdc-text-field__ripple
-                            span.mdc-floating-label Comment
-                            input.mdc-text-field__input(type="text" required maxlength="500")
-                            span.mdc-line-ripple
-                        button.mdc-button.mdc-button--outlined(type="button" style="display: block;" disabled)
-                            span.mdc-button__ripple
-                            span.mdc-button__label Save
-        aside.mdc-snackbar#snackbar-comment-saved
-            .mdc-snackbar__surface(role="status" aria-relevant="additions")
-                .mdc-snackbar__label(aria-atomic="false") Comment saved!
-        include includes/footer
-        script(src="js/guide-detail.js" type="module")
+extends includes/layout.pug
+block variables
+    - var title = "Study Guide";
+    - var description = "Learn more about this topic with a study guide";
+block main-stylesheet
+    link(rel="stylesheet" href="css/guide-detail.scss")
+block content
+    .page.is-relative#home
+        h1
+            span.field-name
+            button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
+                span.icon
+                    i.material-symbols-rounded(aria-hidden="true") thumb_up
+                span.ml-1 Like
+            p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
+                span.field-num-terms
+                |  items
+        p.field-description
+        .page-loader
+            .loader-container
+                span.loader.is-size-1
+        .tabs-wrapper
+            .tabs.is-boxed
+                ul
+            .tabs-content
+                ul
+        include includes/comment-quickview
+append scripts-footer
+    script.
+        window.bulmaOptions = {autoParseDocument: false}
+    script(src="js/guide-detail.js" type="module")

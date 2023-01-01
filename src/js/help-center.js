@@ -1,8 +1,7 @@
 import initialize from "./general";
 initialize();
-const coll = document.getElementsByClassName("collapsible");
-for (let el of coll) {
-    el.addEventListener("click", () => {
-        el.classList.toggle("active");
-    })
-}
+let frame;
+document.addEventListener("scroll", () => {
+    if (frame) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => document.body.classList.toggle("hero-small",document.documentElement.scrollTop > 52))
+});

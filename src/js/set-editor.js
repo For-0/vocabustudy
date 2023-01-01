@@ -1,19 +1,14 @@
-import { MDCDialog } from "@material/dialog/index";
-import { MDCRipple } from "@material/ripple/index";
-import { MDCFormField } from "@material/form-field/index";
-import { MDCRadio } from "@material/radio/index";
-import { MDCSwitch } from "@material/switch/index";
-import { MDCTextField } from "@material/textfield/index";
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections } from "./utils.js";
-import { MDCSnackbar } from "@material/snackbar/component.js";
-import { map } from "@firebase/util";
+import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements } from "./utils.js";
+import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
+import { toast } from "bulma-toast";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
         super();
     }
+    initialized = false;
     /**
      * Initialize the quiz question and create the elements if connected
      * @param {{question: string, answers: String[], type: 0|1}} question The initial data for the quiz question
@@ -26,68 +21,45 @@ class QuizQuestion extends HTMLElement {
         let answers = [...this.querySelectorAll(".answer-input input")].map(el => el.value.trim()).filter(el => el);
         if (answers.length < 1) answers = ["True", "False"];
         return {
-            question: this.questionInput.value,
+            question: this.questionInput.querySelector("input").value,
             answers,
             type: parseInt(this.querySelector("input[type=radio]:checked").value)
         }
     }
     createAnswerInput(answer) {
-        let input = createTextFieldWithHelper("Answer", null, {maxLength: 500}).obj;
-        input.value = answer;
-        this.appendChild(input.root);
-        input.layout();
-        input.root.classList.add("answer-input");
-        input.listen("input", () => {
-            if (input.root.nextElementSibling?.nodeName !== "LABEL") this.createAnswerInput("");
-            else if (input.value === "" && input.root.nextElementSibling?.nodeName === "LABEL" && input.root.nextElementSibling.querySelector("input").value === "") input.root.nextElementSibling.remove();
+        let input = createTextFieldWithHelper("Answer", null, {maxLength: 500, value: answer}).textField;
+        this.contentContainer.appendChild(input);
+        input.classList.add("answer-input");
+        input.addEventListener("input", () => {
+            if (!input.nextElementSibling?.classList?.contains("answer-input")) this.createAnswerInput("");
+            else if (input.querySelector("input").value === "" && input.nextElementSibling?.classList?.contains("answer-input") && input.nextElementSibling.querySelector("input").value === "") input.nextElementSibling.remove();
         });
         return input;
     }
     showQuestion() {
-        this.questionInput = createTextFieldWithHelper("Question", null, {required: true, maxLength: 500}).obj;
-        this.questionInput.root.style.width = "90%";
-        this.questionInput.value = this.initialQuestion.question;
-        this.appendChild(this.questionInput.root);
-        this.deleteButton = createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
-            createElement("div", ["mdc-icon-button__ripple"]),
-            createElement("i", ["material-icons-round"], {innerText: "delete"})
-        ]);
-        this.appendChild(this.deleteButton);
-        MDCRipple.attachTo(this.deleteButton).unbounded = true;
-        this.deleteButton.addEventListener("click", () => this.remove());
-        let questionId = `_${crypto.randomUUID()}`;
-        let answerTypes = createElement("div", [], {}, [
-            createElement("div", ["mdc-form-field"], {}, [
-                createElement("div", ["mdc-radio", "mdc-radio--touch"], {}, [
-                    createElement("input", ["mdc-radio__native-control"], {type: "radio", value: "0", name: questionId, id: `${questionId}-0`}),
-                    createElement("div", ["mdc-radio__background"], {}, [
-                        createElement("div", ["mdc-radio__outer-circle"]),
-                        createElement("div", ["mdc-radio__inner-circle"])
-                    ]),
-                    createElement("div", ["mdc-radio__ripple"])
-                ]),
-                createElement("label", [], {innerText: "Multiple Choice", htmlFor: `${questionId}-0`})
-            ]),
-            createElement("div", ["mdc-form-field"], {}, [
-                createElement("div", ["mdc-radio", "mdc-radio--touch"], {}, [
-                    createElement("input", ["mdc-radio__native-control"], {type: "radio", value: "1", name: questionId, id: `${questionId}-1`}),
-                    createElement("div", ["mdc-radio__background"], {}, [
-                        createElement("div", ["mdc-radio__outer-circle"]),
-                        createElement("div", ["mdc-radio__inner-circle"])
-                    ]),
-                    createElement("div", ["mdc-radio__ripple"])
-                ]),
-                createElement("label", [], {innerText: "Short Answer", htmlFor: `${questionId}-1`})
-            ])
-        ]);
-        let radioObjs = [...answerTypes.querySelectorAll(".mdc-form-field")].map(el => MDCFormField.attachTo(el).input = new MDCRadio(el.firstElementChild));
-        radioObjs[this.initialQuestion.type].checked = true;
-        this.appendChild(answerTypes);
-        this.initialQuestion.answers.push("");
-        this.initialQuestion.answers.map(el => this.createAnswerInput(el));
+        if (!this.initialized) {
+            this.textContent = "";
+            this.contentContainer = this.appendChild(createElement("div", ["list-item-content"]));
+            this.questionInput = createTextFieldWithHelper("Question", null, {required: true, maxLength: 500, value: this.initialQuestion.question}).textField;
+            this.contentContainer.appendChild(this.questionInput);
+            this.deleteButton = createElement("button", ["delete"], {type: "button"});
+            this.appendChild(createElement("div", ["list-item-controls", "is-align-items-baseline"], {}, [createElement("div", ["buttons", "is-pulled-right"], {}, [this.deleteButton])])).querySelector(".buttons").style.marginTop = "1.15em";
+            this.deleteButton.addEventListener("click", () => this.remove());
+            let questionId = `_${crypto.randomUUID()}`;
+            let answerTypes = createElement("div", ["field"], {}, [
+                createElement("input", ["is-checkradio", "is-info"], {type: "radio", name: questionId, value: "0", checked: this.initialQuestion.type === 0, id: `${questionId}-0`}),
+                createElement("label", [], {htmlFor: `${questionId}-0`, innerText: "Multiple Choice"}),
+                createElement("input", ["is-checkradio", "is-info"], {type: "radio", name: questionId, value: "1", checked: this.initialQuestion.type === 1, id: `${questionId}-1`}),
+                createElement("label", [], {htmlFor: `${questionId}-1`, innerText: "Short Answer"}),
+            ]);
+            this.contentContainer.appendChild(answerTypes);
+            this.initialQuestion.answers.push("");
+            this.initialQuestion.answers.map(el => this.createAnswerInput(el));
+            this.classList.add("list-item");
+            this.initialized = true;
+        }
     }
     connectedCallback() {
-        this.textContent = "";
         if (this.initialQuestion) this.showQuestion();
     }
 }
@@ -107,23 +79,26 @@ const {db, auth} = initialize(async user => {
             case "new":
                 document.title = "New Set - Vocabustudy";
                 document.querySelector("h1").innerText = "New Set";
-                document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+                document.querySelector("h2").innerText = "Vocabulary Words";
+                fields.terms.classList.remove("columns");
                 setType = 0;
                 fields.btnAddQuiz.hidden = true;
                 break;
             case "new-timeline":
                 document.title = "New Timeline - Vocabustudy";
                 document.querySelector("h1").innerText = "New Timeline";
-                document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
+                document.querySelector("h2").innerText = "Timeline Items";
+                fields.terms.classList.add("columns");
                 fields.btnAddQuiz.hidden = true;
                 setType = 1;
                 break;
             case "new-guide":
                 document.title = "New Guide - Vocabustudy";
                 document.querySelector("h1").innerText = "New Study Guide";
-                document.querySelector("h2").childNodes[0].textContent = "Guide Items";
+                document.querySelector("h2").innerText = "Guide Items";
+                fields.terms.classList.add("columns");
                 setType = 2;
-                fields.btnAddQuiz.hidden = true;
+                fields.btnAddQuiz.hidden = false;
                 break;
             default:
                 goBack();
@@ -153,18 +128,21 @@ const {db, auth} = initialize(async user => {
         fields.terms.textContent = "";
         if (currentSetMeta.collections.includes("-:0")) {
             setType = 1;
-            document.querySelector("h1").innerText = "Edit Timeline";     
-            document.querySelector("h2").childNodes[0].textContent = "Timeline Items";
+            document.querySelector("h1").innerText = "Edit Timeline";
+            document.querySelector("h2").innerText = "Timeline Items";
+            fields.terms.classList.add("columns");
             fields.btnAddQuiz.hidden = true;
         } else if (currentSetMeta.collections.includes("-:1")) {
             setType = 2;
-            document.querySelector("h1").innerText = "Edit Study Guide";     
-            document.querySelector("h2").childNodes[0].textContent = "Guide Items"
+            document.querySelector("h1").innerText = "Edit Study Guide";
+            document.querySelector("h2").innerText = "Guide Items"
+            fields.terms.classList.add("columns");
             fields.btnAddQuiz.hidden = false;
         } else {
             setType = 0;
             document.querySelector("h1").innerText = "Edit Set";
-            document.querySelector("h2").childNodes[0].textContent = "Vocabulary Words";
+            document.querySelector("h2").innerText = "Vocabulary Words";
+            fields.terms.classList.remove("columns");
             fields.btnAddQuiz.hidden = true;
         }
         fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
@@ -183,32 +161,32 @@ const savingFunctions = {
     },
     2: el => {
         switch(el.dataset.type) {
-            case "0":
-                let inputs = [...el.querySelectorAll("input,textarea")].map(el => el.value.trim());
+            case "0": {
+                let inputs = [...el.querySelectorAll("input,textarea")].map(inp => inp.value.trim());
                 return {title: inputs[0], type: 0, body: inputs[1]};
-            case "1":
+            } case "1": {
                 let title = el.querySelector("input").value.trim();
-                let questions = [...el.querySelectorAll("quiz-question")].map(el => el.question);
+                let questions = [...el.querySelectorAll("quiz-question")].map(inp => inp.question);
                 return {title, type: 1, questions};
+            }
         }
     }
 };
 const fields = {
-    setName: new MDCTextField(document.querySelector(".field-name")),
-    setDescription: new MDCTextField(document.querySelector(".field-description")),
-    public: new MDCSwitch(document.getElementById("field-public")),
+    setName: document.querySelector(".field-name"),
+    setDescription: document.querySelector(".field-description"),
+    public: document.getElementById("field-public"),
     terms: document.querySelector(".field-terms-edit"),
     btnCancel: document.querySelector(".btn-cancel"),
     btnAddTerm: document.querySelector(".btn-add-term"),
     btnAddQuiz: document.querySelector(".btn-add-quiz"),
     btnImportTerms: document.querySelector(".btn-import-terms"),
     formEdit: document.querySelector("form"),
-    importDialog: new MDCDialog(document.querySelector("#dialog-import-terms")),
-    importDialogInput: new MDCTextField(document.querySelector("#dialog-import-terms .mdc-text-field--textarea")),
+    importDialog: new Modal("#dialog-import-terms").modal(),
+    importDialogInput: document.querySelector("#dialog-import-terms textarea"),
     collections: document.querySelector(".field-collections"),
     btnImportBlooket: document.querySelector(".btn-import-blooket"),
-    fieldImportBlooket: new MDCTextField(document.querySelector(".field-import-blooket")),
-    snackbarCantSave: new MDCSnackbar(document.getElementById("snackbar-cant-save")),
+    fieldImportBlooket:document.querySelector(".field-import-blooket"),
     warningDuplicateTerms: document.querySelector(".warning-duplicate"),
 };
 let changesSaved = true;
@@ -225,6 +203,22 @@ function checkInputDuplicates() {
     let isDup = terms.some((item, index) => terms.indexOf(item) != index) || definitions.some((item, index) => definitions.indexOf(item) != index);
     fields.warningDuplicateTerms.hidden = !isDup;
 }
+function createTimelineDetail(detailContent) {
+    let detailInput = createTextFieldWithHelper("Detail", null, {maxLength: 500, value: detailContent, required: true});
+    detailInput.textField.style.width = "90%";
+    let listItem = createElement("div", ["list-item"], {}, [
+        createElement("div", ["list-item-content"], {}, [detailInput.textField]),
+        createElement("div", ["list-item-controls"], {}, [
+            createElement("div", ["buttons", "is-right"], {}, [
+                createElement("button", ["delete"], {type: "button"})
+            ])
+        ])
+    ]);
+    listItem.style.width = "100%";
+    listItem.querySelector("button").addEventListener("click", () => listItem.remove());
+    listItem.querySelector(".buttons").style.marginTop = "1.15em";
+    return listItem;
+}
 function createTermInput(term) {
     /** @type {HTMLDivElement?} */
     let termInput;
@@ -233,112 +227,145 @@ function createTermInput(term) {
         let definitionField = createTextFieldWithHelper("Definition", null, {required: true, maxLength: 500});
         termField.textField.style.width = "";
         definitionField.textField.style.width = "";
-        termInput = createElement("div", ["editor-term"], {}, [
-            termField.textField,
-            definitionField.textField,
-            createElement("button", ["mdc-icon-button", "btn-delete"], {type: "button"}, [
-                createElement("div", ["mdc-icon-button__ripple"]),
-                createElement("span", ["mdc-icon-button__focus-ring"]),
-                createElement("i", ["material-icons-round"], {innerText: "delete"})
+        let deleteButton = createElement("button", ["button", "btn-delete", "is-danger", "is-inverted"], {type: "button"}, [
+            createElement("span", ["icon"], {}, [
+                createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "delete"})
             ])
         ]);
-        MDCRipple.attachTo(termInput.children[2]).unbounded = true;
-        termField.obj.value = term.term;
-        definitionField.obj.value = term.definition;
-        termField.obj.listen("change", () => checkInputDuplicates());
-        definitionField.obj.listen("change", () => checkInputDuplicates());
-        termInput.children[2].addEventListener("click", () => termInput.remove());
+        let deleteButtonMobile = deleteButton.cloneNode(true);
+        termInput = createElement("div", ["editor-term", "columns"], {}, [
+            createElement("div", ["column", "is-one-third"], {}, [
+                createElement("div", ["columns", "is-mobile"], {}, [
+                    createElement("div", ["column"], {}, [termField.textField]),
+                    createElement("div", ["column", "is-narrow", "is-hidden-tablet", "is-align-self-flex-end"], {}, [deleteButtonMobile])
+                ]),
+            ]),
+            createElement("div", ["column"], {}, [definitionField.textField]),
+            createElement("div", ["column", "is-narrow", "is-align-self-flex-end", "is-hidden-mobile"], {}, [deleteButton])
+        ]);
+        termField.textField.querySelector("input").value = term.term;
+        definitionField.textField.querySelector("input").value = term.definition;
+        termInput.addEventListener("change", () => checkInputDuplicates());
+        deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
+        deleteButtonMobile.addEventListener("click", () => zoomOutRemove(termInput));
     } else if (setType === 1) {
-        let inputName = createTextFieldWithHelper("Event", null, {required: true, maxLength: 500});
-        let inputDate = createTextFieldWithHelper("Date", null, {required: true, maxLength: 500});
         let [name, date] = term.term.split("\x00");
+        let inputName = createTextFieldWithHelper("Event", null, {required: true, maxLength: 500, value: name || ""});
+        let inputDate = createTextFieldWithHelper("Date", null, {required: true, maxLength: 500, value: date || ""});
         let details = term.definition.split("\x00");
-        let detailInputs = details.map(el => {
-            let detailInput = createTextFieldWithHelper("Detail", null, {maxLength: 500});
-            detailInput.obj.value = el;
-            return detailInput.textField;
-        });
-        termInput = createElement("div", ["mdc-card", "editor-timeline-piece"], {}, [
-            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                inputName.textField,
-                inputDate.textField
-            ]),
-            createElement("div", ["mdc-card-wrapper__text-section", "details-container"], {}, [...detailInputs, 
-                createElement("p", [], {innerText: "Leave a detail blank to delete"})
-            ]),
-            createElement("div", ["mdc-card__actions"], {}, [
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Add Detail", type: "button", innerText: "add"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
-                createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+        let detailInputs = details.map(createTimelineDetail);
+        let deleteButton = createElement("button", ["delete"], {type: "button"});
+        deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
+        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column", "is-relative"], {}, [
+            createElement("div", ["panel", "editor-timeline-piece", "has-background-white"], {}, [
+                createElement("p", ["panel-heading"], {}, [
+                    createElement("div", ["columns"], {}, [
+                        createElement("div", ["column", "is-two-thirds"], {}, [inputName.textField]),
+                        createElement("div", ["column", "is-one-third"], {}, [inputDate.textField])
+                    ])
+                ]),
+                createElement("div", ["panel-block", "list", "details-container"], {}, detailInputs),
+                createElement("div", ["panel-block", "is-flex", "is-justify-content-space-between"], {}, [
+                    createElement("button", ["button", "btn-move"], {title: "Move Left", type: "button"}, [
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_before"})])
+                    ]),
+                    createElement("button", ["button"], {title: "Add Detail", type: "button"}, [
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "add"})]),
+                        createElement("span", [], {innerText: "Detail"})
+                    ]),
+                    createElement("button", ["button", "btn-move"], {title: "Move Right", type: "button"}, [
+                        createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_next"})])
+                    ])
+                ]),
+                deleteButton
             ])
         ]);
-        inputName.obj.value = name || "";
-        inputDate.obj.value = date || "";
-        let actionButtons = [...termInput.querySelectorAll('.mdc-card__actions > button')].map(el => MDCRipple.attachTo(el).root);
-        actionButtons[0].addEventListener("click", () => {
-            if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
+        let actionButtons = [...termInput.querySelectorAll('.panel-block > button')];
+        actionButtons[0].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[2].disabled = true;
+            if (termInput.previousElementSibling) {
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.previousElementSibling);
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false);
+            }
+            actionButtons[0].disabled = actionButtons[2].disabled = false;
         });
         actionButtons[1].addEventListener("click", () => {
-            termInput.querySelector(".details-container").insertBefore(createTextFieldWithHelper("Detail", null, {maxLength: 500}).textField, termInput.querySelector(".details-container").lastElementChild);
+            termInput.querySelector(".details-container").insertBefore(createTimelineDetail(""), termInput.querySelector(".details-container").lastElementChild);
         });
-        actionButtons[2].addEventListener("click", () => termInput.remove());
-        actionButtons[3].addEventListener("click", () => {
-            if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
-            else fields.terms.appendChild(termInput);
+        actionButtons[2].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[2].disabled = true;
+            if (termInput.nextElementSibling) {
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.nextElementSibling);
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false);
+            }
+            actionButtons[0].disabled = actionButtons[2].disabled = false;
         });
     } else if (setType === 2) {
-        let inputName = createTextFieldWithHelper("Title", null, {required: true, maxLength: 500});
+        let inputName = createTextFieldWithHelper("Title", null, {required: true, maxLength: 500, value: term.title || ""});
         /** @type {HTMLElement} */
         let bodyInput;
-        let buttons = [
-            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Left", type: "button", innerText: "navigate_before"}),
-            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round", "btn-delete"], {title: "Delete", type: "button", innerText: "delete"}),
-            createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Move Right", type: "button", innerText: "navigate_next"})
+        let deleteButton = createElement("button", ["delete"], {type: "button"});
+        deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
+        let actionButtons = [
+            createElement("button", ["button", "btn-move"], {title: "Move Left", type: "button"}, [
+                createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_before"})])
+            ]),
+            createElement("button", ["button", "btn-move"], {title: "Move Right", type: "button"}, [
+                createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "navigate_next"})])
+            ])
         ];
         if (term.type === 0) {
-            bodyInput = createElement("label", ["mdc-text-field", "mdc-text-field--outlined", "mdc-text-field--textarea", "mdc-text-field--no-label"], {}, [
-                createElement("span", ["mdc-notched-outline"], {}, [
-                    createElement("span", ["mdc-notched-outline__leading"]),
-                    createElement("span", ["mdc-notched-outline__trailing"])
-                ]),
-                createElement("span", ["mdc-text-field__resizer"], {}, [
-                    createElement("textarea", ["mdc-text-field__input", "custom-scrollbar"], {rows: 8, cols: 40})
+            bodyInput = createElement("div", ["field", "is-flex", "is-flex-direction-column"], {}, [
+                createElement("label", ["label"], {innerText: "Item Body:"}),
+                createElement("div", ["control", "is-flex-grow-1"], {}, [
+                    createElement("textarea", ["textarea"], {required: true, cols: 40, rows:4, value: term.body || ""})
                 ])
             ]);
-            let bodyInputObj = new MDCTextField(bodyInput);
-            bodyInputObj.value = term.body || "";
+            bodyInput.style.height = "100%";
+            bodyInput.querySelector("textarea").style.height = "100%";
         } else if (term.type === 1) {
-            bodyInput = createElement("div", ["questions-container"], {}, [
+            bodyInput = createElement("div", ["list"], {}, [
                 ...term.questions.map(el => createElement("quiz-question", [], {initialQuestion: el})),
-                createElement("p", [], {innerText: "MC: First is correct, SA: All are correct"})
+                createElement("p", ["has-text-centered", "has-workaround"], {innerText: "MC: First is correct, SA: All are correct"})
             ]);
-            buttons.splice(1, 0, createElement("button", ["mdc-icon-button", "mdc-card__action", "mdc-card__action--icon", "material-icons-round"], {title: "Add Question", type: "button", innerText: "add"}));
-            buttons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [], type: 0}}), bodyInput.lastElementChild));
+            actionButtons.splice(1, 0, createElement("button", ["button"], {title: "Add Question", type: "button"}, [
+                createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "add"})]),
+                createElement("span", [], {innerText: "Question"})
+            ]));
+            actionButtons[1].addEventListener("click", () => bodyInput.insertBefore(createElement("quiz-question", [], {initialQuestion: {question: "", answers: [], type: 0}}), bodyInput.lastElementChild));
         } else return;
-        termInput = createElement("div", ["mdc-card", "editor-study-piece"], {}, [
-            createElement("div", ["mdc-card-wrapper__text-section"], {}, [
-                inputName.textField
-            ]),
-            createElement("div", ["mdc-card-wrapper__text-section", "details-container"], {}, [
-                createElement("p", [], {innerText: (term.type === 1) ? "Quiz Questions:" : "Item body:"}),
-                bodyInput
-            ]),
-            createElement("div", ["mdc-card__actions"], {}, buttons)
+        bodyInput.style.width = "100%";
+        termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column", "is-relative"], {}, [
+            createElement("div", ["panel", "editor-study-piece", "has-background-white"], {}, [
+                createElement("p", ["panel-heading"], {}, [inputName.textField]),
+                createElement("div", ["panel-block", "details-container", "is-flex-grow-1"], {}, [bodyInput]),
+                createElement("div", ["panel-block", "is-flex", "is-justify-content-space-between"], {}, actionButtons),
+                deleteButton
+            ])
         ]);
+        actionButtons[0].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = true;
+            if (termInput.previousElementSibling) {
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.previousElementSibling);
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false); // they've been switched so use nextElementSibling
+            }
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = false;
+        });
+        actionButtons[1 + term.type].addEventListener("click", async () => {
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = true;
+            if (termInput.nextElementSibling) {
+                termInput.nextElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = true);
+                await switchElements(termInput, termInput.nextElementSibling);
+                termInput.previousElementSibling.querySelectorAll(".btn-move").forEach(el => el.disabled = false);
+            }
+            actionButtons[0].disabled = actionButtons[1 + term.type].disabled = false;
+        });
         termInput.dataset.type = term.type;
-        inputName.obj.value = term.title || "";
-        let actionButtons = [...termInput.querySelectorAll('.mdc-card__actions > button')].map(el => MDCRipple.attachTo(el).root);
-        actionButtons[0].addEventListener("click", () => {
-            if (termInput.previousElementSibling) fields.terms.insertBefore(termInput, termInput.previousElementSibling);
-        });
-        actionButtons[1 + term.type].addEventListener("click", () => termInput.remove());
-        actionButtons[2 + term.type].addEventListener("click", () => {
-            if (termInput.nextElementSibling?.nextElementSibling) fields.terms.insertBefore(termInput, termInput.nextElementSibling.nextElementSibling);
-            else fields.terms.appendChild(termInput);
-        });
     }
-    if (termInput) fields.terms.appendChild(termInput);
+    if (termInput) optionalAnimate(fields.terms.appendChild(termInput), ...cardSlideInAnimation);
 }
 document.addEventListener("change", () => changesSaved = false);
 function goBack() {
@@ -351,8 +378,9 @@ fields.btnAddQuiz.addEventListener("click", () => createTermInput({title: "", qu
 fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
+    if (!fields.formEdit.reportValidity()) return fields.formEdit.classList.add("has-validated-inputs");
     let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
-    if (terms.length < 4 && setType !== 2) return alert("You must have at least 4 terms in a set");
+    if (terms.length < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
     let nameWords = getWords(setName.normalize("NFD").replace(/\p{Diacritic}/gu, ""));
@@ -377,17 +405,14 @@ fields.formEdit.addEventListener("submit", async e => {
         await batch.commit();
         goBack();
     } catch {
-        fields.snackbarCantSave.open();
+        toast({message: "We weren't able to save your set. This may be caused by a recent Display Name change.", type: "is-danger", dismissible: true, position: "bottom-center"})
     }
 });
 async function importTerms() {
-    fields.importDialog.open();
     fields.importDialogInput.value = "";
-    fields.importDialogInput.valid = true;
-    /** @type {string?} */
-    let result = await (() => new Promise(resolve => fields.importDialog.listen("V:Result", e => resolve(e.detail.result), { once: true })))();
-    if (result !== null) {
-        let terms = result.split("\n").filter(el => el).map(el => {
+    let result = await bulmaModalPromise(fields.importDialog)
+    if (result) {
+        let terms = fields.importDialogInput.value.split("\n").filter(el => el).map(el => {
             let splitted = el.split("  ");
             return {term: splitted.shift().trim(), definition: splitted.join("  ").trim()};
         });
@@ -397,17 +422,9 @@ async function importTerms() {
 onbeforeunload = () => {
     if (!changesSaved) return " ";
 };
-fields.importDialog.root.querySelector(".btn-submit").addEventListener("click", () => {
-    if (fields.importDialogInput.valid = fields.importDialogInput.valid) {
-        fields.importDialog.emit("V:Result", { result: fields.importDialogInput.value });
-        fields.importDialog.close("success");
-    }
-});
-fields.importDialog.listen("MDCDialog:closing", e => {
-    if (e.detail.action === "close") fields.importDialog.emit("V:Result", { result: null });
-});
+fields.importDialog.validateInput = () => fields.importDialogInput.reportValidity();
 fields.btnImportBlooket.addEventListener("click", async () => {
-    if (fields.fieldImportBlooket.root.querySelector("input").reportValidity()) {
+    if (fields.fieldImportBlooket.reportValidity()) {
         let dashRes = fields.fieldImportBlooket.value.match(blooketDashboardRe);
         let hwRe = fields.fieldImportBlooket.value.match(blooketHwRe);
         if (dashRes) {
@@ -424,3 +441,4 @@ fields.btnImportBlooket.addEventListener("click", async () => {
     }
 });
 showCollections(fields.collections);
+initBulmaModals([fields.importDialog]);

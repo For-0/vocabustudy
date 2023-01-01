@@ -1,13 +1,8 @@
-import { MDCRipple } from "@material/ripple/index";
-import { MDCTextField } from "@material/textfield/index";
-import { MDCFormField } from "@material/form-field/index";
-import { MDCRadio } from "@material/radio/index";
-import { MDCSnackbar } from "@material/snackbar/index";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, normalizeAnswer } from "./utils.js";
-import { sanitize } from "dompurify";
-import { marked } from "marked";
+import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize } from "./utils.js";
+import { toast } from "bulma-toast";
+import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -23,56 +18,41 @@ class QuizQuestion extends HTMLElement {
         if (this.isConnected) this.showQuestion();
     }
     reportValidity() {
-        if (this.question.type == 0) return this.radios[0].root.querySelector("input").reportValidity();
-        else if (this.question.type == 1) return this.input.valid = this.input.valid;
+        if (this.question.type == 0) return this.radios[0].reportValidity();
+        else if (this.question.type == 1) return this.input.querySelector("input").reportValidity();
     }
     get correct() {
         if (this.question.type == 0) return this.correctOption.checked;
         else if (this.question.type == 1) {
-            let isCorrect = this.question.answers.some(el => checkAnswers(el, this.input.value));
-            this.input.helperText.root.innerText = isCorrect ? "Correct!" : `Incorrect -> ${normalizeAnswer(this.question.answers[0])}`;
-            this.input.helperText.root.parentElement.hidden = false;
+            let isCorrect = this.question.answers.some(el => checkAnswers(el, this.input.querySelector("input").value));
+            this.input.nextElementSibling.innerText = isCorrect ? "Correct!" : `Incorrect -> ${normalizeAnswer(this.question.answers[0])}`;
+            this.input.nextElementSibling.hidden = false;
             return isCorrect;
-        }
+        } else return false;
     }
     /**
      * @param {boolean} value
      */
     set disabled(value) {
         if (this.question.type == 0) this.radios.forEach(el => el.disabled = value);
-        else if (this.question.type == 1) this.input.disabled = value;
+        else if (this.question.type == 1) this.input.querySelector("input").disabled = value;
     }
     createMCInput(answer) {
         let optionId = `_${crypto.randomUUID()}`;
-        let radioButton = this.appendChild(createElement("div", [], {}, [
-            createElement("div", ["mdc-form-field"], {}, [
-                createElement("div", ["mdc-radio", "mdc-radio__touch"], {}, [
-                    createElement("input", ["mdc-radio__native-control"], {
-                        type: "radio",
-                        name: this.questionId,
-                        id: optionId,
-                        required: true
-                    }),
-                    createElement("div", ["mdc-radio__background"], {}, [
-                        createElement("div", ["mdc-radio__outer-circle"]),
-                        createElement("div", ["mdc-radio__inner-circle"])
-                    ])
-                ]),
-                createElement("label", [], { innerText: sanitize(marked.parseInline(answer), sanitizerOpts), htmlFor: optionId })
-            ])
+        let radioButton = this.appendChild(createElement("div", ["field"], {}, [
+            createElement("input", ["is-checkradio"], {id: optionId, required: true, type: "radio", name: this.questionId}),
+            createElement("label", [], {htmlFor: optionId, innerHTML: styleAndSanitize(answer, true)})
         ]));
-        return MDCFormField.attachTo(radioButton.firstElementChild).input = new MDCRadio(radioButton.firstElementChild.firstElementChild);
+        return radioButton.firstElementChild;
     }
     createSAInput() {
         let input = createTextFieldWithHelper("Answer", "howdy", { required: true });
-        input.helperLine.querySelector(".mdc-text-field-helper-text").classList.add("mdc-text-field-helper-text--persistent");
         this.append(input.textField, input.helperLine);
-        input.obj.initialize();
         input.helperLine.hidden = true;
-        return input.obj;
+        return input.textField;
     }
     showQuestion() {
-        this.appendChild(createElement("p", [], { innerHTML: sanitize(marked.parseInline(`**${this.question.question}**`), sanitizerOpts) }));
+        this.appendChild(createElement("p", ["is-size-5"], { innerHTML: styleAndSanitize(`**${this.question.question}**`, true) }));
         if (this.question.type == 0) {
             let shuffledOptions = [...this.question.answers];
             shuffle(shuffledOptions);
@@ -84,6 +64,7 @@ class QuizQuestion extends HTMLElement {
     }
     connectedCallback() {
         this.textContent = "";
+        this.classList.add("is-block", "mb-4");
         if (this.question) this.showQuestion();
     }
 }
@@ -99,8 +80,6 @@ const { db, auth } = initialize(async user => {
 });
 const [, setId] = decodeURIComponent(location.pathname).match(/\/guide\/([\w ]+)\/view\/?/) || (location.pathname = "/");
 const setRef = doc(db, "sets", setId);
-/** @type {DOMPurify.Config} */
-const sanitizerOpts = { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] };
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
 /**
@@ -114,108 +93,90 @@ const pages = {
         name: document.querySelector("#home .field-name"),
         description: document.querySelector("#home .field-description"),
         numTerms: document.querySelector("#home .field-num-terms"),
-        terms: document.querySelector("#home .field-terms"),
-        termNav: document.querySelector("#home .field-term-navigation"),
+        terms: document.querySelector("#home .tabs-content ul"),
+        termNav: document.querySelector("#home .tabs ul"),
         btnLike: document.querySelector("#home .btn-like"),
-        commentsContainer: document.querySelector(".comments-container"),
-        fieldComment: document.querySelector("#home .field-comment"),
-        snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved"))
+    },
+    comment: {
+        quickview: document.querySelector("#home .quickview"),
+        container: document.querySelector("#home .quickview-body .list"),
+        inputComment: document.getElementById("input-user-comment"),
+        btnSaveComment: document.querySelector("#home .quickview-footer button"),
+        btnShowComments: document.querySelector("#home .btn-show-comments")
     }
 };
 
 function showLikeStatus(likeStatus) {
-    if (likeStatus) {
-        pages.setOverview.btnLike.querySelector(".mdc-button__label").innerText = "Unlike";
-        pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText = "favorite";
-    } else {
-        pages.setOverview.btnLike.querySelector(".mdc-button__label").innerText = "Like";
-        pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText = "favorite_border";
-    }
-}
-
-function checkAnswers(answer, correct) {
-    let cleanAnswer = normalizeAnswer(answer).toUpperCase();
-    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
-    return possibleCorrect.includes(cleanAnswer);
-}
-
-function selectNavButton(btn) {
-    pages.setOverview.termNav.querySelectorAll(".mdc-button--raised").forEach(el => {
-        el.classList.remove("mdc-button--raised", "mdc-button--unelevated");
-        el.classList.add("mdc-button--outlined");
-    });
-    btn.classList.add("mdc-button--raised", "mdc-button--unelevated");
-    btn.classList.remove("mdc-button--outlined");
+    pages.setOverview.btnLike.querySelector("i").classList.toggle("is-filled", likeStatus);
 }
 
 function createItem(item, index) {
-    let itemId = `item-${index}`;
-    let navBtn = pages.setOverview.termNav.appendChild(createElement("a", ["mdc-button", "mdc-button--outlined"], {href: `#${itemId}`}, [
-        createElement("span", ["mdc-button__ripple"]),
-        createElement("span", ["mdc-button__label"], { innerText: item.title })
+    let navBtn = pages.setOverview.termNav.appendChild(createElement("li", [], {}, [
+        createElement("a", [], { role: "button" }, [
+            createElement("span", ["icon"], {}, [
+                createElement("i", ["material-symbols-rounded"], { innerText: item.type ? "checklist" : "text_snippet" })
+            ]),
+            createElement("span", [], { innerText: item.title })
+        ])
     ]));
-    let navRipple = MDCRipple.attachTo(navBtn);
-    navBtn.addEventListener("click", () => {
-        selectNavButton(navBtn);
-        navRipple.layout();
-    });
-    if (index === 0) navBtn.click();
+    if (index === 0) navBtn.classList.add("is-active");
     if (item.type === 0) {
-        let cardEl = createElement("div", ["guide-item"], {id: itemId}, [
-            createElement("h2", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
-            createElement("div", [], { innerHTML: sanitize(marked.parse(item.body), sanitizerOpts) })
+        let cardEl = createElement("li", ["guide-item"], {}, [
+            createElement("h2", ["title", "is-4"], { innerHTML: styleAndSanitize("# " + item.title) }),
+            createElement("div", [], { innerHTML: styleAndSanitize(item.body) })
         ]);
+        if (index === 0) cardEl.classList.add("is-active");
         return pages.setOverview.terms.appendChild(cardEl);
     } else if (item.type === 1) {
         let questionEls = item.questions.map(question => createElement("quiz-question", [], { question }));
-        let btnCheck = createElement("div", [], {}, [createElement("button", ["mdc-button", "mdc-button--raised"], {}, [
-            createElement("span", ["mdc-button__ripple"]),
-            createElement("span", ["mdc-button__label"], { innerText: "Check" })
-        ])]);
-        btnCheck.style.marginTop = "1rem";
-        let cardEl = createElement("div", ["guide-item"], {id: itemId}, [
-            createElement("h2", ["mdc-typography--headline6"], { innerHTML: sanitize(marked.parse("# " + item.title), sanitizerOpts) }),
+        let btnCheck = createElement("div", ["mt-4"], {}, [createElement("button", ["button", "is-primary"], {innerText: "Check"})]);
+        let cardEl = createElement("li", ["guide-item"], {}, [
+            createElement("h2", ["title", "is-4"], { innerHTML: styleAndSanitize("# " + item.title) }),
             createElement("div", [], {}, [...questionEls, btnCheck])
         ]);
-        MDCRipple.attachTo(btnCheck.firstElementChild);
         btnCheck.firstElementChild.addEventListener("click", () => {
-            if (btnCheck.querySelector(".mdc-button__label").innerText === "CHECK") {
+            if (btnCheck.innerText === "Check") {
                 if (questionEls.every(el => el.reportValidity())) {
                     questionEls.forEach(el => {
                         el.classList.add(el.correct ? "correct" : "incorrect");
-                        el.correctOption?.root.classList.add("option-correct");
+                        el.correctOption?.classList.add("option-correct");
                         el.disabled = true;
                     });
                     let numCorrect = cardEl.querySelectorAll(".correct").length;
-                    btnCheck.querySelector(".mdc-button__label").innerText = `${(numCorrect/questionEls.length).toFixed(2) * 100}% - Restart`;
+                    btnCheck.firstElementChild.innerText = `${(numCorrect/questionEls.length).toFixed(2) * 100}% - Restart`;
                 }
             } else {
-                btnCheck.querySelector(".mdc-button__label").innerText = "Check";
+                btnCheck.firstElementChild.innerText = "Check";
                 questionEls.forEach(el => {
                     el.classList.remove("correct", "incorrect");
                     el.connectedCallback()
                 });
             }
-        })
+        });
+        if (index === 0) cardEl.classList.add("is-active");
         return pages.setOverview.terms.appendChild(cardEl);
     }
 }
 function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
-    let cardEl = createElement("div", ["mdc-card"]);
-    let cardHeading = cardEl.appendChild(createElement("div", ["mdc-card-wrapper__text-section"]));
-    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], { innerText: name, href: `/user/${id}/` })]));
-    cardTitle.style.fontWeight = "600";
-    let cardText = cardHeading.appendChild(document.createElement("div"));
-    if (isMyComment) {
-        cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
-        pages.setOverview.fieldComment.input.value = comment;
-    } else {
-        cardText.innerHTML = sanitize(marked.parseInline(comment), sanitizerOpts);
-        cardText.style.overflowWrap = "break-word";
-        if (like) cardText.appendChild(createElement("span", ["likes-badge"], { innerText: `${name} likes this set` }));
-    }
-    return pages.setOverview.commentsContainer.appendChild(cardEl);
+    if (isMyComment)
+        pages.comment.inputComment.value = comment;
+    else
+        pages.comment.container.appendChild(createElement("div", ["list-item"], {}, [
+            createElement("div", ["list-item-content"], {}, [
+                createElement("div", ["list-item-title"], {}, [
+                    createElement("div", ["list-item-title", "is-flex", "is-justify-content-space-between"], {}, [
+                        createElement("span", [], {innerText: name}),
+                        ...(like ? [createElement("span", ["tag", "is-success", "has-tooltip-arrow", "has-tooltip-info", "has-tooltip-left"], {dataset: {tooltip: `${name} likes this set`}}, [
+                            createElement("span", ["icon"], {}, [
+                                createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "thumb_up", style: {verticalAlign: "middle", fontSize: "1rem", cursor: "auto"}})
+                            ])
+                        ])] : [])
+                    ])
+                ]),
+                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment, true)})
+            ])
+        ]));
 }
 function shuffle(arr) {
     let currentIndex = arr.length, randomIndex;
@@ -227,8 +188,6 @@ function shuffle(arr) {
 }
 
 addEventListener("DOMContentLoaded", async () => {
-    pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
-    pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
     try {
         let setSnap = await getDoc(setRef);
         if (!setSnap.exists()) return location.href = "/404";
@@ -239,41 +198,38 @@ addEventListener("DOMContentLoaded", async () => {
             term.body = term.body.replace(/[\u2018\u2019]/g, "'");
         });
 
-        // MDC Instantiation and Events
+        // Events
         pages.setOverview.name.innerText = currentSet.name;
-        pages.setOverview.description.innerHTML = sanitize(marked.parse(currentSet.description || ""), sanitizerOpts)
+        pages.setOverview.description.innerHTML = styleAndSanitize(currentSet.description || "");
         pages.setOverview.numTerms.innerText = currentSet.terms.length;
         for (let [i, term] of currentSet.terms.entries()) createItem(term, i);
+        new Tabs(document.querySelector("#home .tabs-wrapper")).tabs();
         pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
                 localStorage.setItem("redirect_after_login", location.href);
                 location.href = "/#login";
             } else if (socialRef) {
-                let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
-                await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName }, { merge: true });
+                let currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
+                await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }
         });
-        pages.setOverview.commentsContainer.parentElement.addEventListener("toggle", async () => { // TODO modularize
+        pages.comment.btnShowComments.addEventListener("click", async () => { // TODO modularize
             let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
             comments.forEach(comment => createCommentCard(comment.data(), comment.id));
-            if (auth.currentUser && !pages.setOverview.commentsContainer.querySelector(".mdc-text-field")) {
-                createCommentCard({ name: auth.currentUser.displayName, comment: "" }, auth.currentUser.uid);
-                pages.setOverview.fieldComment.input.valid = true;
-            }
         }, { once: true });
-        pages.setOverview.fieldComment.input.listen("change", () => pages.setOverview.fieldComment.button.disabled = false);
-        pages.setOverview.fieldComment.button.addEventListener("click", async () => {
-            if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
-                await setDoc(socialRef, { comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName }, { merge: true });
-                pages.setOverview.snackbarCommentSaved.open();
-                pages.setOverview.fieldComment.button.disabled = true;
+        pages.comment.inputComment.addEventListener("input", () => pages.comment.btnSaveComment.disabled = false);
+        pages.comment.btnSaveComment.addEventListener("click", async () => {
+            if (auth.currentUser && pages.comment.inputComment.reportValidity()) {
+                await setDoc(socialRef, { comment: pages.comment.inputComment.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+                toast({message: "Comment saved!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000})
+                pages.comment.btnSaveComment.disabled = true;
             }
         });
-        location.hash = "#";
-        location.hash = "#item-0";
-        setTimeout(() => document.documentElement.scrollTo(0, 0), 100);
+        initQuickview(pages.comment.quickview, pages.comment.btnShowComments);
+        document.querySelector(".page-loader").hidden = true;
     } catch (err) {
+        console.error(err);
         if (err.message.includes("Forbidden")) {
             localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();
@@ -281,10 +237,4 @@ addEventListener("DOMContentLoaded", async () => {
             return;
         } else window.sentryCaptureException?.call(globalThis, err)
     }
-});
-
-addEventListener("hashchange", () => {
-    let possibleBtn = document.querySelector(`a[href="${location.hash}"]`);
-    if (possibleBtn) selectNavButton(possibleBtn);
-    document.documentElement.scrollTo(0, 0);
 });

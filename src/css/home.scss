@@ -1,11 +1,14 @@
 @import "styles.scss";
-.realhome {
-    background: url("../hero-background.svg") no-repeat center center;
+#home {
+    .list-item {
+        border: 0 !important;
+    }
+    background: url("../images/hero-background.svg") no-repeat center center;
     background-size: 100% 100%;
     position: absolute;
     left: 0;
     width: 100%;
-    height: calc(100% - 64px);
+    height: calc(100% - 52px);
     z-index: 2;
     ul {
         list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -5 24 24' width='20' fill='%23fff'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z'/%3E%3C/svg%3E");
@@ -46,7 +49,9 @@
                         font-weight: bold;
                     }
                     ul {
+                        padding: revert;
                         padding-top: 1rem;
+                        float: right;
                         font-size: 1.25rem;
                         min-width: 25%;
                     }
@@ -56,12 +61,7 @@
                 }
             }
             &:last-child {
-                --mdc-theme-text-primary-on-background: white;
-                --mdc-theme-text-secondary-on-background: rgb(252, 227, 196);
-                --mdc-theme-text-icon-on-background: white;
-                --mdc-outlined-button-outline-color: #ffffff1f;
-                --mdc-outlined-button-label-text-color: white;
-                background: url("../features-background.svg") no-repeat center center;
+                background: url("../images/features-background.svg") no-repeat center center;
                 background-size: auto;
                 h2 {
                     text-align: center;
@@ -75,9 +75,6 @@
                     @media (max-height: 400px) {
                         transform: scale(0.6, 0.6);
                     }
-                }
-                .mdc-list-item__secondary-text {
-                    white-space: normal;
                 }
             }
         }
@@ -102,24 +99,26 @@
         }
     }
     .set-container {
-        .mdc-card-wrapper__text-section:nth-last-child(2) {
+        .card-content:nth-last-child(2) {
             margin-top: 4px;
         }
-        .mdc-card__primary-action {
-            height: 100%;
+        .card {
+            max-width: 50%;
         }
     }
-    @media (max-width: 730px) {
-        .field-search-container {
-            width: 100% !important;
-            margin-bottom: 1rem;
-            + .mdc-button--outlined {
-                margin-left: 0 !important;
+    .field-search-container .buttons span {
+        @media (max-width: 380px) {
+            &:not(.icon) {
+                display: none;
+            }
+            &.icon {
+                margin-left: calc(-.5em - 1px);
+                margin-right: calc(-.5em - 1px);
             }
         }
     }
 }
-@supports selector(has) {
+@supports selector(:has(.page:not(#home))) {
     main:not(:has(.page:not(#home):target)) ~ footer {
         z-index: 20;
         opacity: 0;
@@ -133,76 +132,105 @@
     }
 }
 
-#admin, #mysets {
-    .mdc-card-wrapper__text-section:nth-last-child(2) {
-        margin-top: 6px;
-        padding-bottom: 2px;
+#credits  {
+    ul > li {
+        margin-bottom: 1rem;
     }
-}
-#credits ul > li {
-    margin-bottom: 1rem;
 }
 #login {
-    position: relative;
-    > div:nth-child(2) {
+    &::after {
+        content: "";
         position: absolute;
-        top: 1rem;
-        left: -1rem;
-        width: calc(50% + 1rem);
-        height: calc(100%);
-        &::after {
-            width: 100%;
-            height: 100%;
-            display: inline-block;
-            background: url("../hero-background.svg") no-repeat center center;
-            background-size: 100% 100%;
-            z-index: -1;
-            content: "";
-            position: absolute;
-        }
-        > div {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            background-color: #ffffff1c;
-            padding: 2rem;
-            border-radius: 20px;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        display: inline-block;
+        background: url("../images/login-background.svg") no-repeat center center;
+        background-size: 100% 100%;
+    }
+    .column.is-8:first-child {
+        background-color: var(--scheme-main-bis);
+        border-radius: 10px;
+    }
+    .column.is-8:last-child {
+        @media (max-width: 768px) {
+            .level-left, .level-right, .level-item {
+                display: inline;
+            }
         }
     }
-    > div:last-child {
-        position: absolute;
-        top: 1rem;
-        left: 50%;
-        width: calc(50% + 1rem);
-        height: calc(100%);
-        &::after {
-            width: 100%;
-            height: 100%;
-            display: inline-block;
-            background: url("../login-background.svg") no-repeat center center;
-            background-size: 100% 100%;
-            z-index: -1;
-            content: "";
-            position: absolute;
-        }
-        p {
-            position: absolute;
+    .container {
+        top: 40%;
+        position: relative;
+        transform: translateY(-50%);
+        z-index: 2;
+        @media (max-height: 800px) or (max-width: 500px) {
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            background-color: #ffffff1c;
-            padding: 2rem;
-            padding-bottom: 0;
-            border-radius: 20px;
-            img {
-                width: 50%;
-                margin-top: 2rem;
+        }
+    }
+    background-color: var(--primary);
+    > img {
+        position: absolute;
+        left: 1rem;
+        bottom: calc(43px + 2rem);
+        z-index: 2;
+        height: 8rem;
+        width: 8rem;
+    }
+    &[data-mode="sign-up"] {
+        .btn-switch-mode::after {
+            content: "Log In";
+        }
+        :is(form button[type=submit], .form-title)::after {
+            content: "Sign Up";
+        }
+        .prompt-switch-mode span:last-child {
+            display: none;
+        }
+    }
+    &[data-mode="forgot-password"] {
+        .btn-switch-mode {
+            &::after {
+                content: "Log In";
             }
+            + a, span {
+                display: none;
+            }
+        }
+        :is(form button[type=submit], .form-title)::after {
+            content: "Reset Password";
+        }
+        .btn-continue-google {
+            display: none;
+        }
+        #login-display-name, #login-password, #login-confirm-password, #login-accept-tos, #login-accept-tos + label {
+            display: none;
+        }
+        .prompt-switch-mode span:first-child {
+            display: none;
+        }
+    }
+    &:not([data-mode="sign-up"]):not([data-mode="forgot-password"]) {
+        .btn-switch-mode::after {
+            content: "Sign Up";
+        }
+        :is(form button[type=submit], .form-title)::after {
+            content: "Log In";
+        }
+        #login-display-name, #login-confirm-password {
+            display: none;
+        }
+        .prompt-switch-mode span:first-child, #login-accept-tos, #login-accept-tos + label {
+            display: none;
+        }
+    }
+    .btn-continue-google .icon {
+        @media (min-width: 769px) {
+            margin-right: 0.75rem;
+        }
+        @media (max-width: 768px) {
+            margin: 0;
         }
     }
 }

@@ -1,19 +1,11 @@
-import { MDCCheckbox } from "@material/checkbox/index";
-import { MDCCircularProgress } from "@material/circular-progress/index";
-import { MDCDialog } from "@material/dialog/index";
-import { MDCFormField } from "@material/form-field/index";
-import { MDCIconButtonToggle } from "@material/icon-button";
-import { MDCList } from "@material/list/index";
-import { MDCRadio } from "@material/radio/index";
-import { MDCRipple } from "@material/ripple/index";
-import { MDCSnackbar } from "@material/snackbar/index";
-import { MDCTextField } from "@material/textfield/index";
-import { sanitize } from "dompurify";
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
-import { marked } from "marked";
 import initialize from "./general.js";
-import { createElement, normalizeAnswer } from "./utils.js";
+import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate, preventBreaking, initBulmaModals } from "./utils.js";
 import fitty from "fitty";
+import Modal from "@vizuaalog/bulmajs/src/plugins/modal.js";
+import { toast } from "bulma-toast";
+
+/* global QRCode */
 
 class AccentKeyboard extends HTMLElement {
     constructor() {
@@ -37,12 +29,8 @@ class AccentKeyboard extends HTMLElement {
     }
     showButtons() {
         for (let specialChar of this.accents) {
-            let btn = this.fieldset.appendChild(document.createElement("button"));
+            let btn = this.fieldset.appendChild(createElement("button", ["button"], {innerText: specialChar}));
             btn.tabIndex = -1;
-            btn.classList.add("mdc-button", "mdc-button--outlined");
-            btn.appendChild(document.createElement("span")).classList.add("mdc-button__ripple");
-            btn.appendChild(document.createElement("span")).classList.add("mdc-button__label");
-            btn.lastElementChild.innerText = specialChar;
             btn.addEventListener("mousedown", e => {
                 e.preventDefault();
                 if (document.activeElement === this.input) {
@@ -67,19 +55,26 @@ class StarButton extends HTMLButtonElement {
     }
     initialValue = false
     initialized = false
-    /** @type {MDCIconButtonToggle?} */
-    obj = null;
+    get on() {
+        return this.querySelector("i")?.classList?.contains("is-filled");
+    }
+    /**
+     * @param {boolean | undefined} force
+     */
+    toggleOn(force) {
+        this.querySelector("i")?.classList?.toggle("is-filled", force);
+        this.querySelector("span")?.classList?.toggle("has-text-warning-dark", force);
+    }
     connectedCallback() {
         if (this.isConnected && !this.initialized) {
             this.initialized = true;
-            this.classList.add("mdc-icon-button", "star-button");
-            this.ariaPressed = this.initialValue;
-            this.appendChild(createElement("div", ["mdc-icon-button__ripple"]));
-            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon", "mdc-icon-button__icon--on"], { innerText: "star" }));
-            this.appendChild(createElement("i", ["material-icons", "mdc-icon-button__icon"], { innerText: "star_border" }));
-            this.obj = new MDCIconButtonToggle(this);
-            this.obj.on = this.initialValue;
-            this.addEventListener("MDCIconButtonToggle:change", e => window.StarredTerms.setStar(parseInt(this.dataset.termIndex), e.detail.isOn));
+            this.classList.add("button", "star-button", "is-inverted", "is-gold");
+            this.appendChild(createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "star"})]));
+            this.addEventListener("click", () => {
+                this.toggleOn();
+                window.StarredTerms.setStar(parseInt(this.dataset.termIndex), this.on);
+            })
+            this.toggleOn(this.initialValue);
         }
     }
 }
@@ -98,9 +93,7 @@ const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|t
 const setRef = doc(db, "sets", setId);
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
-/** @type {DOMPurify.Config} */
-const sanitizerOpts = { FORBID_ATTR: ["style"], FORBID_TAGS: ["style"] };
-const accentsRE = /[^a-zA-Z0-9\s_\(\)\[\]!'"\.\/\\,-]/ig;
+const accentsRE = /[^a-zA-Z0-9\s_()[\]!'"./\\,-]/ig;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
 /**
@@ -127,7 +120,7 @@ window.StarredTerms = {
         let orig = this.getAllStarred();
         orig[setId] = starList;
         localStorage.setItem("starred_terms", JSON.stringify(orig));
-        document.querySelectorAll(".star-button").forEach(sb => sb.obj.on = starList.includes(parseInt(sb.dataset.termIndex)));
+        document.querySelectorAll(".star-button").forEach(sb => sb.toggleOn(starList.includes(parseInt(sb.dataset.termIndex))));
     },
     /**
      * Find out if a term in the current set is starred
@@ -162,14 +155,20 @@ const pages = {
         terms: document.querySelector("#home .field-terms"),
         btnLike: document.querySelector("#home .btn-like"),
         btnExportTerms: document.querySelector("#home .btn-export-terms"),
-        commentsContainer: document.querySelector(".comments-container"),
-        fieldComment: document.querySelector("#home .field-comment"),
-        snackbarCommentSaved: new MDCSnackbar(document.querySelector("#snackbar-comment-saved")),
-        modalExportTerms: new MDCDialog(document.querySelector("#modal-export-terms")),
+        modalExportTerms: new Modal("#modal-export-terms").modal(),
         btnCopyTerms: document.querySelector("#modal-export-terms .btn-copy"),
+        btnCopyLink: document.querySelector("#modal-export-terms .btn-copy-link"),
+        btnCopyQrcode: document.querySelector("#modal-export-terms .btn-copy-qrcode"),
         btnShare: document.querySelector("#modal-export-terms .btn-share"),
         shareLink: document.querySelector("#modal-export-terms .share-link"),
         btnShorten: document.querySelector("#modal-export-terms .btn-shorten-link")
+    },
+    comment: {
+        quickview: document.querySelector("#home .quickview"),
+        container: document.querySelector("#home .quickview-body .list"),
+        inputComment: document.getElementById("input-user-comment"),
+        btnSaveComment: document.querySelector("#home .quickview-footer button"),
+        btnShowComments: document.querySelector("#home .btn-show-comments")
     },
     flashcards: {
         el: document.getElementById("flashcards"),
@@ -178,33 +177,54 @@ const pages = {
         },
         set index(value) {
             if (value < 0 || value > this.numTerms) return;
-            this.btnPrevious.disabled = (value === 0);
-            this.btnNext.disabled = (value === this.numTerms);
-            this.btnFlip.disabled = (value === this.numTerms);
+            this.navigateBtns[0].disabled = (value === 0);
+            this.navigateBtns[1].disabled = (value === this.numTerms);
+            this.navigateBtns[2].disabled = (value === this.numTerms);
             this.terms.querySelectorAll(".show").forEach(el => el.classList.remove("show"));
             let currentCard = this.terms.children[value];
             currentCard.classList.add("show");
             document.querySelector("#flashcards h1 > p > span").innerText = value;
         },
-        nextCard() {
-            this.btnPrevious.disabled = true;
-            this.btnNext.disabled = true;
-            this.btnFlip.disabled = true;
-            this.terms.classList.add("switching");
-            setTimeout(() => {
-                this.terms.classList.remove("switching");
-                this.index++;
-            }, 400);
+        async nextCard() {
+            this.navigateBtns.forEach(el => el.disabled = true);
+            let currentFlashcard = this.terms.children[this.index];
+            let nextFlashcard = this.terms.children[this.index + 1];
+            currentFlashcard.style.position = "absolute";
+            nextFlashcard.style.display = "block";
+            if (this.index < this.numTerms) nextFlashcard.querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100, observeMutations: false}));
+            await Promise.all([
+                optionalAnimate(currentFlashcard, [
+                    {},
+                    {transform: "translateX(-100vw)"}
+                ], {easing: "ease", duration: 400})?.finished,
+                optionalAnimate(nextFlashcard, [
+                    {transform: "translateX(100vw)"},
+                    {transform: "translateX(0)"}
+                ], {easing: "ease", duration: 400})?.finished
+            ]);
+            currentFlashcard.style.removeProperty("position");
+            nextFlashcard.style.removeProperty("display");
+            this.index++;
         },
-        prevCard() {
-            this.btnPrevious.disabled = true;
-            this.btnNext.disabled = true;
-            this.btnFlip.disabled = true;
-            this.terms.classList.add("returning");
-            setTimeout(() => {
-                this.terms.classList.remove("returning");
-                this.index--;
-            }, 400);
+        async prevCard() {
+            this.navigateBtns.forEach(el => el.disabled = true);
+            let currentFlashcard = this.terms.children[this.index];
+            let prevFlashcard = this.terms.children[this.index - 1];
+            prevFlashcard.style.position = "absolute";
+            prevFlashcard.style.display = "block";
+            await Promise.all([
+                optionalAnimate(currentFlashcard, [
+                    {},
+                    {transform: "translateX(100vw)"}
+                ], {easing: "ease", duration: 400})?.finished,
+                optionalAnimate(prevFlashcard, [
+                    {transform: "translateX(-100vw)"},
+                    {transform: "translateX(0)"}
+                ], {easing: "ease", duration: 400})?.finished
+            ]);
+            prevFlashcard.style.removeProperty("position");
+            prevFlashcard.style.removeProperty("display");
+            this.index--;
         },
         getTermText(tIndex, side) {
             return this.terms.children[tIndex].querySelector(`:scope > div > div:nth-child(${side}) > p`);
@@ -216,40 +236,43 @@ const pages = {
             document.querySelector("#flashcards h1 > p > span:last-child").innerText = value;
         },
         setName: document.querySelector("#flashcards h1 > span"),
-        terms: document.querySelector("#flashcards > div:nth-child(2) > div:last-child"),
-        btnShuffle: document.querySelector("#flashcards > div > div:first-child .mdc-button--outlined"),
-        btnPrevious: document.getElementById("btn-previous-flashcard"),
-        btnNext: document.getElementById("btn-next-flashcard"),
-        btnFlip: document.getElementById("btn-flip-flashcard"),
-        radioBtns: document.querySelectorAll("#flashcards .answer-with"),
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#flashcards .check-starred"),
+        terms: document.querySelector("#flashcards > div:nth-child(2) > div:last-child > div:first-child"),
+        btnShuffle: document.querySelector("#flashcards > div > div:first-child .button"),
+        navigateBtns: document.querySelectorAll("#flashcards > div:nth-child(2) > div:last-child > div:last-child > button"),
+        radioBtns: document.querySelectorAll("#flashcards [name='radio-flashcards-answer-with']"),
+        checkOnlyStarred: document.getElementById("check-flashcard-starred"),
         onKeyUp(e) {
-            if (e.key === "ArrowRight") this.btnNext.click();
-            else if (e.key === "ArrowLeft") this.btnPrevious.click();
+            if (e.key === "ArrowRight") this.navigateBtns[2].click();
+            else if (e.key === "ArrowLeft") this.navigateBtns[0].click();
             else if (e.key === " ") {
                 e.preventDefault();
-                this.btnFlip.click();
+                this.navigateBtns[1].click();
             }
         },
         createFlashcard({ term, definition, i }, isStarred) {
-            let cardEl = document.createElement("div");
-            let cardInner = cardEl.appendChild(document.createElement("div"));
-            let cardFront = cardInner.appendChild(document.createElement("div"));
-            let cardBack = cardInner.appendChild(document.createElement("div"));
-            cardFront.appendChild(applyStyling(term.replace("\x00", " - "), document.createElement("p"))).classList.add("fit");
-            if (setType === "timeline" && definition.includes("\x00")) {
-                let p = cardBack.appendChild(document.createElement("p"));
-                p.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
-                p.classList.add("fit");
-            } else cardBack.appendChild(applyStyling(definition, document.createElement("p"))).classList.add("fit");
+            let cardEl = createElement("div", [], {}, [
+                createElement("div", ["box"], {}, [
+                    createElement("div", [], {}, [
+                        createElement("p", ["fit"], {innerHTML: styleAndSanitize(term.replace("\x00", " - "), true)})
+                    ]),
+                    createElement("div", [], {}, [
+                        createElement("p", ["fit", "content"], {})
+                    ])
+                ])
+            ]);
+            let cardBackParagraph = cardEl.firstElementChild.lastElementChild.firstElementChild;
+            if (setType === "timeline" && definition.includes("\x00"))
+                cardBackParagraph.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+            else cardBackParagraph.innerHTML = styleAndSanitize(definition, true)
             if (isStarred) cardEl.classList.add("is-starred");
             if (i >= 0) {
-                let starButton = (/** @type {StarButton} */ (cardInner.appendChild(document.createElement("button", { is: "star-button" }))));
+                let starButton = (/** @type {StarButton} */ (cardEl.firstElementChild.appendChild(document.createElement("button", { is: "star-button" }))));
                 starButton.initialValue = isStarred;
                 starButton.dataset.termIndex = i;
-                starButton.addEventListener("click", e => e.stopPropagation());
-                starButton.addEventListener("MDCIconButtonToggle:change", e => cardEl.classList.toggle("is-starred", e.detail.isOn));
+                starButton.addEventListener("click", e => {
+                    e.stopPropagation();
+                    cardEl.classList.toggle("is-starred", !starButton.on); // called before the StarButton event handler, so invert `on`
+                });
             }
             return this.terms.appendChild(cardEl);
         },
@@ -268,33 +291,21 @@ const pages = {
             for (let term of terms) this.createFlashcard(term, onlyStarred || starredList.includes(term.i));
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
-            this.terms.children[0].querySelectorAll("p").forEach(el => {
-                //el.style.fontSize = "100px";
-                //resizeText(el);
-                fitty(el, {maxSize: 100});
-            });
+            this.terms.children[0].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100, observeMutations: false}));
         },
         init() {
-            document.querySelectorAll("#flashcards > div:last-child .mdc-button").forEach(el => MDCRipple.attachTo(el));
-            this.radioBtns = [...this.radioBtns].map(el =>
-                MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
-            );
-            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
-            this.checkOnlyStarred.listen("change", () => this.show());
+            this.checkOnlyStarred.addEventListener("change", () => this.show());
             this.btnShuffle.addEventListener("click", () => this.show(true));
-            this.btnPrevious.addEventListener("click", () => {
+            this.navigateBtns[0].addEventListener("click", async () => {
                 this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
-                this.prevCard();
+                await this.prevCard();
             });
-            this.btnNext.addEventListener("click", () => {
+            this.navigateBtns[2].addEventListener("click", async () => {
                 this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
-                if (this.index < this.numTerms) {
-                    this.terms.children[this.index + 1].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100}));
-                }
-                this.nextCard();
+                await this.nextCard();
             });
-            this.btnFlip.addEventListener("click", () => this.terms.classList.toggle("flipped"));
-            this.terms.addEventListener("click", () => this.btnFlip.click());
+            this.navigateBtns[1].addEventListener("click", () => this.terms.classList.toggle("flipped"));
+            this.terms.addEventListener("click", () => this.navigateBtns[1].click());
         }
     },
     learn: {
@@ -307,22 +318,26 @@ const pages = {
         },
         set progressMC(value) {
             this.progressMC_ = value;
-            this.progressIndicators[0].progress = value / this.numTerms;
-            this.progressIndicators[0].root.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.progressIndicator.style.setProperty("--progress", value / this.numTerms);
+            this.progressIndicator.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.currentQuestionType.children[0].hidden = false;
+            this.currentQuestionType.children[1].hidden = true;
         },
         get progressSA() {
             return this.progressSA_;
         },
         set progressSA(value) {
             this.progressSA_ = value;
-            this.progressIndicators[1].progress = value / this.numTerms;
-            this.progressIndicators[1].root.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.progressIndicator.style.setProperty("--progress", value / this.numTerms);
+            this.progressIndicator.dataset.progress = `${(value * 100 / this.numTerms).toFixed(0)}%`;
+            this.currentQuestionType.children[0].hidden = true;
+            this.currentQuestionType.children[1].hidden = false;
         },
         get numTerms() {
-            return parseInt(document.getElementById("learn-num-terms").innerText);
+            return parseInt(document.querySelector("#learn .field-num-terms").innerText);
         },
         set numTerms(value) {
-            document.getElementById("learn-num-terms").innerText = value;
+            document.querySelector("#learn .field-num-terms").innerText = value;
         },
         get questionType() {
             return (this.radioBtns[0].checked) ? "definition" : "term";
@@ -330,39 +345,38 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#learn .check-starred"),
+        checkOnlyStarred: document.getElementById("check-learn-starred"),
         setName: document.querySelector("#learn h1 > span"),
         question: document.querySelector("#learn > div > div:last-child p"),
-        answerSA: new MDCTextField(document.querySelector("#learn .mdc-text-field")),
+        answerSA: document.querySelector("#learn .input[type=text]"),
         answerSABtns: (/** @type {AccentKeyboard} */ (document.querySelector("#learn accent-keyboard"))),
-        answerSACheck: MDCRipple.attachTo(document.querySelector("#learn .mdc-text-field + button")).root,
+        answerSACheck: document.querySelector("#learn .field.has-addons button"),
         answerMC: document.querySelector("#learn > div > div:last-child > fieldset"),
-        msgCorrect: document.querySelector("#learn .answer-correct"),
-        msgIncorrect: document.querySelector("#learn .answer-incorrect"),
-        msgIdle: document.querySelector("#learn > div > div:last-child > div:nth-child(2) > p"),
-        msgDone: document.querySelector("#learn > div > div:last-child > div:nth-child(2) > p:nth-child(2)"),
-        radioBtns: document.querySelectorAll("#learn .answer-with"),
-        progressIndicators: (/** @type {MDCCircularProgress[]} */ (document.querySelectorAll("#learn .mdc-circular-progress"))),
+        msgCorrect: document.querySelector("#learn .notification.is-success"),
+        msgIncorrect: document.querySelector("#learn .notification.is-danger"),
+        msgDone: document.querySelector("#learn > div > div:last-child > div:nth-child(2) > p:first-child"),
+        radioBtns: document.querySelectorAll("#learn [name='radio-learn-answer-with']"),
+        progressIndicator: document.querySelector("#learn .progress-circle"),
+        currentQuestionType: document.querySelector("#learn .field-current-type"),
         currentQuestionIndex: 0,
         /**
          * @param {KeyboardEvent} e
          */
         onKeyUp(e) {
-            if (this.msgIdle.hidden && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) this.generateQuestion();
+            if (["1", "2"].includes(this.msgDone.parentElement.dataset.mode) && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) this.generateQuestion();
             else if (!this.answerMC.hidden && !this.answerMC.disabled) this.answerMC.elements[parseInt(e.key) - 1]?.click();
         },
         show() {
             this.questionData = currentSet.terms.map((_, i) => ({ i, mc: 1, fmc: 0, sa: 1, fsa: 0 }));
             if (this.checkOnlyStarred.checked && window.StarredTerms.getCurrentSet().length) this.questionData = this.questionData.filter(({ i }) => window.StarredTerms.isStarred(i));
             this.setName.innerText = currentSet.name;
-            this.msgDone.hidden = true;
+            this.msgDone.parentElement.dataset.mode = "0";
             this.numTerms = this.questionData.length;
-            this.progressMC = 0;
             this.progressSA = 0;
+            this.progressMC = 0;
             this.generateQuestion();
             this.answerSABtns.clear();
-            this.answerSABtns.initialize(currentSet.specials, this.answerSA.root.querySelector("input"));
+            this.answerSABtns.initialize(currentSet.specials, this.answerSA);
         },
         generateQuestion() {
             let mcQuestions = this.questionData.filter(el => el.mc > 0);
@@ -381,89 +395,79 @@ const pages = {
             } else {
                 this.question.innerText = "All done!";
                 this.answerMC.hidden = true;
-                this.answerSA.root.hidden = true;
+                this.answerSA.hidden = true;
                 this.answerSABtns.hidden = true;
                 this.answerSACheck.hidden = true;
-                this.msgCorrect.hidden = true;
-                this.msgIncorrect.hidden = true;
-                this.msgIdle.hidden = true;
-                this.msgDone.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "3";
             }
         },
         showQuestion(term, answers = null) {
-            document.querySelectorAll(".mdc-ripple-upgraded--background-focused").forEach(el => el.classList.remove("mdc-ripple-upgraded--background-focused"));
             applyStyling(term[this.answerType], this.msgIncorrect.querySelector("strong"));
             applyStyling(term[this.answerType], this.msgCorrect.querySelector("strong"));
-            this.msgCorrect.hidden = true;
-            this.msgIncorrect.hidden = true;
-            this.msgIdle.hidden = false;
+            this.msgDone.parentElement.dataset.mode = "0";
             if (answers) {
                 this.answerMC.hidden = false;
-                this.answerSA.root.hidden = true;
+                this.answerSA.hidden = true;
                 this.answerSABtns.hidden = true;
                 this.answerSACheck.hidden = true;
                 this.answerMC.disabled = false;
                 answers.forEach((answer, i) => {
                     let btn = this.answerMC.elements[i];
                     let ansTerm = currentSet.terms[answer];
-                    applyStyling(ansTerm[this.answerType], btn.querySelector(".mdc-button__label"));
-                    resizeButtonText(btn);
+                    applyStyling(ansTerm[this.answerType], btn.querySelector(".fit"));
+                    preventBreaking(btn.querySelector(".fit"));
                     btn.dataset.answerindex = answer;
                 });
             } else {
                 this.answerMC.hidden = true;
-                this.answerSA.root.hidden = false;
+                this.answerSA.hidden = false;
                 this.answerSABtns.hidden = false;
                 this.answerSACheck.hidden = false;
                 this.answerSA.disabled = false;
                 this.answerSABtns.disabled = false;
                 this.answerSACheck.disabled = false;
                 this.answerSA.value = "";
-                this.answerSA.valid = true;
                 this.answerSA.focus();
             }
-
-            this.question.innerText = "";
-            let height = this.question.clientHeight;
             applyStyling(term[this.questionType], this.question);
-            resizeTextToMaxHeight(this.question, height);
+            resizeTextToMaxHeight(this.question, this.question.parentElement.clientHeight);
             this.question.style.color = (window.StarredTerms.isStarred(this.questionData[this.currentQuestionIndex].i)) ? "goldenrod" : "unset";
         },
         processMCResult(answer) {
             this.answerMC.disabled = true;
-            this.msgIdle.hidden = true;
             if (answer === this.questionData[this.currentQuestionIndex].i) {
-                this.msgCorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "1";
                 this.questionData[this.currentQuestionIndex].mc--;
                 this.progressMC++;
             } else {
-                this.msgIncorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "2";
                 if (++this.questionData[this.currentQuestionIndex].mc > 4) window.StarredTerms.setStar(this.currentQuestionIndex, true);
                 this.questionData[this.currentQuestionIndex].fmc++;
                 this.progressMC--;
             }
+            resizeTextToMaxHeight(this.question, this.question.parentElement.clientHeight);
         },
         processSAResult() {
-            if (!(this.answerSA.valid = this.answerSA.valid)) return;
+            if (!(this.answerSA.reportValidity())) return;
             let answer = this.answerSA.value;
             document.activeElement.blur();
             this.answerSA.disabled = true;
             this.answerSABtns.disabled = true;
             this.answerSACheck.disabled = true;
-            this.msgIdle.hidden = true;
             if (checkAnswers(answer, currentSet.terms[this.questionData[this.currentQuestionIndex].i][this.answerType])) {
-                this.msgCorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "1";
                 this.questionData[this.currentQuestionIndex].sa--;
                 this.progressSA++;
             } else {
-                this.msgIncorrect.hidden = false;
+                this.msgDone.parentElement.dataset.mode = "2";
                 if (++this.questionData[this.currentQuestionIndex].sa > 4) window.StarredTerms.setStar(this.currentQuestionIndex, true);
                 this.questionData[this.currentQuestionIndex].fsa++;
                 this.progressSA--;
             }
+            resizeTextToMaxHeight(this.question, this.question.parentElement.clientHeight);
         },
         overrideCorrect() {
-            if (this.answerSA.root.hidden) {
+            if (this.answerSA.hidden) {
                 this.questionData[this.currentQuestionIndex].mc -= 2;
                 this.questionData[this.currentQuestionIndex].fmc--;
                 this.progressMC += 2;
@@ -480,24 +484,17 @@ const pages = {
             open("/learn-results.html", "learn-results-context", "popup,width=900,height=500");
         },
         init() {
-            MDCRipple.attachTo(this.msgDone.querySelector("button"));
-            this.radioBtns = [...this.radioBtns].map(el => {
-                el.addEventListener("change", () => this.generateQuestion());
-                return MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"));
-            });
-            this.progressIndicators = [...this.progressIndicators].map(el =>
-                new MDCCircularProgress(el)
-            );
+            this.radioBtns.forEach(el => el.addEventListener("change", () => this.generateQuestion()));
             for (let btn of this.answerMC.elements) {
                 btn.addEventListener("click", () => this.processMCResult(parseInt(btn.dataset.answerindex)));
-                MDCRipple.attachTo(btn);
+                fitty(btn.querySelector(".fit"), {maxSize: 24, minSize: 4});
+                btn.querySelector(".fit").addEventListener("fit", () => resizeTextToMaxHeight(btn.querySelector(".fit"), 60, 4));
             }
-            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
-            this.checkOnlyStarred.listen("change", () => this.show());
+            this.checkOnlyStarred.addEventListener("change", () => this.show());
             this.msgCorrect.addEventListener("click", () => this.generateQuestion());
             this.msgIncorrect.addEventListener("click", () => this.generateQuestion());
             this.answerSACheck.addEventListener("click", () => this.processSAResult());
-            this.answerSA.root.addEventListener("keyup", e => {
+            this.answerSA.addEventListener("keyup", e => {
                 if (e.key === "Enter") {
                     e.stopPropagation();
                     this.answerSACheck.click();
@@ -514,18 +511,16 @@ const pages = {
     test: {
         el: document.getElementById("test"),
         setName: document.querySelector("#test h1 > span"),
-        btnNew: document.querySelector("#test > div > div:first-child .mdc-button--outlined"),
-        btnCheck: document.querySelector("#test > div > div:first-child .mdc-button--raised"),
-        radioBtns: document.querySelectorAll("#test .answer-with"),
-        /** @type {MDCCheckbox[]} */
-        checkboxes: document.querySelectorAll("#test .check-test-question-types"),
+        btnToggleSettings: document.querySelector("#test > div > div:first-child .button"),
+        btnNew: document.querySelector("#test > div > div:first-child .button:not(.is-dark)"),
+        btnCheck: document.querySelector("#test > div > div:first-child .button.is-primary"),
+        radioBtns: document.querySelectorAll("#test input[name='radio-test-answer-with']"),
+        checkboxes: [...document.querySelectorAll("#test input[type=checkbox]:not(#check-test-starred)")],
         questionTypeHeaders: document.querySelectorAll("#test > div > fieldset > h2"),
         questionContainers: document.querySelectorAll("#test > div > fieldset > div"),
         questionsFieldset: document.querySelector("#test > div > fieldset"),
         currentMatchMode: 0,
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#test .check-starred"),
-        /** @type {MDCTextField} */
+        checkOnlyStarred: document.getElementById("check-test-starred"),
         fieldMaxTerms: document.querySelector("#test .field-max-terms"),
         get questionType() {
             return (this.radioBtns[0].checked) ? "definition" : "term";
@@ -547,67 +542,39 @@ const pages = {
         },
         makeSAQuestion(question) {
             let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
-            let helperTextId = `_${crypto.randomUUID()}`;
-            let questionEl = applyStyling(question[this.questionType], this.questionContainers[0].appendChild(createElement("p", ["mdc-typography--body1"])));
-            questionEl.style.margin = "0";
-            questionEl.style.marginBottom = "4px";
-            if (isStarred) questionEl.style.color = "goldenrod";
-            let textFieldEl = this.questionContainers[0].appendChild(createElement("label", ["mdc-text-field", "mdc-text-field--outlined"], {}, [
-                createElement("span", ["mdc-notched-outline"], {}, [
-                    createElement("span", ["mdc-notched-outline__leading"], {}, []),
-                    createElement("span", ["mdc-notched-outline__notch"], {}, [
-                        createElement("span", ["mdc-floating-label"], { innerText: "Answer" }, [])
-                    ]),
-                    createElement("span", ["mdc-notched-outline__trailing"], {}, [])
+            let questionEl = this.questionContainers[0].appendChild(createElement("div", ["field"], {}, [
+                createElement("label", ["label"], {innerHTML: styleAndSanitize(question[this.questionType], true)}),
+                createElement("div", ["control"], {}, [
+                    createElement("input", ["input"], {type: "text", placeholder: "Your Answer", required: true})
                 ]),
-                createElement("input", ["mdc-text-field__input"], { "aria-label": "Answer", type: "text", "aria-controls": helperTextId, "aria-describedby": helperTextId }, [])
+                createElement("p", ["help"])
             ]));
-            textFieldEl.style.marginBottom = "0";
-            this.questionContainers[0].appendChild(createElement("div", ["mdc-text-field-helper-line"], {}, [
-                createElement("div", ["mdc-text-field-helper-text", "mdc-text-field-helper-text--persistent"], { id: helperTextId }, [])
-            ])).style.marginBottom = "1rem";
+            if (isStarred) questionEl.querySelector("label").style.color = "goldenrod";
             let accentKeyboard = this.questionContainers[0].appendChild(document.createElement("accent-keyboard"));
-            accentKeyboard.initialize(currentSet.specials, textFieldEl.querySelector("input"))
-            let textField = new MDCTextField(textFieldEl);
-            textField.required = true;
-            return textField;
+            accentKeyboard.initialize(currentSet.specials, questionEl.querySelector("input"))
+            return questionEl;
         },
         makeMCQuestion(question, answers, container = 1, customQuestion = null) {
             let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let radioName = `_${crypto.randomUUID()}`;
-            let answerRadios = answers.map((answer, i) => {
-                let el = createElement("div", [], {}, [
-                    createElement("div", ["mdc-form-field"], {}, [
-                        createElement("div", ["mdc-radio", "mdc-radio--touch"], {}, [
-                            createElement("input", ["mdc-radio__native-control"], { type: "radio", id: `${radioName}-${i}`, name: radioName, required: true }, []),
-                            createElement("div", ["mdc-radio__background"], {}, [
-                                createElement("div", ["mdc-radio__outer-circle"], {}, []),
-                                createElement("div", ["mdc-radio__inner-circle"], {}, [])
-                            ]),
-                            createElement("div", ["mdc-radio__ripple"], {}, [])
-                        ]),
-                        createElement("label", [], { htmlFor: `${radioName}-${i}` }, [])
-                    ])
-                ]);
-                applyStyling(answer, el.querySelector("label"));
-                return el;
-            });
-            let questionContainer = this.questionContainers[container].appendChild(createElement("div", [], {}, [
-                createElement("h3", ["mdc-typography--headline5"], {}, []),
+            let answerRadios = answers.map((answer, i) => createElement("div", ["field"], {}, [
+                createElement("input", ["is-checkradio"], {type: "radio", id: `${radioName}-${i}`, required: true, name: radioName}),
+                createElement("label", [], {htmlFor: `${radioName}-${i}`, innerHTML: styleAndSanitize(answer, true)})
+            ]));
+            let questionContainer = this.questionContainers[container].appendChild(createElement("div", ["mb-4"], {}, [
+                createElement("h3", ["title", "is-size-5", "mb-2"], {innerHTML: styleAndSanitize(customQuestion || question[this.questionType], true)}, []),
                 ...answerRadios
             ]));
             if (isStarred) questionContainer.querySelector("h3").style.color = "goldenrod";
-            applyStyling(customQuestion || question[this.questionType], questionContainer.querySelector("h3"));
-            questionContainer.firstElementChild.style.marginBottom = "0";
-            return answerRadios.map(formField => MDCFormField.attachTo(formField).input = new MDCRadio(formField.querySelector(".mdc-radio")));
+            return answerRadios;
         },
         makeMTQuestion(question) {
             let isStarred = window.StarredTerms.isStarred(currentSet.terms.indexOf(question));
             let questionUUID = crypto.randomUUID();
-            let div1 = applyStyling(question[this.questionType], this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left"], {}, [])));
+            let div1 = applyStyling(question[this.questionType], this.questionContainers[2].querySelector(":scope > div:first-child").appendChild(createElement("div", ["test-matching-box", "left", "box"], {}, [])));
             div1.dataset.questionId = questionUUID;
             if (isStarred) div1.style.color = "goldenrod";
-            let div2 = applyStyling(question[this.answerType], this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right"], {}, [])));
+            let div2 = applyStyling(question[this.answerType], this.questionContainers[2].querySelector(":scope > div:nth-child(2)").appendChild(createElement("div", ["test-matching-box", "right", "box"], {}, [])));
             div2.dataset.questionId = questionUUID;
         },
         matchEls(div1, div2) {
@@ -644,8 +611,9 @@ const pages = {
             for (let i = container.children.length; i >= 0; i--) container.appendChild(container.children[Math.random() * i | 0]);
         },
         generateQuestions() {
+            this.questionsFieldset.classList.remove("has-validated-inputs");
             this.btnCheck.disabled = false;
-            this.btnCheck.querySelector(".mdc-button__label").innerText = "Check Answers";
+            this.btnCheck.querySelector("span:last-child").innerText = "Check Answers";
             this.questionContainers[0].textContent = this.questionContainers[1].textContent = this.questionContainers[3].textContent = "";
             this.questionContainers[2].querySelectorAll(":scope > div").forEach(el => el.textContent = "");
             this.questionTypeHeaders.forEach(el => el.dataset.count = 0);
@@ -698,32 +666,30 @@ const pages = {
             this.currentMatchMode = 0;
         },
         checkAnswers() {
+            this.questionsFieldset.classList.add("has-validated-inputs");
             for (let sa of this.questionInputs.sa) {
-                if (!sa.input.valid) {
-                    sa.input.valid = false; //trigger :invalid psuedoclass
-                    return;
-                }
+                if (!sa.input.querySelector("input").reportValidity()) return;
             }
-            for (let mc of this.questionInputs.mc) if (!mc.inputs[0].nativeControl.reportValidity()) return;
-            for (let tf of this.questionInputs.tf) if (!tf.inputs[0].nativeControl.reportValidity()) return;
+            for (let mc of this.questionInputs.mc) if (!mc.inputs[0].querySelector("input").reportValidity()) return;
+            for (let tf of this.questionInputs.tf) if (!tf.inputs[0].querySelector("input").reportValidity()) return;
             this.questionsFieldset.disabled = true;
             document.querySelectorAll(".test-matching-box").forEach(box => box.removeEventListener("click", this.matchingBoxClickListener));
             let numCorrect = 0;
             for (let sa of this.questionInputs.sa) {
-                if (checkAnswers(sa.input.value, sa.answer)) {
-                    sa.input.root.classList.add("correct");
-                    sa.input.helperTextContent = "Correct!";
+                if (checkAnswers(sa.input.querySelector("input").value, sa.answer)) {
+                    sa.input.classList.add("correct");
+                    sa.input.querySelector(".help").innerText = "Correct!";
                     numCorrect++;
                 } else {
-                    sa.input.root.classList.add("incorrect");
-                    sa.input.helperTextContent = `Incorrect -> ${normalizeAnswer(sa.answer)}`;
+                    sa.input.classList.add("incorrect");
+                    sa.input.querySelector(".help").innerText = `Incorrect -> ${normalizeAnswer(sa.answer)}`;
                 }
             }
             for (let mc of this.questionInputs.mc) {
                 let correctAnswer = mc.inputs[mc.answer];
-                numCorrect += correctAnswer.checked; // implicit cast
-                mc.inputs.find(el => el.checked).root.classList.toggle("incorrect", !correctAnswer.checked);
-                correctAnswer.root.classList.add("correct");
+                numCorrect += correctAnswer.querySelector("input").checked; // implicit cast
+                mc.inputs.find(el => el.querySelector("input").checked).classList.toggle("incorrect", !correctAnswer.querySelector("input").checked);
+                correctAnswer.classList.add("correct");
             }
             for (let match of document.querySelectorAll(".matches-container > div")) {
                 let isCorrect = match.dataset.fromCard === match.dataset.toCard;
@@ -731,17 +697,17 @@ const pages = {
                 match.classList.add(isCorrect ? "correct" : "incorrect");
             }
             for (let tf of this.questionInputs.tf) {
-                let selectedInput = tf.inputs.find(el => el.checked);
+                let selectedInput = tf.inputs.find(el => el.querySelector("input").checked);
                 let correctAnswer = tf.inputs[tf.answer ? 0 : 1];
-                correctAnswer.root.classList.add("correct");
-                if (selectedInput !== correctAnswer) selectedInput.root.classList.add("incorrect");
+                correctAnswer.classList.add("correct");
+                if (selectedInput !== correctAnswer) selectedInput.classList.add("incorrect");
                 else numCorrect++;
             }
             let total = Math.max(Math.min(this.termList.length, this.userMaxQuestions), 1);
             let percentCorrect = Math.round(numCorrect * 100 / total);
             this.btnCheck.disabled = true;
-            this.btnCheck.classList.remove("mdc-ripple-upgraded--background-focused");
-            this.btnCheck.querySelector(".mdc-button__label").innerText = `${percentCorrect}%`;
+            this.btnCheck.querySelector("span:last-child").innerText = `${percentCorrect}%`;
+            this.questionsFieldset.classList.remove("has-validated-inputs");
         },
         matchingBoxClickListener(e) {
             switch (pages.test.currentMatchMode) {
@@ -772,7 +738,7 @@ const pages = {
                             pages.test.currentMatchMode = 0;
                             return;
                         }
-                    };
+                    }
                     e.currentTarget.classList.add("selected");
                     e.currentTarget.classList.remove("chosen");
                     break;
@@ -814,29 +780,23 @@ const pages = {
             }
         },
         init() {
-            document.querySelectorAll("#test .mdc-button").forEach(el => MDCRipple.attachTo(el));
-            this.radioBtns = [...this.radioBtns].map(el =>
-                MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
-            );
-            this.checkboxes = [...this.checkboxes].map(el =>
-                MDCFormField.attachTo(el).input = new MDCCheckbox(el.querySelector(".mdc-checkbox"))
-            );
-            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
-            this.fieldMaxTerms = new MDCTextField(this.fieldMaxTerms);
             this.fieldMaxTerms.value = "20";
             this.checkboxes.forEach(el => el.checked = true);
             this.btnNew.addEventListener("click", () => this.generateQuestions());
             this.btnCheck.addEventListener("click", () => this.checkAnswers());
+            this.btnToggleSettings.addEventListener("click", () => this.btnToggleSettings.nextElementSibling.classList.toggle("is-hidden-mobile"));
         }
     },
     match: {
         el: document.getElementById("match"),
         setName: document.querySelector("#match h1 > span"),
-        btnNew: document.querySelectorAll("#match .btn-refresh"),
-        radioBtns: document.querySelectorAll("#match .answer-with"),
+        btnNew: document.querySelector("#match .button"),
+        btnShowHelp: document.querySelector("#match .button:last-child"),
+        radioBtns: document.querySelectorAll("#match input[name='radio-match-answer-with']"),
         termsContainer: document.querySelector("#match > div > div:last-child"),
-        completedDialog: new MDCDialog(document.getElementById("modal-match-done")),
-        completedDialogList: new MDCList(document.querySelector("#modal-match-done ul")),
+        completedDialog: new Modal("#modal-match-done").modal(),
+        helpDialog: new Modal("#modal-match-help").modal(),
+        completedDialogList: document.querySelector("#modal-match-done .list"),
         fieldTime: document.querySelector("#match .field-time"),
         get questionType() {
             return (this.radioBtns[0].checked) ? "definition" : "term";
@@ -844,8 +804,7 @@ const pages = {
         get answerType() {
             return (this.radioBtns[1].checked) ? "definition" : "term";
         },
-        /** @type {MDCCheckbox} */
-        checkOnlyStarred: document.querySelector("#match .check-starred"),
+        checkOnlyStarred: document.getElementById("check-match-starred"),
         onlyStarred: false,
         interval: null,
         dragEvents: {
@@ -908,11 +867,7 @@ const pages = {
             this.generateCards();
         },
         makeDraggableCard(text, questionId, index) {
-            let card = createElement("div", ["mdc-card", "draggable-card", "mdc-typography--button"], { draggable: true }, [
-                createElement("div", ["mdc-card-wrapper__text-section"])
-            ]);
-            applyStyling(text, card.firstElementChild);
-            card.dataset.questionId = questionId;
+            let card = createElement("div", ["draggable-card", "box", "mb-0", "notification", "is-primary", "p-4"], { draggable: true, innerHTML: styleAndSanitize(text, true), dataset: {questionId} });
             card.addEventListener("dragstart", this.dragEvents.start);
             card.addEventListener("dragend", this.dragEvents.end);
             card.addEventListener("click", this.dragEvents.dragClick, true);
@@ -920,12 +875,10 @@ const pages = {
             return card;
         },
         makeDropzoneCard(text, questionId) {
-            let card = createElement("div", ["mdc-card", "dropzone-card"], {}, [
-                createElement("div", ["mdc-card-wrapper__text-section"]),
+            let card = createElement("div", ["dropzone-card", "box", "mb-0", "p-1"], {dataset: {questionId}}, [
+                createElement("div", ["p-4", "pb-1"], {innerHTML: styleAndSanitize(text, true)}),
                 createElement("div")
             ]);
-            applyStyling(text, card.firstElementChild);
-            card.dataset.questionId = questionId;
             card.addEventListener("dragover", this.dragEvents.over);
             card.addEventListener("dragenter", this.dragEvents.enter);
             card.addEventListener("dragleave", this.dragEvents.leave);
@@ -937,7 +890,7 @@ const pages = {
             for (let el of this.termsContainer.children) el.textContent = "";
             let terms = currentSet.terms;
             if (this.checkOnlyStarred.checked) {
-                terms = StarredTerms.getStarredTermList();
+                terms = window.StarredTerms.getStarredTermList();
                 this.onlyStarred = true;
             } else this.onlyStarred = false;
             let included = getRandomChoices(10, terms.length, null, true)
@@ -970,10 +923,8 @@ const pages = {
                 let id = child.dataset.questionId;
                 let dropzone = child.querySelector("div:last-child");
                 if (id && dropzone) {
-                    if (id !== dropzone.children[0]?.dataset?.questionId) {
-                        return;
-                    }
-                }
+                    if (id !== dropzone.children[0]?.dataset?.questionId) return;
+                } else return
             }
             this.clearTimer();
             let totalTime = (Date.now() - this.startTime) / 1000;
@@ -1001,16 +952,15 @@ const pages = {
             if (this.onlyStarred) actualLeaderboard.push({ name: "Play a full round to save!", time });
             else if (!auth.currentUser) actualLeaderboard.push({ name: "Sign in to save!", time });
             actualLeaderboard.sort((a, b) => a.time - b.time);
-            this.completedDialogList.root.textContent = "";
+            this.completedDialogList.textContent = "";
             for (let [i, item] of actualLeaderboard.entries()) {
-                this.completedDialogList.root.appendChild(createElement("li", ["mdc-list", "mdc-list-item--non-interactive", "mdc-list-item--with-two-lines"], {}, [
-                    createElement("span", ["mdc-list-item__content"], {}, [
-                        createElement("span", ["mdc-list-item__primary-text"], { innerText: `#${i + 1} ${item.name}` }),
-                        createElement("span", ["mdc-list-item__secondary-text"], { innerText: `${item.time.toFixed(2)}s` })
+                this.completedDialogList.appendChild(createElement("div", ["list-item"], {}, [
+                    createElement("div", ["list-item-content"], {}, [
+                        createElement("span", ["list-item-title"], { innerText: `#${i + 1} ${item.name}` }),
+                        createElement("span", ["list-item-description"], { innerText: `${item.time.toFixed(2)}s` })
                     ])
                 ]));
             }
-            this.completedDialogList.layout();
         },
         setTimer() {
             this.interval = setInterval(() => {
@@ -1024,41 +974,29 @@ const pages = {
             clearInterval(this.interval);
         },
         init() {
-            document.querySelectorAll("#test .mdc-button").forEach(el => MDCRipple.attachTo(el));
-            this.radioBtns = [...this.radioBtns].map(el =>
-                MDCFormField.attachTo(el).input = new MDCRadio(el.querySelector(".mdc-radio"))
-            );
-            this.btnNew.forEach(el => el.addEventListener("click", () => this.generateCards()));
-            this.completedDialog.listen("MDCDialog:closing", e => {
-                if (e.detail.action === "accept") this.generateCards();
+            this.btnNew.addEventListener("click", () => this.generateCards());
+            this.btnShowHelp.addEventListener("click", () => this.helpDialog.open());
+            this.completedDialog.onuserclose = action => {
+                if (action === "restart") this.generateCards();
                 else history.back();
-            });
-            this.checkOnlyStarred = (MDCFormField.attachTo(this.checkOnlyStarred).input = new MDCCheckbox(this.checkOnlyStarred.querySelector(".mdc-checkbox")));
+            };
+            this.completedDialog.onclose = () => this.generateCards();
+            this.helpDialog.onclose = () => {};
+            initBulmaModals([this.completedDialog, this.helpDialog]);
         }
     }
 };
 
 // #region UTILITIES
-function resizeButtonText(button, minSize = 1) {
-    button.style.removeProperty("--mdc-outlined-button-label-text-size");
-    let i = parseFloat(getComputedStyle(button)["font-size"]);
-    let overflow = button.scrollHeight > button.getBoundingClientRect().height;
-    while (overflow && i > minSize) {
-        i--;
-        button.style.setProperty("--mdc-outlined-button-label-text-size", `${i}px`);
-        overflow = button.scrollHeight > button.getBoundingClientRect().height;
-    }
-}
 function resizeTextToMaxHeight(textEl, maxHeight, minSize = 1) {
     textEl.style.fontSize = "";
     let i = 0;
     let initialSize = parseInt(getComputedStyle(textEl).fontSize);
-    let currentHeight = null;
-    while (i < 100 && currentHeight !== textEl.clientHeight && textEl.clientHeight > maxHeight && initialSize > minSize) {
-        currentHeight = textEl.clientHeight;
+    while (i < 100 && textEl.clientHeight > maxHeight && initialSize > minSize) {
         textEl.style.fontSize = `${Math.max(initialSize -= 2, minSize)}px`;
         i++;
     }
+    textEl.style.fontSize = `${Math.max(initialSize, minSize)}px`;
 }
 /**
  * Apply inline styling of text to an element
@@ -1068,7 +1006,7 @@ function resizeTextToMaxHeight(textEl, maxHeight, minSize = 1) {
  * @returns {HTMLElementTagNameMap[T]} The element with the text
  */
 function applyStyling(text, el) {
-    el.innerHTML = sanitize(marked.parseInline(text), setId === "ZEAuZPbTS5JlB1goITO5" ? {} : sanitizerOpts);
+    el.innerHTML = styleAndSanitize(text, true);
     return el;
 }
 /**
@@ -1099,11 +1037,6 @@ function makeRandomGroups(max, numGroups, aMax) {
     let groups = Array(numGroups).fill(baseVal).fill(baseVal + 1, 0, extra).map(el => nums.splice(0, el));
     return groups;
 }
-function checkAnswers(answer, correct) {
-    let cleanAnswer = normalizeAnswer(answer).toUpperCase();
-    let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
-    return possibleCorrect.includes(cleanAnswer);
-}
 function getOffset(el) {
     let rect = el.getBoundingClientRect();
     return {
@@ -1125,40 +1058,37 @@ function shuffle(arr) {
 
 // #region CARD GENERATION
 function createTermCard({ term, definition }, index, isStarred) {
-    let cardEl = document.createElement("div");
-    cardEl.classList.add("mdc-card", "mdc-card--outlined");
-    let cardHeading = cardEl.appendChild(document.createElement("div"));
-    cardHeading.classList.add("mdc-card-wrapper__text-section");
-    let cardTitle = cardHeading.appendChild(document.createElement("div"));
-    cardTitle.classList.add("mdc-typography--headline6");
-    cardTitle.style.fontWeight = "600";
-    applyStyling(term.replace("\x00", " - "), cardTitle);
-    let starButton = (/** @type {StarButton} */ (cardTitle.appendChild(document.createElement("button", { is: "star-button" }))));
-    starButton.initialValue = isStarred;
-    starButton.dataset.termIndex = index;
+    let cardEl = createElement("div", ["box", "is-relative"], {}, [
+        createElement("p", ["has-font-weight-bold", "is-size-5"], {innerHTML: styleAndSanitize(term.replace("\x00", " - "))}),
+        createElement("hr", ["my-3"]),
+        createElement(["button", "star-button"], [], {initialValue: isStarred, dataset: {termIndex: index}})
+    ]);
     if (setType === "timeline") {
-        cardHeading.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
-        cardEl.classList.add("timeline-piece")
-    } else applyStyling(definition, cardHeading.appendChild(document.createElement("div")));
-    pages.setOverview.terms.appendChild(cardEl);
-    return cardEl;
+        cardEl.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));
+        cardEl.classList.add("timeline-piece", "content");
+    } else cardEl.appendChild(document.createElement("p")).innerHTML = styleAndSanitize(definition);
+    pages.setOverview.terms.appendChild(createElement("div", ["column", "is-one-quarter-desktop", "is-half-tablet"], {}, [cardEl]));
 }
 function createCommentCard({ name, comment, like }, id) {
     let isMyComment = auth.currentUser?.uid === id;
-    let cardEl = createElement("div", ["mdc-card"]);
-    let cardHeading = cardEl.appendChild(createElement("div", ["mdc-card-wrapper__text-section"]));
-    let cardTitle = cardHeading.appendChild(createElement("div", ["mdc-typography--headline6"], {}, [createElement("a", [], { innerText: name, href: `/user/${id}/` })]));
-    cardTitle.style.fontWeight = "600";
-    let cardText = cardHeading.appendChild(document.createElement("div"));
-    if (isMyComment) {
-        cardText.appendChild(pages.setOverview.fieldComment).hidden = false;
-        pages.setOverview.fieldComment.input.value = comment;
-    } else {
-        cardText.innerHTML = sanitize(marked.parseInline(comment), { FORBID_ATTR: ["style"] });
-        cardText.style.overflowWrap = "break-word";
-        if (like) cardText.appendChild(createElement("span", ["likes-badge"], { innerText: `${name} likes this set` }));
-    }
-    return pages.setOverview.commentsContainer.appendChild(cardEl);
+    if (isMyComment)
+        pages.comment.inputComment.value = comment;
+    else
+        pages.comment.container.appendChild(createElement("div", ["list-item"], {}, [
+            createElement("div", ["list-item-content"], {}, [
+                createElement("div", ["list-item-title"], {}, [
+                    createElement("div", ["list-item-title", "is-flex", "is-justify-content-space-between"], {}, [
+                        createElement("span", [], {innerText: name}),
+                        ...(like ? [createElement("span", ["tag", "is-success", "has-tooltip-arrow", "has-tooltip-info", "has-tooltip-left"], {dataset: {tooltip: `${name} likes this set`}}, [
+                            createElement("span", ["icon"], {}, [
+                                createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "thumb_up", style: {verticalAlign: "middle", fontSize: "1rem", cursor: "auto"}})
+                            ])
+                        ])] : [])
+                    ])
+                ]),
+                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment, true)})
+            ])
+        ]));
 }
 // #endregion
 function navigate() {
@@ -1178,13 +1108,7 @@ function navigate() {
     }
 }
 function showLikeStatus(likeStatus) {
-    if (likeStatus) {
-        pages.setOverview.btnLike.querySelector(".mdc-button__label").innerText = "Unlike";
-        pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText = "favorite";
-    } else {
-        pages.setOverview.btnLike.querySelector(".mdc-button__label").innerText = "Like";
-        pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText = "favorite_border";
-    }
+    pages.setOverview.btnLike.querySelector("i").classList.toggle("is-filled", likeStatus);
 }
 
 async function getShortenedSetUrl() {
@@ -1214,17 +1138,9 @@ addEventListener("DOMContentLoaded", async () => {
     pages.learn.init();
     pages.test.init();
     pages.match.init();
-    pages.setOverview.fieldComment.input = new MDCTextField(pages.setOverview.fieldComment.querySelector("label"));
-    pages.setOverview.fieldComment.button = new MDCRipple(pages.setOverview.fieldComment.querySelector("button")).root;
-    MDCRipple.attachTo(pages.setOverview.btnCopyTerms).unbounded = true;
-    MDCRipple.attachTo(pages.setOverview.btnShare).unbounded = true;
-    MDCRipple.attachTo(pages.setOverview.btnShorten);
     if (setType === "timeline") {
         pages.setOverview.terms.style.justifyContent = "left";
-        document.querySelectorAll(".study-modes :is(a, button):not([href='#flashcards'])").forEach(el => {
-            el.style.pointerEvents = "none";
-            el.style.opacity = 0.5;
-        }); // TODO other study modes
+        document.querySelectorAll(".study-modes > :not([href='#flashcards'])").forEach(el => el.hidden = true);
     }
     try {
         let setSnap = await getDoc(setRef);
@@ -1259,8 +1175,15 @@ addEventListener("DOMContentLoaded", async () => {
         };
         document.head.appendChild(createElement("script", [], {type: "application/ld+json", innerText: JSON.stringify(quizJsonLD)}));
 
-        // MDC Instantiation and Events
-        document.querySelectorAll("#home .study-modes .mdc-button").forEach(el => MDCRipple.attachTo(el));
+        pages.setOverview.name.innerText = currentSet.name;
+        applyStyling(currentSet.description || "", pages.setOverview.description);
+        pages.setOverview.numTerms.innerText = currentSet.terms.length;
+        let starredList = window.StarredTerms.getCurrentSet();
+        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i, starredList.includes(i));
+        navigate();
+        initQuickview(pages.comment.quickview, pages.comment.btnShowComments);
+
+        // Events
         document.addEventListener("keyup", e => {
             if (location.hash === "#flashcards") pages.flashcards.onKeyUp(e);
             else if (location.hash === "#learn") pages.learn.onKeyUp(e);
@@ -1280,43 +1203,38 @@ addEventListener("DOMContentLoaded", async () => {
                 if (location.hash === "#test") pages.test.onResize();
             }, 100);
         })
-        pages.setOverview.name.innerText = currentSet.name;
-        applyStyling(currentSet.description || "", pages.setOverview.description);
-        pages.setOverview.numTerms.innerText = currentSet.terms.length;
-        let starredList = window.StarredTerms.getCurrentSet();
-        for (let [i, term] of currentSet.terms.entries()) createTermCard(term, i, starredList.includes(i));
-        navigate();
         pages.setOverview.btnLike.addEventListener("click", async () => {
             if (!auth.currentUser) {
                 localStorage.setItem("redirect_after_login", location.href);
                 location.href = "/#login";
             } else if (socialRef) {
-                let currentLikeStatus = pages.setOverview.btnLike.querySelector(".mdc-button__icon").innerText === "favorite";
+                let currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
                 await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }
         });
-        pages.setOverview.commentsContainer.parentElement.addEventListener("toggle", async () => {
+        pages.comment.btnShowComments.addEventListener("click", async () => { // TODO modularize
             let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
             comments.forEach(comment => createCommentCard(comment.data(), comment.id));
-            if (auth.currentUser && !pages.setOverview.commentsContainer.querySelector(".mdc-text-field")) {
-                createCommentCard({ name: auth.currentUser.displayName, comment: "" }, auth.currentUser.uid);
-                pages.setOverview.fieldComment.input.valid = true;
-            }
         }, { once: true });
-        pages.setOverview.fieldComment.input.listen("change", () => pages.setOverview.fieldComment.button.disabled = false);
-        pages.setOverview.fieldComment.button.addEventListener("click", async () => {
-            if (auth.currentUser && (pages.setOverview.fieldComment.input.valid = pages.setOverview.fieldComment.input.valid)) {
-                await setDoc(socialRef, { comment: pages.setOverview.fieldComment.input.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
-                pages.setOverview.snackbarCommentSaved.open();
-                pages.setOverview.fieldComment.button.disabled = true;
+        pages.comment.inputComment.addEventListener("input", () => pages.comment.btnSaveComment.disabled = false);
+        pages.comment.btnSaveComment.addEventListener("click", async () => {
+            if (auth.currentUser && pages.comment.inputComment.reportValidity()) {
+                await setDoc(socialRef, { comment: pages.comment.inputComment.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+                toast({message: "Comment saved!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000})
+                pages.comment.btnSaveComment.disabled = true;
             }
         });
         pages.setOverview.btnExportTerms.addEventListener("click", () => pages.setOverview.modalExportTerms.open());
         pages.setOverview.btnCopyTerms.addEventListener("click", async () => {
             await navigator.clipboard.writeText(pages.setOverview.modalExportTerms.root.querySelector("pre").innerText);
-            pages.setOverview.btnCopyTerms.childNodes[1].textContent = "inventory";
-            setTimeout(() => pages.setOverview.btnCopyTerms.childNodes[1].textContent = "content_paste", 500);
+            pages.setOverview.btnCopyTerms.querySelector("i").textContent = "inventory";
+            setTimeout(() => pages.setOverview.btnCopyTerms.querySelector("i").textContent = "content_paste", 500);
+        });
+        pages.setOverview.btnCopyLink.addEventListener("click", async () => {
+            await navigator.clipboard.writeText(pages.setOverview.shareLink.href);
+            pages.setOverview.btnCopyLink.querySelector("i").textContent = "inventory";
+            setTimeout(() => pages.setOverview.btnCopyLink.querySelector("i").textContent = "content_paste", 500);
         });
         pages.setOverview.btnShorten.addEventListener("click", async () => {
             let shortLink = await getShortenedSetUrl();
@@ -1324,13 +1242,24 @@ addEventListener("DOMContentLoaded", async () => {
             pages.setOverview.shareLink.innerText = shortLink;
             pages.setOverview.shareLink.href = shortLink;
         });
+
+        // Share Modal
         pages.setOverview.modalExportTerms.root.querySelector("pre").innerText = currentSet.terms.map(el => `${el.term}  ${el.definition}`).join("\n");
         pages.setOverview.shareLink.innerText = `https://vocabustudy.org${location.pathname}`;
         pages.setOverview.shareLink.href = `https://vocabustudy.org${location.pathname}`;
         new QRCode(document.getElementById("set-qrcode"), `https://vocabustudy.org${location.pathname}`);
         if (!navigator.share) pages.setOverview.btnShare.hidden = true;
         else pages.setOverview.btnShare.addEventListener("click", () => navigator.share({title: `${currentSet.name} - Vocabustudy`, text: currentSet.description || `Study this set with ${currentSet.terms.length} terms on Vocabustudy`, url: pages.setOverview.shareLink.href}));
+        if (!navigator.clipboard.write) pages.setOverview.btnCopyQrcode.hidden = true;
+        else pages.setOverview.btnCopyQrcode.addEventListener("click", async () => {
+            let qrcodeBlob = await (await fetch(document.querySelector("#set-qrcode img").src)).blob();
+            await navigator.clipboard.write([new ClipboardItem({"image/png": qrcodeBlob})]);
+            pages.setOverview.btnCopyQrcode.querySelector("i").textContent = "inventory";
+            setTimeout(() => pages.setOverview.btnCopyQrcode.querySelector("i").textContent = "content_paste", 500);
+        });
+        document.querySelector(".page-loader").hidden = true;
     } catch (err) {
+        console.error(err);
         if (err.message.includes("Forbidden")) {
             localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();

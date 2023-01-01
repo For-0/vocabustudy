@@ -1,29 +1,13 @@
-import { MDCMenu } from "@material/menu/index";
-import { MDCTooltip } from "@material/tooltip/index";
-import { MDCRipple } from "@material/ripple/index";
+/* eslint-disable no-undef */
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
-import { fetchAndActivate, getRemoteConfig } from "firebase/remote-config";
 
 function setLoginButtonsState(state, isAdmin) {
     document.querySelectorAll(".loggedin").forEach(el => el.hidden = !state);
     document.querySelectorAll(".loggedout").forEach(el => el.hidden = state);
     document.querySelectorAll(".adminonly").forEach(el => el.hidden = !isAdmin);
 }
-const navbar = {
-    accountMenu: document.getElementById("account-menu"),
-    btnAccountMenu: document.getElementById("btn-account-menu"),
-    btnLogout: document.getElementById("btn-logout"),
-    tooltipAccountMenu: document.getElementById("tooltip-btn-account-menu"),
-    tooltipBtnBrowse: document.getElementById("tooltip-btn-browse"),
-    tooltipBtnHelp: document.getElementById("tooltip-btn-support")
-};
-const fabs = {
-    theme: document.querySelector(".fab-theme"),
-    themeContainer: document.querySelector(".fab-theme-container"),
-    themeOptions: document.querySelectorAll(".fab-theme-container > div button")
-};
 
 const firebaseConfig = {
     apiKey: "AIzaSyCsDuM2jx3ZqccS8MS5aumkOKaV2LiVwZk",
@@ -32,31 +16,7 @@ const firebaseConfig = {
     storageBucket: "vocab-u-study.appspot.com",
     messagingSenderId: "230085427328",
     appId: "1:230085427328:web:9eed7902aab4c8eb49e665"
-
 };
-const themes = ["system", "dark", "light"];
-function showTheme(theme) {
-    document.body.classList.remove("theme-dark", "theme-system");
-    switch(theme) {
-        case "dark":
-            fabs.theme.querySelector("span").innerText = "brightness_4";
-            document.body.classList.add("theme-dark");
-            break;
-        case "system":
-            fabs.theme.querySelector("span").innerText = "settings_brightness";
-            document.body.classList.add("theme-system");
-            break;
-        case "light":
-            fabs.theme.querySelector("span").innerText = "brightness_high";
-            break;
-    }
-}
-export function setHue(hue) {
-    if (parseInt(hue) > 0) {
-        document.documentElement.style.setProperty("--hue-rotated", hue)
-        document.documentElement.style.filter = `hue-rotate(calc(var(--hue-rotated) * 1deg))`;
-    } else document.documentElement.style.filter = "none";
-}
 
 /**
  * Callback for when the auth state changes
@@ -66,7 +26,7 @@ export function setHue(hue) {
 /**
  * Callback for when remote config has been activated
  * @callback remoteConfigActivatedCallback
- * @param {import("firebase/remote-config").RemoteConfig} remoteConfig The remote config instance
+ * @param {import("firebase/remote-config").RemoteConfig?} remoteConfig The remote config instance. Null if remote config is unavailable (like if indexeddb is not available)
  */
 
 /**
@@ -74,13 +34,7 @@ export function setHue(hue) {
  * @param {authStateChangedCallback} authStateChangedCallback 
  * @param {remoteConfigActivatedCallback} remoteConfigActivatedCallback 
  */
-export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = () => {}) {
-    if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) {
-        location.host = "vocabustudy.org";
-        return;
-    }
-    showTheme(localStorage.getItem("theme"));
-    setHue(localStorage.getItem("theme_hue"));
+export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = null) {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = initializeAuth(app, {
@@ -88,8 +42,20 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         popupRedirectResolver: browserPopupRedirectResolver
     });
     auth.setPersistence(browserLocalPersistence);
-    //const analytics = getAnalytics(app);
-    const remoteConfig = getRemoteConfig(app);
+    if (remoteConfigActivatedCallback !== null) {
+        import("firebase/remote-config").then(async ({getRemoteConfig, fetchAndActivate}) => {
+            let remoteConfig = getRemoteConfig(app);
+            remoteConfig.settings.minimumFetchIntervalMillis = 172800000; //-> two days
+            remoteConfig.defaultConfig = {
+                featuredSets: []
+            };
+            await fetchAndActivate(remoteConfig)
+            remoteConfigActivatedCallback(remoteConfig);
+        }).catch(err => {
+            console.warn(`Error while activating Remote Config: ${err}`);
+            remoteConfigActivatedCallback(null);
+        });
+    }
     
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") {
         connectAuthEmulator(auth, "http://localhost:9099", {disableWarnings: true});
@@ -101,41 +67,11 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         connectAuthEmulator(auth, `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`, {disableWarnings: true});
         connectFirestoreEmulator(db, `${8080}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}`, 443);
     }
-    addEventListener("DOMContentLoaded", () => {
-        MDCTooltip.attachTo(navbar.tooltipAccountMenu);
-        MDCTooltip.attachTo(navbar.tooltipBtnBrowse);
-        MDCTooltip.attachTo(navbar.tooltipBtnHelp);
-        MDCRipple.attachTo(fabs.theme);
-        fabs.themeOptions.forEach((el, i) => {
-            MDCRipple.attachTo(el);
-            el.addEventListener("click", () => {
-                showTheme(themes[i]);
-                localStorage.setItem("theme", themes[i]);
-            });
-        });
-        let menu = new MDCMenu(navbar.accountMenu);
-        menu.setAnchorMargin({ top: 20 });
-        navbar.btnAccountMenu.addEventListener("mousedown", () => menu.open = !menu.open);
-        navbar.btnLogout.addEventListener("click", () => auth.signOut());
-    });
+    window.signOut = () => auth.signOut(); // TODO move all to SW, as this will not work on some pages. ALso may disable tree shaking
     auth.onAuthStateChanged(async user => {
         window.sentrySetUser?.call(window, user);
         if (user) setLoginButtonsState(true, (await user.getIdTokenResult()).claims.admin); else setLoginButtonsState(false, false);
         authStateChangedCallback(user);
-    });
-    fabs.theme.addEventListener("click", e => {
-        e.stopPropagation();
-        fabs.themeContainer.classList.toggle("show")
-    }, true);
-    document.addEventListener("click", () => fabs.themeContainer.classList.remove("show"));
-    document.querySelector("#account-menu .loggedout a").addEventListener("click", () => localStorage.removeItem("redirect_after_login"))
-    remoteConfig.settings.minimumFetchIntervalMillis = 172800000; //-> two days
-    remoteConfig.defaultConfig = {
-        featuredSets: []
-    };
-    fetchAndActivate(remoteConfig).then(() => remoteConfigActivatedCallback(remoteConfig)).catch(err => {
-        console.log(`Error while activating Remote Config: ${err}`);
-        remoteConfigActivatedCallback(null);
     });
     return {app, db, auth};
 }

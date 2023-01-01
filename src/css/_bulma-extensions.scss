@@ -1,0 +1,1530 @@
+// NOTE: This file is only for bulma extensions which we need to modify! (typically to remove a redundant import) All others should be imported directly
+@use "sass:math";
+@use "bulma-modules" as *;
+// FAB https://github.com/alakise/bulma-floating-button
+.button.is-floating {
+    width: 60px;
+    height: 60px;
+    border-radius: 100px;
+    text-align: center;
+    font-size: 1.6rem;
+    box-shadow: $box-shadow;
+    z-index: 3;
+    padding: 0;
+    &.is-large {
+        width: 90px;
+        height: 90px;
+        font-size: 2.6rem;
+    }
+    &.is-medium {
+        width: 75px;
+        height: 75px;
+        font-size: 2.2rem;
+    }
+    &.is-small {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+    }
+    i {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateY(-50%) translateX(-50%);
+    }
+}
+
+//#region Slider https://wikiki.github.io/form/slider/
+$slider-radius: $radius !default;
+$slider-track-background: $grey-lighter !default;
+$slider-track-radius: $radius !default;
+$slider-track-border: 0px solid $grey !default;
+$slider-track-shadow: 0px 0px 0px $grey !default;
+$slider-thumb-background: $white !default;
+$slider-thumb-radius: $radius !default;
+$slider-thumb-border: 1px solid $grey-light !default;
+$slider-thumb-shadow: none !default;
+$slider-thumb-to-track-ratio: 2 !default;
+$slider-output-width: 3rem !default;
+$slider-output-background: $grey-dark !default;
+$slider-output-radius: $radius !default;
+
+@mixin slider-size($size) {
+    $track-height: math.div($size, $slider-thumb-to-track-ratio);
+    $thumb-size: $size;
+
+    &:not([orient="vertical"]) {
+        min-height: calc((#{$size} + 2px) * 1.25);
+
+        &::-webkit-slider-runnable-track {
+            height: $track-height;
+        }
+
+        &::-moz-range-track {
+            height: $track-height;
+        }
+
+        &::-ms-track {
+            height: $track-height;
+        }
+    }
+
+    &[orient="vertical"] {
+        &::-webkit-slider-runnable-track {
+            width: $track-height;
+        }
+
+        &::-moz-range-track {
+            width: $track-height;
+        }
+
+        &::-ms-track {
+            width: $track-height;
+        }
+    }
+
+    &::-webkit-slider-thumb {
+        height: $thumb-size;
+        width: $thumb-size;
+    }
+
+    &::-moz-range-thumb {
+        height: $thumb-size;
+        width: $thumb-size;
+    }
+
+    &::-ms-thumb {
+        height: $thumb-size;
+        width: $thumb-size;
+    }
+
+    &::-ms-thumb {
+        margin-top: 0;
+    }
+
+    &::-webkit-slider-thumb {
+        margin-top: (0 - math.div($thumb-size, 4));
+    }
+
+    &[orient="vertical"] {
+        &::-webkit-slider-thumb {
+            margin-top: auto;
+            margin-left: (0 - math.div($thumb-size, 4));
+        }
+    }
+}
+
+input[type="range"] {
+    &.slider {
+        appearance: none;
+        margin: 1rem 0;
+        background: transparent;
+        touch-action: none;
+
+        &.is-fullwidth {
+            display: block;
+            width: 100%;
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:not([orient="vertical"]) {
+            &::-webkit-slider-runnable-track {
+                width: 100%;
+            }
+
+            &::-moz-range-track {
+                width: 100%;
+            }
+
+            &::-ms-track {
+                width: 100%;
+            }
+
+            &.has-output,
+            &.has-output-tooltip {
+                + output {
+                    width: $slider-output-width;
+                    background: $slider-output-background;
+                    border-radius: $slider-output-radius;
+                    padding: 0.4rem 0.8rem;
+                    font-size: $size-7;
+                    line-height: $size-7;
+                    text-align: center;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    color: $white;
+                    overflow: hidden;
+                    pointer-events: none;
+                    z-index: 200;
+                }
+
+                &:disabled+output {
+                    opacity: 0.5;
+                }
+            }
+
+            &.has-output {
+                display: inline-block;
+                vertical-align: middle;
+                width: calc(100% - (#{$slider-output-width + 1.2rem}));
+
+                + output {
+                    display: inline-block;
+                    margin-left: 0.75rem;
+                    vertical-align: middle;
+                }
+            }
+
+            &.has-output-tooltip {
+                display: block;
+
+                + output {
+                    position: absolute;
+                    left: 0;
+                    top: -0.1rem;
+                }
+            }
+        }
+
+        &[orient="vertical"] {
+            appearance: slider-vertical;
+            writing-mode: bt-lr;
+
+            &::-webkit-slider-runnable-track {
+                height: 100%;
+            }
+
+            &::-moz-range-track {
+                height: 100%;
+            }
+
+            &::-ms-track {
+                height: 100%;
+            }
+        }
+
+        &::-webkit-slider-runnable-track {
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: $slider-track-shadow;
+            background: $slider-track-background;
+            border-radius: $slider-track-radius;
+            border: $slider-track-border;
+        }
+
+        &::-moz-range-track {
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: $slider-track-shadow;
+            background: $slider-track-background;
+            border-radius: $slider-track-radius;
+            border: $slider-track-border;
+        }
+
+        &::-ms-track {
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: $slider-track-shadow;
+            background: $slider-track-background;
+            border-radius: $slider-track-radius;
+            border: $slider-track-border;
+        }
+
+        &::-ms-fill-lower {
+            background: $grey-lighter;
+            border-radius: $slider-radius;
+        }
+
+        &::-ms-fill-upper {
+            background: $grey-lighter;
+            border-radius: $slider-radius;
+        }
+
+        &::-webkit-slider-thumb {
+            box-shadow: $slider-thumb-shadow;
+            border: $slider-thumb-border;
+            border-radius: $slider-thumb-radius;
+            background: $slider-thumb-background;
+            cursor: pointer;
+        }
+
+        &::-moz-range-thumb {
+            box-shadow: $slider-thumb-shadow;
+            border: $slider-thumb-border;
+            border-radius: $slider-thumb-radius;
+            background: $slider-thumb-background;
+            cursor: pointer;
+        }
+
+        &::-ms-thumb {
+            box-shadow: $slider-thumb-shadow;
+            border: $slider-thumb-border;
+            border-radius: $slider-thumb-radius;
+            background: $slider-thumb-background;
+            cursor: pointer;
+        }
+
+        &::-webkit-slider-thumb {
+            appearance: none;
+        }
+
+        &.is-circle {
+            &::-webkit-slider-thumb {
+                border-radius: $radius-rounded;
+            }
+
+            &::-moz-range-thumb {
+                border-radius: $radius-rounded;
+            }
+
+            &::-ms-thumb {
+                border-radius: $radius-rounded;
+            }
+        }
+
+        &:active {
+            &::-webkit-slider-thumb {
+                transform: scale(1.25);
+            }
+
+            &::-moz-range-thumb {
+                transform: scale(1.25);
+            }
+
+            &::-ms-thumb {
+                transform: scale(1.25);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &::-webkit-slider-thumb {
+                cursor: not-allowed;
+                transform: scale(1);
+            }
+
+            &::-moz-range-thumb {
+                cursor: not-allowed;
+                transform: scale(1);
+            }
+
+            &::-ms-thumb {
+                cursor: not-allowed;
+                transform: scale(1);
+            }
+        }
+
+        @include slider-size($size-normal);
+
+        &.is-small {
+            @include slider-size($size-small);
+        }
+
+        &.is-medium {
+            @include slider-size($size-medium);
+        }
+
+        &.is-large {
+            @include slider-size($size-large);
+        }
+
+        @each $name,
+        $pair in $colors {
+            $color: nth($pair, 1);
+            $color-invert: nth($pair, 2);
+
+            &.is-#{$name} {
+                &::-moz-range-track {
+                    background: $color !important;
+                }
+
+                &::-webkit-slider-runnable-track {
+                    background: $color !important;
+                }
+
+                &::-ms-track {
+                    background: $color !important;
+                }
+
+                &::-ms-fill-lower {
+                    background: $color;
+                }
+
+                &::-ms-fill-upper {
+                    background: $color;
+                }
+
+                &.has-output,
+                .has-output-tooltip {
+                    + output {
+                        background-color: $color;
+                        color: $color-invert;
+                    }
+                }
+            }
+        }
+    }
+}
+
+//#endregion
+//#region Checkradio https://wikiki.github.io/form/checkradio/
+$checkbox-radius: $radius !default;
+$checkbox-border: .1rem solid $grey-lighter !default;
+$checkbox-block-background: $white-ter !default;
+$checkbox-checked-width: .1rem !default;
+$checkradio-focus: 1px dotted $grey-light !default;
+$checkradio-top-offset: 0rem !default;
+
+@mixin checkbox-size($size) {
+    $newSize: $size * 1.5;
+    $height: math.div($newSize, 2.5);
+    $width: math.div($newSize, 4);
+
+    + label {
+        font-size: $size;
+        padding-left: $size * 2;
+
+        &::before,
+        &:before {
+            width: $newSize;
+            height: $newSize;
+        }
+
+        &::after,
+        &:after {
+            width: $width;
+            height: $height;
+            top: ((math.div($newSize, 2)) - (math.div($height, 2))) * 0.9;
+            left: $height;
+        }
+    }
+
+    &.is-block {
+        + label {
+
+            &::before,
+            &:before {
+                width: 1.25 * $size;
+                height: 1.25 * $size;
+                left: .175rem;
+                top: .175rem;
+            }
+
+            &::after,
+            &:after {
+                top: .2rem + $size * 0.125;
+                left: .2rem + $size * 0.45;
+            }
+        }
+    }
+
+    &.is-rtl {
+        + label {
+            padding-left: 0;
+            padding-right: $size * 2;
+
+            &::after,
+            &:after {
+                left: auto;
+                right: $height;
+            }
+
+            // Use a mixin to define all ratios in the same spot
+        }
+    }
+}
+
+@mixin radio-size($size) {
+    $newSize: $size * 1.5;
+    $height: $newSize;
+    $width: $newSize;
+
+    + label {
+        font-size: $size;
+        line-height: $newSize;
+        padding-left: $size * 2;
+
+        &::before,
+        &:before,
+        &::after,
+        &:after {
+            width: $width;
+            height: $height;
+        }
+    }
+
+    &.is-rtl {
+        + label {
+            padding-right: $size * 2;
+        }
+    }
+}
+
+.is-checkradio[type="radio"],
+.is-checkradio[type="checkbox"] {
+    outline: 0;
+    user-select: none;
+    display: none;
+    position: absolute;
+    opacity: 0;
+
+    + label {
+        position: relative;
+        display: initial;
+        cursor: pointer;
+        vertical-align: middle;
+        margin: .5em;
+        padding: .2rem .5rem .2rem 0;
+        border-radius: $checkbox-radius;
+
+        &:first-of-type {
+            margin-left: 0;
+        }
+
+        &:hover {
+
+            &::before,
+            &:before {
+                animation-duration: 0.4s;
+                animation-fill-mode: both;
+                animation-name: hover-color;
+            }
+        }
+
+        &::before,
+        &:before {
+            position: absolute;
+            left: 0;
+            top: $checkradio-top-offset;
+            content: '';
+            border: $checkbox-border;
+        }
+
+        &::after,
+        &:after {
+            position: absolute;
+            display: none;
+            content: '';
+            top: $checkradio-top-offset;
+        }
+    }
+
+    &.is-rtl {
+        + label {
+            margin-right: 0rem;
+            margin-left: 0.5rem;
+
+            &::before,
+            &:before {
+                left: auto;
+                right: 0;
+            }
+        }
+    }
+
+    &:focus {
+        + label {
+
+            &::before,
+            &:before {
+                outline: $checkradio-focus;
+            }
+        }
+    }
+
+    &:hover:not([disabled]) {
+        + label {
+
+            &::before,
+            &:before {
+                border-color: $primary !important;
+            }
+        }
+    }
+
+    &:checked {
+        + label {
+
+            &::before,
+            &:before {
+                border: $checkbox-border;
+            }
+        }
+
+        &[disabled] {
+            cursor: not-allowed;
+
+            + label {
+                opacity: 0.5;
+            }
+        }
+
+        + label {
+
+            &::before,
+            &:before {
+                animation-name: none;
+            }
+
+            &::after,
+            &:after {
+                display: inline-block;
+            }
+        }
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+
+        + label {
+            opacity: 0.5;
+            cursor: not-allowed;
+
+            &:hover,
+            &:before,
+            &::before,
+            &::after,
+            &:after {
+                cursor: not-allowed;
+            }
+        }
+
+        &:hover {
+            cursor: not-allowed;
+
+            &::before,
+            &:before {
+                animation-name: none;
+            }
+        }
+
+        &::before,
+        &:before {
+            cursor: not-allowed;
+        }
+
+        &::after,
+        &:after {
+            cursor: not-allowed;
+        }
+    }
+
+    &.has-no-border {
+        + label {
+
+            &::before,
+            &:before {
+                border: none !important;
+            }
+        }
+    }
+
+    &.is-block {
+        display: none !important;
+
+        + label {
+            width: 100% !important;
+            background: $checkbox-block-background;
+            color: findColorInvert($checkbox-block-background );
+            padding-right: .75em;
+        }
+
+        &:hover:not([disabled]) {
+            + label {
+                background: darken($checkbox-block-background, 5%);
+            }
+        }
+    }
+}
+
+.is-checkradio[type="checkbox"] {
+    + label {
+
+        &::before,
+        &:before {
+            border-radius: $checkbox-radius;
+        }
+
+        &::after,
+        &:after {
+            box-sizing: border-box;
+            transform: translateY($checkradio-top-offset) rotate(45deg);
+            border-width: $checkbox-checked-width;
+            border-style: solid;
+            border-color: $primary;
+            border-top: 0;
+            border-left: 0;
+        }
+    }
+
+    &.is-circle {
+        + label {
+
+            &::before,
+            &:before {
+                border-radius: 50%;
+            }
+        }
+    }
+
+    @include checkbox-size($size-normal);
+
+    &.is-small {
+        @include checkbox-size($size-small);
+    }
+
+    &.is-medium {
+        @include checkbox-size($size-medium);
+    }
+
+    &.is-large {
+        @include checkbox-size($size-large);
+    }
+
+    @each $name,
+    $pair in $colors {
+        $color: nth($pair, 1);
+        $color-invert: nth($pair, 2);
+
+        &.is-#{$name} {
+            &.has-background-color {
+                + label {
+
+                    &::before,
+                    &:before {
+                        border-color: transparent !important;
+                        background-color: $color !important;
+                    }
+                }
+            }
+
+            &:hover:not([disabled]) {
+                + label {
+
+                    &::before,
+                    &:before {
+                        border-color: $color !important;
+                    }
+                }
+            }
+
+            &:checked {
+                + label {
+
+                    &::after,
+                    &:after {
+                        border-color: $color !important;
+                    }
+                }
+
+                &.has-background-color {
+                    + label {
+
+                        &::before,
+                        &:before {
+                            border-color: transparent !important;
+                            background-color: $color !important;
+                        }
+
+                        &::after,
+                        &:after {
+                            border-color: $color-invert !important;
+                            background-color: $color !important;
+                        }
+                    }
+                }
+            }
+
+            &.is-block {
+                &:hover:not([disabled]) {
+                    + label {
+
+                        &::after,
+                        &:after,
+                        &::before,
+                        &:before {
+                            border-color: $color !important;
+                        }
+                    }
+                }
+
+                &:checked {
+                    + label {
+                        color: $color-invert;
+                        border-color: $color !important;
+                        background: $color;
+
+                        &::after,
+                        &:after {
+                            border-color: $color-invert !important;
+                        }
+                    }
+
+                    &:hover:not([disabled]) {
+                        + label {
+                            background: darken($color, 5%);
+
+                            &::after,
+                            &:after,
+                            &::before,
+                            &:before {
+                                border-color: bulmaVarDarken($color-invert, 5%) !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &:indeterminate {
+        + label {
+
+            &::after,
+            &:after {
+                display: inline-block;
+                transform: rotate(90deg);
+                border-bottom: none;
+            }
+        }
+
+        @each $name,
+        $pair in $colors {
+            $color: nth($pair, 1);
+            $color-invert: nth($pair, 2);
+
+            &.is-#{$name} {
+                + label {
+
+                    &::after,
+                    &:after {
+                        border-color: $color;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.is-checkradio[type="radio"] {
+    + label {
+
+        &::before,
+        &:before {
+            border-radius: 50%;
+        }
+
+        &::after,
+        &:after {
+            border-radius: 50%;
+            background: $primary;
+            left: 0;
+            transform: scale(0.5);
+        }
+    }
+
+    &:checked {
+        &.has-background-color {
+            + label {
+
+                &::before,
+                &:before {
+                    border-color: $text !important;
+                    background-color: $text !important;
+                }
+
+                &::after,
+                &:after {
+                    border-color: $text !important;
+                    background-color: $text !important;
+                }
+            }
+        }
+    }
+
+    &.is-rtl {
+        + label {
+            padding-left: 0;
+
+            &::after,
+            &:after {
+                left: auto;
+                right: 0;
+            }
+        }
+    }
+
+    @include radio-size($size-normal);
+
+    &.is-small {
+        @include radio-size($size-small);
+    }
+
+    &.is-medium {
+        @include radio-size($size-medium);
+    }
+
+    &.is-large {
+        @include radio-size($size-large);
+    }
+
+    @each $name,
+    $pair in $colors {
+        $color: nth($pair, 1);
+        $color-invert: nth($pair, 2);
+
+        &.is-#{$name} {
+            &.has-background-color {
+                + label {
+
+                    &::before,
+                    &:before {
+                        border-color: $color !important;
+                        background-color: $color !important;
+                    }
+                }
+            }
+
+            &:hover:not([disabled]) {
+                + label {
+
+                    &::before,
+                    &:before {
+                        border-color: $color !important;
+                    }
+                }
+            }
+
+            &:checked {
+                + label {
+
+                    &::after,
+                    &:after {
+                        border-color: $color !important;
+                        background-color: $color !important;
+                    }
+                }
+
+                &.has-background-color {
+                    + label {
+
+                        &::before,
+                        &:before {
+                            border-color: $color !important;
+                            background-color: $color !important;
+                        }
+
+                        &::after,
+                        &:after {
+                            border-color: $color-invert !important;
+                            background-color: $color-invert !important
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+//#endregion
+//#region Bulma Social
+.button {
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition-property: background-color;
+    transition-duration: 0.3s;
+}
+
+.no-animation {
+    transition-property: none !important;
+}
+
+a {
+    transition: transform 1s;
+}
+
+$button-focus-box-shadow-size: 0 0 0 0.125em !default;
+$button-static-color: hsl(0, 0%, 48%) !default;
+$button-static-background-color: hsl(0, 0%, 96%) !default;
+$button-static-border-color: hsl(0, 0%, 86%) !default;
+$discord: hsl(226.7, 58.4%, 65.1%) !default;
+$discord-invert: findColorInvert($discord);
+$discord-light: findLightColor($discord);
+$discord-dark: findDarkColor($discord);
+$github: hsl(210, 12.2%, 16.1%) !default;
+$github-invert: findColorInvert($github);
+$github-light: findLightColor($github);
+$github-dark: findDarkColor($github);
+$button-colors: ("discord": ($discord, $discord-invert, $discord-light, $discord-dark), "github": ($github, $github-invert, $github-light, $github-dark));
+
+.button {
+
+    // Colors
+    @each $name,
+    $pair in $button-colors {
+        $color: nth($pair, 1);
+        $color-invert: nth($pair, 2);
+
+        &.is-#{$name} {
+            background-color: $color;
+            border-color: transparent;
+            color: $color-invert;
+
+            &:hover,
+            &.is-hovered {
+                background-color: bulmaDarken($color, 2.5%);
+                border-color: transparent;
+                color: $color-invert;
+            }
+
+            &:focus,
+            &.is-focused {
+                border-color: transparent;
+                color: $color-invert;
+
+                &:not(:active) {
+                    box-shadow: $button-focus-box-shadow-size bulmaRgba($color, 0.25);
+                }
+            }
+
+            &:active,
+            &.is-active {
+                background-color: bulmaDarken($color, 5%);
+                border-color: transparent;
+                color: $color-invert;
+            }
+
+            &[disabled],
+            fieldset[disabled] & {
+                background-color: $color;
+                border-color: transparent;
+                box-shadow: none;
+            }
+
+            &.is-inverted {
+                background-color: $color-invert;
+                color: $color;
+
+                &:hover,
+                &.is-hovered {
+                    background-color: bulmaDarken($color-invert, 5%);
+                }
+
+                &[disabled],
+                fieldset[disabled] & {
+                    background-color: $color-invert;
+                    border-color: transparent;
+                    box-shadow: none;
+                    color: $color;
+                }
+            }
+
+            &.is-loading {
+                &::after {
+                    border-color: transparent transparent $color-invert $color-invert !important;
+                }
+            }
+
+            &.is-outlined {
+                background-color: transparent;
+                border-color: $color;
+                color: $color;
+
+                &:hover,
+                &.is-hovered,
+                &:focus,
+                &.is-focused {
+                    background-color: $color;
+                    border-color: $color;
+                    color: $color-invert;
+                }
+
+                &.is-loading {
+                    &::after {
+                        border-color: transparent transparent $color $color !important;
+                    }
+
+                    &:hover,
+                    &.is-hovered,
+                    &:focus,
+                    &.is-focused {
+                        &::after {
+                            border-color: transparent transparent $color-invert $color-invert !important;
+                        }
+                    }
+                }
+
+                &[disabled],
+                fieldset[disabled] & {
+                    background-color: transparent;
+                    border-color: $color;
+                    box-shadow: none;
+                    color: $color;
+                }
+            }
+
+            &.is-inverted.is-outlined {
+                background-color: transparent;
+                border-color: $color-invert;
+                color: $color-invert;
+
+                &:hover,
+                &.is-hovered,
+                &:focus,
+                &.is-focused {
+                    background-color: $color-invert;
+                    color: $color;
+                }
+
+                &.is-loading {
+
+                    &:hover,
+                    &.is-hovered,
+                    &:focus,
+                    &.is-focused {
+                        &::after {
+                            border-color: transparent transparent $color $color !important;
+                        }
+                    }
+                }
+
+                &[disabled],
+                fieldset[disabled] & {
+                    background-color: transparent;
+                    border-color: $color-invert;
+                    box-shadow: none;
+                    color: $color-invert;
+                }
+
+                // If light and dark colors are provided
+            }
+
+            @if length($pair)>=4 {
+                $color-light: nth($pair, 3);
+                $color-dark: nth($pair, 4);
+
+                &.is-light {
+                    background-color: $color-light;
+                    color: $color-dark;
+
+                    &:hover,
+                    &.is-hovered {
+                        background-color: bulmaDarken($color-light, 2.5%);
+                        border-color: transparent;
+                        color: $color-dark;
+                    }
+
+                    &:active,
+                    &.is-active {
+                        background-color: bulmaDarken($color-light, 5%);
+                        border-color: transparent;
+                        color: $color-dark;
+                    }
+                }
+            }
+        }
+    }
+
+    &.is-static {
+        background-color: $button-static-background-color;
+        border-color: $button-static-border-color;
+        color: $button-static-color;
+        box-shadow: none;
+        pointer-events: none;
+    }
+}
+
+@each $name,
+$pair in $button-colors {
+    $color: nth($pair, 1);
+
+    .has-text-#{$name} {
+        color: $color !important;
+    }
+
+    a.has-text-#{$name} {
+
+        &:hover,
+        &:focus {
+            color: bulmaDarken($color, 10%) !important;
+        }
+    }
+
+    .has-background-#{$name} {
+        background-color: $color !important;
+    }
+
+    @if length($pair)>=4 {
+        $color-light: nth($pair, 3);
+        $color-dark: nth($pair, 4);
+
+        // Light
+        .has-text-#{$name}-light {
+            color: $color-light !important;
+        }
+
+        a.has-text-#{$name}-light {
+
+            &:hover,
+            &:focus {
+                color: bulmaDarken($color-light, 10%) !important;
+            }
+        }
+
+        .has-background-#{$name}-light {
+            background-color: $color-light !important;
+        }
+
+        // Dark
+        .has-text-#{$name}-dark {
+            color: $color-dark !important;
+        }
+
+        a.has-text-#{$name}-dark {
+
+            &:hover,
+            &:focus {
+                color: bulmaLighten($color-dark, 10%) !important;
+            }
+        }
+
+        .has-background-#{$name}-dark {
+            background-color: $color-dark !important;
+        }
+    }
+}
+//#endregion
+//#region Circular Progress
+$backColor: var(--scheme-main-bis);
+
+.progress-circle {
+    position: relative;
+    height: 48px;
+    width: 48px;
+    svg {
+        width: inherit;
+        height: inherit;
+        circle:first-child {
+            cx: 24px;
+            cy: 24px;
+            r: 20px;
+            fill: none;
+            stroke-width: var(--thickness, 5px);
+            stroke: $backColor;
+        }
+        circle:last-child {
+            cx: 24px;
+            cy: 24px;
+            r: 20px;
+            fill: none;
+            stroke-width: var(--thickness, 5px);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 360px;
+            stroke-dashoffset: calc(130px - var(--progress) * 130px + 230px); // don't quesiton the formula. I manipulated the numbers to make them work
+            transition: 0.1s stroke-dashoffset;
+        }
+    }
+    @each $name, $pair in $colors {
+        &.is-#{$name} circle:last-child {
+            stroke: nth($pair, 1);
+        }
+    }
+    &::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%)translateY(-50%);
+        text-align: center;
+        content: attr(data-progress)
+    }
+}
+//#endregion
+//#region Switch
+$switch-background: $grey-light !default;
+$switch-border: .1rem solid transparent !default;
+$switch-background-active: $primary !default;
+$switch-radius: $radius !default;
+$switch-paddle-background: $white !default;
+$switch-paddle-background-active: $primary !default;
+$switch-paddle-offset: 0.25rem !default;
+$switch-paddle-transition: all 0.25s ease-out !default;
+$switch-focus: 1px dotted $grey-light !default;
+@mixin switch-size($size) {
+    $switch-height: $size * 1.5;
+    $switch-width: $switch-height * 2;
+    $paddle-height: $switch-height - ($switch-paddle-offset * 2);
+    $paddle-width: $switch-height - ($switch-paddle-offset * 2);
+    $paddle-active-offest: $switch-width - $paddle-width - ($switch-paddle-offset * 1.5);
+    + label {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: $size;
+        height: $control-height;
+        line-height: $control-line-height;
+        padding-left: $switch-width + .5;
+        padding-top: .2rem;
+        cursor: pointer;
+        &::before,
+        &:before {
+            position: absolute;
+            display: block;
+            top: calc(50% - #{$switch-height} * 0.5);
+            left: 0;
+            width: $switch-width;
+            height: $switch-height;
+            border: $switch-border;
+            border-radius: $switch-radius;
+            background: $switch-background;
+            content: '';
+        }
+        &::after,
+        &:after {
+            display: block;
+            position: absolute;
+            top: calc(50% - #{$paddle-height} * 0.5);
+            left: $switch-paddle-offset;
+            width: $paddle-width;
+            height: $paddle-height;
+            transform: translate3d(0, 0, 0);
+            border-radius: $switch-radius;
+            background: $switch-paddle-background;
+            transition: $switch-paddle-transition;
+            content: '';
+        }
+        .switch-active,
+        .switch-inactive {
+            font-size: $size - 0.1;
+            z-index: 1;
+            margin-top: -4px;
+        }
+        &.has-text-inside {
+            .switch-inactive {
+                margin-left: -($paddle-active-offest + 0.3);
+            }
+            .switch-active {
+                margin-left: -($paddle-active-offest * 2);
+            }
+        }
+    }
+    &.is-rtl {
+        + label {
+            padding-left: 0;
+            padding-right: $switch-width + .5;
+            &::before,
+            &:before {
+                left: auto;
+                right: 0;
+            }
+            &::after,
+            &:after {
+                left: auto;
+                right: $paddle-active-offest;
+            }
+        }
+    }
+    &:checked {
+        + label {
+            &::before,
+            &:before {
+                background: $switch-background-active;
+            }
+            &::after {
+                left: $paddle-active-offest;
+            }
+        }
+        &.is-rtl {
+            + label {
+                &::after,
+                &:after {
+                    left: auto;
+                    right: $switch-paddle-offset;
+                }
+            }
+        }
+    }
+    &.is-outlined {
+        + label {
+            &::before,
+            &:before {
+                background-color: transparent;
+                border-color: $switch-background;
+            }
+            &::after,
+            &:after {
+                background: $switch-background;
+            }
+        }
+        &:checked {
+            + label {
+                &::before,
+                &:before {
+                    background-color: transparent;
+                    border-color: $switch-background-active;
+                }
+                &::after,
+                &:after {
+                    background: $switch-paddle-background-active;
+                }
+            }
+        }
+    }
+    &.is-thin {
+        + label {
+            &::before,
+            &:before {
+                top: calc($switch-height / 2.75);
+                height: calc($switch-height / 4);
+            }
+            &::after,
+            &:after {
+                box-shadow: 0px 0px 3px $grey;
+            }
+        }
+    }
+    &.is-rounded {
+        + label {
+            &::before,
+            &:before {
+                border-radius: $radius-large * 4;
+            }
+            &::after,
+            &:after {
+                border-radius: 50%;
+            }
+        }
+    }
+}
+.switch[type="checkbox"] {
+    outline: 0;
+    user-select: none;
+    display: inline-block;
+    position: absolute;
+    opacity: 0;
+    &:focus {
+        + label {
+            &::before,
+            &:before,
+            &::after,
+            &:after {
+                outline: $switch-focus;
+            }
+        }
+    }
+    &[disabled] {
+        cursor: not-allowed;
+        + label {
+            opacity: 0.5;
+            &::before,
+            &:before {
+                opacity: 0.5;
+            }
+            &::after,
+            &:after {
+                opacity: 0.5;
+            }
+            &:hover {
+                cursor: not-allowed;
+            }
+        }
+    }
+    @include switch-size($size-normal);
+    &.is-small {
+        @include switch-size($size-small);
+    }
+    &.is-medium {
+        @include switch-size($size-medium);
+    }
+    &.is-large {
+        @include switch-size($size-large);
+    }
+    @each $name,
+    $pair in $colors {
+        $color: nth($pair, 1);
+        $color-invert: nth($pair, 2);
+        &.is-#{$name} {
+            + label {
+                .switch-active {
+                    display: none;
+                }
+                .switch-inactive {
+                    display: inline-block;
+                }
+            }
+            &:checked {
+                + label {
+                    &::before,
+                    &:before {
+                        background: $color;
+                    }
+                    .switch-active {
+                        display: inline-block;
+                    }
+                    .switch-inactive {
+                        display: none;
+                    }
+                }
+            }
+            &.is-outlined {
+                &:checked {
+                    + label {
+                        &::before,
+                        &:before {
+                            background-color: transparent;
+                            border-color: $color !important;
+                        }
+                        &::after,
+                        &:after {
+                            background: $color;
+                        }
+                    }
+                }
+            }
+            &.is-thin {
+                &.is-outlined {
+                    + label {
+                        &::after,
+                        &:after {
+                            box-shadow: none;
+                        }
+                    }
+                }
+            }
+        }
+        &.is-unchecked-#{$name} {
+            + label {
+                &::before,
+                &:before {
+                    background: $color;
+                }
+            }
+            &.is-outlined {
+                + label {
+                    &::before,
+                    &:before {
+                        background-color: transparent;
+                        border-color: $color !important;
+                    }
+                    &::after,
+                    &:after {
+                        background: $color;
+                    }
+                }
+            }
+        }
+    }
+}
+.field-body {
+    .switch[type="checkbox"] {
+        + label {
+            margin-top: .375em;
+        }
+    }
+}
+//#endregion
