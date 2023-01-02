@@ -14,7 +14,6 @@
 // The only exception (for things like kbd) is for when something depends on a bulma variable;=
 .icon.is-large i {
     font-size: 36px;
-    vertical-align: text-top;
 }
 .list.has-text-white {
     $text: white;
@@ -38,9 +37,6 @@
 }
 :is(.button:not(.is-floating):not(.is-ghost):not(.is-inverted), .tabs) .material-symbols-rounded {
     font-size: inherit;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%)translateX(-50%);
 }
 .button {
     transition: 0.1s all;

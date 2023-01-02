@@ -2,22 +2,33 @@
   "name": "vocabustudy",
   "version": "1.1.0",
   "description": "A free tool for studying vocab",
-  "source": [
-    "src/index.pug",
-    "src/set-detail.pug",
-    "src/guide-detail.pug",
-    "src/learn-results.pug",
-    "src/set-editor.pug",
-    "src/user-sets.pug",
-    "src/privacy-policy.pug",
-    "src/custom-collections.pug",
-    "src/404.pug",
-    "src/google867623008d63d621.html",
-    "src/help-center.pug",
-    "src/tos.pug",
-    "src/auth-action.pug",
-    "src/service-worker.js"
-  ],
+  "targets": {
+    "pages": {
+      "source": [
+        "src/index.pug",
+        "src/set-detail.pug",
+        "src/guide-detail.pug",
+        "src/learn-results.pug",
+        "src/set-editor.pug",
+        "src/user-sets.pug",
+        "src/privacy-policy.pug",
+        "src/custom-collections.pug",
+        "src/404.pug",
+        "src/google867623008d63d621.html",
+        "src/help-center.pug",
+        "src/tos.pug",
+        "src/auth-action.pug"
+      ],
+      "context": "browser",
+      "distDir": "./dist"
+    },
+    "service-worker": {
+      "source": "src/js/service-worker.js",
+      "context": "service-worker",
+      "outputFormat": "esmodule",
+      "distDir": "./dist"
+    }
+  },
   "browserslist": "> 0.1% and last 2 versions and not dead",
   "scripts": {
     "start": "parcel",

@@ -45,9 +45,10 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     if (remoteConfigActivatedCallback !== null) {
         import("firebase/remote-config").then(async ({getRemoteConfig, fetchAndActivate}) => {
             let remoteConfig = getRemoteConfig(app);
-            remoteConfig.settings.minimumFetchIntervalMillis = 172800000; //-> two days
+            remoteConfig.settings.minimumFetchIntervalMillis = 86400000; //-> two days
             remoteConfig.defaultConfig = {
-                featuredSets: []
+                featuredSets: [],
+                announcements: []
             };
             await fetchAndActivate(remoteConfig)
             remoteConfigActivatedCallback(remoteConfig);

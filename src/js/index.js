@@ -7,7 +7,7 @@ import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAu
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
-import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise } from "./utils";
+import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth } = initialize(async user => {
@@ -36,6 +36,24 @@ const { db, auth } = initialize(async user => {
             let els = await createSetCard(set, set.id);
             pages.search.sets[0].appendChild(els.card);
         }
+        let announcements = JSON.parse(getValue(remoteConfig, "announcements").asString());
+        let seenAnnouncements = JSON.parse(localStorage.getItem("seen_announcements")) || [];
+        announcements.filter(a => !seenAnnouncements.includes(a.id)).forEach(a => {
+            let deleteButton = createElement("button", ["delete"]);
+            let announcement = document.querySelector(".announcements-container").appendChild(createElement("article", ["message", `is-${a.type}`, "announcement"], {}, [
+                createElement("div", ["message-header"], {}, [
+                    createElement("p", [], {innerText: a.title}),
+                    deleteButton
+                ]),
+                createElement("div", ["message-body"], {innerText: a.message})
+            ]));
+            deleteButton.addEventListener("click", () => {
+                zoomOutRemove(announcement);
+                let s = JSON.parse(localStorage.getItem("seen_announcements")) || [];
+                s.push(a.id);
+                localStorage.setItem("seen_announcements", JSON.stringify(s));
+            })
+        });
     } else pages.search.sets[0].textContent = "Failed to load featured sets";
 });
 const hashTitles = {
