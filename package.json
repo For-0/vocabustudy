@@ -35,7 +35,7 @@
     "build": "rm -rf dist && parcel build --no-source-maps",
     "cleanup": "rm -rf .parcel-cache dist",
     "watch": "npm run cleanup && parcel watch --no-hmr",
-    "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import emulator-data --export-on-exit",
+    "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import ../vocabustudy-internals/emulator-data --export-on-exit",
     "clean": "rm -r dist && rm -r .parcel-cache",
     "publish": "npm run build && firebase deploy --only hosting:vocabustudy",
     "publish-nightly": "npm version patch && npm run build && firebase deploy --only hosting:nightly",
