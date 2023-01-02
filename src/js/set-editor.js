@@ -104,7 +104,7 @@ const {db, auth} = initialize(async user => {
                 goBack();
         }
         fields.terms.textContent = "";
-        fields.public.selected = false;
+        fields.public.checked = false;
         fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
     } else {
@@ -124,7 +124,7 @@ const {db, auth} = initialize(async user => {
         fields.setName.value = currentSet.name;
         if (currentSet.description)
             fields.setDescription.value = currentSet.description;
-        fields.public.selected = currentSet.public;
+        fields.public.checked = currentSet.public;
         fields.terms.textContent = "";
         if (currentSetMeta.collections.includes("-:0")) {
             setType = 1;
@@ -384,7 +384,7 @@ fields.formEdit.addEventListener("submit", async e => {
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
     let nameWords = getWords(setName.normalize("NFD").replace(/\p{Diacritic}/gu, ""));
-    let sPublic = fields.public.selected;
+    let sPublic = fields.public.checked;
     let batch = writeBatch(db);
     let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
     if (setType === 1) collections.unshift("-:0");

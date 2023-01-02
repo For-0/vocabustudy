@@ -15,7 +15,8 @@
     "src/google867623008d63d621.html",
     "src/help-center.pug",
     "src/tos.pug",
-    "src/auth-action.pug"
+    "src/auth-action.pug",
+    "src/service-worker.js"
   ],
   "browserslist": "> 0.1% and last 2 versions and not dead",
   "scripts": {
@@ -40,9 +41,8 @@
     "@bulvar/bulma": "^0.11.13",
     "@creativebulma/bulma-divider": "^1.1.0",
     "@creativebulma/bulma-tooltip": "^1.2.0",
-    "@parcel/service-worker": "^2.8.2",
-    "@sentry/browser": "^7.21.1",
-    "@sentry/tracing": "^7.21.1",
+    "@sentry/browser": "^7.28.1",
+    "@sentry/tracing": "^7.28.1",
     "@vizuaalog/bulmajs": "^0.12.2",
     "bulma": "^0.9.4",
     "bulma-checkradio": "^2.1.3",
@@ -64,9 +64,13 @@
     "@parcel/transformer-pug": "^2.8.2",
     "@parcel/transformer-sass": "^2.8.2",
     "@parcel/transformer-webmanifest": "^2.8.2",
+    "@parcel/service-worker": "^2.8.2",
     "eslint": "^8.28.0",
     "parcel": "^2.8.2",
     "process": "^0.11.10",
     "sharp": "^0.31.2"
+  },
+  "@parcel/transformer-js": {
+    "inlineEnvironment": ["npm_package_version", "NODE_ENV", "CODESPACES", "GITPOD_WORKSPACE_URL", "CODESPACE_NAME", "GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"]
   }
 }

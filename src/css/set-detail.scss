@@ -46,7 +46,7 @@ main,
         img {
             max-width: 100%;
         }
-        .star-button {
+        star-button {
             position: absolute;
             top: 0;
             right: 0;
@@ -87,9 +87,10 @@ main,
                 height: 100%;
                 &.flipped > div > div {
                     transform: rotateY(180deg);
-                    .star-button {
+                    star-button {
                         left: 1rem;
                         right: unset;
+                        transform: translateZ(-1px);
                     }
                 }
                 > div {
@@ -105,11 +106,11 @@ main,
                         p {
                             color: var(--gold);
                         }
-                        > div {
+                        > div > div {
                             box-shadow: 0 .5em 1em -.125em #d7a21f52, 0 0 0 1px #d7a21f2e;
                         }
                     }
-                    .star-button {
+                    star-button {
                         position: absolute;
                         top: 1rem;
                         right: 1rem;
@@ -126,7 +127,7 @@ main,
                         position: relative;
                         z-index: 10;
                         left: 0;
-                        .star-button {
+                        star-button {
                             display: inline-block;
                         }
                     }
@@ -525,6 +526,6 @@ accent-keyboard {
         border-color: rgba(75, 21, 4, 0.8);
     }
 }
-.star-button {
+star-button button {
     background-color: transparent !important;
 }

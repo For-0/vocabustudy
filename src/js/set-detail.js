@@ -49,7 +49,7 @@ class AccentKeyboard extends HTMLElement {
         if (this.accents) this.showButtons();
     }
 }
-class StarButton extends HTMLButtonElement {
+class StarButton extends HTMLElement {
     constructor() {
         super();
     }
@@ -68,18 +68,21 @@ class StarButton extends HTMLButtonElement {
     connectedCallback() {
         if (this.isConnected && !this.initialized) {
             this.initialized = true;
-            this.classList.add("button", "star-button", "is-inverted", "is-gold");
-            this.appendChild(createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "star"})]));
-            this.addEventListener("click", () => {
+            this.button = this.appendChild(createElement("button", ["is-inverted", "is-gold", "button"], {type: "button"},[
+                createElement("span", ["icon"], {}, [createElement("i", ["material-symbols-rounded"], {innerText: "star"})])
+            ]));
+            this.button.addEventListener("click", e => {
+                e.stopPropagation();
                 this.toggleOn();
                 window.StarredTerms.setStar(parseInt(this.dataset.termIndex), this.on);
+                this.dispatchEvent(new CustomEvent("StarButton:toggle", {detail: this.on}));
             })
             this.toggleOn(this.initialValue);
         }
     }
 }
 customElements.define("accent-keyboard", AccentKeyboard);
-customElements.define("star-button", StarButton, { extends: "button" });
+customElements.define("star-button", StarButton);
 const { db, auth } = initialize(async user => {
     if (user) {
         socialRef = doc(setRef, "social", user.uid);
@@ -120,7 +123,7 @@ window.StarredTerms = {
         let orig = this.getAllStarred();
         orig[setId] = starList;
         localStorage.setItem("starred_terms", JSON.stringify(orig));
-        document.querySelectorAll(".star-button").forEach(sb => sb.toggleOn(starList.includes(parseInt(sb.dataset.termIndex))));
+        document.querySelectorAll("star-button").forEach(sb => sb.toggleOn(starList.includes(parseInt(sb.dataset.termIndex))));
     },
     /**
      * Find out if a term in the current set is starred
@@ -251,11 +254,11 @@ const pages = {
         },
         createFlashcard({ term, definition, i }, isStarred) {
             let cardEl = createElement("div", [], {}, [
-                createElement("div", ["box"], {}, [
-                    createElement("div", [], {}, [
+                createElement("div", [], {}, [
+                    createElement("div", ["box"], {}, [
                         createElement("p", ["fit"], {innerHTML: styleAndSanitize(term.replace("\x00", " - "), true)})
                     ]),
-                    createElement("div", [], {}, [
+                    createElement("div", ["box"], {}, [
                         createElement("p", ["fit", "content"], {})
                     ])
                 ])
@@ -266,13 +269,10 @@ const pages = {
             else cardBackParagraph.innerHTML = styleAndSanitize(definition, true)
             if (isStarred) cardEl.classList.add("is-starred");
             if (i >= 0) {
-                let starButton = (/** @type {StarButton} */ (cardEl.firstElementChild.appendChild(document.createElement("button", { is: "star-button" }))));
+                let starButton = (/** @type {StarButton} */ (cardEl.firstElementChild.appendChild(document.createElement("star-button"))));
                 starButton.initialValue = isStarred;
                 starButton.dataset.termIndex = i;
-                starButton.addEventListener("click", e => {
-                    e.stopPropagation();
-                    cardEl.classList.toggle("is-starred", !starButton.on); // called before the StarButton event handler, so invert `on`
-                });
+                starButton.addEventListener("StarButton:toggle", e => cardEl.classList.toggle("is-starred", e.detail));
             }
             return this.terms.appendChild(cardEl);
         },
@@ -1061,7 +1061,7 @@ function createTermCard({ term, definition }, index, isStarred) {
     let cardEl = createElement("div", ["box", "is-relative"], {}, [
         createElement("p", ["has-font-weight-bold", "is-size-5"], {innerHTML: styleAndSanitize(term.replace("\x00", " - "))}),
         createElement("hr", ["my-3"]),
-        createElement(["button", "star-button"], [], {initialValue: isStarred, dataset: {termIndex: index}})
+        createElement("star-button", [], {initialValue: isStarred, dataset: {termIndex: index}})
     ]);
     if (setType === "timeline") {
         cardEl.appendChild(document.createElement("ul")).append(...definition.split("\x00").map(el => applyStyling(el, document.createElement("li"))));

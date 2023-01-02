@@ -50,9 +50,9 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.navbar-item(href="/#")
                         img.nohuechange(src="icons/icon-192.png" height="28" style="border: 1px solid #fff8; border-radius: 0.5rem;" alt="Navbar Vocabustudy Logo")
                     a.navbar-burger(role="button" aria-label="menu" aria-expanded="false" data-target="main-navbar")
-                        span(aria-hidden="true")
-                        span(aria-hidden="true")
-                        span(aria-hidden="true")
+                        span.has-background-white(aria-hidden="true")
+                        span.has-background-white(aria-hidden="true")
+                        span.has-background-white(aria-hidden="true")
                 #main-navbar.navbar-menu
                     .navbar-start
                         a.navbar-item(href="/#") Home
@@ -90,7 +90,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
         footer.footer.level.is-mobile(style="position: relative;")
             p.level-item
                 a(href="https://github.com/For-0/vocabustudy/releases") #[span.mr-1 #[span.tag.is-secondary v#{process.env.npm_package_version}]]
-                span.is-hidden-mobile.mr-1  | &copy; 2022 Siddhant K. All Rights Reserved
+                span.is-hidden-mobile.mr-1  | &copy; 2022-2023 Siddhant K. All Rights Reserved
                 | - 
                 a.has-text-white.is-underlined.ml-1(href="/#credits") Credits
             .level-item
@@ -100,8 +100,6 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.has-text-white.is-underlined(href="/#youtube") YouTube
                     |  | 
                     a.has-text-white.is-underlined(href="/#discord") Discord
-                    |  | 
-                    a.has-text-white.is-underlined(href="https://github.com/orgs/For-0/projects/2/insights/1" target="_blank") Bug Leaderboard
                 .is-hidden-tablet(style="transform: scale(0.8);")
                     a.has-text-white.mr-3.is-filled.icon(href="/privacy/" title="Privacy")
                         i.material-symbols-rounded verified_user
@@ -109,8 +107,6 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                         i.material-symbols-rounded subscriptions
                     a.has-text-white.mr-3.is-filled.icon(href="/#discord" title="Discord")
                         img.credits-brandicons(src="icons/brands/discord.svg" style="height: 1.5rem; width: 1.5rem;" alt="Discord")
-                    a.has-text-white.mr-3.is-filled.icon(href="https://github.com/orgs/For-0/projects/2/insights/1" title="Bug Leaderboard")
-                        i.material-symbols-rounded leaderboard
         block scripts-footer
             script.
                 console.info("%cOrchestra is better than Band*\n%c*But Art is the best", "background-color: #795548; color: white; font-size: 96px; font-weight: bold; border-radius: 4px; font-style: italic;", "font-size: 12px; font-style: italic;");
@@ -201,5 +197,6 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 }, true);
                 document.addEventListener("click", () => fabs.themeContainer.classList.remove("show"));
                 document.querySelector("#btn-logout + a.loggedout").addEventListener("click", () => localStorage.removeItem("redirect_after_login"));
-            script(type="module").
-                navigator.serviceWorker.register(new URL("service-worker.js", import.meta.url), {type: "module", scope: "/"});
+                if (!("randomUUID" in crypto))
+                    crypto.randomUUID = () => ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+                navigator.serviceWorker.register(new URL("./service-worker.js", location.origin) , {type: "module", scope: "/"});

@@ -112,7 +112,7 @@ function showLikeStatus(likeStatus) {
 
 function createItem(item, index) {
     let navBtn = pages.setOverview.termNav.appendChild(createElement("li", [], {}, [
-        createElement("a", [], { role: "button" }, [
+        createElement("a", ["is-relative", "has-text-dark"], { role: "button" }, [
             createElement("span", ["icon"], {}, [
                 createElement("i", ["material-symbols-rounded"], { innerText: item.type ? "checklist" : "text_snippet" })
             ]),

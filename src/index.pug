@@ -50,16 +50,18 @@ block content
                                 span.is-hidden-mobile Continue with Google
                             br
                             small
-                                em You must be at least 13 years old to use an account, or you must have permission from a parent/guardian.
-                .column.is-8.is-offset-2
-                    .level.mt-1.has-text-centered
+                                em 
+                                    span.is-hidden-mobile You must be at least 13 years old to use an account, or you must have permission from a parent/guardian.
+                                    span.is-hidden-tablet You must be at least 13 or have parental permission to use an account.
+                .column.is-8.is-offset-2.p-0
+                    .level.mt-2.has-text-centered.is-mobile.is-flex-wrap-wrap.is-justify-content-center(style="row-gap: 1rem;")
                         .level-left
                             .level-item
                                 button.btn-switch-mode.button.is-secondary-light.mr-4
                                 button.btn-forgot-password.button.is-primary-alt.mr-4 Forgot Password?
                         .level-right
                             .level-item
-                                a.button.is-primary.btn-tos.is-primary-alt(href="/terms/") Terms of Service
+                                a.button.is-primary.btn-tos.is-primary-alt(href="/terms/" style="white-space: pre;") Terms #[span.is-hidden-mobile of Service]
         img.nohuechange.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     .page#account(data-nosnippet)
         h1 My Account
@@ -136,25 +138,27 @@ block content
             .set-container.mt-4(style="cursor: auto;" data-empty="No featured sets") Loading featured sets...
         h2.title.is-size-4.mb-0 Search:
         p.block Most sets are created by CVMS students for CVMS students
-        div.field-search-container.box
-            .columns.mb-1
-                .column.is-four-fifths-fullhd.is-three-quarters-widescreen.is-two-thirds-desktop.is-half-tablet
-                    input.input.field-search(placeholder="Search" type="text" autocomplete="off")
-                .column.buttons
-                    button.button.is-outlined.is-info.btn-collections-menu(type="button")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_list
-                        span Collections
-                    button.button.is-outlined.is-danger.btn-clear-filters(type="button")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_list_off
-                        span Clear
-                    button.button.is-primary.btn-search-go(type="button")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") search
-                        span Search
-            p Maximum 10 Words/Collections:
-                span.field-search-collections-list
+        div.field-search-container.box.p-3
+            .level.mb-2
+                .level-left.is-flex-grow-1
+                    .level-item(style="width: calc(100% - 1rem);")
+                        input.input.field-search(placeholder="Search" type="text" autocomplete="off")
+                .level-right
+                    .level-item.buttons
+                        button.button.is-outlined.is-info.btn-collections-menu(type="button")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_list
+                            span Collections
+                        button.button.is-outlined.is-danger.btn-clear-filters(type="button")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_list_off
+                            span Clear
+                        button.button.is-primary.btn-search-go(type="button")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") search
+                            span Search
+            p.m-1 Maximum 10 Words/Collections:
+                span.ml-1.is-inline-block.field-search-collections-list(style="vertical-align: bottom;")
         .set-container.mt-4(data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     .page#credits(data-nosnippet)
@@ -243,6 +247,8 @@ block content
         h1 Donate
         p.title.is-size-3 Your donations help!
         p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
+        p Donations will help us pay for the domain. It is $12 per year.
+        p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
         p If you'd like to donate, there are two ways you can help out!
         br
         p.title.is-size-3 1. BuyMeACoffee
@@ -252,8 +258,7 @@ block content
         br
         br
         p.title.is-size-3 2. Physical Donation
-        //p Donations will help us pay for the domain. It is about $12 per year.
-        //p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
+        
         p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell (next to Ms. Krull's room). #[b Coins do not fit through the slot. Only bills do.]
         ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
         br
@@ -276,58 +281,68 @@ block content
             div
                 div
                     div
-                        h2.is-size-2 Learn Vocabulary, #[br]For Free.
-                        ul
+                        h2.is-size-3.has-text-centered-mobile.has-text-weight-semibold(style="line-height: normal; width: auto;") Learn Vocabulary, #[br]For Free.
+                        ul.is-hidden-mobile
                             li 100% Free
                             li No Ads
                             li Relevant Vocab
-                    p.mb-0.is-size-5.has-text-weight-bold(style="margin-top: 2rem;") Created/developed by Siddhant Kameswar
-                    p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-bold(href="/#credits" style="border-bottom: 1px solid white;") Credits]
+                    p.mb-0.is-size-5.has-text-weight-semibold(style="margin-top: 2rem;") Created by Siddhant Kameswar
+                    p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-semibold(href="/#credits" style="border-bottom: 1px solid white;") Credits]
                     p.mb-0.mt-4.is-size-7 VOCABUSTUDY - U STUDY VOCAB
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
                                 i.material-symbols-rounded keyboard_double_arrow_down
-            div.home-features
+            .home-features
                 div
                     h2.is-size-4 Features:
                     ul.list.has-text-white.is-filled
-                        li.list-item
-                            div.list-item-image
+                        li.list-item.is-flex-wrap-nowrap.pb-0
+                            .list-item-image
                                 span.icon
                                     i.material-symbols-rounded tune
-                            div.list-item-content
-                                div.list-item-title Multiple Study Modes
-                                div.list-item-description Don't like flashcards? You can take a mock test, match terms, and more!
-                        li.list-item
-                            div.list-item-image
+                            .list-item-content
+                                .list-item-title Multiple Study Modes
+                                .list-item-description 
+                                    span.is-hidden-mobile Don't like flashcards? You can take a mock test, match terms, and more!
+                                    span.is-hidden-tablet Flashcards, learn, test, and match
+                        li.list-item.is-flex-wrap-nowrap.pb-0
+                            .list-item-image
                                 span.icon
                                     i.material-symbols-rounded category
-                            div.list-item-content
-                                div.list-item-title Collections
-                                div.list-item-description Transform your learning with designed collections of vocab sets.
-                        li.list-item
-                            div.list-item-image
+                            .list-item-content
+                                .list-item-title Collections
+                                .list-item-description 
+                                    span.is-hidden-mobile Transform your learning with designed collections of vocab sets.
+                                    span.is-hidden-tablet Find sets about a specific topic
+                        li.list-item.is-flex-wrap-nowrap.pb-0
+                            .list-item-image
                                 span.icon
                                     i.material-symbols-rounded rule
-                            div.list-item-content 
-                                div.list-item-title Effective Test Prep
-                                div.list-item-description Ace your test with customized sets for your classes.
-                        li.list-item.is-clickable(onclick="window.open('https://github.com/For-0')")
-                            div.list-item-image
+                            .list-item-content 
+                                .list-item-title Effective Test Prep
+                                .list-item-description 
+                                    span.is-hidden-mobile Ace your test with customized sets for your classes.
+                                    span.is-hidden-tablet Find sets about relevant topics
+                        li.list-item.is-flex-wrap-nowrap.pb-0.is-clickable(onclick="window.open('https://github.com/For-0')")
+                            .list-item-image
                                 span.icon
                                     i.material-symbols-rounded money_off
-                            div.list-item-content
-                                div.list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
-                                div.list-item-description Fast, simple, effective, and completely free.
-                        li.list-item
-                            div.list-item-image
+                            .list-item-content
+                                .list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
+                                .list-item-description 
+                                    span.is-hidden-mobile Fast, simple, effective, and completely free.
+                                    span.is-hidden-tablet Forever free
+                        li.list-item.is-flex-wrap-nowrap.pb-0
+                            .list-item-image
                                 span.icon
                                     i.material-symbols-rounded school
-                            div.list-item-content
-                                div.list-item-title Assignments (Coming Soon)
-                                div.list-item-description Transform learning at home and in the classroom.
-                    div.buttons.has-addons.is-centered.mt-4
+                            .list-item-content
+                                .list-item-title Study Guides
+                                .list-item-description 
+                                    span.is-hidden-mobile Learn and quiz yourself about a topic
+                                    span.is-hidden-tablet Learning and quizzing combined
+                    .buttons.has-addons.is-centered.mt-4
                         a.button.is-primary.is-rounded.m-1(href="/#search")
                             span.icon
                                 i.material-symbols-rounded(aria-hidden="true") search
