@@ -8,6 +8,7 @@
 <div align="center">
     <a href="https://vocabustudy.org/"><img src="https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version&amp;style=for-the-badge" alt="GitHub  release (latest by date)"></a>
     <a href="https://nightly.vocabustudy.org/"><img src="https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&amp;label=latest%20nightly&amp;style=for-the-badge" alt="GitHub release (latest by date including pre-releases)"></a>
+    <img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/for-0/vocabustudy/lint.yml?event=push&label=lint&logo=eslint&style=for-the-badge">
     <br>
     <a href="https://gitpod.io/"><img src="https://img.shields.io/badge/editable%20on-Chromebooks-brightgreen?style=for-the-badge" alt="Editable on Chromebooks"></a>
     <a href="https://web.dev/pwa/"><img src="https://img.shields.io/badge/PWA-Coming%20Soon-yellow?style=for-the-badge" alt="Editable on Chromebooks"></a>
