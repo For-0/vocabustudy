@@ -2,6 +2,8 @@ import { sanitize } from "dompurify";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
 import { marked } from "marked";
 
+let unusedVariable = true;
+
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
 export const SET_VISIBILITIES = [
