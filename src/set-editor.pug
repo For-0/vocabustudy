@@ -30,9 +30,20 @@ block content
                                 input.input.field-name.is-primary(text="text" required maxlength="500")
                 .level-right.is-align-self-flex-end
                     .level-item
-                        .field
-                            input#field-public.switch.is-thin.is-rounded.is-rtl(type="checkbox")
-                            label(for="field-public") Public
+                        .dropdown.field-visibility
+                            .dropdown-trigger
+                                button.button(type="button")
+                                    span Private
+                                    span.icon
+                                        i.material-symbols-rounded expand_more
+                            .dropdown-menu
+                                .dropdown-content
+                                    .dropdown-item Set Visibility
+                                    hr.dropdown-divider
+                                    a.dropdown-item.is-active(style="--dropdown-item-active-background-color: var(--warning); --dropdown-item-active-color: var(--warning-invert);") Private
+                                    a.dropdown-item(style="--dropdown-item-active-background-color: var(--info);") Unlisted
+                                    a.dropdown-item Shared
+                                    a.dropdown-item(style="--dropdown-item-active-background-color: var(--success);") Public
             .field
                 label.label Set Description
                 .control
@@ -114,4 +125,21 @@ append scripts-footer
                     p.help Each term/definition pair should be on its own line. Separate terms and definitions with two spaces
             footer.modal-card-foot
                 button.button.is-success(type="button") OK
+    .modal#dialog-configure-shared
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Share This Set
+                button.delete(aria-label="close")
+            section.modal-card-body
+                article.message.is-info
+                    .message-body Shared sets can only be viewed by their creators and users that they are shared with.
+                .field
+                    label.label Share With:
+                    .control
+                        input.input(type="text" placeholder="user1@example.com user2@example.com")
+                    .help Enter the email addresses of the users you would like to share this set with. Seperate multiple email addresses with #[strong a space].
+                p You can come back to this dialog at any time by selecting "Shared" again in the set visibility dropdown.
+            footer.modal-card-foot
+                button.button.is-success.action-close(type="button") OK
     script(src="js/set-editor.js" type="module")

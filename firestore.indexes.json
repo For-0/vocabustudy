@@ -1,176 +1,200 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "meta_sets",
-      "queryScope": "COLLECTION",
-      "fields": [
+    "indexes": [
         {
-          "fieldPath": "collections",
-          "arrayConfig": "CONTAINS"
+            "collectionGroup": "meta_sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "collections",
+                    "arrayConfig": "CONTAINS"
+                },
+                {
+                    "fieldPath": "visibility",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "likes",
+                    "order": "DESCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "public",
-          "order": "ASCENDING"
+            "collectionGroup": "meta_sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "nameWords",
+                    "arrayConfig": "CONTAINS"
+                },
+                {
+                    "fieldPath": "visibility",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "likes",
+                    "order": "DESCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "likes",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "meta_sets",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "nameWords",
-          "arrayConfig": "CONTAINS"
+            "collectionGroup": "meta_sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "visibility",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "likes",
+                    "order": "DESCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "public",
-          "order": "ASCENDING"
+            "collectionGroup": "meta_sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "visibility",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "uid",
+                    "order": "ASCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "likes",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "meta_sets",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "public",
-          "order": "ASCENDING"
+            "collectionGroup": "meta_sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "visibility",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "uid",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "likes",
+                    "order": "DESCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "uid",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "meta_sets",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "public",
-          "order": "ASCENDING"
+            "collectionGroup": "meta_sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "uid",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "likes",
+                    "order": "DESCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "uid",
-          "order": "ASCENDING"
+            "collectionGroup": "social",
+            "queryScope": "COLLECTION_GROUP",
+            "fields": [
+                {
+                    "fieldPath": "like",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "uid",
+                    "order": "ASCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": [
+        {
+            "collectionGroup": "meta_sets",
+            "fieldPath": "collections",
+            "ttl": false,
+            "indexes": [
+                {
+                    "arrayConfig": "CONTAINS",
+                    "queryScope": "COLLECTION"
+                }
+            ]
         },
         {
-          "fieldPath": "likes",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "meta_sets",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "uid",
-          "order": "ASCENDING"
+            "collectionGroup": "meta_sets",
+            "fieldPath": "creator",
+            "ttl": false,
+            "indexes": []
         },
         {
-          "fieldPath": "likes",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "social",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        {
-          "fieldPath": "like",
-          "order": "ASCENDING"
+            "collectionGroup": "meta_sets",
+            "fieldPath": "name",
+            "ttl": false,
+            "indexes": []
         },
         {
-          "fieldPath": "uid",
-          "order": "ASCENDING"
-        }
-      ]
-    }
-  ],
-  "fieldOverrides": [
-    {
-      "collectionGroup": "meta_sets",
-      "fieldPath": "collections",
-      "indexes": [
-        {
-          "arrayConfig": "CONTAINS",
-          "queryScope": "COLLECTION"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "meta_sets",
-      "fieldPath": "creator",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "meta_sets",
-      "fieldPath": "name",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "sets",
-      "fieldPath": "description",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "sets",
-      "fieldPath": "name",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "sets",
-      "fieldPath": "terms",
-      "indexes": []
-    },
-    {
-      "collectionGroup": "social",
-      "fieldPath": "comment",
-      "indexes": [
-        {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "social",
-      "fieldPath": "leaderboard",
-      "indexes": [
-        {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "social",
-      "fieldPath": "like",
-      "indexes": [
-        {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION"
+            "collectionGroup": "sets",
+            "fieldPath": "description",
+            "ttl": false,
+            "indexes": []
         },
         {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION_GROUP"
+            "collectionGroup": "sets",
+            "fieldPath": "name",
+            "ttl": false,
+            "indexes": []
+        },
+        {
+            "collectionGroup": "sets",
+            "fieldPath": "terms",
+            "ttl": false,
+            "indexes": []
+        },
+        {
+            "collectionGroup": "social",
+            "fieldPath": "comment",
+            "ttl": false,
+            "indexes": [
+                {
+                    "order": "ASCENDING",
+                    "queryScope": "COLLECTION"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "social",
+            "fieldPath": "leaderboard",
+            "ttl": false,
+            "indexes": [
+                {
+                    "order": "ASCENDING",
+                    "queryScope": "COLLECTION"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "social",
+            "fieldPath": "like",
+            "ttl": false,
+            "indexes": [
+                {
+                    "order": "ASCENDING",
+                    "queryScope": "COLLECTION"
+                },
+                {
+                    "order": "ASCENDING",
+                    "queryScope": "COLLECTION_GROUP"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "social",
+            "fieldPath": "name",
+            "ttl": false,
+            "indexes": []
         }
-      ]
-    },
-    {
-      "collectionGroup": "social",
-      "fieldPath": "name",
-      "indexes": []
-    }
-  ]
+    ]
 }

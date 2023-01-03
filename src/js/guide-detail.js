@@ -83,7 +83,7 @@ const setRef = doc(db, "sets", setId);
 /** @type {import("firebase/firestore/lite").DocumentReference<import("firebase/firestore/lite").DocumentData>?} */
 let socialRef = null;
 /**
- * @type {{name: string, public: true, terms: {term: string, definition: string}[], uid: string}?}
+ * @type {{name: string, visibility: number|string[], terms: {term: string, definition: string}[], uid: string}?}
  */
 let currentSet = null;
 
@@ -230,7 +230,7 @@ addEventListener("DOMContentLoaded", async () => {
         document.querySelector(".page-loader").hidden = true;
     } catch (err) {
         console.error(err);
-        if (err.message.includes("Forbidden")) {
+        if (err.message.includes("Forbidden") || err.code === "permission-denied") {
             localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();
             location.href = "/#login";

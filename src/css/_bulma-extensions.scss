@@ -1244,287 +1244,140 @@ $backColor: var(--scheme-main-bis);
     }
 }
 //#endregion
-//#region Switch
-$switch-background: $grey-light !default;
-$switch-border: .1rem solid transparent !default;
-$switch-background-active: $primary !default;
-$switch-radius: $radius !default;
-$switch-paddle-background: $white !default;
-$switch-paddle-background-active: $primary !default;
-$switch-paddle-offset: 0.25rem !default;
-$switch-paddle-transition: all 0.25s ease-out !default;
-$switch-focus: 1px dotted $grey-light !default;
-@mixin switch-size($size) {
-    $switch-height: $size * 1.5;
-    $switch-width: $switch-height * 2;
-    $paddle-height: $switch-height - ($switch-paddle-offset * 2);
-    $paddle-width: $switch-height - ($switch-paddle-offset * 2);
-    $paddle-active-offest: $switch-width - $paddle-width - ($switch-paddle-offset * 1.5);
-    + label {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        justify-content: flex-start;
-        font-size: $size;
-        height: $control-height;
-        line-height: $control-line-height;
-        padding-left: $switch-width + .5;
-        padding-top: .2rem;
-        cursor: pointer;
-        &::before,
-        &:before {
-            position: absolute;
+//#region Tagsinput
+$tagsinput-selected-background-color: $primary !default;
+$tagsinput-duplicate-animation: blinker .75s linear infinite !default;
+
+.tags-input {
+    @extend %input;
+    align-content: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 2.5em;
+    padding: 0;
+    position: relative;
+
+    .tag {
+        font-size: $size-normal;
+        margin: .1rem;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &.is-selected {
+            background-color: $tagsinput-selected-background-color;
+            color: findColorInvert($tagsinput-selected-background-color);
+        }
+
+        &.is-duplicate {
+            animation: $tagsinput-duplicate-animation;
+        }
+    }
+
+    .input {
+        border-color: transparent;
+        box-shadow: none;
+        display: inline-block;
+        flex: 1 0 auto;
+        height: 2.3rem;
+        margin: .1rem;
+        width: auto;
+    }
+
+    &.is-filter {
+        input {
+            color: $input-placeholder-color;
+
+            @include placeholder {
+                color: $input-placeholder-color;
+            }
+        }
+    }
+
+    &.no-input {
+        input {
+            color: transparent;
+            text-shadow: 0 0 0 $input-placeholder-color;
+
+            @include placeholder {
+                color: $input-placeholder-color;
+                text-shadow: none;
+            }
+        }
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        .dropdown-content {
+            max-height: 250px;
+            overflow: hidden;
+            overflow-y: auto;
+
+            &.is-loading {
+                &::after {
+                    @extend %loader;
+                    left: 50%;
+                    position: absolute !important;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    z-index: 4;
+                }
+
+                &::before {
+                    background-color: rgba($background, .5);
+                    content: "";
+                    height: 100%;
+                    left: 0;
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                    z-index: 3;
+                }
+            }
+        }
+
+        .dropdown-item {
+            &:not(.empty-title) {
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            &.empty-title {
+                color: $input-disabled-color;
+                text-align: center;
+
+                &:hover {
+                    background: inherit;
+                    color: $input-disabled-color;
+                }
+            }
+
+            mark {
+                &.is-highlighted {
+                    background-color: $warning;
+                }
+            }
+        }
+    }
+    &.is-active {
+        .dropdown-menu {
             display: block;
-            top: calc(50% - #{$switch-height} * 0.5);
-            left: 0;
-            width: $switch-width;
-            height: $switch-height;
-            border: $switch-border;
-            border-radius: $switch-radius;
-            background: $switch-background;
-            content: '';
-        }
-        &::after,
-        &:after {
-            display: block;
-            position: absolute;
-            top: calc(50% - #{$paddle-height} * 0.5);
-            left: $switch-paddle-offset;
-            width: $paddle-width;
-            height: $paddle-height;
-            transform: translate3d(0, 0, 0);
-            border-radius: $switch-radius;
-            background: $switch-paddle-background;
-            transition: $switch-paddle-transition;
-            content: '';
-        }
-        .switch-active,
-        .switch-inactive {
-            font-size: $size - 0.1;
-            z-index: 1;
-            margin-top: -4px;
-        }
-        &.has-text-inside {
-            .switch-inactive {
-                margin-left: -($paddle-active-offest + 0.3);
-            }
-            .switch-active {
-                margin-left: -($paddle-active-offest * 2);
-            }
-        }
-    }
-    &.is-rtl {
-        + label {
-            padding-left: 0;
-            padding-right: $switch-width + .5;
-            &::before,
-            &:before {
-                left: auto;
-                right: 0;
-            }
-            &::after,
-            &:after {
-                left: auto;
-                right: $paddle-active-offest;
-            }
-        }
-    }
-    &:checked {
-        + label {
-            &::before,
-            &:before {
-                background: $switch-background-active;
-            }
-            &::after {
-                left: $paddle-active-offest;
-            }
-        }
-        &.is-rtl {
-            + label {
-                &::after,
-                &:after {
-                    left: auto;
-                    right: $switch-paddle-offset;
-                }
-            }
-        }
-    }
-    &.is-outlined {
-        + label {
-            &::before,
-            &:before {
-                background-color: transparent;
-                border-color: $switch-background;
-            }
-            &::after,
-            &:after {
-                background: $switch-background;
-            }
-        }
-        &:checked {
-            + label {
-                &::before,
-                &:before {
-                    background-color: transparent;
-                    border-color: $switch-background-active;
-                }
-                &::after,
-                &:after {
-                    background: $switch-paddle-background-active;
-                }
-            }
-        }
-    }
-    &.is-thin {
-        + label {
-            &::before,
-            &:before {
-                top: calc($switch-height / 2.75);
-                height: calc($switch-height / 4);
-            }
-            &::after,
-            &:after {
-                box-shadow: 0px 0px 3px $grey;
-            }
-        }
-    }
-    &.is-rounded {
-        + label {
-            &::before,
-            &:before {
-                border-radius: $radius-large * 4;
-            }
-            &::after,
-            &:after {
-                border-radius: 50%;
-            }
         }
     }
 }
-.switch[type="checkbox"] {
-    outline: 0;
-    user-select: none;
-    display: inline-block;
-    position: absolute;
-    opacity: 0;
-    &:focus {
-        + label {
-            &::before,
-            &:before,
-            &::after,
-            &:after {
-                outline: $switch-focus;
-            }
-        }
+
+@keyframes blinker {
+    0% {
+        opacity: 1.0;
     }
-    &[disabled] {
-        cursor: not-allowed;
-        + label {
-            opacity: 0.5;
-            &::before,
-            &:before {
-                opacity: 0.5;
-            }
-            &::after,
-            &:after {
-                opacity: 0.5;
-            }
-            &:hover {
-                cursor: not-allowed;
-            }
-        }
+    50% {
+        opacity: 0.0;
     }
-    @include switch-size($size-normal);
-    &.is-small {
-        @include switch-size($size-small);
-    }
-    &.is-medium {
-        @include switch-size($size-medium);
-    }
-    &.is-large {
-        @include switch-size($size-large);
-    }
-    @each $name,
-    $pair in $colors {
-        $color: nth($pair, 1);
-        $color-invert: nth($pair, 2);
-        &.is-#{$name} {
-            + label {
-                .switch-active {
-                    display: none;
-                }
-                .switch-inactive {
-                    display: inline-block;
-                }
-            }
-            &:checked {
-                + label {
-                    &::before,
-                    &:before {
-                        background: $color;
-                    }
-                    .switch-active {
-                        display: inline-block;
-                    }
-                    .switch-inactive {
-                        display: none;
-                    }
-                }
-            }
-            &.is-outlined {
-                &:checked {
-                    + label {
-                        &::before,
-                        &:before {
-                            background-color: transparent;
-                            border-color: $color !important;
-                        }
-                        &::after,
-                        &:after {
-                            background: $color;
-                        }
-                    }
-                }
-            }
-            &.is-thin {
-                &.is-outlined {
-                    + label {
-                        &::after,
-                        &:after {
-                            box-shadow: none;
-                        }
-                    }
-                }
-            }
-        }
-        &.is-unchecked-#{$name} {
-            + label {
-                &::before,
-                &:before {
-                    background: $color;
-                }
-            }
-            &.is-outlined {
-                + label {
-                    &::before,
-                    &:before {
-                        background-color: transparent;
-                        border-color: $color !important;
-                    }
-                    &::after,
-                    &:after {
-                        background: $color;
-                    }
-                }
-            }
-        }
-    }
-}
-.field-body {
-    .switch[type="checkbox"] {
-        + label {
-            margin-top: .375em;
-        }
+    100% {
+        opacity: 1.0;
     }
 }
 //#endregion

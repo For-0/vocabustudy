@@ -296,12 +296,12 @@ async function search() {
     let queries = [];
     if (searchTerm) {
         words = getWords(searchTerm).slice(0, 10);
-        queries.push(query(collection(db, "meta_sets"), where("public", "==", true), where("nameWords", "array-contains-any", words)));
+        queries.push(query(collection(db, "meta_sets"), where("visibility", "==", 2), where("nameWords", "array-contains-any", words)));
     }
     if (selectedFilters.length > 0)
-        queries.push(query(collection(db, "meta_sets"), where("public", "==", true), where("collections", "array-contains-any", selectedFilters)));
+        queries.push(query(collection(db, "meta_sets"), where("visibility", "==", 2), where("collections", "array-contains-any", selectedFilters)));
     if (!searchTerm && selectedFilters.length <= 0)
-        queries.push(query(collection(db, "meta_sets"), where("public", "==", true)));
+        queries.push(query(collection(db, "meta_sets"), where("visibility", "==", 2)));
     pages.search.sets[1].textContent = "Loading Sets...";
     await paginateQueries(queries, pages.search.sets[1].nextElementSibling, results => {
         let data = results.filter((val, index, self) => index === self.findIndex(t => t.id === val.id)).map(el => {
@@ -326,7 +326,7 @@ async function showLikedSets() {
         await paginateQueries([mQuery], pages.savedSets.likedSets.nextElementSibling, async docs => {
             let setIds = docs.map(el => el.ref.parent.parent.id);
             if (setIds.length < 1) return;
-            let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", setIds), where("public", "==", true)));
+            let sets = await getDocs(query(collection(db, "meta_sets"), where(documentId(), "in", setIds), where("visibility", "==", 2)));
             sets.forEach(async docSnap => {
                 let els = await createSetCard(docSnap.data(), docSnap.id);
                 pages.savedSets.likedSets.appendChild(els.card);

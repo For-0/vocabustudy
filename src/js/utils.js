@@ -4,6 +4,12 @@ import { marked } from "marked";
 
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
+export const SET_VISIBILITIES = [
+    {title: "Private", color: "warning"},
+    {title: "Unlisted", color: "info"},
+    {title: "Public", color: "success"},
+    {title: "Shared", color: "link"}
+];
 /** @type {[Keyframe[], KeyframeAnimationOptions]} */
 export const cardSlideInAnimation = [
     [
@@ -266,12 +272,14 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
     ];
     buttons[2].addEventListener("click", e => e.preventDefault());
     if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${set.uid}/`, innerText: "More by User"}));
-    let likeText = set.public ? ` - ${set.likes || "0"} likes` : "";
+    let likeText = set.visibility !== 0 ? ` - ${set.likes || "0"} likes` : "";
+    console.log(id, set.visibility);
+    let visibilityData = SET_VISIBILITIES[Array.isArray(set.visibility) ? 3 : set.visibility];
     let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
             createElement("p", ["card-header-title"], { innerText: set.name }),
             createElement("span", ["card-header-icon"], {}, [
-                createElement("span", ["tag", set.public ? "is-success" : "is-warning"], {innerText: set.public ? "Public" : "Private"})
+                createElement("span", ["tag", `is-${visibilityData.color}`], {innerText: visibilityData.title})
             ])
         ]),
         createElement("div", ["card-content"], {}, [

@@ -16,7 +16,7 @@ function goBack() {
 
 addEventListener("DOMContentLoaded", async () => {
     fields.sets.innerText = "Loading sets...";
-    await paginateQueries([query(collection(db, "meta_sets"), where("public", "==", true), where("uid", "==", userId))], fields.sets.nextElementSibling, results => {
+    await paginateQueries([query(collection(db, "meta_sets"), where("visibility", "==", 2), where("uid", "==", userId))], fields.sets.nextElementSibling, results => {
         results.forEach(async docSnap => {
             fields.userName.innerText = docSnap.get("creator");
             let els = await createSetCard(docSnap.data(), docSnap.id);

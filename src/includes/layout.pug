@@ -199,4 +199,5 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 document.querySelector("#btn-logout + a.loggedout").addEventListener("click", () => localStorage.removeItem("redirect_after_login"));
                 if (!("randomUUID" in crypto))
                     crypto.randomUUID = () => ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
-                navigator.serviceWorker.register(new URL("./service-worker.js", location.origin) , {type: "module", scope: "/"});
+                if ("serviceWorker" in navigator)
+                    navigator.serviceWorker.register(new URL("./service-worker.js", location.origin) , {type: "module", scope: "/"});

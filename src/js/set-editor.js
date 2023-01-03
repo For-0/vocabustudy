@@ -3,6 +3,7 @@ import initialize from "./general.js";
 import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements } from "./utils.js";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
+import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -104,7 +105,8 @@ const {db, auth} = initialize(async user => {
                 goBack();
         }
         fields.terms.textContent = "";
-        fields.public.checked = false;
+        selectDropdownItem(fields.visibilityOptions[0]);
+        fields.shareDialogInput.removeAll();
         fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
     } else {
@@ -124,7 +126,12 @@ const {db, auth} = initialize(async user => {
         fields.setName.value = currentSet.name;
         if (currentSet.description)
             fields.setDescription.value = currentSet.description;
-        fields.public.checked = currentSet.public;
+        // if visibility is array, select the 2nd (shared) visibility option. If it equals 2, select the 3rd (public). Otherwise, if it equals 0 or 1, select the 0th or 1st visibility option.
+        selectDropdownItem(fields.visibilityOptions[Array.isArray(currentSet.visibility) ? 2 : currentSet.visibility === 2 ? 3 : currentSet.visibility]);
+        if (Array.isArray(currentSet.visibility)) {
+            fields.shareDialogInput.removeAll();
+            fields.shareDialogInput.add(currentSet.visibility);
+        }
         fields.terms.textContent = "";
         if (currentSetMeta.collections.includes("-:0")) {
             setType = 1;
@@ -175,7 +182,9 @@ const savingFunctions = {
 const fields = {
     setName: document.querySelector(".field-name"),
     setDescription: document.querySelector(".field-description"),
-    public: document.getElementById("field-public"),
+    visibilityDropdown: document.querySelector(".field-visibility"),
+    visibilityButton: document.querySelector(".field-visibility button"),
+    visibilityOptions: document.querySelectorAll(".field-visibility a"),
     terms: document.querySelector(".field-terms-edit"),
     btnCancel: document.querySelector(".btn-cancel"),
     btnAddTerm: document.querySelector(".btn-add-term"),
@@ -184,12 +193,19 @@ const fields = {
     formEdit: document.querySelector("form"),
     importDialog: new Modal("#dialog-import-terms").modal(),
     importDialogInput: document.querySelector("#dialog-import-terms textarea"),
+    shareDialog: new Modal("#dialog-configure-shared").modal(),
+    shareDialogInput: new BulmaTagsInput("#dialog-configure-shared input[type=text]", {delimiter: " ", minChars: 3, tagClass: "is-link is-light is-family-code", selectable: false}),
     collections: document.querySelector(".field-collections"),
     btnImportBlooket: document.querySelector(".btn-import-blooket"),
     fieldImportBlooket:document.querySelector(".field-import-blooket"),
     warningDuplicateTerms: document.querySelector(".warning-duplicate"),
 };
 let changesSaved = true;
+function selectDropdownItem(dropdownItem) {
+    document.querySelector(".field-visibility a.is-active").classList.remove("is-active");
+    dropdownItem.classList.add("is-active");
+    fields.visibilityButton.querySelector("span").innerText = dropdownItem.innerText;
+}
 function checkInputDuplicates() {
     let terms = [];
     let definitions = [];
@@ -384,7 +400,9 @@ fields.formEdit.addEventListener("submit", async e => {
     let setName = fields.setName.value;
     let description = fields.setDescription.value;
     let nameWords = getWords(setName.normalize("NFD").replace(/\p{Diacritic}/gu, ""));
-    let sPublic = fields.public.checked;
+    let visibility = [...fields.visibilityOptions].findIndex(el => el.classList.contains("is-active"));
+    if (visibility === 2) visibility = fields.shareDialogInput.items;
+    else if (visibility === 3) visibility--;
     let batch = writeBatch(db);
     let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
     if (setType === 1) collections.unshift("-:0");
@@ -393,13 +411,13 @@ fields.formEdit.addEventListener("submit", async e => {
     if (setId === "new" || setId === "new-timeline" || setId === "new-guide") {
         let setRef = doc(collection(db, "sets"));
         let setMetaRef = doc(db, "meta_sets", setRef.id);
-        batch.set(setMetaRef, {numTerms: terms.length, public: sPublic, name: setName, nameWords, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, collections, likes: 0});
-        batch.set(setRef, {terms, public: sPublic, name: setName, uid: auth.currentUser.uid, description});
+        batch.set(setMetaRef, {numTerms: terms.length, visibility, name: setName, nameWords, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, collections, likes: 0});
+        batch.set(setRef, {terms, visibility, name: setName, uid: auth.currentUser.uid, description});
     } else {
         let setRef = doc(db, "sets", setId);
         let setMetaRef = doc(db, "meta_sets", setId);
-        batch.update(setMetaRef, {numTerms: terms.length, public: sPublic, name: setName, nameWords, collections, creator: creator || auth.currentUser.displayName});
-        batch.update(setRef, {terms, public: sPublic, name: setName, description});
+        batch.update(setMetaRef, {numTerms: terms.length, visibility, name: setName, nameWords, collections, creator: creator || auth.currentUser.displayName});
+        batch.update(setRef, {terms, visibility, name: setName, description});
     }
     try {
         await batch.commit();
@@ -423,6 +441,7 @@ onbeforeunload = () => {
     if (!changesSaved) return " ";
 };
 fields.importDialog.validateInput = () => fields.importDialogInput.reportValidity();
+fields.shareDialog.onclose = () => {};
 fields.btnImportBlooket.addEventListener("click", async () => {
     if (fields.fieldImportBlooket.reportValidity()) {
         let dashRes = fields.fieldImportBlooket.value.match(blooketDashboardRe);
@@ -440,5 +459,23 @@ fields.btnImportBlooket.addEventListener("click", async () => {
         }
     }
 });
+fields.visibilityButton.addEventListener("click", e => {
+    e.stopPropagation();
+    fields.visibilityDropdown.classList.add("is-active");
+});
+document.addEventListener("click", () => fields.visibilityDropdown.classList.remove("is-active"));
+fields.visibilityOptions.forEach((el, i) => el.addEventListener("click", () => {
+    selectDropdownItem(el);
+    if (i === 2) {
+        fields.shareDialog.open();
+        fields.shareDialogInput.focus();
+    }
+}));
+fields.shareDialogInput.input.parentElement.addEventListener("focusout", () => {
+    if (fields.shareDialogInput.input.value) {
+        fields.shareDialogInput.add(fields.shareDialogInput.input.value);
+        fields.shareDialogInput.input.value = "";
+    }
+}, true);
 showCollections(fields.collections);
-initBulmaModals([fields.importDialog]);
+initBulmaModals([fields.importDialog, fields.shareDialog]);

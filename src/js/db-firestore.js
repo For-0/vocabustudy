@@ -181,8 +181,8 @@ class MetaSet extends FSDocument {
         this.creator = data.creator;
         /** @type {String} */
         this.uid = data.uid;
-        /** @type {Boolean} */
-        this.public = data.public;
+        /** @type {Number|string[]} */
+        this.visibility = data.visibility;
         /** @type {Number} */
         this.numTerms = data.numTerms;
         /** @type {String[]} */
@@ -215,8 +215,8 @@ class VocabSet extends FSDocument {
         this.description = data.description;
         /** @type {String} */
         this.uid = data.uid;
-        /** @type {Boolean} */
-        this.public = data.public;
+        /** @type {Number|string[]} */
+        this.visibility = data.visibility;
         /** @type {{term: String, definition: String}[]|{body: String?, type: Number, questions: {type: Number, question: String, answers: String[]}[]}[]} */
         this.terms = data.terms;
     }

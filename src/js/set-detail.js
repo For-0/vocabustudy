@@ -100,7 +100,7 @@ const accentsRE = /[^a-zA-Z0-9\s_()[\]!'"./\\,-]/ig;
 /** @type {{name: String, time: number, uid: String}[]?} */
 let currentMatchLeaderboard = null;
 /**
- * @type {{name: string, public: true, terms: {term: string, definition: string}[], uid: string, description: string?}?}
+ * @type {{name: string, visibility: number|string[], terms: {term: string, definition: string}[], uid: string, description: string?}?}
  */
 let currentSet = null;
 let specialCharCollator = new Intl.Collator().compare;
@@ -1260,7 +1260,7 @@ addEventListener("DOMContentLoaded", async () => {
         document.querySelector(".page-loader").hidden = true;
     } catch (err) {
         console.error(err);
-        if (err.message.includes("Forbidden")) {
+        if (err.message.includes("Forbidden") || err.code === "permission-denied") {
             localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();
             location.href = "/#login";

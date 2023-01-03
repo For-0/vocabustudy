@@ -52,11 +52,7 @@ html.theme-dark, html.theme-system.prefers-dark {
     --card-background-color: var(--scheme-main-bis);
     --shadow: none;
 
-    --link: #{utilities.$turquoise};
-    --link-hover: #{utilities.bulmaVarLighten(utilities.$link, 5%)};
-    --link-focus: #{utilities.bulmaVarDarken(utilities.$link, 5)};
-    --link-active: #{utilities.bulmaVarDarken(utilities.$link, 5)};
-    --link-focus-border: var(--grey-light);
+    --link: var(--primary);
 
     --button-hover-color: var(--text-strong);
     --button-focus: var(--text-strong);
@@ -146,5 +142,9 @@ html.theme-dark, html.theme-system.prefers-dark {
     .btn-continue-google {
         --light-l: 80%;
         --light: hsla(var(--light-h), var(--light-s), var(--light-l), var(--light-a));
+    }
+    .button.is-danger.is-inverted.btn-delete {
+        background-color: transparent;
+        color: var(--danger-dark);
     }
 }
