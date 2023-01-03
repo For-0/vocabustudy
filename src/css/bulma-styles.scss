@@ -1,5 +1,4 @@
 @charset "utf-8";
-
 @use "bulma-modules" as *;
 @use "bulma-extensions";
 @use "@bulvar/bulma/themes/light";
@@ -24,18 +23,17 @@
         color: $grey-light;
     }
 }
-
 .material-symbols-rounded {
     font-variation-settings:
-        'FILL' var(--font-variation-fill, 0),
-        'wght' var(--font-variation-weight, 400),
-        'GRAD' var(--font-variation-grade, 0),
-        'opsz' var(--font-variation-optical-size, 48);
+        "FILL" var(--font-variation-fill, 0),
+        "wght" var(--font-variation-weight, 400),
+        "GRAD" var(--font-variation-grade, 0),
+        "opsz" var(--font-variation-optical-size, 48);
 }
 .is-filled {
     --font-variation-fill: 1;
 }
-:is(.button:not(.is-floating):not(.is-ghost):not(.is-inverted), .tabs) .material-symbols-rounded {
+:is(.button:not(.is-floating, .is-ghost, .is-inverted), .tabs) .material-symbols-rounded {
     font-size: inherit;
 }
 .button {
@@ -79,6 +77,7 @@
 }
 .button.is-vocabustudy {
     @extend .has-background-primary;
+
     border-color: transparent;
     img {
         transform: scale(1.6);
@@ -102,7 +101,7 @@ fieldset[disabled] .is-checkradio {
     color: var(--danger);
 }
 .switch[type="checkbox"].is-thin + label::before {
-    top: calc(50% - .25rem);
+    top: calc(50% - 0.25rem);
 }
 .modal > .modal-close {
     transform: translateX(100%);
@@ -117,21 +116,18 @@ fieldset[disabled] .is-checkradio {
         display: block;
     }
 }
-.quickview {
-    max-width: unset;
-}
 kbd {
-    margin: 0px 0.1em;
+    margin: 0 0.1em;
     padding: 0.1em 0.6em;
     border-radius: 3px;
-    border: 1px solid rgb(204, 204, 204);
-    color: rgb(51, 51, 51);
+    border: 1px solid rgb(204 204 204);
+    color: rgb(51 51 51);
     line-height: 1.4;
     font-family: $family-monospace;
     font-size: 10px;
     display: inline-block;
-    box-shadow: 0px 1px 0px rgba(0,0,0,0.2), inset 0px 0px 0px 2px #ffffff;
-    background-color: rgb(247, 247, 247);
+    box-shadow: 0 1px 0 rgba(0 0 0 0 2), inset 0 0 0 2px #fff;
+    background-color: rgb(247 247 247);
     text-shadow: 0 1px 0 #fff;
     vertical-align: middle;
 }
@@ -150,16 +146,14 @@ a:visited.dropdown-item {
 .list.has-hoverable-list-items .list-item:hover {
     background-color: var(--scheme-main-ter);
 }
-
 .quickview {
     background-color: var(--background);
+    max-width: unset;
 }
-
 .quickview-footer {
     background-color: var(--scheme-main-ter);
     border-top: 1px solid var(--light);
 }
-
-input[type=text] {
+input[type="text"] {
     transition: 0.1s border-color;
 }

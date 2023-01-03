@@ -3,7 +3,7 @@ block variables
     - var title = "Privacy Policy";
     - var description = "Vocabustudy values your privacy";
 block content
-    .page#home.content
+    #home.page.content
         h1 Privacy Policy
         p
             | At Vocabustudy, accessible from vocabustudy.org, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Vocabustudy and how we use it.
@@ -25,7 +25,7 @@ block content
                 |  for error tracking
                 br
                 .field
-                    input.is-checkradio.is-danger#checkbox-sentry-optout(type="checkbox")
+                    input#checkbox-sentry-optout.is-checkradio.is-danger(type="checkbox")
                     label(for="checkbox-sentry-optout") Opt out of Sentry
             li Improve, personalize, and expand our website
             li Understand and analyze how you use our website

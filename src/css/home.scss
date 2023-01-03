@@ -1,8 +1,5 @@
 @import "styles.scss";
 #home {
-    .list-item {
-        border: 0 !important;
-    }
     background: url("../images/hero-background.svg") no-repeat center center;
     background-size: 100% 100%;
     position: absolute;
@@ -10,6 +7,9 @@
     width: 100%;
     height: calc(100% - 52px);
     z-index: 2;
+    .list-item {
+        border: 0 !important;
+    }
     ul {
         list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -5 24 24' width='20' fill='%23fff'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z'/%3E%3C/svg%3E");
     }
@@ -81,6 +81,7 @@
 }
 #account {
     text-align: center;
+    /* stylelint-disable-next-line no-descending-specificity */
     div {
         margin: auto;
     }
@@ -111,8 +112,8 @@
                 display: none;
             }
             &.icon {
-                margin-left: calc(-.5em - 1px);
-                margin-right: calc(-.5em - 1px);
+                margin-left: calc(-0.5em - 1px);
+                margin-right: calc(-0.5em - 1px);
             }
         }
     }
@@ -130,13 +131,13 @@
         }
     }
 }
-
-#credits  {
+#credits {
     ul > li {
         margin-bottom: 1rem;
     }
 }
 #login {
+    background-color: var(--primary);
     &::after {
         content: "";
         position: absolute;
@@ -154,7 +155,9 @@
     }
     .column.is-8:last-child {
         @media (max-width: 768px) {
-            .level-left, .level-right, .level-item {
+            .level-left,
+            .level-right,
+            .level-item {
                 display: inline;
             }
         }
@@ -168,7 +171,6 @@
             top: 50%;
         }
     }
-    background-color: var(--primary);
     > img {
         position: absolute;
         left: 1rem;
@@ -181,7 +183,7 @@
         .btn-switch-mode::after {
             content: "Log In";
         }
-        :is(form button[type=submit], .form-title)::after {
+        :is(form button[type="submit"], .form-title)::after {
             content: "Sign Up";
         }
         .prompt-switch-mode span:last-child {
@@ -193,34 +195,42 @@
             &::after {
                 content: "Log In";
             }
-            + a, span {
+            + a,
+            span {
                 display: none;
             }
         }
-        :is(form button[type=submit], .form-title)::after {
+        :is(form button[type="submit"], .form-title)::after {
             content: "Reset Password";
         }
         .btn-continue-google {
             display: none;
         }
-        #login-display-name, #login-password, #login-confirm-password, #login-accept-tos, #login-accept-tos + label {
+        #login-display-name,
+        #login-password,
+        #login-confirm-password,
+        #login-accept-tos,
+        #login-accept-tos + label {
             display: none;
         }
         .prompt-switch-mode span:first-child {
             display: none;
         }
     }
-    &:not([data-mode="sign-up"]):not([data-mode="forgot-password"]) {
+    &:not([data-mode="sign-up"], [data-mode="forgot-password"]) {
         .btn-switch-mode::after {
             content: "Sign Up";
         }
-        :is(form button[type=submit], .form-title)::after {
+        :is(form button[type="submit"], .form-title)::after {
             content: "Log In";
         }
-        #login-display-name, #login-confirm-password {
+        #login-display-name,
+        #login-confirm-password {
             display: none;
         }
-        .prompt-switch-mode span:first-child, #login-accept-tos, #login-accept-tos + label {
+        .prompt-switch-mode span:first-child,
+        #login-accept-tos,
+        #login-accept-tos + label {
             display: none;
         }
     }

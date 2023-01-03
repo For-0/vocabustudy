@@ -1,9 +1,12 @@
+/* stylelint-disable custom-property-empty-line-before */
 @charset "utf-0";
 @use "@bulvar/bulma/sass/utilities";
 
 /*! bulmaswatch darkly theme | MIT License | github.com/jenil/bulmaswatch/blob/gh-pages/darkly */
+
 /* Modified to fit vocabustudy theme */
-html.theme-dark, html.theme-system.prefers-dark {
+html.theme-dark,
+html.theme-system.prefers-dark {
     --grey-lighter: #dbdee0;
     --grey-light: #8c9b9d;
     --grey: #5e6d6f;
@@ -82,7 +85,7 @@ html.theme-dark, html.theme-system.prefers-dark {
     --navbar-item-hover-background-color: transparent;
     --navbar-item-active-color: var(--link);
     --navbar-dropdown-arrow: #fff;
-    --navbar-divider-background-color: rgba(255, 255, 255, 0.2);
+    --navbar-divider-background-color: rgba(255 255 255 20%);
     --navbar-dropdown-border-top: 1px solid var(--navbar-divider-background-color);
     --navbar-dropdown-item-hover-color: var(--grey-lighter);
     --navbar-dropdown-item-hover-background-color: #000a;
@@ -99,25 +102,21 @@ html.theme-dark, html.theme-system.prefers-dark {
     --progress-bar-background-color: var(--grey-dark);
 
     --panel-heading-background-color: var(--grey-dark);
-    --modal-background-background-color: rgba(10, 10, 10, .86);
-
-    .modal-close::before, .delete::before, .modal-close::after, .delete::after {
+    --modal-background-background-color: rgba(10 10 10 86%);
+    .modal-close::before,
+    .delete::before,
+    .modal-close::after,
+    .delete::after {
         --scheme-main: var(--scheme-invert);
     }
-
-    /*.has-text-dark {
-        --dark-h: var(--light-h);
-        --dark-s: var(--light-s);
-        --dark-l: var(--light-l);
-        --dark-a: var(--light-a);
-        --dark: var(--light);
-    }*/
-    
-    .has-text-primary, .button {
+    .has-text-primary,
+    .button {
         --primary: var(--primary-dark);
     }
-    
-    body > footer, .navbar, .homepage-lead, #home > .hero:first-child {
+    body > footer,
+    .homepage-lead,
+    .navbar,
+    #home > .hero:first-child {
         &::after {
             backdrop-filter: brightness(65%) saturate(110%);
             content: "";
@@ -128,12 +127,14 @@ html.theme-dark, html.theme-system.prefers-dark {
             top: 0;
             left: 0;
         }
-        > div, > p {
+        > div,
+        > p {
             z-index: 1;
             position: relative;
         }
     }
-    .page > h1:first-child::after, #login::after {
+    .page > h1:first-child::after,
+    #login::after {
         filter: brightness(65%) saturate(110%);
     }
     .navbar-dropdown {
@@ -141,7 +142,7 @@ html.theme-dark, html.theme-system.prefers-dark {
     }
     .btn-continue-google {
         --light-l: 80%;
-        --light: hsla(var(--light-h), var(--light-s), var(--light-l), var(--light-a));
+        --light: hsla(var(--light-h) var(--light-s) var(--light-l) var(--light-a));
     }
     .button.is-danger.is-inverted.btn-delete {
         background-color: transparent;

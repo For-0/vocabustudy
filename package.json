@@ -29,7 +29,7 @@
       "distDir": "./dist"
     }
   },
-  "browserslist": "> 0.1% and last 2 versions and not dead",
+  "browserslist": "> 1%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel",
     "build": "rm -rf dist && parcel build --no-source-maps",
@@ -51,6 +51,7 @@
   "dependencies": {
     "@bulvar/bulma": "^0.11.13",
     "@creativebulma/bulma-divider": "^1.1.0",
+    "@creativebulma/bulma-tagsinput": "^1.0.3",
     "@creativebulma/bulma-tooltip": "^1.2.0",
     "@sentry/browser": "^7.28.1",
     "@sentry/tracing": "^7.28.1",
@@ -61,27 +62,36 @@
     "bulma-quickview": "^2.0.0",
     "bulma-slider": "^2.0.5",
     "bulma-social": "^2.1.0",
-    "@creativebulma/bulma-tagsinput": "^1.0.3",
     "bulma-toast": "^2.4.1",
     "dompurify": "^2.4.1",
     "firebase": "^9.14.0",
     "fitty": "^2.3.6",
     "fscreen": "^1.2.0",
-    "marked": "^4.2.3"
+    "marked": "^4.2.3",
+    "stylelint-config-standard-scss": "^6.1.0"
   },
   "devDependencies": {
     "@parcel/packager-raw-url": "^2.8.2",
+    "@parcel/service-worker": "^2.8.2",
     "@parcel/transformer-jsonld": "^2.8.2",
     "@parcel/transformer-pug": "^2.8.2",
     "@parcel/transformer-sass": "^2.8.2",
     "@parcel/transformer-webmanifest": "^2.8.2",
-    "@parcel/service-worker": "^2.8.2",
     "eslint": "^8.28.0",
     "parcel": "^2.8.2",
     "process": "^0.11.10",
-    "sharp": "^0.31.2"
+    "pug-lint": "^2.6.0",
+    "sharp": "^0.31.2",
+    "stylelint": "^14.16.1"
   },
   "@parcel/transformer-js": {
-    "inlineEnvironment": ["npm_package_version", "NODE_ENV", "CODESPACES", "GITPOD_WORKSPACE_URL", "CODESPACE_NAME", "GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"]
+    "inlineEnvironment": [
+      "npm_package_version",
+      "NODE_ENV",
+      "CODESPACES",
+      "GITPOD_WORKSPACE_URL",
+      "CODESPACE_NAME",
+      "GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"
+    ]
   }
 }

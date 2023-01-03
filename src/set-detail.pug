@@ -9,7 +9,7 @@ block main-stylesheet
 block extrahead
     script(src="js/qrcode.min.js")
 block content
-    .page#flashcards
+    #flashcards.page
         h1 Flashcards - #[span] #[+close_button]
             p.is-size-6.has-text-weight-bold(style="line-height: normal;")
                 span 0
@@ -28,7 +28,7 @@ block content
                 .field
                     input#check-flashcard-starred.is-checkradio.is-gold(type="checkbox")
                     label(for="check-flashcard-starred") Only Starred
-                div.mt-auto
+                .mt-auto
                     button.button
                         span.icon
                             i.material-symbols-rounded loop
@@ -46,7 +46,7 @@ block content
                     button.button
                         span Next
                         kbd.is-hidden-touch.ml-1 →
-    .page#learn
+    #learn.page
         h1 Learn - #[span] #[+close_button]
         .columns.is-flex-touch
             .is-flex.column.is-narrow
@@ -105,7 +105,7 @@ block content
                             span.icon
                                 i.material-symbols-rounded filter_4
                             span #[span.fit Option 4]
-    .page#test
+    #test.page
         h1 Test - #[span] #[+close_button]
         .columns.is-flex-touch
             .is-flex.column.is-narrow
@@ -161,7 +161,7 @@ block content
                     .matches-container
                 h2.title.is-4(data-count='0')  True/False Question
                 div
-    .page#match
+    #match.page
         h1 Match - #[span] #[+close_button]
         .columns.is-flex-touch
             .is-flex.column.is-narrow
@@ -186,7 +186,7 @@ block content
             .columns.column.is-mobile
                 .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
                 .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
-    .page.is-relative#home.is-flex-direction-column(style="--page-display: flex;")
+    #home.page.is-relative.is-flex-direction-column(style="--page-display: flex;")
         h1
             span.field-name
             button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
@@ -228,7 +228,7 @@ block content
                 span.loader.is-size-1
         include includes/comment-quickview
 append scripts-footer
-    .modal#modal-match-done
+    #modal-match-done.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -236,10 +236,10 @@ append scripts-footer
                 button.delete(aria-label="close")
             section.modal-card-body.custom-scrollbar.is-thumb-only
                 p(style="margin: 0;") You took 
-                        strong.field-time-taken
-                        |  seconds to finish
-                        br
-                        strong Leaderboard:
+                    strong.field-time-taken
+                    |  seconds to finish
+                    br
+                    strong Leaderboard:
                 .list.has-hoverable-list-items
                     .list-item
                         .list-item-content
@@ -248,7 +248,7 @@ append scripts-footer
             footer.modal-card-foot
                 button.button.action-close(type="button" data-action="back") Back
                 button.button.is-success.action-close(type="button" data-action="restart") Restart
-    .modal#modal-match-help
+    #modal-match-help.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -266,7 +266,7 @@ append scripts-footer
                 p Matching an item on the left to an item on the right that already has an item inside it will unmatch the item inside
             footer.modal-card-foot
                 button.button.is-success.action-close(type="button") OK
-    .modal#modal-export-terms
+    #modal-export-terms.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -305,7 +305,7 @@ append scripts-footer
                         .list-item-content
                             .list-item-title QR Code
                             .list-item-description
-                               #set-qrcode
+                                #set-qrcode
                         .list-item-controls
                             .buttons
                                 button.button.btn-copy-qrcode(type="button" title="Copy Terms")

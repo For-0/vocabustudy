@@ -1,4 +1,5 @@
 @import "styles.scss";
+
 // Thank you the author of this answerer for the code: https://stackoverflow.com/a/54702294 (Austen Holland)
 .rainbow {
     text-align: center;
@@ -6,23 +7,19 @@
     font-family: monospace;
     letter-spacing: 5px;
 }
-
-.rainbow_text_animated {
+.rainbow-text-animated {
     background: linear-gradient(to right, #6c6cb7, #6ba2c4);
-    -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: rainbow_animation 1s ease-in-out infinite;
+    animation: rainbow-animation 1s ease-in-out infinite;
     background-size: 400% 100%;
     font-size: 4rem;
 }
-
-@keyframes rainbow_animation {
+@keyframes rainbow-animation {
     0%,
     100% {
         background-position: 0 0;
     }
-
     50% {
         background-position: 100% 0;
     }

@@ -1,3 +1,5 @@
+// disabled because this file is WIP
+/* eslint-disable no-unused-vars */
 import {manifest, version} from "@parcel/service-worker";
 
 async function install() {

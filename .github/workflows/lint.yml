@@ -1,0 +1,30 @@
+name: Lint
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+permissions:
+  checks: write
+  contents: write
+jobs:
+  run-linters:
+    name: Run Linters
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+      - run: npm ci
+      - name: Run Linters
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          eslint_extensions: js
+          stylelint: true
+          stylelint_extensions: scss,css
+      - name: Lint Pug
+        run: npx pug-lint src/*.pug

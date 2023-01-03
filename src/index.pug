@@ -6,7 +6,7 @@ block main-stylesheet
 block extrahead
     link(rel="preload" href="./images/hero-background.svg" as="image")
 block content
-    .page#login(data-nosnippet data-mode="login")
+    #login.page(data-nosnippet data-mode="login")
         .container
             .columns.is-multiline
                 .column.is-8.is-offset-2
@@ -15,7 +15,7 @@ block content
                             h1.title.is-3.has-text-primary Free, Fast, Simple, and Effective.
                             h1.title.is-4 That's the kind of studying you get when you join Vocabustudy.
                             br
-                            img.nohuechange.is-block.mx-auto(src="./icons/icon-192.png" style="width: 8rem; height: 8rem" alt="Vocabustudy Logo")
+                            img.ignore-user-hue.is-block.mx-auto(src="./icons/icon-192.png" style="width: 8rem; height: 8rem" alt="Vocabustudy Logo")
                             p.prompt-switch-mode(style="position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); width: 100%;")
                                 span.log-in Already have an account? #[a.has-text-primary.has-text-weight-bold(role="button" tabindex="0") Log in]
                                 span.sign-up Don't have an account? #[a.has-text-primary.has-text-weight-bold(role="button" tabindex="0") Sign up]
@@ -24,22 +24,22 @@ block content
                             form(novalidate)
                                 .field
                                     .control
-                                        input.input.is-medium(type="text" placeholder="Display Name" id="login-display-name" required)
+                                        input#login-display-name.input.is-medium(type="text" placeholder="Display Name" required)
                                 .field
                                     .control
-                                        input.input.is-medium(type="email" placeholder="Email" id="login-email" required)
+                                        input#login-email.input.is-medium(type="email" placeholder="Email" required)
                                 .field
                                     .control
-                                        input.input.is-medium(type="password" placeholder="Password" id="login-password" required)
+                                        input#login-password.input.is-medium(type="password" placeholder="Password" required)
                                 .field
                                     .control
-                                        input.input.is-medium(type="password" placeholder="Confirm Password" id="login-confirm-password" required)
+                                        input#login-confirm-password.input.is-medium(type="password" placeholder="Confirm Password" required)
                                 .field
-                                    input.is-checkradio.is-gold#login-accept-tos(type="checkbox" required)
+                                    input#login-accept-tos.is-checkradio.is-gold(type="checkbox" required)
                                     label(for="login-accept-tos") I accept the #[a.has-text-primary(href="/terms/") Terms of Service] and #[a.has-text-primary(href="/privacy/") Privacy Policy]
                                 button.button.is-primary.is-medium.is-fullwidth(type="submit")
                             button.button.is-light.is-medium.is-fullwidth.mt-3.btn-continue-google(type="button")
-                                span.icon.nohuechange(style="width: 24px; height: 24px;")
+                                span.icon.ignore-user-hue(style="width: 24px; height: 24px;")
                                     svg(version='1.1' xmlns='http://www.w3.org/2000/svg' viewbox='0 0 48 48' height="24" width="24")
                                         g
                                             path(fill='#EA4335', d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z')
@@ -62,8 +62,8 @@ block content
                         .level-right
                             .level-item
                                 a.button.is-primary.btn-tos.is-primary-alt(href="/terms/" style="white-space: pre;") Terms #[span.is-hidden-mobile of Service]
-        img.nohuechange.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
-    .page#account(data-nosnippet)
+        img.ignore-user-hue.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
+    #account.page(data-nosnippet)
         h1 My Account
         p Only your display name is public.
         .card 
@@ -72,8 +72,8 @@ block content
                     .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
                     .supporting-text
                         span.field-email
-                        span.field-email-not-verified.fw-bold.nohuechange.tag.ml-1.is-danger(hidden) Email Not Verified
-                        span.field-email-verified.fw-bold.nohuechange.tag.ml-1.is-success(hidden) Email Verified
+                        span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-1.is-danger(hidden) Email Not Verified
+                        span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-1.is-success(hidden) Email Verified
                     .supporting-text 
                         strong Account Created: 
                         span.field-created
@@ -85,8 +85,8 @@ block content
                 p.card-footer-item
                     button.button.is-ghost.has-text-primary.btn-change-password Change Password
                 p.card-footer-item
-                    button.button.is-ghost.btn-delete-account.has-text-danger.nohuechange Delete Account
-    .page#mysets(data-nosnippet)
+                    button.button.is-ghost.btn-delete-account.has-text-danger.ignore-user-hue Delete Account
+    #mysets.page(data-nosnippet)
         h1 My Sets:
             .dropdown.is-pulled-right
                 .dropdown-trigger
@@ -120,17 +120,17 @@ block content
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
                         span Create Custom Collection
         .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
-    .page#admin(data-nosnippet)
+    #admin.page(data-nosnippet)
         h1 Admin Portal
         button.button.is-warning.mb-4.btn-get-all.is-block Load All Sets
         .set-container(data-empty="No Sets")
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
-    .page#saved-sets(data-nosnippet)
+    #saved-sets.page(data-nosnippet)
         h1 Saved Sets
         h2 Liked Sets:
         .liked-container.set-container(data-empty="No Sets")
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
-    .page#search(data-nosnippet)
+    #search.page(data-nosnippet)
         h1 Browse Sets:
         details.box.block.mt-5
             summary
@@ -138,7 +138,7 @@ block content
             .set-container.mt-4(style="cursor: auto;" data-empty="No featured sets") Loading featured sets...
         h2.title.is-size-4.mb-0 Search:
         p.block Most sets are created by CVMS students for CVMS students
-        div.field-search-container.box.p-3
+        .field-search-container.box.p-3
             .level.mb-2
                 .level-left.is-flex-grow-1
                     .level-item(style="width: calc(100% - 1rem);")
@@ -161,7 +161,7 @@ block content
                 span.ml-1.is-inline-block.field-search-collections-list(style="vertical-align: bottom;")
         .set-container.mt-4(data-empty="No Sets Matched Your Search. Did you spell each word correctly?") Try searching for something like '50 States' or try a featured set above.
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
-    .page#credits(data-nosnippet)
+    #credits.page(data-nosnippet)
         h1 Credits - Vocabustudy
         div(style="text-align: center;")
             p.title.is-size-5 Vocabustudy is part of a group of applications called the #[a(href="https://github.com/For-0") For Zero Applications].
@@ -173,57 +173,57 @@ block content
                     .modal-content
                         .box
                             p.mb-2.title.is-4 Siddhant Kameswar
-                            .tags.is-inline-block #[span.tag.is-primary.is-light.nohuechange Creator] #[span.tag.is-link.is-light.nohuechange For Zero Co-Founder] #[span.tag.is-danger.is-light.nohuechange Lead Developer] #[span.tag.is-success.is-light.nohuechange Design]
+                            .tags.is-inline-block #[span.tag.is-primary.is-light.ignore-user-hue Creator] #[span.tag.is-link.is-light.ignore-user-hue For Zero Co-Founder] #[span.tag.is-danger.is-light.ignore-user-hue Lead Developer] #[span.tag.is-success.is-light.ignore-user-hue Design]
                             br
                             p For Zero Applications is headed by #[strong Siddhant Kameswar], who is the creator of Vocabustudy. The amount of work and contribution given by Siddhant outstrips all other contributors.
                             .buttons.mt-3.is-inline-block
-                                a(href="https://github.com/grimsteel").button.is-small.is-github.nohuechange #[img(src="icons/brands/github.svg" alt="GitHub").credits-brandicons]
-                                a(href="/user/AZ1AbMqRkoWavZsVg3Gi6DbnF7x2/").button.is-small.is-vocabustudy.nohuechange #[img(alt="Vocabustudy" src="icons/brands/vocabustudy-transparent-brownV.svg").credits-brandicons]
-                button.button.is-primary.is-credit #[p(style="color:white;").subtitle.is-5 Ruhan Gupta]
+                                a.button.is-small.is-github.ignore-user-hue(href="https://github.com/grimsteel") #[img.credits-brandicons(src="icons/brands/github.svg" alt="GitHub")]
+                                a.button.is-small.is-vocabustudy.ignore-user-hue(href="/user/AZ1AbMqRkoWavZsVg3Gi6DbnF7x2/") #[img.credits-brandicons(alt="Vocabustudy" src="icons/brands/vocabustudy-transparent-brownV.svg")]
+                button.button.is-primary.is-credit #[p.has-text-white.subtitle.is-5 Ruhan Gupta]
                 .modal.is-credit
                     .modal-background
                     .modal-content
                         .box
                             p.mb-2.title.is-4 Ruhan Gupta
-                            .tags.is-inline-block #[span.tag.is-link.is-light.nohuechange For Zero Co-Founder] #[span.tag.is-danger.is-light.nohuechange Developer] #[span.tag.is-success.is-light.nohuechange Design] #[span.tag.is-info.is-light.nohuechange Lead Marketer (Public Relations)]
+                            .tags.is-inline-block #[span.tag.is-link.is-light.ignore-user-hue For Zero Co-Founder] #[span.tag.is-danger.is-light.ignore-user-hue Developer] #[span.tag.is-success.is-light.ignore-user-hue Design] #[span.tag.is-info.is-light.ignore-user-hue Lead Marketer (Public Relations)]
                             br
                             p #[strong Ruhan Gupta] (not Nikhil's brother) helped #[strong co-found] For Zero and has contributed to some of the #[strong visual design] of the applications, like Vocabustudy. Like the other contributors, he has #[strong helped with functionality, testing, and bug fixes], created the #[strong For Zero and Vocabustudy logo], and helped improve the design of the #[strong Vocabustudy Discord Server]. He manages with the For Zero's organization operations and interaction with the outside world.
                             .buttons.mt-3.is-inline-block
-                                a(href="https://github.com/IMGROOT2").button.is-small.is-github.nohuechange #[img(src="icons/brands/github.svg" alt="GitHub").credits-brandicons]
-                                a(href="https://discordapp.com/users/698961308506390568").button.is-small.is-discord.nohuechange #[img(src="icons/brands/discord.svg" alt="Discord").credits-brandicons]
-                                a(href="/user/nWasbt2yvXewc8AhGSqwmfT4gVu2/").button.is-small.is-vocabustudy.nohuechange #[img(src="icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy").credits-brandicons]
-                button.button.is-primary.is-credit #[p(style="color:white;").subtitle.is-5 Omkar Patil]
+                                a.button.is-small.is-github.ignore-user-hue(href="https://github.com/IMGROOT2") #[img.credits-brandicons(src="icons/brands/github.svg" alt="GitHub")]
+                                a.button.is-small.is-discord.ignore-user-hue(href="https://discordapp.com/users/698961308506390568") #[img.credits-brandicons(src="icons/brands/discord.svg" alt="Discord")]
+                                a.button.is-small.is-vocabustudy.ignore-user-hue(href="/user/nWasbt2yvXewc8AhGSqwmfT4gVu2/") #[img.credits-brandicons(src="icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy")]
+                button.button.is-primary.is-credit #[p.has-text-white.subtitle.is-5 Omkar Patil]
                 .modal.is-credit
                     .modal-background
                     .modal-content
                         .box
                             p.mb-2.title.is-4 Omkar Patil
-                            .tags.is-inline-block #[span.tag.is-info.is-light.nohuechange Marketer] #[span.tag.is-warning.is-light.nohuechange Tester] #[span.tag.is-danger.is-light.nohuechange Developer]
+                            .tags.is-inline-block #[span.tag.is-info.is-light.ignore-user-hue Marketer] #[span.tag.is-warning.is-light.ignore-user-hue Tester] #[span.tag.is-danger.is-light.ignore-user-hue Developer]
                             br
                             p #[strong Omkar Patil] has been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong helped with testing, bug fixes, and new features] and has #[strong requested features] to make Vocabustudy better. He also #[strong helped set up the Discord server]. Above all, he and Nikhil have #[strong shared Vocabustudy with the world], and has helped grow it along the way.
                             .buttons.mt-3.is-inline-block
-                                a(href="https://github.com/PrakmO").button.is-small.is-github.nohuechange #[img(src="icons/brands/github.svg" alt="GitHub").credits-brandicons]
-                                a(href="/user/mnDmw8WhAGSup4W2kH0EsRCgb072/").button.is-small.is-vocabustudy.nohuechange #[img(src="icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy").credits-brandicons]
-                button.button.is-primary.is-credit #[p(style="color:white;").subtitle.is-5 Nikhil Gupta]
+                                a.button.is-small.is-github.ignore-user-hue(href="https://github.com/PrakmO") #[img.credits-brandicons(src="icons/brands/github.svg" alt="GitHub")]
+                                a.button.is-small.is-vocabustudy.ignore-user-hue(href="/user/mnDmw8WhAGSup4W2kH0EsRCgb072/") #[img.credits-brandicons(src="icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy")]
+                button.button.is-primary.is-credit #[p.has-text-white.subtitle.is-5 Nikhil Gupta]
                 .modal.is-credit
                     .modal-background
                     .modal-content
                         .box
                             p.mb-2.title.is-4 Nikhil Gupta
-                            .tags.is-inline-block #[span.tag.is-info.is-light.nohuechange Marketer] #[span.tag.is-danger.is-light.nohuechange Developer]
+                            .tags.is-inline-block #[span.tag.is-info.is-light.ignore-user-hue Marketer] #[span.tag.is-danger.is-light.ignore-user-hue Developer]
                             br
                             p #[strong Nikhil Gupta] ("not" Ruhan's brother) has also been with Siddhant since the beginning. Throughout the development of Vocabustudy, he has #[strong requested features] to make Vocabustudy better. He #[strong created the Discord server], #[strong invited people], and #[moderates it]. He and Omkar have #[strong shared Vocabustudy with the world], which has helped grow it along the way.
                             .buttons.mt-3.is-inline-block
-                                a(href="https://github.com/Nikhilatvocabustudy").button.is-small.is-github.nohuechange #[img(src="icons/brands/github.svg" alt="GitHub").credits-brandicons]
-                                a(href="https://discordapp.com/users/999731275667619971").button.is-small.is-discord.nohuechange #[img(src="icons/brands/discord.svg" alt="Discord").credits-brandicons]
-                                a(href="/user/indXd3yqrqVZw07LCWHnTm69ZAg1/").button.is-small.is-vocabustudy.nohuechange #[img(src="icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy").credits-brandicons]
-                button.button.is-primary.is-credit #[p(style="color:white;").subtitle.is-5 Michael Zhao]
+                                a.button.is-small.is-github.ignore-user-hue(href="https://github.com/Nikhilatvocabustudy") #[img.credits-brandicons(src="icons/brands/github.svg" alt="GitHub")]
+                                a.button.is-small.is-discord.ignore-user-hue(href="https://discordapp.com/users/999731275667619971") #[img.credits-brandicons(src="icons/brands/discord.svg" alt="Discord")]
+                                a.button.is-small.is-vocabustudy.ignore-user-hue(href="/user/indXd3yqrqVZw07LCWHnTm69ZAg1/") #[img.credits-brandicons(src="icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy")]
+                button.button.is-primary.is-credit #[p.has-text-white.subtitle.is-5 Michael Zhao]
                 .modal.is-credit
                     .modal-background
                     .modal-content
                         .box
                             p.mb-2.title.is-4 Michael Zhao
-                            .tags.is-inline-block #[span.tag.is-warning.is-light.nohuechange Tester]
+                            .tags.is-inline-block #[span.tag.is-warning.is-light.ignore-user-hue Tester]
                             br
                             p #[strong Michael Zhao], once told about Vocabustudy, started stress testing it. The amount of bugs he found and helped fix cannot be counted.* He has helped countless times with making Vocabustudy more responsive and easier to use on smaller screens.
                             p(style="margin-top: 2rem; font-size: 8px;") *Maybe they can be??????????
@@ -231,19 +231,19 @@ block content
             p.title.is-size-5 Vocabustudy was built with the following:
             br
             .py-4.box.has-text-centered(style="height: auto;")
-                div.tile.is-ancestor.is-5
-                    div.tile.is-vertical.is-parent
-                        div.tile.is-child
+                .tile.is-ancestor.is-5
+                    .tile.is-vertical.is-parent
+                        .tile.is-child
                             button.button.has-background-white.is-static.has-text-black(style="font-size: 4rem; border-radius: 6px; height: 100px; border-color: white;") Raleway Font
-                        div.tile.is-child
-                            img.my-auto.has-background-white(src="images/made-with-bulma.png?as=webp&height=100" style="border-radius: 6px; height: 100px;").nohuechange
-                    div.tile.is-parent
-                        div.tile.is-child
-                            img(src="images/built-with-firebase.svg" style="height: 220px").nohuechange
+                        .tile.is-child
+                            img.my-auto.has-background-white.ignore-user-hue(src="images/made-with-bulma.png?as=webp&height=100" style="border-radius: 6px; height: 100px;")
+                    .tile.is-parent
+                        .tile.is-child
+                            img.ignore-user-hue(src="images/built-with-firebase.svg" style="height: 220px")
             ul(style="margin-bottom: 2rem; margin-top: 1rem;")
                 li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
                 li Thank you to all moderators and helpers on the Vocabustudy Discord Server.
-    .page#donate(data-nosnippet)
+    #donate.page(data-nosnippet)
         h1 Donate
         p.title.is-size-3 Your donations help!
         p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
@@ -254,7 +254,7 @@ block content
         p.title.is-size-3 1. BuyMeACoffee
         p If you can donate electronically, please consider buying us a coffee.
         br
-        <a href="https://www.buymeacoffee.com/forzero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" class="nohuechange"></a>
+        a(href="https://www.buymeacoffee.com/forzero" target="_blank") #[img.ignore-user-hue(src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;")]
         br
         br
         p.title.is-size-3 2. Physical Donation
@@ -263,21 +263,21 @@ block content
         ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
         br
         h2.title.is2 Thank you for your donations! Even a dollar can help us improve this website.
-    .page#discord(data-nosnippet)
+    #discord.page(data-nosnippet)
         h1 Discord
         p.title.is-size-5 Vocabustudy Discord Server
         p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
         p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderation by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
         p For any questions about the Discord server, please contact "OP#1192" or "Nikhilatvocabustudy#4578" in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
         p If you wish to join, you can join #[a(href="https://discord.gg/UrRs7Bbr6d") here].
-    .page#youtube(data-nosnippet)
+    #youtube.page(data-nosnippet)
         h1 YouTube
         .has-text-centered
             p.title.is-4 Check out our YouTube channel #[a(href="https://www.youtube.com/@forzero") here!]
             p Our channel is a work in progress, so we don't have much content as of now. However, we'll be adding more content soon, so #[b stay tuned]!
-            iframe(width="650" height="450" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/vZMAcyIOIok?autoplay=1><img src=https://img.youtube.com/vi/vZMAcyIOIok/hqdefault.jpg alt='What is Vocabustudy'><span>▶</span></a>" title="YouTube Video Player" frameborder="0" allow="autoplay; clipboard-write; picture-in-picture" allowfullscreen).nohuechange
-    .page.homepage-lead#home
-        div.custom-scrollbar
+            iframe.ignore-user-hue(width="650" height="450" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/vZMAcyIOIok?autoplay=1><img src=https://img.youtube.com/vi/vZMAcyIOIok/hqdefault.jpg alt='What is Vocabustudy'><span>▶</span></a>" title="YouTube Video Player" frameborder="0" allow="autoplay; clipboard-write; picture-in-picture" allowfullscreen)
+    #home.page.homepage-lead
+        .custom-scrollbar
             div
                 div
                     div
@@ -353,7 +353,7 @@ block content
                             span Sign Up
 append scripts-footer
     .announcements-container
-    .modal#modal-reauthenticate-password
+    #modal-reauthenticate-password.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -364,7 +364,7 @@ append scripts-footer
                 input.input(type="password" required placeholder="Password")
             footer.modal-card-foot
                 button.button.is-success(type="button") OK
-    .modal#modal-change-password
+    #modal-change-password.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -375,7 +375,7 @@ append scripts-footer
                 input.input(type="password" required placeholder="Confirm Password" minlength="6")
             footer.modal-card-foot
                 button.button.is-success(type="button") OK
-    .modal#modal-change-name
+    #modal-change-name.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -385,7 +385,7 @@ append scripts-footer
                 input.input(type="text" required placeholder="Name")
             footer.modal-card-foot
                 button.button.is-success(type="button") OK
-    .modal#modal-filter-collection
+    #modal-filter-collection.modal
         .modal-background
         .modal-card
             header.modal-card-head
@@ -398,7 +398,7 @@ append scripts-footer
                     ul.menu-list
             footer.modal-card-foot
                 button.button.is-success.action-close(type="button") OK
-    .modal#modal-change-hue
+    #modal-change-hue.modal
         .modal-background
         .modal-card
             header.modal-card-head

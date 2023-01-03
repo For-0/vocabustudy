@@ -24,7 +24,7 @@ block extrahead
             border-radius: 6px;
         }
 block content
-    .page#home.has-background-primary
+    #home.page.has-background-primary
         .container.has-background-white.has-text-centered.p-6
             h1.title.is-3.has-text-primary #[span.field-mode]
             p.mb-3 #[span.field-mode ...] #[strong.field-email ...]
@@ -34,10 +34,10 @@ block content
             form(novalidate hidden)
                 .field
                     .control
-                        input.input.is-medium(type="password" placeholder="New Password" id="reset-new-password" required)
+                        input#reset-new-password.input.is-medium(type="password" placeholder="New Password" required)
                 .field
                     .control
-                        input.input.is-medium(type="password" placeholder="Confirm Password" id="reset-confirm-password" required)
+                        input#reset-confirm-password.input.is-medium(type="password" placeholder="Confirm Password" required)
                 button.button.is-primary.is-medium.is-fullwidth(type="submit") Change Password
 append scripts-footer
-     script(src="js/auth-action.js" type="module")
+    script(src="js/auth-action.js" type="module")

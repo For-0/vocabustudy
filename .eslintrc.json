@@ -10,6 +10,7 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
+    "ignorePatterns": ["/src/js/qrcode.min.js"],
     "rules": {
     },
     "globals": {

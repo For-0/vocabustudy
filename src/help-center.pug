@@ -103,9 +103,9 @@ block content
         article.message.is-danger
             .message-body Your sets cannot have offensive, harmful, or explicit content.
                 .tags.has-addons.mt-3
-                        span.tag.is-warning
-                            span.material-symbols-rounded(style="font-size: 1rem;") dangerous
-                        span.tag.is-warning.is-light Sets meeting this criteria will be made private or deleted. The associated account may also be restricted.
+                    span.tag.is-warning
+                        span.material-symbols-rounded(style="font-size: 1rem;") dangerous
+                    span.tag.is-warning.is-light Sets meeting this criteria will be made private or deleted. The associated account may also be restricted.
         article.message.is-info
             .message-body Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
         article.message.is-warning 
@@ -126,7 +126,7 @@ block content
                 br
                 li And more!
             h2 How to create an account
-            p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login")] vocabustudy.org/#login].
+            p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login") https://vocabustudy.org/#Login].
             p 2. Click "log in" in the menu that appears.
             p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email.
                 | We recommend signing in with Google, because it is much easier to create your account and login to it.
@@ -156,7 +156,7 @@ block content
                 br
             h3 Your Account has been verified!
             p You can now use your account when you are using Vocabustudy.
-    .page#home
+    #home.page
         section.hero.is-primary.is-small
             .hero-body.has-text-centered
                 h1.title.is-2.mb-4 Vocabustudy Help Center
@@ -187,8 +187,8 @@ block content
                                 article
                                     a.is-block(href=`#${article.hash}`)
                                         figure.image.is-5by3
-                                            img.nohuechange(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png' alt="Placeholder")
-                                        h2(style="margin-bottom: 0.5rem;").subtitle= article.title
+                                            img.ignore-user-hue(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png' alt="Placeholder")
+                                        h2.subtitle(style="margin-bottom: 0.5rem;")= article.title
                                         span.tag.is-rounded= category.name
             section.my-5
                 .columns.is-multiline

@@ -1,3 +1,5 @@
+// disabled because this file is WIP
+/* eslint-disable no-unused-vars */
 const firestore = {
     dbServer: "https://firestore.googleapis.com/v1/",
     projectPrefix: "projects/vocab-u-study/databases/(default)/documents",

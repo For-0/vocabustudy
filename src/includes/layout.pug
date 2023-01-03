@@ -48,7 +48,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
             nav.navbar.is-primary.is-fixed-top(role="navigation" aria-label="main navigation")
                 .navbar-brand.is-justify-content-space-between
                     a.navbar-item(href="/#")
-                        img.nohuechange(src="icons/icon-192.png" height="28" style="border: 1px solid #fff8; border-radius: 0.5rem;" alt="Navbar Vocabustudy Logo")
+                        img.ignore-user-hue(src="icons/icon-192.png" height="28" style="border: 1px solid #fff8; border-radius: 0.5rem;" alt="Navbar Vocabustudy Logo")
                     a.navbar-burger(role="button" aria-label="menu" aria-expanded="false" data-target="main-navbar")
                         span.has-background-white(aria-hidden="true")
                         span.has-background-white(aria-hidden="true")
@@ -77,7 +77,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
             block content
         .fab-theme-container
             button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme")
-                i(style="font-size: 1.5rem; ").material-symbols-rounded.has-text-white.is-filled light_mode
+                i.material-symbols-rounded.has-text-white.is-filled(style="font-size: 1.5rem; ") light_mode
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
                     i.material-symbols-rounded.is-filled brightness_4
@@ -94,7 +94,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 | - 
                 a.has-text-white.is-underlined.ml-1(href="/#credits") Credits
             .level-item
-                div.is-hidden-mobile
+                .is-hidden-mobile
                     a.has-text-white.is-underlined(href="/privacy/") Privacy Policy
                     |  | 
                     a.has-text-white.is-underlined(href="/#youtube") YouTube

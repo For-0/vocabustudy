@@ -1,0 +1,13 @@
+{
+    "extends": "stylelint-config-standard-scss",
+    "rules": {
+        "indentation": 4,
+        "rule-empty-line-before": "never",
+        "scss/at-import-partial-extension": null,
+        "at-rule-empty-line-before": "never",
+        "max-line-length": null,
+        "no-descending-specificity": null,
+        "scss/at-extend-no-missing-placeholder": null,
+        "scss/no-global-function-names": null
+    }
+}

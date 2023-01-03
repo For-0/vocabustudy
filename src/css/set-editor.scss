@@ -1,5 +1,4 @@
 @import "styles.scss";
-
 #home .field-terms-edit {
     margin-bottom: 2rem;
     .editor-term {
@@ -28,18 +27,18 @@
                 &:nth-child(3) .label::after {
                     content: "(correct)";
                     float: right;
-                    color: hsl(141, 71%, 48%);
+                    color: hsl(141deg 71% 48%);
                 }
                 &:not(:nth-child(3)) .label::after {
                     content: "(incorrect)";
                     float: right;
-                    color: hsl(348, 100%, 61%);
+                    color: hsl(348deg 100% 61%);
                 }
             }
             .field:has(input:last-of-type:checked) ~ .answer-input .label::after {
                 content: "(correct)";
                 float: right;
-                color: hsl(141, 71%, 48%);
+                color: hsl(141deg 71% 48%);
             }
             .has-workaround {
                 display: none;
@@ -55,14 +54,14 @@
         }
     }
 }
-
 .vocab-words-controls.level.box {
     top: calc(120px + 1rem);
     position: sticky;
     z-index: 1;
     @media screen and (min-width: 500px) {
         display: flex;
-        > .level-left, .level-right {
+        > .level-left,
+        .level-right {
             display: flex;
         }
         > .level-left + .level-right {
