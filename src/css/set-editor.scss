@@ -27,18 +27,18 @@
                 &:nth-child(3) .label::after {
                     content: "(correct)";
                     float: right;
-                    color: hsl(141deg 71% 48%);
+                    color: hsl(141deg, 71%, 48%);
                 }
                 &:not(:nth-child(3)) .label::after {
                     content: "(incorrect)";
                     float: right;
-                    color: hsl(348deg 100% 61%);
+                    color: hsl(348deg, 100%, 61%);
                 }
             }
             .field:has(input:last-of-type:checked) ~ .answer-input .label::after {
                 content: "(correct)";
                 float: right;
-                color: hsl(141deg 71% 48%);
+                color: hsl(141deg, 71%, 48%);
             }
             .has-workaround {
                 display: none;

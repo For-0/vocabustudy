@@ -8,6 +8,7 @@
         "max-line-length": null,
         "no-descending-specificity": null,
         "scss/at-extend-no-missing-placeholder": null,
-        "scss/no-global-function-names": null
+        "scss/no-global-function-names": null,
+        "color-function-notation": "legacy"
     }
 }
