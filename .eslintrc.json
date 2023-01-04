@@ -12,6 +12,7 @@
     },
     "ignorePatterns": ["/src/js/qrcode.min.js"],
     "rules": {
+        "no-unused-vars": ["error", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }]
     },
     "globals": {
         "process": true,

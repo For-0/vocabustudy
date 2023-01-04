@@ -23,6 +23,10 @@ service cloud.firestore {
       let keys = request.resource.data.keys();
       return keys.hasAll(required) && keys.hasOnly(required.concat(optional));
     }
+    function nameWordsMatchesName() {
+        let normalizedNameWords = request.resource.data.name.replace("[\\x{0300}-\\x{036F}]", "").replace("\\W", " ").lower().trim().split("\\s+").removeAll([" "]);
+        return request.resource.data.nameWords.hasOnly(normalizedNameWords);
+    }
     function canView() {
       return
         resource.data.visibility == 1 ||
@@ -45,8 +49,8 @@ service cloud.firestore {
       allow get: if resource == null || canView();
       allow list: if resource.data.visibility == 2 || isCreator();
       allow delete: if isCreator() && canAdminDelete();
-      allow update: if isCreator() && onlyUpdated(["creator", "nameWords", "name", "numTerms", "collections", "visibility"]) && isNotImpersonating(false);
-      allow create: if auth() && limitResourceKeys(["creator", "nameWords", "name", "numTerms", "collections", "uid", "visibility"], ["likes"]) && request.resource.data.likes == 0 && isNotImpersonating(false);
+      allow update: if isCreator() && onlyUpdated(["creator", "nameWords", "name", "numTerms", "collections", "visibility"]) && isNotImpersonating(false) && nameWordsMatchesName();
+      allow create: if auth() && limitResourceKeys(["creator", "nameWords", "name", "numTerms", "collections", "uid", "visibility"], ["likes"]) && request.resource.data.likes == 0 && isNotImpersonating(false) && nameWordsMatchesName();
     }
     match /collections/{collection_id} {
       allow read: if true;

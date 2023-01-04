@@ -397,9 +397,9 @@ fields.formEdit.addEventListener("submit", async e => {
     if (!fields.formEdit.reportValidity()) return fields.formEdit.classList.add("has-validated-inputs");
     let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
     if (terms.length < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});
-    let setName = fields.setName.value;
+    let setName = fields.setName.value.normalize("NFD");
     let description = fields.setDescription.value;
-    let nameWords = getWords(setName.normalize("NFD").replace(/\p{Diacritic}/gu, ""));
+    let nameWords = getWords(setName.replace(/\p{Diacritic}/gu, ""));
     let visibility = [...fields.visibilityOptions].findIndex(el => el.classList.contains("is-active"));
     if (visibility === 2) visibility = fields.shareDialogInput.items;
     else if (visibility === 3) visibility--;

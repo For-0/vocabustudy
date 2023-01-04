@@ -36,14 +36,10 @@
     "cleanup": "rm -rf .parcel-cache dist",
     "watch": "npm run cleanup && parcel watch --no-hmr",
     "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import ../vocabustudy-internals/emulator-data --export-on-exit",
-    "clean": "rm -r dist && rm -r .parcel-cache",
-    "publish": "npm run build && firebase deploy --only hosting:vocabustudy",
-    "publish-nightly": "npm version patch && npm run build && firebase deploy --only hosting:nightly",
-    "publish-major": "npm version major && npm run publish",
-    "publish-minor": "npm version minor && npm run publish",
-    "delete-maps": "npm run delete-map-files && npm run delete-references-to-map-files",
-    "delete-map-files": "find ./dist -name '*.map' -delete",
-    "delete-references-to-map-files": "find ./dist -regex \".*\\.\\(js\\|css\\)\" -exec sed -i -E \"\\/[\\*\\/]#\\ssourceMappingURL=.*(\\.[0-9a-f]+)?\\.(css|js)\\.map(\\*\\/)?/g\" {} +"
+    "delete-maps": "npm run delete-maps:files&& npm run delete-maps:references",
+    "delete-maps:files": "find ./dist -name '*.map' -delete",
+    "delete-maps:references": "find ./dist -regex \".*\\.\\(js\\|css\\)\" -exec sed -i -E \"\\/[\\*\\/]#\\ssourceMappingURL=.*(\\.[0-9a-f]+)?\\.(css|js)\\.map(\\*\\/)?/g\" {} +",
+    "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\""
   },
   "keywords": [],
   "author": "Siddhant Kameswar",
@@ -71,6 +67,7 @@
     "stylelint-config-standard-scss": "^6.1.0"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^2.0.5",
     "@parcel/packager-raw-url": "^2.8.2",
     "@parcel/service-worker": "^2.8.2",
     "@parcel/transformer-jsonld": "^2.8.2",
@@ -78,6 +75,7 @@
     "@parcel/transformer-sass": "^2.8.2",
     "@parcel/transformer-webmanifest": "^2.8.2",
     "eslint": "^8.28.0",
+    "mocha": "^10.2.0",
     "parcel": "^2.8.2",
     "process": "^0.11.10",
     "pug-lint": "^2.6.0",
