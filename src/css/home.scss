@@ -263,3 +263,9 @@ body > .announcements-container {
     max-width: 300px;
     width: 300px;
 }
+.btn-create {
+    text-decoration: none;
+    &:hover > span:nth-child(2){
+        text-decoration: underline;
+    }
+}
