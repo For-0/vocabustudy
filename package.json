@@ -23,7 +23,7 @@
       "distDir": "./dist"
     },
     "service-worker": {
-      "source": "src/js/service-worker.js",
+      "source": "src/service-worker.js",
       "context": "service-worker",
       "outputFormat": "esmodule",
       "distDir": "./dist"
@@ -36,7 +36,7 @@
     "cleanup": "rm -rf .parcel-cache dist",
     "watch": "npm run cleanup && parcel watch --no-hmr",
     "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import ../vocabustudy-internals/emulator-data --export-on-exit",
-    "delete-maps": "npm run delete-maps:files&& npm run delete-maps:references",
+    "delete-maps": "npm run delete-maps:references",
     "delete-maps:files": "find ./dist -name '*.map' -delete",
     "delete-maps:references": "find ./dist -regex \".*\\.\\(js\\|css\\)\" -exec sed -i -E \"\\/[\\*\\/]#\\ssourceMappingURL=.*(\\.[0-9a-f]+)?\\.(css|js)\\.map(\\*\\/)?/g\" {} +",
     "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\""

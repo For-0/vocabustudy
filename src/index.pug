@@ -91,10 +91,10 @@ block content
             .dropdown.is-pulled-right
                 .dropdown-trigger
                     button.button.btn-create.has-text-white.is-ghost(aria-haspopup="true" aria-controls="dropdown-menu")
-                        span.icon
+                        span.icon(style="text-decoration: none;")
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
                         span Create
-                        span.icon.is-small
+                        span.icon.is-small(style="text-decoration: none;")
                             i.material-symbols-rounded(aria-hidden="true") arrow_drop_down
                 .dropdown-menu.menu-create(role="menu")
                     .dropdown-content
@@ -275,7 +275,8 @@ block content
         .has-text-centered
             p.title.is-4 Check out our YouTube channel #[a(href="https://www.youtube.com/@forzero") here!]
             p Our channel is a work in progress, so we don't have much content as of now. However, we'll be adding more content soon, so #[b stay tuned]!
-            iframe.ignore-user-hue(width="650" height="450" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/vZMAcyIOIok?autoplay=1><img src=https://img.youtube.com/vi/vZMAcyIOIok/hqdefault.jpg alt='What is Vocabustudy'><span>▶</span></a>" title="YouTube Video Player" frameborder="0" allow="autoplay; clipboard-write; picture-in-picture" allowfullscreen)
+            a.ignore-user-hue(href="https://www.youtu.be/vZMAcyIOIok")
+                img(src="https://img.youtube.com/vi/vZMAcyIOIok/hqdefault.jpg" alt='What is Vocabustudy')
     #home.page.homepage-lead
         .custom-scrollbar
             div
@@ -292,7 +293,7 @@ block content
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
-                                i.material-symbols-rounded keyboard_double_arrow_down
+                                i.material-symbols-rounded(aria-hidden="true") keyboard_double_arrow_down
             .home-features
                 div
                     h2.is-size-4 Features:
@@ -300,7 +301,7 @@ block content
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon
-                                    i.material-symbols-rounded tune
+                                    i.material-symbols-rounded(aria-hidden="true") tune
                             .list-item-content
                                 .list-item-title Multiple Study Modes
                                 .list-item-description 
@@ -309,7 +310,7 @@ block content
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon
-                                    i.material-symbols-rounded category
+                                    i.material-symbols-rounded(aria-hidden="true") category
                             .list-item-content
                                 .list-item-title Collections
                                 .list-item-description 
@@ -318,7 +319,7 @@ block content
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon
-                                    i.material-symbols-rounded rule
+                                    i.material-symbols-rounded(aria-hidden="true") rule
                             .list-item-content 
                                 .list-item-title Effective Test Prep
                                 .list-item-description 
@@ -327,7 +328,7 @@ block content
                         li.list-item.is-flex-wrap-nowrap.pb-0.is-clickable(onclick="window.open('https://github.com/For-0')")
                             .list-item-image
                                 span.icon
-                                    i.material-symbols-rounded money_off
+                                    i.material-symbols-rounded(aria-hidden="true") money_off
                             .list-item-content
                                 .list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
                                 .list-item-description 
@@ -336,7 +337,7 @@ block content
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon
-                                    i.material-symbols-rounded school
+                                    i.material-symbols-rounded(aria-hidden="true") school
                             .list-item-content
                                 .list-item-title Study Guides
                                 .list-item-description 

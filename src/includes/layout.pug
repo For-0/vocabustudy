@@ -81,13 +81,13 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 i.material-symbols-rounded.has-text-white.is-filled(style="font-size: 1.5rem; ") light_mode
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
-                    i.material-symbols-rounded.is-filled brightness_4
+                    i.material-symbols-rounded.is-filled(aria-hidden="true") brightness_4
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="Dark")
-                    i.material-symbols-rounded.is-filled dark_mode
+                    i.material-symbols-rounded.is-filled(aria-hidden="true") dark_mode
                 button.button.is-primary.fab-theme.is-floating(aria-label="Light" title="Light")
-                    i.material-symbols-rounded.is-filled light_mode
+                    i.material-symbols-rounded.is-filled(aria-hidden="true") light_mode
                 button.button.is-primary.fab-theme.is-floating.btn-change-hue(hidden aria-label="Hue" title="Set Hue")
-                    i.material-symbols-rounded.is-filled palette
+                    i.material-symbols-rounded.is-filled(aria-hidden="true") palette
         footer.footer.level.is-mobile(style="position: relative;")
             p.level-item
                 a(href="https://github.com/For-0/vocabustudy/releases") #[span.mr-1 #[span.tag.is-secondary v#{process.env.npm_package_version}]]
@@ -103,9 +103,9 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.has-text-white.is-underlined(href="/#discord") Discord
                 .is-hidden-tablet(style="transform: scale(0.8);")
                     a.has-text-white.mr-3.is-filled.icon(href="/privacy/" title="Privacy")
-                        i.material-symbols-rounded verified_user
+                        i.material-symbols-rounded(aria-hidden="true") verified_user
                     a.has-text-white.mr-3.is-filled.icon(href="/#youtube" title="YouTube")
-                        i.material-symbols-rounded subscriptions
+                        i.material-symbols-rounded(aria-hidden="true") subscriptions
                     a.has-text-white.mr-3.is-filled.icon(href="/#discord" title="Discord")
                         img.credits-brandicons(src="icons/brands/discord.svg" style="height: 1.5rem; width: 1.5rem;" alt="Discord")
         block scripts-footer

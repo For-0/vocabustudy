@@ -35,7 +35,7 @@ block content
                                 button.button(type="button")
                                     span Private
                                     span.icon
-                                        i.material-symbols-rounded expand_more
+                                        i.material-symbols-rounded(aria-hidden="true") expand_more
                             .dropdown-menu
                                 .dropdown-content
                                     .dropdown-item Set Visibility
@@ -57,15 +57,15 @@ block content
                         .buttons
                             button.button.is-primary.btn-add-term.ml-4(type="button")
                                 span.icon
-                                    i.material-symbols-rounded add_circle
+                                    i.material-symbols-rounded(aria-hidden="true") add_circle
                                 span Add
                             button.button.is-light.is-primary.btn-add-quiz.ml-4(type="button" hidden)
                                 span.icon
-                                    i.material-symbols-rounded add_circle
+                                    i.material-symbols-rounded(aria-hidden="true") add_circle
                                 span Add Quiz
                             button.button.is-outlined.is-primary.ml-4.btn-import-terms(type="button")
                                 span.icon
-                                    i.material-symbols-rounded.is-filled upload_file
+                                    i.material-symbols-rounded.is-filled(aria-hidden="true") upload_file
                                 span Import Items
             .notification.is-warning.is-light.warning-duplicate(hidden)
                 span.icon.mr-3
@@ -88,12 +88,12 @@ block content
                 .control
                     button.button.is-primary(type="submit")
                         span.icon
-                            span.material-symbols-rounded save
+                            span.material-symbols-rounded(aria-hidden="true") save
                         span Save
                 .control
                     button.button.is-primary.is-outlined.btn-cancel(type="button")
                         span.icon
-                            span.material-symbols-rounded cancel
+                            span.material-symbols-rounded(aria-hidden="true") cancel
                         span Cancel
 append scripts-footer
     #dialog-import-terms.modal

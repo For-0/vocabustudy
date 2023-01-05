@@ -5,6 +5,8 @@ import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
 import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
 
+window.BulmaTagsInput = BulmaTagsInput; // prevent parcel from tree shaking proper
+
 class QuizQuestion extends HTMLElement {
     constructor() {
         super();

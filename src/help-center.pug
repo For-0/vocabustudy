@@ -175,11 +175,11 @@ block content
                                 .control
                                     button.button.is-small(disabled)
                                         span.icon
-                                            i.material-symbols-rounded chevron_left
+                                            i.material-symbols-rounded(aria-hidden="true") chevron_left
                                 .control
                                     button.button.is-small(disabled)
                                         span.icon
-                                            i.material-symbols-rounded chevron_right
+                                            i.material-symbols-rounded(aria-hidden="true") chevron_right
                 .columns
                     each category in articleCategories
                         each article in category.articles.filter(article => article.featured)
@@ -203,6 +203,6 @@ block content
                                         li.pt-4
                                             a.is-block.has-text-dark(href=`#${article.hash}`)= article.title
                                                 span.icon.is-pulled-right
-                                                    i.material-symbols-rounded arrow_forward
+                                                    i.material-symbols-rounded(aria-hidden="true") arrow_forward
 append scripts-footer
     script(src="js/help-center.js" type="module")

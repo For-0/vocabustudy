@@ -31,7 +31,7 @@ block content
                 .mt-auto
                     button.button
                         span.icon
-                            i.material-symbols-rounded loop
+                            i.material-symbols-rounded(aria-hidden="true") loop
                         span Shuffle
             .column.is-flex.is-flex-direction-column
                 .is-flex-grow-1.is-clickable.is-relative
@@ -41,7 +41,7 @@ block content
                         span Previous
                     button.button.is-primary
                         span.icon
-                            i.material-symbols-rounded.is-filled change_circle
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") change_circle
                         span Flip #[kbd.is-hidden-touch Space]
                     button.button
                         span Next
@@ -66,14 +66,14 @@ block content
                     svg(viewbox="0 0 48 48")
                         circle
                         circle
-            .is-flex-grow-1.is-flex.is-flex-direction-column.mb-0(style="overflow-wrap: break-word;")
+            .is-flex-grow-1.is-flex.is-flex-direction-column.mb-0(style="overflow-wrap: break-word; min-width: 0;")
                 .is-flex-grow-1(style="font-size: 3rem;") #[p.has-text-centered]
-                div
+                .custom-scrollbar.is-thumb-only(style="overflow-y: auto;")
                     p.has-text-centered
                         button.button.is-primary.is-outlined(type='button')
                             span Most Missed Questions
                             span.icon
-                                i.material-symbols-rounded open_in_new
+                                i.material-symbols-rounded(aria-hidden="true") open_in_new
                     .notification.m-0.has-text-centered.is-relative.is-clickable.is-success Correct #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop Tap here to move on.]
                     .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop.is-block.has-text-right(style="margin-left: 150px;") Tap here to move on.]
                         button.button.is-danger(type='button') Override - Correct
@@ -88,22 +88,22 @@ block content
                     .column.is-half.p-1.pt-0.pl-0
                         button.button.is-large(data-answerindex='0')
                             span.icon
-                                i.material-symbols-rounded filter_1
+                                i.material-symbols-rounded(aria-hidden="true") filter_1
                             span #[span.fit Option 1]
                     .column.is-half.p-1.pr-0.pt-0
                         button.button.is-large(data-answerindex='1')
                             span.icon
-                                i.material-symbols-rounded filter_2
+                                i.material-symbols-rounded(aria-hidden="true") filter_2
                             span #[span.fit Option 2]
                     .column.is-half.p-1.pl-0.pb-0
                         button.button.is-large(data-answerindex='3')
                             span.icon
-                                i.material-symbols-rounded filter_3
+                                i.material-symbols-rounded(aria-hidden="true") filter_3
                             span #[span.fit Option 3]
                     .column.is-half.p-1.pr-0.pb-0
                         button.button.is-large(data-answerindex='4')
                             span.icon
-                                i.material-symbols-rounded filter_4
+                                i.material-symbols-rounded(aria-hidden="true") filter_4
                             span #[span.fit Option 4]
     #test.page
         h1 Test - #[span] #[+close_button]
@@ -111,7 +111,7 @@ block content
             .is-flex.column.is-narrow
                 button.button.is-hidden-tablet.is-primary-alt
                     span.icon
-                        i.material-symbols-rounded settings
+                        i.material-symbols-rounded(aria-hidden="true") settings
                 .is-flex-mobile.is-flex-direction-row.is-flex-wrap-wrap.is-align-items-center.is-justify-content-space-between.is-hidden-mobile
                     p.mb-2 #[strong Answer With:]
                     .field
@@ -142,11 +142,11 @@ block content
                             input.input.field-max-terms(type="number" min="0" placeholder="20")
                 button.button.mb-2
                     span.icon
-                        i.material-symbols-rounded loop
+                        i.material-symbols-rounded(aria-hidden="true") loop
                     span New Test
                 button.button.is-primary
                     span.icon
-                        i.material-symbols-rounded check_circle
+                        i.material-symbols-rounded(aria-hidden="true") check_circle
                     span Check Answers
             fieldset.custom-scrollbar.is-thumb-only.column
                 h2.title.is-4(data-count='0')  Short Answer Question
@@ -178,11 +178,11 @@ block content
                 p Time: #[span.field-time 0.0]s
                 button.button.mb-3
                     span.icon
-                        i.material-symbols-rounded loop
+                        i.material-symbols-rounded(aria-hidden="true") loop
                     span Restart
                 button.button.mb-3
                     span.icon
-                        i.material-symbols-rounded help
+                        i.material-symbols-rounded(aria-hidden="true") help
             .columns.column.is-mobile
                 .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
                 .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
@@ -200,7 +200,7 @@ block content
         hr.my-3
         .columns.main-content.is-flex-direction-row-reverse.is-flex-grow-1.custom-scrollbar.is-thumb-only(style="overflow: auto; overflow-wrap: break-word;")
             .column.is-narrow
-                .study-modes.box.buttons.are-medium.custom-scrollbar.is-thumb-only(style="width: min-content; height: calc(100% - 1.5rem); overflow: auto;")
+                .study-modes.box.buttons.are-medium.custom-scrollbar.is-thumb-only(style="width: min-content; height: 100%; overflow: auto;")
                     a.button.is-primary.is-fullwidth(href="#flashcards")
                         span.icon
                             i.material-symbols-rounded.is-filled(aria-hidden="true") collections
@@ -283,13 +283,13 @@ append scripts-footer
                             .buttons
                                 button.button.btn-copy-link(type="button" title="Copy")
                                     span.icon
-                                        i.material-symbols-rounded content_paste
+                                        i.material-symbols-rounded(aria-hidden="true") content_paste
                                 button.button.btn-shorten-link(type="button" title="Shorten")
                                     span.icon
-                                        i.material-symbols-rounded app_shortcut
+                                        i.material-symbols-rounded(aria-hidden="true") app_shortcut
                                 button.button.btn-share(type="button" title="Share")
                                     span.icon
-                                        i.material-symbols-rounded share
+                                        i.material-symbols-rounded(aria-hidden="true") share
                     .list-item
                         .list-item-content
                             .list-item-title Export
@@ -300,7 +300,7 @@ append scripts-footer
                             .buttons
                                 button.button.btn-copy(type="button" title="Copy Terms")
                                     span.icon
-                                        i.material-symbols-rounded content_paste
+                                        i.material-symbols-rounded(aria-hidden="true") content_paste
                     .list-item
                         .list-item-content
                             .list-item-title QR Code
@@ -310,7 +310,7 @@ append scripts-footer
                             .buttons
                                 button.button.btn-copy-qrcode(type="button" title="Copy Terms")
                                     span.icon
-                                        i.material-symbols-rounded content_paste
+                                        i.material-symbols-rounded(aria-hidden="true") content_paste
             footer.modal-card-foot
                 button.button.is-success.action-close(type="button") OK
     script(src="js/set-detail.js" type="module")
