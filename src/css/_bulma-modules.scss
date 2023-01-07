@@ -2,13 +2,15 @@
 /* stylelint-disable at-rule-empty-line-before */
 
 /*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
+$primary-color: #795548 !default;
+$secondary-color: #4f2b26 !default;
 $primary-alt: #8a6051;
 $secondary-alt: #a67360;
 $main-font: "Raleway", blinkmacsystemfont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 @use "@bulvar/bulma/sass/utilities/functions" as fn;
 @forward "@bulvar/bulma/sass/utilities" with (
-    $primary: #795548,
-    $secondary: #4F2B26,
+    $primary: $primary-color,
+    $secondary: $secondary-color,
     $custom-colors: ("primary-alt": ($primary-alt, fn.findColorInvert($primary-alt)), "secondary-light": ($secondary-alt, fn.findColorInvert($secondary-alt)), "gold": (goldenrod, fn.findColorInvert(goldenrod))),
     $family-primary: $main-font
 );
