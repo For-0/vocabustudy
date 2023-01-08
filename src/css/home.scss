@@ -103,7 +103,9 @@
             margin-top: 4px;
         }
         .card {
-            max-width: 50%;
+            @media (min-width: 769px) {
+                max-width: 50%;
+            }
         }
     }
     .field-search-container .buttons span {
@@ -263,9 +265,9 @@ body > .announcements-container {
     max-width: 300px;
     width: 300px;
 }
-.btn-create {
+.btn-create.button.is-ghost:hover {
     text-decoration: none;
-    &:hover > span:nth-child(2) {
+    > span:nth-child(2) {
         text-decoration: underline;
     }
 }

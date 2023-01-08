@@ -40,10 +40,6 @@ main,
     }
 }
 #home .field-terms {
-    &:empty::after {
-        content: "Loading set...";
-        font-size: larger;
-    }
     .box {
         img {
             max-width: 100%;
@@ -73,6 +69,20 @@ main,
             padding-top: 10%;
             margin-top: -10%;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23795548' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8'/%3E%3C/svg%3E");
+        }
+    }
+}
+.quickview-body {
+    min-width: 0;
+    .list-item-content {
+        min-width: 0;
+        .list-item-title.is-flex > span:first-child {
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+        .list-item-description {
+            min-width: 0;
+            overflow-wrap: break-word;
         }
     }
 }

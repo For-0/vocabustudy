@@ -277,7 +277,7 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
     let visibilityData = SET_VISIBILITIES[Array.isArray(set.visibility) ? 3 : set.visibility];
     let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
-            createElement("p", ["card-header-title"], { innerText: set.name }),
+            createElement("p", ["card-header-title"], { innerText: set.name, style: { overflowWrap: "anywhere" } }),
             createElement("span", ["card-header-icon"], {}, [
                 createElement("span", ["tag", `is-${visibilityData.color}`], {innerText: visibilityData.title})
             ])
@@ -316,7 +316,7 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     let setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
     let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
-            createElement("p", ["card-header-title"], { innerText: name }),
+            createElement("p", ["card-header-title"], { innerText: name, style: { overflowWrap: "anywhere" } }),
             createElement("a", ["card-header-icon", "has-tooltip-arrow", "link-user"], {href: `/user/${uid}/`}, [
                 createElement("span", ["icon", "has-text-gold"], {}, [
                     createElement("i", ["is-filled", "material-symbols-rounded"], {innerText: "person"})
@@ -357,7 +357,7 @@ export function createCustomCollectionCard(collection, id) {
     })
     let cardEl = createElement("div", ["card", "has-spreaded-content", "has-validated-inputs"], {}, [
         createElement("header", ["card-header"], {}, [
-            createElement("p", ["card-header-title"], {innerText: collection.name}),
+            createElement("p", ["card-header-title"], {innerText: collection.name, style: {overflowWrap: "anywhere"}}),
             createElement("span", ["card-header-icon"], {}, [
                 createElement("span", ["tag", "is-light"], {innerText: `${collection.sets.length} sets`})
             ])

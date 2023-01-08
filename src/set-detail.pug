@@ -75,7 +75,7 @@ block content
                             span.icon
                                 i.material-symbols-rounded(aria-hidden="true") open_in_new
                     .notification.m-0.has-text-centered.is-relative.is-clickable.is-success Correct #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop Tap here to move on.]
-                    .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop.is-block.has-text-right(style="margin-left: 150px;") Tap here to move on.]
+                    .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-mobile Press #[kbd Enter] or click here to move on.]#[span.is-hidden-tablet.has-text-right(style="margin-right: 150px;") Tap here to move on.]
                         button.button.is-danger(type='button') Override - Correct
                 .p-1
                     accent-keyboard.custom-scrollbar
@@ -108,7 +108,7 @@ block content
     #test.page
         h1 Test - #[span] #[+close_button]
         .columns.is-flex-touch
-            .is-flex.column.is-narrow
+            .is-flex.column.is-narrow(style="min-height: 0; overflow-y: auto;")
                 button.button.is-hidden-tablet.is-primary-alt
                     span.icon
                         i.material-symbols-rounded(aria-hidden="true") settings
@@ -196,9 +196,9 @@ block content
             p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
                 span.field-num-terms
                 |  terms
-        p.field-description
+        p.field-description(style="min-height: 0;overflow-y: auto;max-height:25vh;")
         hr.my-3
-        .columns.main-content.is-flex-direction-row-reverse.is-flex-grow-1.custom-scrollbar.is-thumb-only(style="overflow: auto; overflow-wrap: break-word;")
+        .columns.main-content.is-flex-direction-row-reverse.custom-scrollbar.is-thumb-only(style="overflow: auto; overflow-wrap: break-word;flex: 1;")
             .column.is-narrow
                 .study-modes.box.buttons.are-medium.custom-scrollbar.is-thumb-only(style="width: min-content; height: 100%; overflow: auto;")
                     a.button.is-primary.is-fullwidth(href="#flashcards")

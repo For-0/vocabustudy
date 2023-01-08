@@ -202,6 +202,29 @@ const fields = {
     fieldImportBlooket:document.querySelector(".field-import-blooket"),
     warningDuplicateTerms: document.querySelector(".warning-duplicate"),
 };
+const ratelimit = {
+    remaining: 5,
+    timeout: 0,
+    toastIsShowing: false,
+    setTimeout() {
+        window.clearTimeout(this.timeout);
+        this.timeout = window.setTimeout(() => this.remaining = 5,  5000);
+    },
+    canDoAction() {
+        if (this.remaining > 0) {
+            this.setTimeout();
+            this.remaining--;
+            return true;
+        } else {
+            if (!this.toastIsShowing) {
+                toast({message: "Ratelimit exceeded", type: "is-warning", dismissible: true, position: "bottom-center"});
+                this.toastIsShowing = true;
+                window.setTimeout(() => this.toastIsShowing = false, 2000);
+            }
+            return false;
+        }
+    }
+};
 let changesSaved = true;
 function selectDropdownItem(dropdownItem) {
     document.querySelector(".field-visibility a.is-active").classList.remove("is-active");
@@ -396,6 +419,7 @@ fields.btnAddQuiz.addEventListener("click", () => createTermInput({title: "", qu
 fields.btnImportTerms.addEventListener("click", () => importTerms());
 fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
+    if (!ratelimit.canDoAction()) return;
     if (!fields.formEdit.reportValidity()) return fields.formEdit.classList.add("has-validated-inputs");
     let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
     if (terms.length < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});

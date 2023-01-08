@@ -157,3 +157,6 @@ a:visited.dropdown-item {
 input[type="text"] {
     transition: 0.1s border-color;
 }
+[data-tooltip]::before {
+    max-width: 80vw;
+}

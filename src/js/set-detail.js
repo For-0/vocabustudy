@@ -359,6 +359,7 @@ const pages = {
         progressIndicator: document.querySelector("#learn .progress-circle"),
         currentQuestionType: document.querySelector("#learn .field-current-type"),
         currentQuestionIndex: 0,
+        fittyInitialized: false,
         /**
          * @param {KeyboardEvent} e
          */
@@ -377,6 +378,15 @@ const pages = {
             this.generateQuestion();
             this.answerSABtns.clear();
             this.answerSABtns.initialize(currentSet.specials, this.answerSA);
+            if (!this.fittyInitialized) {
+                for (let btn of this.answerMC.elements) {
+                    fitty(btn.querySelector(".fit"), {maxSize: 24, minSize: 4, multiLine: true});
+                    btn.querySelector(".fit").addEventListener("fit", () => {
+                        if (btn.querySelector(".fit").scrollHeight > btn.clientHeight) resizeTextToMaxHeight(btn.querySelector(".fit"), 60, 4);
+                    });
+                }
+                this.fittyInitialized = true;
+            }
         },
         generateQuestion() {
             let mcQuestions = this.questionData.filter(el => el.mc > 0);
@@ -485,11 +495,8 @@ const pages = {
         },
         init() {
             this.radioBtns.forEach(el => el.addEventListener("change", () => this.generateQuestion()));
-            for (let btn of this.answerMC.elements) {
+            for (let btn of this.answerMC.elements)
                 btn.addEventListener("click", () => this.processMCResult(parseInt(btn.dataset.answerindex)));
-                fitty(btn.querySelector(".fit"), {maxSize: 24, minSize: 4});
-                btn.querySelector(".fit").addEventListener("fit", () => resizeTextToMaxHeight(btn.querySelector(".fit"), 60, 4));
-            }
             this.checkOnlyStarred.addEventListener("change", () => this.show());
             this.msgCorrect.addEventListener("click", () => this.generateQuestion());
             this.msgIncorrect.addEventListener("click", () => this.generateQuestion());
@@ -512,7 +519,7 @@ const pages = {
         el: document.getElementById("test"),
         setName: document.querySelector("#test h1 > span"),
         btnToggleSettings: document.querySelector("#test > div > div:first-child .button"),
-        btnNew: document.querySelector("#test > div > div:first-child .button:not(.is-dark)"),
+        btnNew: document.querySelector("#test > div > div:first-child .button:not(.is-dark):not(.is-primary-alt)"),
         btnCheck: document.querySelector("#test > div > div:first-child .button.is-primary"),
         radioBtns: document.querySelectorAll("#test input[name='radio-test-answer-with']"),
         checkboxes: [...document.querySelectorAll("#test input[type=checkbox]:not(#check-test-starred)")],
