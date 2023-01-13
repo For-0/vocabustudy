@@ -39,6 +39,7 @@ Examples of unacceptable behavior include:
   professional setting
 * Gambling (unless you are the owner)
 * Whining
+* Swearing, including using the phrase "I swear" or an acronym of a swear word. (If you swear you will be instantly banned for life)
 
 ## Enforcement Responsibilities
 
