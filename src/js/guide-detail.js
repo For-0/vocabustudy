@@ -123,7 +123,7 @@ function createItem(item, index) {
     if (item.type === 0) {
         let cardEl = createElement("li", ["guide-item"], {}, [
             createElement("h2", ["title", "is-4"], { innerHTML: styleAndSanitize("# " + item.title) }),
-            createElement("div", [], { innerHTML: styleAndSanitize(item.body) })
+            createElement("div", ["content"], { innerHTML: styleAndSanitize(item.body) })
         ]);
         if (index === 0) cardEl.classList.add("is-active");
         return pages.setOverview.terms.appendChild(cardEl);

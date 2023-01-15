@@ -3,11 +3,13 @@ import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 // eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, updatePassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, sendPasswordResetEmail, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, updatePassword, updateProfile } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
 import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
+
+/* global google */
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
 const { db, auth } = initialize(async user => {
@@ -95,17 +97,95 @@ const pages = {
         inputConfirmPassword: document.querySelector("#login-confirm-password"),
         checkTos: document.querySelector("#login-accept-tos"),
         btnSubmit: document.querySelector("#login button[type=submit]"),
-        btnContinueGoogle: document.querySelector("#login .btn-continue-google"),
+        onetapLoaded: false,
         show(switchMode = true) {
             this.btnSubmit.disabled = false;
-            this.btnContinueGoogle.disabled = false;
             if (switchMode) this.page.dataset.mode = "login";
             this.btnSubmit.classList.remove("is-loading");
-            this.btnContinueGoogle.classList.remove("is-loading");
             this.form.reset();
             this.form.classList.remove("has-validated-inputs");
             if (auth.currentUser) 
                 return location.hash = "#account";
+            if (!this.onetapLoaded) {
+                if (process.env.NODE_ENV !== "development") {
+                    if ("google" in window) this.setupGoogleButton();
+                    else window.onGoogleLibraryLoad = () => this.setupGoogleButton();
+                } else {
+                    let btn = document.getElementById("google-onetap-container").appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
+                    btn.addEventListener("click", async () => {
+                        const provider = new GoogleAuthProvider();
+                        try {
+                            await signInWithPopup(auth, provider);
+                            pages.login.restoreState();
+                        } catch (err) {
+                            switch(err.code) {
+                                case "auth/popup-blocked":
+                                    toast({message: "The popup was blocked", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
+                                    break;
+                                case "auth/popup-closed-by-user":
+                                    toast({message: "Operation Cancelled", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
+                                    break;
+                                case "auth/too-many-requests":
+                                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                    break;
+                                case "auth/user-disabled":
+                                    toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                                    break;
+                                case "auth/account-exists-with-different-credential":
+                                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                    break;
+                            }
+                        } finally {
+                            pages.login.show();
+                        }
+                    });
+                    this.onetapLoaded = true;
+                }
+            }
+        },
+        setupGoogleButton() {
+            if (process.env.NODE_ENV !== "development") {
+                google.accounts.id.initialize({
+                    client_id: "230085427328-qenpln5lodm47t04dqqgeiuc5acpm7sv.apps.googleusercontent.com",
+                    context: "signin",
+                    ux_mode: "popup",
+                    auto_select: true,
+                    callback: async function (response) {
+                        const credential = GoogleAuthProvider.credential(response.credential);
+                        try {
+                            await signInWithCredential(auth, credential);
+                            pages.login.restoreState();
+                        } catch (err) {
+                            switch(err.code) {
+                                case "auth/too-many-requests":
+                                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                    break;
+                                case "auth/user-disabled":
+                                    toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                                    break;
+                                case "auth/unauthorized-continue-uri":
+                                    toast({message: "Invalid domain", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                                    break;
+                                case "auth/account-exists-with-different-credential":
+                                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
+                                    break;
+                            }
+                        } finally {
+                            pages.login.show();
+                        }
+                    }
+                });
+                google.accounts.id.renderButton(document.getElementById("google-onetap-container"), {
+                    type: "standard",
+                    shape: "rectangular",
+                    theme: "outline",
+                    text: "continue_with",
+                    size: "large",
+                    logo_alignment: "left",
+                    width: 215
+                });
+                this.onetapLoaded = true;
+            }
         },
         restoreState() {
             let afterLogin = localStorage.getItem("redirect_after_login");
@@ -538,38 +618,6 @@ addEventListener("DOMContentLoaded", () => {
         else pages.login.page.dataset.mode = "sign-up";
     }));
     pages.login.btnForgotPassword.addEventListener("click", () => pages.login.page.dataset.mode = "forgot-password");
-    pages.login.btnContinueGoogle.addEventListener("click", async () => {
-        pages.login.btnContinueGoogle.disabled = true;
-        pages.login.btnContinueGoogle.classList.add("is-loading");
-        const provider = new GoogleAuthProvider();
-        try {
-            await signInWithPopup(auth, provider);
-            pages.login.restoreState();
-        } catch (err) {
-            switch(err.code) {
-                case "auth/popup-blocked":
-                    toast({message: "The popup was blocked", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
-                    break;
-                case "auth/popup-closed-by-user":
-                    toast({message: "Operation Cancelled", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
-                    break;
-                case "auth/too-many-requests":
-                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                    break;
-                case "auth/user-disabled":
-                    toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                    break;
-                case "auth/unauthorized-continue-uri":
-                    toast({message: "Invalid domain", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                    break;
-                case "auth/account-exists-with-different-credential":
-                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                    break;
-            }
-        } finally {
-            pages.login.show();
-        }
-    });
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
     document.querySelector(".btn-change-hue").hidden = false;
     document.querySelectorAll(".button.is-credit").forEach((el, i) => el.addEventListener("click", () => pages.modals.contributers[i].open()))

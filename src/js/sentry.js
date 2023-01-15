@@ -8,7 +8,7 @@ if (!localStorage.getItem("sentry_optout")) {
         integrations: [new BrowserTracing()],
         tracesSampleRate: 1.0,
         release: `vocabustudy@v${npm_package_version}`,
-        ignoreErrors: ["AbortError", "Display name too long", "Failed to register a service worker", "auth/network-request-failed", /Failed to access \w+ before initialization/]
+        ignoreErrors: ["AbortError", "Display name too long", "Failed to register a service worker", "auth/network-request-failed", /Failed to access \w+ before initialization/, "The key path element name is longer"]
     });
     window.sentryCaptureException = Sentry.captureException;
     /** @param {import("firebase/auth").User?} user */

@@ -12,6 +12,10 @@
 .guide-item {
     width: 100%;
     overflow-wrap: break-word;
+    li {
+        list-style: revert !important;
+        display: revert !important;
+    }
 }
 .page img {
     max-width: 25%;

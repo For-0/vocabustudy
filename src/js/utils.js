@@ -1,9 +1,30 @@
 import { sanitize } from "dompurify";
 import { documentId, getDocs, limit, orderBy, query, startAfter } from "firebase/firestore/lite";
 import { marked } from "marked";
+import { openDB } from "idb";
 
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
+const markdownBulmaTag = /^:([^\n]+):([^:\n]*):(?:\n|$)/;
+marked.use({extensions: [{
+    name: "bulma-tag",
+    level: "inline",
+    start(src) { return src.match(/:/)?.index },
+    tokenizer(src) {
+        const match = markdownBulmaTag.exec(src);
+        if (match)
+            return {
+                type: "bulma-tag",
+                raw: match[0],
+                modifierClasses: match[1].trim().split(",").map(a => `is-${a}`),
+                content: this.lexer.inlineTokens(match[2].trim())
+            };
+    },
+    renderer(token) {
+        return `<span class="tag ${token.modifierClasses.join(" ")}">${this.parser.parseInline(token.content)}</span>`;
+    },
+    childTokens: ["span"]
+}]});
 export const SET_VISIBILITIES = [
     {title: "Private", color: "warning"},
     {title: "Unlisted", color: "info"},
@@ -429,4 +450,11 @@ export async function bulmaModalPromise(modal) {
 export function initQuickview(quickview, toggleButton) {
     toggleButton.addEventListener("click", () => quickview.classList.toggle("is-active"));
     quickview.querySelector(".delete").addEventListener("click", () => quickview.classList.remove("is-active"));
+}
+export async function getLocalDb() {
+    return await openDB("vocabustudy-database", 1, {
+        upgrade(db) {
+            db.createObjectStore("autosave-backups", { keyPath: "setId" });
+        }
+    });
 }

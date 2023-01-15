@@ -154,6 +154,14 @@
     .column.is-8:first-child {
         background-color: var(--scheme-main-bis);
         border-radius: 10px;
+        @media (max-height: 650px) {
+            .column.is-5 {
+                display: none;
+            }
+            .column:last-child {
+                padding: 1.5rem !important;
+            }
+        }
     }
     .column.is-8:last-child {
         @media (max-width: 768px) {
@@ -165,13 +173,10 @@
         }
     }
     .container {
-        top: 40%;
+        top: 50%;
         position: relative;
         transform: translateY(-50%);
         z-index: 2;
-        @media (max-height: 800px) or (max-width: 500px) {
-            top: 50%;
-        }
     }
     > img {
         position: absolute;
@@ -191,6 +196,12 @@
         .prompt-switch-mode span:last-child {
             display: none;
         }
+        #google-onetap-container {
+            height: 50px;
+            iframe {
+                height: 50px !important;
+            }
+        }
     }
     &[data-mode="forgot-password"] {
         .btn-switch-mode {
@@ -205,7 +216,8 @@
         :is(form button[type="submit"], .form-title)::after {
             content: "Reset Password";
         }
-        .btn-continue-google {
+        #google-onetap-container,
+        .divider {
             display: none;
         }
         #login-display-name,
@@ -236,12 +248,17 @@
             display: none;
         }
     }
-    .btn-continue-google .icon {
-        @media (min-width: 769px) {
-            margin-right: 0.75rem;
+    #google-onetap-container {
+        height: 49px;
+        iframe {
+            height: 49px !important;
+            left: 50% !important;
+            transform: translateX(-50%);
+            margin: 0 !important;
         }
-        @media (max-width: 768px) {
-            margin: 0;
+        div[role="button"] {
+            left: 50%;
+            transform: translateX(-50%);
         }
     }
 }

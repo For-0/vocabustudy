@@ -63,6 +63,7 @@
     "firebase": "^9.14.0",
     "fitty": "^2.3.6",
     "fscreen": "^1.2.0",
+    "idb": "^7.1.1",
     "marked": "^4.2.3",
     "stylelint-config-standard-scss": "^6.1.0"
   },

@@ -1,6 +1,27 @@
 // disabled because this file is WIP
 /* eslint-disable no-unused-vars */
-const firestore = {
+
+/**
+ * A standard term/definition pair. Timelines also fall into this category
+ * @typedef {{term: string, definition: string}} TermDefinition
+ */
+
+/**
+ * A study guide reading
+ * @typedef {{body: string, type: 0}} StudyGuideReading
+ */
+
+/**
+ * A study guide quiz
+ * @typedef {{questions: {type: Number, question: String, answers: String[]}, type: 1}} StudyGuideQuiz
+ */
+
+/**
+ * The document `terms` field
+ * @typedef {TermDefinition[]|(StudyGuideQuiz|StudyGuideReading)[]} SetTerms
+ */
+
+export const firestore = {
     dbServer: "https://firestore.googleapis.com/v1/",
     projectPrefix: "projects/vocab-u-study/databases/(default)/documents",
     get baseUrl() {
@@ -90,7 +111,7 @@ const firestore = {
         };
     },
     deleteDocument: async function (collection, documentId, idToken) {
-        await fetch(`${this.baseUrl}/${collection.collectionKey}/${documentId}`, { 
+        await fetch(`${this.baseUrl}/${collection.collectionKey}/${documentId}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` }
         });
@@ -171,26 +192,24 @@ class FSDocument {
     }
 }
 
-class MetaSet extends FSDocument {
-    static collectionKey = "meta_sets";
+export class VocabSet extends FSDocument {
+    static collectionKey = "sets";
     constructor(data) {
         super(data)
         /** @type {String} */
         this.name = data.name;
-        /** @type {String[]} */
-        this.nameWords = data.nameWords;
+        /** @type {String} */
+        this.description = data.description;
         /** @type {String} */
         this.creator = data.creator;
         /** @type {String} */
         this.uid = data.uid;
         /** @type {Number|string[]} */
         this.visibility = data.visibility;
-        /** @type {Number} */
-        this.numTerms = data.numTerms;
         /** @type {String[]} */
         this.collections = data.collections;
-        /** @type {Number} */
-        this.likes = data.likes;
+        /** @type {SetTerms} */
+        this.terms = data.terms;
     }
 }
 
@@ -207,31 +226,14 @@ class CustomCollection extends FSDocument {
     }
 }
 
-class VocabSet extends FSDocument {
-    static collectionKey = "sets";
-    constructor(data) {
-        super(data)
-        /** @type {String} */
-        this.name = data.name;
-        /** @type {String} */
-        this.description = data.description;
-        /** @type {String} */
-        this.uid = data.uid;
-        /** @type {Number|string[]} */
-        this.visibility = data.visibility;
-        /** @type {{term: String, definition: String}[]|{body: String?, type: Number, questions: {type: Number, question: String, answers: String[]}[]}[]} */
-        this.terms = data.terms;
-    }
-}
-
 class QueryBuilder {
     constructor() {
         this.query = {};
     }
     /**
-     * @param {String} field 
-     * @param {"LESS_THAN"|"LESS_THAN_OR_EQUAL"|"GREATER_THAN"|"GREATER_THAN_OR_EQUAL"|"EQUAL"|"NOT_EQUAL"|"ARRAY_CONTAINS"|"IN"|"ARRAY_CONTAINS_ANY"|"NOT_IN"} op 
-     * @param {any} value 
+     * @param {String} field
+     * @param {"LESS_THAN"|"LESS_THAN_OR_EQUAL"|"GREATER_THAN"|"GREATER_THAN_OR_EQUAL"|"EQUAL"|"NOT_EQUAL"|"ARRAY_CONTAINS"|"IN"|"ARRAY_CONTAINS_ANY"|"NOT_IN"} op
+     * @param {any} value
      * @returns {this}
      */
     where(field, op, value) {
@@ -242,8 +244,8 @@ class QueryBuilder {
         return this;
     }
     /**
-     * @param {string} field 
-     * @param {"ASCENDING"|"DESCENDING"} direction 
+     * @param {string} field
+     * @param {"ASCENDING"|"DESCENDING"} direction
      * @returns {this}
      */
     orderBy(field, direction) {
@@ -252,7 +254,7 @@ class QueryBuilder {
         return this;
     }
     /**
-     * @param {Number} limit 
+     * @param {Number} limit
      * @returns {this}
      */
     limit(limit) {
@@ -260,7 +262,7 @@ class QueryBuilder {
         return this;
     }
     /**
-     * @param {Number} limit 
+     * @param {Number} limit
      * @returns {this}
      */
     setOffset(offset) {
@@ -268,7 +270,7 @@ class QueryBuilder {
         return this;
     }
     /**
-     * @param {(Number|FSDocument)[]} offsets 
+     * @param {(Number|FSDocument)[]} offsets
      * @param {Boolean} before
      * @returns {this}
      */

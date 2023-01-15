@@ -140,10 +140,6 @@ html.theme-system.prefers-dark {
     .navbar-dropdown {
         box-shadow: none;
     }
-    .btn-continue-google {
-        --light-l: 80%;
-        --light: hsla(var(--light-h), var(--light-s), var(--light-l), var(--light-a));
-    }
     .button.is-danger.is-inverted.btn-delete {
         background-color: transparent;
         color: var(--danger-dark);

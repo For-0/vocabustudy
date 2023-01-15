@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements } from "./utils.js";
+import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb } from "./utils.js";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
 import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
@@ -104,13 +104,14 @@ const {db, auth} = initialize(async user => {
                 fields.btnAddQuiz.hidden = false;
                 break;
             default:
-                goBack();
+                await goBack();
         }
         fields.terms.textContent = "";
         selectDropdownItem(fields.visibilityOptions[0]);
         fields.shareDialogInput.removeAll();
         fields.collections.querySelectorAll("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
+        await showAutosaveToast();
     } else {
         let setSnap = await getDoc(doc(db, "sets", setId));
         let setMetaSnap = await getDoc(doc(db, "meta_sets", setId));
@@ -124,39 +125,8 @@ const {db, auth} = initialize(async user => {
             await auth.signOut();
             location.href = "/#login";
         }
-        document.title = `Edit ${currentSet.name} - Vocabustudy`;
-        fields.setName.value = currentSet.name;
-        if (currentSet.description)
-            fields.setDescription.value = currentSet.description;
-        // if visibility is array, select the 2nd (shared) visibility option. If it equals 2, select the 3rd (public). Otherwise, if it equals 0 or 1, select the 0th or 1st visibility option.
-        selectDropdownItem(fields.visibilityOptions[Array.isArray(currentSet.visibility) ? 2 : currentSet.visibility === 2 ? 3 : currentSet.visibility]);
-        if (Array.isArray(currentSet.visibility)) {
-            fields.shareDialogInput.removeAll();
-            fields.shareDialogInput.add(currentSet.visibility);
-        }
-        fields.terms.textContent = "";
-        if (currentSetMeta.collections.includes("-:0")) {
-            setType = 1;
-            document.querySelector("h1").innerText = "Edit Timeline";
-            document.querySelector("h2").innerText = "Timeline Items";
-            fields.terms.classList.add("columns");
-            fields.btnAddQuiz.hidden = true;
-        } else if (currentSetMeta.collections.includes("-:1")) {
-            setType = 2;
-            document.querySelector("h1").innerText = "Edit Study Guide";
-            document.querySelector("h2").innerText = "Guide Items"
-            fields.terms.classList.add("columns");
-            fields.btnAddQuiz.hidden = false;
-        } else {
-            setType = 0;
-            document.querySelector("h1").innerText = "Edit Set";
-            document.querySelector("h2").innerText = "Vocabulary Words";
-            fields.terms.classList.remove("columns");
-            fields.btnAddQuiz.hidden = true;
-        }
-        fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
-        for (let term of currentSet.terms) createTermInput(term);
-        creator = (currentSet.uid === user.uid) ? user.displayName : currentSetMeta.creator;
+        await showAutosaveToast();
+        displayExistingSet(user, currentSet, currentSetMeta);
     }
 });
 const savingFunctions = {
@@ -259,6 +229,80 @@ function createTimelineDetail(detailContent) {
     listItem.querySelector("button").addEventListener("click", () => listItem.remove());
     listItem.querySelector(".buttons").style.marginTop = "1.15em";
     return listItem;
+}
+function displayExistingSet(user, currentSet, currentSetMeta) {
+    document.title = `Edit ${currentSet.name} - Vocabustudy`;
+    fields.setName.value = currentSet.name;
+    if (currentSet.description)
+        fields.setDescription.value = currentSet.description;
+    // if visibility is array, select the 2nd (shared) visibility option. If it equals 2, select the 3rd (public). Otherwise, if it equals 0 or 1, select the 0th or 1st visibility option.
+    selectDropdownItem(fields.visibilityOptions[Array.isArray(currentSet.visibility) ? 2 : currentSet.visibility === 2 ? 3 : currentSet.visibility]);
+    if (Array.isArray(currentSet.visibility)) {
+        fields.shareDialogInput.removeAll();
+        fields.shareDialogInput.add(currentSet.visibility);
+    }
+    fields.terms.textContent = "";
+    if (currentSetMeta.collections.includes("-:0")) {
+        setType = 1;
+        document.querySelector("h1").innerText = "Edit Timeline";
+        document.querySelector("h2").innerText = "Timeline Items";
+        fields.terms.classList.add("columns");
+        fields.btnAddQuiz.hidden = true;
+    } else if (currentSetMeta.collections.includes("-:1")) {
+        setType = 2;
+        document.querySelector("h1").innerText = "Edit Study Guide";
+        document.querySelector("h2").innerText = "Guide Items"
+        fields.terms.classList.add("columns");
+        fields.btnAddQuiz.hidden = false;
+    } else {
+        setType = 0;
+        document.querySelector("h1").innerText = "Edit Set";
+        document.querySelector("h2").innerText = "Vocabulary Words";
+        fields.terms.classList.remove("columns");
+        fields.btnAddQuiz.hidden = true;
+    }
+    fields.collections.querySelectorAll("input").forEach(el => el.checked = currentSetMeta.collections.includes(el.value));
+    for (let term of currentSet.terms) createTermInput(term);
+    creator = (currentSet.uid === user.uid) ? user.displayName : currentSetMeta.creator;
+}
+async function showAutosaveToast() {
+    let localDb = await getLocalDb();
+    let existingAutosave = await localDb.get("autosave-backups", setId)
+    if (existingAutosave) {
+        let restoreBackupBtn = createElement("button", ["button", "is-success"], {type: "button", innerText: "Restore"});
+        let deleteBackupBtn = createElement("button", ["button", "is-danger", "is-outlined"], {type: "button", innerText: "Delete"});
+        deleteBackupBtn.addEventListener("click", () => localDb.delete("autosave-backups", setId));
+        restoreBackupBtn.addEventListener("click", async () => {
+            displayExistingSet(auth.currentUser, existingAutosave.set, existingAutosave.meta);
+            await localDb.delete("autosave-backups", setId);
+        })
+        toast({message: createElement("div", [], {}, [
+            createElement("p", ["has-text-left"], {}, [
+                document.createTextNode("We found an unsaved backup of this set from "),
+                createElement("br"),
+                createElement("strong", [], {innerText: existingAutosave.timestamp.toLocaleString()}),
+                createElement("br"),
+                document.createTextNode("Would you like to restore this backup?")
+            ]),
+            createElement("div", ["buttons", "mt-3"], {}, [
+                restoreBackupBtn,
+                deleteBackupBtn
+            ])
+        ]), dismissible: true, duration: 15000});
+    }
+}
+function serializeSet() {
+    let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
+    let setName = fields.setName.value.normalize("NFD");
+    let description = fields.setDescription.value;
+    let nameWords = getWords(setName.replace(/\p{Diacritic}/gu, ""));
+    let visibility = [...fields.visibilityOptions].findIndex(el => el.classList.contains("is-active"));
+    if (visibility === 2) visibility = fields.shareDialogInput.items;
+    else if (visibility === 3) visibility--;
+    let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
+    if (setType === 1) collections.unshift("-:0");
+    else if (setType === 2) collections.unshift("-:1");
+    return { meta: { numTerms: terms.length, visibility, name: setName, nameWords, collections }, set: { terms, visibility, name: setName, description } };
 }
 function createTermInput(term) {
     /** @type {HTMLDivElement?} */
@@ -408,9 +452,15 @@ function createTermInput(term) {
     }
     if (termInput) optionalAnimate(fields.terms.appendChild(termInput), ...cardSlideInAnimation);
 }
-document.addEventListener("change", () => changesSaved = false);
-function goBack() {
+document.addEventListener("change", async () => {
+    let localDb = await getLocalDb();
+    await localDb.put("autosave-backups", { setId, ...serializeSet(), timestamp: new Date() });
+    changesSaved = false;
+});
+async function goBack() {
     changesSaved = true;
+    let localDb = await getLocalDb();
+    await localDb.delete("autosave-backups", setId)
     history.length > 1 ? history.back() : location.href = location.protocol + "//" + location.host + "/#mysets";
 }
 fields.btnCancel.addEventListener("click", goBack);
@@ -421,33 +471,24 @@ fields.formEdit.addEventListener("submit", async e => {
     e.preventDefault();
     if (!ratelimit.canDoAction()) return;
     if (!fields.formEdit.reportValidity()) return fields.formEdit.classList.add("has-validated-inputs");
-    let terms = [...fields.terms.querySelectorAll(":scope > div")].map(savingFunctions[setType]);
-    if (terms.length < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});
-    let setName = fields.setName.value.normalize("NFD");
-    let description = fields.setDescription.value;
-    let nameWords = getWords(setName.replace(/\p{Diacritic}/gu, ""));
-    let visibility = [...fields.visibilityOptions].findIndex(el => el.classList.contains("is-active"));
-    if (visibility === 2) visibility = fields.shareDialogInput.items;
-    else if (visibility === 3) visibility--;
+    let setData = serializeSet();
+    if (setData.meta.numTerms < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});
     let batch = writeBatch(db);
-    let collections = [...fields.collections.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
-    if (setType === 1) collections.unshift("-:0");
-    else if (setType === 2) collections.unshift("-:1");
     await auth.currentUser.reload();
     if (setId === "new" || setId === "new-timeline" || setId === "new-guide") {
         let setRef = doc(collection(db, "sets"));
         let setMetaRef = doc(db, "meta_sets", setRef.id);
-        batch.set(setMetaRef, {numTerms: terms.length, visibility, name: setName, nameWords, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, collections, likes: 0});
-        batch.set(setRef, {terms, visibility, name: setName, uid: auth.currentUser.uid, description});
+        batch.set(setMetaRef, { ...setData.meta, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, likes: 0});
+        batch.set(setRef, { ...setData.set,  uid: auth.currentUser.uid });
     } else {
         let setRef = doc(db, "sets", setId);
         let setMetaRef = doc(db, "meta_sets", setId);
-        batch.update(setMetaRef, {numTerms: terms.length, visibility, name: setName, nameWords, collections, creator: creator || auth.currentUser.displayName});
-        batch.update(setRef, {terms, visibility, name: setName, description});
+        batch.update(setMetaRef, { ...setData.meta, creator: creator || auth.currentUser.displayName });
+        batch.update(setRef, setData.set);
     }
     try {
         await batch.commit();
-        goBack();
+        await goBack();
     } catch {
         toast({message: "We weren't able to save your set. This may be caused by a recent Display Name change.", type: "is-danger", dismissible: true, position: "bottom-center"})
     }
@@ -458,7 +499,7 @@ async function importTerms() {
     if (result) {
         let terms = fields.importDialogInput.value.split("\n").filter(el => el).map(el => {
             let splitted = el.split("  ");
-            return {term: splitted.shift().trim(), definition: splitted.join("  ").trim()};
+            return {term: splitted.shift().trim().substring(0, 500), definition: splitted.join("  ").trim().substring(0, 500)};
         });
         for (let term of terms) createTermInput(term);
     }
