@@ -1,0 +1,21 @@
+{
+  "projects": {
+    "default": "vocab-u-study"
+  },
+  "targets": {
+    "vocab-u-study": {
+      "hosting": {
+        "rd": [
+          "vocab-u-study"
+        ],
+        "vocabustudy": [
+          "vocabustudyonline"
+        ],
+        "nightly": [
+            "vocabustudyonline--nightly-q9kbiq6r"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,0 +1,28 @@
+{
+    "name": "Vocabustudy",
+    "short_name": "Vocabustudy",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color": "#795548",
+    "description": "Study vocab, for free.",
+    "icons": [
+        {"src": "icons/favicon.ico", "type": "image/x-icon", "sizes": "48x48"},
+        {"src": "icons/icon-192.png", "type": "image/png", "sizes": "192x192"},
+        {"src": "icons/icon-512.png", "type": "image/png", "sizes": "512x512"},
+        {"src": "icons/icon-192-maskable.png", "type": "image/png", "sizes": "192x192", "purpose": "maskable"},
+        {"src": "icons/icon-512-maskable.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable"}
+    ],
+    "shortcuts": [
+        {
+            "name": "Create Set",
+            "short_name": "Set",
+            "description": "Create a set",
+            "url": "/set/new/edit/",
+            "icons": [
+                {"src": "icons/shortcut-add-96.png", "type": "image/png", "sizes": "96x96"},
+                {"src": "icons/shortcut-add-96-maskable.png", "type": "image/png", "sizes": "96x96"}
+            ]
+        }
+    ]
+}  

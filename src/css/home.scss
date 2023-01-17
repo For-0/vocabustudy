@@ -1,0 +1,290 @@
+@import "styles.scss";
+#home {
+    background: url("../images/hero-background.svg") no-repeat center center;
+    background-size: 100% 100%;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 52px);
+    z-index: 2;
+    .list-item {
+        border: 0 !important;
+    }
+    ul {
+        list-style-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -5 24 24' width='20' fill='%23fff'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z'/%3E%3C/svg%3E");
+    }
+    > div {
+        color: white;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        position: relative;
+        > div {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+            > div {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            &:first-child > div {
+                background-color: #ffffff1c;
+                padding: 2rem;
+                padding-bottom: 1rem;
+                border-radius: 20px;
+                > p {
+                    text-align: center;
+                }
+                > div {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    h2 {
+                        font-weight: bold;
+                    }
+                    ul {
+                        padding: revert;
+                        float: right;
+                        font-size: 1.25rem;
+                        min-width: 25%;
+                    }
+                }
+                @media (max-height: 430px) {
+                    transform: scale(0.8, 0.8);
+                }
+            }
+            &:last-child {
+                background: url("../images/features-background.svg") no-repeat center center;
+                background-size: auto;
+                h2 {
+                    text-align: center;
+                    margin: 0;
+                }
+                > div {
+                    max-width: 100%;
+                    @media (max-height: 500px) {
+                        transform: scale(0.8, 0.8);
+                    }
+                    @media (max-height: 400px) {
+                        transform: scale(0.6, 0.6);
+                    }
+                }
+            }
+        }
+    }
+}
+#account {
+    text-align: center;
+    /* stylelint-disable-next-line no-descending-specificity */
+    div {
+        margin: auto;
+    }
+}
+#search {
+    details {
+        cursor: pointer;
+        &:not([open]) > summary > h2::after {
+            content: " (Click to Expand)";
+        }
+        .set-container {
+            @media (min-width: 900px) {
+                flex-wrap: nowrap;
+            }
+        }
+    }
+    .set-container {
+        .card-content:nth-last-child(2) {
+            margin-top: 4px;
+        }
+        .card {
+            @media (min-width: 769px) {
+                max-width: 50%;
+            }
+        }
+    }
+    .field-search-container .buttons span {
+        @media (max-width: 380px) {
+            &:not(.icon) {
+                display: none;
+            }
+            &.icon {
+                margin-left: calc(-0.5em - 1px);
+                margin-right: calc(-0.5em - 1px);
+            }
+        }
+    }
+}
+@supports selector(:has(.page:not(#home))) {
+    main:not(:has(.page:not(#home):target)) ~ footer {
+        z-index: 20;
+        opacity: 0;
+        &:has(> :hover) {
+            opacity: 1;
+            background-color: transparent;
+            &::after {
+                display: none;
+            }
+        }
+    }
+}
+#credits {
+    ul > li {
+        margin-bottom: 1rem;
+    }
+}
+#login {
+    background-color: var(--primary);
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        display: inline-block;
+        background: url("../images/login-background.svg") no-repeat center center;
+        background-size: 100% 100%;
+    }
+    .column.is-8:first-child {
+        background-color: var(--scheme-main-bis);
+        border-radius: 10px;
+        @media (max-height: 650px) {
+            .column.is-5 {
+                display: none;
+            }
+            .column:last-child {
+                padding: 1.5rem !important;
+            }
+        }
+    }
+    .column.is-8:last-child {
+        @media (max-width: 768px) {
+            .level-left,
+            .level-right,
+            .level-item {
+                display: inline;
+            }
+        }
+    }
+    .container {
+        top: 50%;
+        position: relative;
+        transform: translateY(-50%);
+        z-index: 2;
+    }
+    > img {
+        position: absolute;
+        left: 1rem;
+        bottom: calc(43px + 2rem);
+        z-index: 2;
+        height: 8rem;
+        width: 8rem;
+    }
+    &[data-mode="sign-up"] {
+        .btn-switch-mode::after {
+            content: "Log In";
+        }
+        :is(form button[type="submit"], .form-title)::after {
+            content: "Sign Up";
+        }
+        .prompt-switch-mode span:last-child {
+            display: none;
+        }
+        #google-onetap-container {
+            height: 50px;
+            iframe {
+                height: 50px !important;
+            }
+        }
+    }
+    &[data-mode="forgot-password"] {
+        .btn-switch-mode {
+            &::after {
+                content: "Log In";
+            }
+            + a,
+            span {
+                display: none;
+            }
+        }
+        :is(form button[type="submit"], .form-title)::after {
+            content: "Reset Password";
+        }
+        #google-onetap-container,
+        .divider {
+            display: none;
+        }
+        #login-display-name,
+        #login-password,
+        #login-confirm-password,
+        #login-accept-tos,
+        #login-accept-tos + label {
+            display: none;
+        }
+        .prompt-switch-mode span:first-child {
+            display: none;
+        }
+    }
+    &:not([data-mode="sign-up"], [data-mode="forgot-password"]) {
+        .btn-switch-mode::after {
+            content: "Sign Up";
+        }
+        :is(form button[type="submit"], .form-title)::after {
+            content: "Log In";
+        }
+        #login-display-name,
+        #login-confirm-password {
+            display: none;
+        }
+        .prompt-switch-mode span:first-child,
+        #login-accept-tos,
+        #login-accept-tos + label {
+            display: none;
+        }
+    }
+    #google-onetap-container {
+        height: 49px;
+        iframe {
+            height: 49px !important;
+            left: 50% !important;
+            transform: translateX(-50%);
+            margin: 0 !important;
+        }
+        div[role="button"] {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+}
+.change-hue-container {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 3;
+    &:hover {
+        opacity: 1;
+    }
+}
+body > .announcements-container {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 4;
+    max-width: 300px;
+    width: 300px;
+}
+.btn-create.button.is-ghost:hover {
+    text-decoration: none;
+    > span:nth-child(2) {
+        text-decoration: underline;
+    }
+}

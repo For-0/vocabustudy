@@ -1,0 +1,316 @@
+extends includes/layout.pug
+mixin close_button
+    a.delete.is-large(style="position: absolute;right: 0;top: 50%;transform: translateY(-75%);" href="#")
+block variables
+    - var title = "Set Detail";
+    - var description = "Study a set, using one or more of our modes";
+block main-stylesheet
+    link(rel="stylesheet" href="css/set-detail.scss")
+block extrahead
+    script(src="js/qrcode.min.js")
+block content
+    #flashcards.page
+        h1 Flashcards - #[span] #[+close_button]
+            p.is-size-6.has-text-weight-bold(style="line-height: normal;")
+                span 0
+                |  / 
+                span 0
+                |  terms
+        .columns.is-flex-touch
+            .is-flex.column.is-narrow
+                p.mb-2 #[strong Answer With:]
+                .field
+                    input#radio-flashcards-answer-term.is-checkradio(type="radio" name="radio-flashcards-answer-with")
+                    label(for="radio-flashcards-answer-term") Term
+                .field.mb-4
+                    input#radio-flashcards-answer-definition.is-checkradio(type="radio" name="radio-flashcards-answer-with" checked)
+                    label(for="radio-flashcards-answer-definition") Definition
+                .field
+                    input#check-flashcard-starred.is-checkradio.is-gold(type="checkbox")
+                    label(for="check-flashcard-starred") Only Starred
+                .mt-auto
+                    button.button
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") loop
+                        span Shuffle
+            .column.is-flex.is-flex-direction-column
+                .is-flex-grow-1.is-clickable.is-relative
+                .is-flex.mt-5.is-justify-content-space-evenly
+                    button.button
+                        kbd.is-hidden-touch.mr-1 ←
+                        span Previous
+                    button.button.is-primary
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") change_circle
+                        span Flip #[kbd.is-hidden-touch Space]
+                    button.button
+                        span Next
+                        kbd.is-hidden-touch.ml-1 →
+    #learn.page
+        h1 Learn - #[span] #[+close_button]
+        .columns.is-flex-touch
+            .is-flex.column.is-narrow
+                p.mb-2 #[strong Answer With:]
+                .field
+                    input#radio-learn-answer-term.is-checkradio(type="radio" name="radio-learn-answer-with" checked)
+                    label(for="radio-learn-answer-term") Term
+                .field.mb-4
+                    input#radio-learn-answer-definition.is-checkradio(type="radio" name="radio-learn-answer-with")
+                    label(for="radio-learn-answer-definition") Definition
+                .field.mb-4
+                    input#check-learn-starred.is-checkradio.is-gold(type="checkbox")
+                    label(for="check-learn-starred") Only Starred
+                p.field-current-type #[strong Multiple Choice] #[strong Short Answer] #[em.mb-3.is-hidden-mobile.is-block #[span.field-num-terms] terms]
+                p.is-hidden-mobile #[strong Progress:]
+                .progress-circle.is-primary(data-progress="0%" style="--progress: 0;")
+                    svg(viewbox="0 0 48 48")
+                        circle
+                        circle
+            .is-flex-grow-1.is-flex.is-flex-direction-column.mb-0(style="overflow-wrap: break-word; min-width: 0;")
+                .is-flex-grow-1(style="font-size: 3rem;") #[p.has-text-centered]
+                .custom-scrollbar.is-thumb-only(style="overflow-y: auto;")
+                    p.has-text-centered
+                        button.button.is-primary.is-outlined(type='button')
+                            span Most Missed Questions
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") open_in_new
+                    .notification.m-0.has-text-centered.is-relative.is-clickable.is-success Correct #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop Tap here to move on.]
+                    .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-mobile Press #[kbd Enter] or click here to move on.]#[span.is-hidden-tablet.has-text-right(style="margin-right: 150px;") Tap here to move on.]
+                        button.button.is-danger(type='button') Override - Correct
+                .p-1
+                    accent-keyboard.custom-scrollbar
+                    .field.has-addons
+                        p.control.is-expanded
+                            input.input(type="text" placeholder="Your Answer" required)
+                        p.control
+                            button.button.is-primary(type='button') Check                    
+                fieldset.m-0.columns.is-multiline.is-mobile
+                    .column.is-half.p-1.pt-0.pl-0
+                        button.button.is-large(data-answerindex='0')
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_1
+                            span #[span.fit Option 1]
+                    .column.is-half.p-1.pr-0.pt-0
+                        button.button.is-large(data-answerindex='1')
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_2
+                            span #[span.fit Option 2]
+                    .column.is-half.p-1.pl-0.pb-0
+                        button.button.is-large(data-answerindex='3')
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_3
+                            span #[span.fit Option 3]
+                    .column.is-half.p-1.pr-0.pb-0
+                        button.button.is-large(data-answerindex='4')
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden="true") filter_4
+                            span #[span.fit Option 4]
+    #test.page
+        h1 Test - #[span] #[+close_button]
+        .columns.is-flex-touch
+            .is-flex.column.is-narrow(style="min-height: 0; overflow-y: auto;")
+                button.button.is-hidden-tablet.is-primary-alt
+                    span.icon
+                        i.material-symbols-rounded(aria-hidden="true") settings
+                .is-flex-mobile.is-flex-direction-row.is-flex-wrap-wrap.is-align-items-center.is-justify-content-space-between.is-hidden-mobile
+                    p.mb-2 #[strong Answer With:]
+                    .field
+                        input#radio-test-answer-term.is-checkradio(type="radio" name="radio-test-answer-with")
+                        label(for="radio-test-answer-term") Term
+                    .field.mb-4
+                        input#radio-test-answer-definition.is-checkradio(type="radio" name="radio-test-answer-with" checked)
+                        label(for="radio-test-answer-definition") Definition
+                    p #[strong Question Types:]
+                    .field
+                        input#check-test-question-sa.is-checkradio(type="checkbox")
+                        label(for="check-test-question-sa") Short Answer
+                    .field
+                        input#check-test-question-mc.is-checkradio(type="checkbox")
+                        label(for="check-test-question-mc") Multiple Choice
+                    .field
+                        input#check-test-question-mt.is-checkradio(type="checkbox")
+                        label(for="check-test-question-mt") Matching
+                    .field.mb-3
+                        input#check-test-question-tf.is-checkradio(type="checkbox")
+                        label(for="check-test-question-tf") True/False
+                    .field.mb-4
+                        input#check-test-starred.is-checkradio.is-gold(type="checkbox")
+                        label(for="check-test-starred") Only Starred
+                    .field.mb-3
+                        label.label Max Terms
+                        .control
+                            input.input.field-max-terms(type="number" min="0" placeholder="20")
+                button.button.mb-2
+                    span.icon
+                        i.material-symbols-rounded(aria-hidden="true") loop
+                    span New Test
+                button.button.is-primary
+                    span.icon
+                        i.material-symbols-rounded(aria-hidden="true") check_circle
+                    span Check Answers
+            fieldset.custom-scrollbar.is-thumb-only.column
+                h2.title.is-4(data-count='0')  Short Answer Question
+                div
+                h2.title.is-4(data-count='0')  Multiple Choice Question
+                div
+                h2.title.is-4.mb-1(data-count='0')  Matching Question
+                p.mb-3 Select an item on the left, then choose the matching item on the right
+                .columns.is-relative.is-variable.is-mobile(style="--columnGap: 5%;")
+                    .column.is-half(style="z-index: 2;")
+                    .column.is-half(style="z-index: 2;")
+                    .matches-container
+                h2.title.is-4(data-count='0')  True/False Question
+                div
+    #match.page
+        h1 Match - #[span] #[+close_button]
+        .columns.is-flex-touch
+            .is-flex.column.is-narrow
+                p.mb-2 #[strong Answer With:]
+                .field
+                    input#radio-match-answer-term.is-checkradio(type="radio" name="radio-match-answer-with" checked)
+                    label(for="radio-match-answer-term") Term
+                .field.mb-4
+                    input#radio-match-answer-definition.is-checkradio(type="radio" name="radio-match-answer-with")
+                    label(for="radio-match-answer-definition") Definition
+                .field.mb-4
+                    input#check-match-starred.is-checkradio.is-gold(type="checkbox")
+                    label(for="check-match-starred") Only Starred
+                p Time: #[span.field-time 0.0]s
+                button.button.mb-3
+                    span.icon
+                        i.material-symbols-rounded(aria-hidden="true") loop
+                    span Restart
+                button.button.mb-3
+                    span.icon
+                        i.material-symbols-rounded(aria-hidden="true") help
+            .columns.column.is-mobile
+                .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
+                .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
+    #home.page.is-relative.is-flex-direction-column(style="--page-display: flex;")
+        h1
+            span.field-name
+            button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
+                span.icon
+                    i.material-symbols-rounded(aria-hidden="true") thumb_up
+                span.ml-1 Like
+            p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
+                span.field-num-terms
+                |  terms
+        p.field-description(style="min-height: 0;overflow-y: auto;max-height:25vh;")
+        hr.my-3
+        .columns.main-content.is-flex-direction-row-reverse.custom-scrollbar.is-thumb-only(style="overflow: auto; overflow-wrap: break-word;flex: 1;")
+            .column.is-narrow
+                .study-modes.box.buttons.are-medium.custom-scrollbar.is-thumb-only(style="width: min-content; height: 100%; overflow: auto;")
+                    a.button.is-primary.is-fullwidth(href="#flashcards")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") collections
+                        span Flashcards
+                    a.button.is-primary.is-outlined.is-fullwidth(href="#learn")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") quiz
+                        span Learn
+                    a.button.is-primary.is-outlined.is-fullwidth(href="#test")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") assignment
+                        span Test
+                    a.button.is-primary.is-outlined.is-fullwidth(href="#match")
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") attach_file
+                        span Match
+                    button.button.is-normal.btn-export-terms.is-fullwidth
+                        span.icon
+                            i.material-symbols-rounded.is-filled(aria-hidden="true") file_download
+                        span Export
+            .column.custom-scrollbar.is-thumb-only(style="overflow: auto;")
+                .field-terms.columns.is-multiline
+        .page-loader
+            .loader-container
+                span.loader.is-size-1
+        include includes/comment-quickview
+append scripts-footer
+    #modal-match-done.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title All Done!
+                button.delete(aria-label="close")
+            section.modal-card-body.custom-scrollbar.is-thumb-only
+                p(style="margin: 0;") You took 
+                    strong.field-time-taken
+                    |  seconds to finish
+                    br
+                    strong Leaderboard:
+                .list.has-hoverable-list-items
+                    .list-item
+                        .list-item-content
+                            .list-item-title Set URL
+                            .list-item-description
+            footer.modal-card-foot
+                button.button.action-close(type="button" data-action="back") Back
+                button.button.is-success.action-close(type="button" data-action="restart") Restart
+    #modal-match-help.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Help with Match
+                button.delete(aria-label="close")
+            section.modal-card-body.custom-scrollbar.is-thumb-only
+                p.mb-2
+                    strong Mouse:
+                    br
+                    | Drag the items on the left onto the items on the right
+                    br
+                    strong Touch:
+                    br
+                    | Tap an item on the left, then tap one on the right
+                p Matching an item on the left to an item on the right that already has an item inside it will unmatch the item inside
+            footer.modal-card-foot
+                button.button.is-success.action-close(type="button") OK
+    #modal-export-terms.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Share
+                button.delete(aria-label="close")
+            section.modal-card-body.custom-scrollbar.is-thumb-only
+                .list.has-hoverable-list-items
+                    .list-item
+                        .list-item-content
+                            .list-item-title Set URL
+                            .list-item-description
+                                a.share-link(target="_blank" style="word-break: break-all;")
+                        .list-item-controls
+                            .buttons
+                                button.button.btn-copy-link(type="button" title="Copy")
+                                    span.icon
+                                        i.material-symbols-rounded(aria-hidden="true") content_paste
+                                button.button.btn-shorten-link(type="button" title="Shorten")
+                                    span.icon
+                                        i.material-symbols-rounded(aria-hidden="true") app_shortcut
+                                button.button.btn-share(type="button" title="Share")
+                                    span.icon
+                                        i.material-symbols-rounded(aria-hidden="true") share
+                    .list-item
+                        .list-item-content
+                            .list-item-title Export
+                            .list-item-description
+                                p.m-0 Paste this into the #[code Import Terms] dialog to copy this set:
+                                pre.custom-scrollbar(style="max-width: 100%; overflow: auto;")
+                        .list-item-controls
+                            .buttons
+                                button.button.btn-copy(type="button" title="Copy Terms")
+                                    span.icon
+                                        i.material-symbols-rounded(aria-hidden="true") content_paste
+                    .list-item
+                        .list-item-content
+                            .list-item-title QR Code
+                            .list-item-description
+                                #set-qrcode
+                        .list-item-controls
+                            .buttons
+                                button.button.btn-copy-qrcode(type="button" title="Copy Terms")
+                                    span.icon
+                                        i.material-symbols-rounded(aria-hidden="true") content_paste
+            footer.modal-card-foot
+                button.button.is-success.action-close(type="button") OK
+    script(src="js/set-detail.js" type="module")

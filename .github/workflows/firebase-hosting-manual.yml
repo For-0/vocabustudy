@@ -1,0 +1,21 @@
+name: Manual Deploy
+'on':
+  workflow_dispatch
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+          cache: "npm"
+      - run: npm ci && npx parcel build --no-source-maps
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOCAB_U_STUDY }}'
+          channelId: preview
+          expires: 1d
+          projectId: vocab-u-study
+          target: "vocabustudy"

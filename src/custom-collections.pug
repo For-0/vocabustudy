@@ -1,0 +1,11 @@
+extends includes/layout.pug
+block variables
+    - var title = "Custom Collections";
+    - var description = "View sets in this Custom Collection";
+block content
+    #home.page
+        h1 Custom Collection - 
+            span.field-collection-name(style="--studymode-header-width: 330px;")
+        .set-container(data-empty="This collection has no sets")
+append scripts-footer
+    script(src="js/custom-collections.js" type="module")

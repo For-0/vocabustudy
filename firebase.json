@@ -1,0 +1,135 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": [
+    {
+      "public": "dist",
+      "target": "vocabustudy",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/set/*/view/",
+          "destination": "/set-detail.html"
+        },
+        {
+          "source": "/timeline/*/view/",
+          "destination": "/set-detail.html"
+        },
+        {
+          "source": "/guide/*/view/",
+          "destination": "/guide-detail.html"
+        },
+        {
+          "source": "/set/*/edit/",
+          "destination": "/set-editor.html"
+        },
+        {
+          "source": "/user/*/",
+          "destination": "/user-sets.html"
+        },
+        {
+          "source": "/collection/*/",
+          "destination": "/custom-collections.html"
+        },
+        {
+          "source": "/privacy/",
+          "destination": "/privacy-policy.html"
+        },
+        {
+            "source": "/terms/",
+            "destination": "/tos.html"
+        },
+        {
+          "source": "/help-center/",
+          "destination": "/help-center.html"
+        }
+      ],
+      "trailingSlash": true
+    },
+    {
+        "public": "dist",
+        "target": "nightly",
+        "ignore": [
+          "firebase.json",
+          "**/.*",
+          "**/node_modules/**"
+        ],
+        "rewrites": [
+          {
+            "source": "/set/*/view/",
+            "destination": "/set-detail.html"
+          },
+          {
+            "source": "/timeline/*/view/",
+            "destination": "/set-detail.html"
+          },
+          {
+            "source": "/guide/*/view/",
+            "destination": "/guide-detail.html"
+          },
+          {
+            "source": "/set/*/edit/",
+            "destination": "/set-editor.html"
+          },
+          {
+            "source": "/user/*/",
+            "destination": "/user-sets.html"
+          },
+          {
+            "source": "/collection/*/",
+            "destination": "/custom-collections.html"
+          },
+          {
+            "source": "/privacy/",
+            "destination": "/privacy-policy.html"
+          },
+          {
+            "source": "/terms/",
+            "destination": "/tos.html"
+          },
+          {
+            "source": "/help-center/",
+            "destination": "/help-center.html"
+          }
+        ],
+        "trailingSlash": true
+      },
+    {
+      "public": "rd",
+      "target": "rd"
+    }
+  ],
+  "emulators": {
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8080
+    },
+    "hosting": {
+      "host": "127.0.0.1",
+      "port": 5000
+    },
+    "logging": {
+      "host": "127.0.0.1",
+      "port": 4500
+    },
+    "hub": {
+      "host": "127.0.0.1",
+      "port": 4400
+    },
+    "ui": {
+      "host": "127.0.0.1",
+      "port": 4000,
+      "enabled": true
+    }
+  }
+}

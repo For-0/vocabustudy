@@ -1,0 +1,45 @@
+@charset "utf-8";
+/* stylelint-disable at-rule-empty-line-before */
+
+/*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
+$primary-alt: #8a6051;
+$secondary-alt: #a67360;
+$main-font: "Raleway", blinkmacsystemfont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+@forward "@bulvar/bulma/sass/utilities" with (
+    $primary: #795548 !default,
+    $secondary: #4f2b26 !default,
+    $custom-colors: ("primary-alt": $primary-alt, "secondary-light": $secondary-alt, "gold": goldenrod) !default,
+    $family-primary: $main-font
+);
+@use "@bulvar/bulma/sass/utilities";
+@forward "@bulvar/bulma/sass/base";
+
+@forward "@bulvar/bulma/sass/elements/box";
+@forward "@bulvar/bulma/sass/elements/button";
+@forward "@bulvar/bulma/sass/elements/content";
+@forward "@bulvar/bulma/sass/elements/container";
+@forward "@bulvar/bulma/sass/elements/icon";
+@forward "@bulvar/bulma/sass/elements/tag";
+@forward "@bulvar/bulma/sass/elements/title";
+@forward "@bulvar/bulma/sass/elements/notification";
+@forward "@bulvar/bulma/sass/elements/other";
+
+@forward "@bulvar/bulma/sass/form";
+
+@forward "@bulvar/bulma/sass/components/card";
+@forward "@bulvar/bulma/sass/components/dropdown";
+@forward "@bulvar/bulma/sass/components/level";
+@forward "@bulvar/bulma/sass/components/menu";
+@forward "@bulvar/bulma/sass/components/message";
+@forward "@bulvar/bulma/sass/components/modal";
+@forward "@bulvar/bulma/sass/components/navbar";
+@forward "@bulvar/bulma/sass/components/panel";
+@forward "@bulvar/bulma/sass/components/tabs";
+
+@forward "@bulvar/bulma/sass/grid";
+@forward "@bulvar/bulma/sass/helpers";
+@forward "@bulvar/bulma/sass/layout" with (
+    $footer-background-color: utilities.$primary,
+    $footer-color: utilities.$primary-invert,
+    $footer-padding: 1rem
+);

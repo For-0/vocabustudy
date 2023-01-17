@@ -1,0 +1,33 @@
+extends includes/layout.pug
+block variables
+    - var title = "Learn Results";
+    - var description = "Results on your Learn Session";
+block extrahead
+    meta(name="robots" content="noindex")
+block content
+    .page
+        h1 Learn Results
+        .container-results(style="overflow-wrap: break-word;")
+        p This information never leaves your computer, and is deleted when you close Vocabustudy
+append scripts-footer
+    script. 
+        let learnResults = opener?.temp_learnResults;
+        if (learnResults) {
+            delete opener?.temp_learnResults;
+            if (learnResults.results.length < 1) document.querySelector(".container-results").innerText = "No missed questions!";
+            else {
+                learnResults.results.forEach(el => {
+                    let row = document.querySelector(".container-results").appendChild(document.createElement("p"));
+                    row.appendChild(document.createElement("strong")).innerText = el[1] + " ";
+                    row.appendChild(document.createElement("span")).innerText = el[2];
+                });
+                let btn = document.querySelector(".container-results").appendChild(document.createElement("button"));
+                btn.classList.add("button", "is-primary");
+                btn.innerText = "Star All Terms"
+                btn.addEventListener("click", () => {
+                    opener.StarredTerms.setStars(learnResults.results.map(el => el[0]), true);
+                    btn.disabled = true;
+                    btn.innerText = "Starred";
+                });
+            }
+        }

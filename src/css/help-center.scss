@@ -1,0 +1,59 @@
+@import "styles.scss";
+.featured .level {
+    border-bottom: 1px solid lightgrey;
+}
+.category {
+    .title span {
+        opacity: 0.5;
+        font-size: 1rem;
+        font-weight: 400;
+        margin-left: 1rem;
+    }
+    i {
+        font-size: inherit;
+    }
+    .icon {
+        margin-right: 4px;
+        transition: 0.1s ease margin-right, 0.1s ease color;
+    }
+    li:hover .icon {
+        margin-right: 0;
+        color: #795548;
+    }
+}
+.hero {
+    margin-left: -1rem;
+    width: calc(100% + 2rem);
+}
+#home .hero {
+    background-image: linear-gradient(to top, transparent, transparent, #795548), url("../images/nasa-space-background.jpg?as=webp&width=2000");
+    background-position: center center;
+    background-size: cover;
+    position: fixed;
+    top: 52px;
+    transition: 0.2s ease padding;
+    padding: 3rem 0;
+    z-index: 2;
+    h1 {
+        transition: 0.2s ease margin;
+    }
+    p.is-size-4 {
+        height: 36px;
+        transition: 0.2s ease height, 0.2s ease opacity;
+    }
+}
+.hero-small #home .hero {
+    padding: 0 !important;
+    h1 {
+        margin-bottom: 0 !important;
+    }
+    p.is-size-4 {
+        height: 0;
+        opacity: 0;
+    }
+}
+.page:not(#home) .hero {
+    top: 52px;
+    position: sticky;
+    z-index: 2;
+}

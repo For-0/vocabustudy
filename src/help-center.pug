@@ -1,0 +1,208 @@
+extends includes/layout.pug
+
+mixin article_content(categoryIndex, articleIndex)
+    .page(id=articleCategories[categoryIndex].articles[articleIndex].hash)
+        section.py-1.hero.is-primary.is-small
+            .hero-body.has-text-centered.p-0.pb-3
+                h1.title.is-2= articleCategories[categoryIndex].articles[articleIndex].title
+        .container.mt-3
+            block
+block variables
+    - var title = "Help Center";
+    - var description = "Vocabustudy Help Center";
+    - 
+        var articleCategories = [
+            {
+                name: "Set Editor",
+                articles: [
+                    {
+                        title: "Creating a Set",
+                        hash: "creating-a-set",
+                        featured: true
+                    }
+                ]
+            },
+            {
+                name: "Accounts and Interactions",
+                articles: [
+                    {
+                        title: "Creating an Account",
+                        hash: "creating-an-account",
+                        featured: true
+                    }
+                ]
+            }
+        ];
+block main-stylesheet
+    link(rel="stylesheet" href="css/help-center.scss")
+block content
+    +article_content(0, 0)
+        p There are #[strong three] types of sets in Vocabustudy.
+        p Normal sets are made up of term and definition pairs, and are great for studying vocabulary,.
+        h2.title.is-size-4.mb-0.mt-3 Here's how to create a set:
+        .list
+            .list-item
+                .list-item-content
+                    .list-item-title Open Vocabustudy (obviously)
+                    .list-item-description Make sure you are logged in
+            .list-item
+                .list-item-content
+                    .list-item-title Go to the #[a.has-text-primary(href="/#mysets") My Sets] page
+                    .list-item-description Alternatively, click the account icon at the top right, and select #[span(style="color: #0a0a0a;background-color: #f5f5f5;padding: .375rem 1rem;border-radius: 4px;") My Sets]
+            .list-item
+                .list-item-title Select
+                    span.button.is-primary.mx-3(style="vertical-align: middle; cursor: auto;")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden='true') add_circle_outline
+                        span Create
+                        span.icon.is-small
+                            i.material-symbols-rounded(aria-hidden='true') arrow_drop_down
+                    | and choose
+                    span.dropdown-item.is-inline
+                        i.material-symbols-rounded(aria-hidden='true' style="vertical-align: middle;") add_circle_outline
+                        span Set
+            .list-item
+                .list-item-content
+                    .list-item-title Add a #[strong required] title to the set, and an optional description if you want
+                    .list-item-description You should also choose whether to make the set public or private
+            .list-item
+                .list-item-content
+                    .list-item-title Add terms using the
+                        span.button.is-primary.mx-3(style="vertical-align: middle; cursor: auto;")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden='true') add_circle_outline
+                            span Add
+                        | button
+                    .list-item-description
+                        .tags.has-addons.mt-3
+                            span.tag.is-warning
+                                span.material-symbols-rounded(style="font-size: 1rem;") warning
+                            span.tag.is-warning.is-light(style="white-space: break-spaces;") Make sure your set has at least #[strong(style="color: inherit;") four] terms
+            .list-item
+                .list-item-content
+                    .list-item-title You can also
+                        span.button.is-primary.is-outlined.mx-3(style="vertical-align: middle; cursor: auto;")
+                            span.icon
+                                i.material-symbols-rounded(aria-hidden='true') upload_file
+                            span Import Items
+                        | from Quizlet or Blooket.
+                    .list-item-description Alternatively, you can copy-paste terms from a vocabulary list, Kahoot, etc.
+            .list-item
+                .list-item-content
+                    .list-item-title Add your set to the collections/subjects it falls under
+                    .list-item-description This helps people find it easily
+            .list-item
+                .list-item-title When you're done, click
+                    span.button.is-primary.ml-3(style="vertical-align: middle; cursor: auto;")
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden='true') save
+                        span Save
+                    | !
+        h4.title.is-size-5.mt-3 Congratulations, you have created a set!
+        p Here are some general guidelines for sets:
+        article.message.is-danger
+            .message-body Your sets cannot have offensive, harmful, or explicit content.
+                .tags.has-addons.mt-3
+                    span.tag.is-warning
+                        span.material-symbols-rounded(style="font-size: 1rem;") dangerous
+                    span.tag.is-warning.is-light Sets meeting this criteria will be made private or deleted. The associated account may also be restricted.
+        article.message.is-info
+            .message-body Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
+        article.message.is-warning 
+            .message-body Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
+        p.has-text-weight-bold Have fun making useful sets!
+        // TODO Add timelines and study guides
+    +article_content(1, 0)
+        .content
+            h2 Creating an account gives you the ability to:
+            ul
+                li Create sets
+                br
+                li Save sets
+                br
+                li Comment on sets
+                br
+                li Like sets
+                br
+                li And more!
+            h2 How to create an account
+            p 1. Click the account icon at the top right of the header or go to #[a(href="https://vocabustudy.org/#login") https://vocabustudy.org/#Login].
+            p 2. Click "log in" in the menu that appears.
+            p 3. You will have a choice to choose between either creating your account by sigining in with Google or with email.
+                | We recommend signing in with Google, because it is much easier to create your account and login to it.
+                | However, if you want to create your account with email, here are the steps:
+            ol
+                li Press the button that says "Sign in with email".
+                br
+                li Enter your email in the menu that appears.
+                br
+                li Enter your name and the password that you want to use for your new account.
+                br
+                li It will bring up information about email verification. Press "Send Verification Email" when you are ready.
+                br
+                li You will get a message at the bottom of the screen when the email has been sent.
+                br
+                li Open your email.
+                br
+                li Look for an email from noreply@vocabustudy.org (such a cool, professional email, I know!!!!) titled "Verify your email for Vocabustudy".
+                br
+                li Open it and click the link.
+                br
+                li It will tell you when your email is verified.
+                br
+                li Close the tab with the email verification link.
+                br
+                li Reload the My Account page on Vocabustudy.
+                br
+            h3 Your Account has been verified!
+            p You can now use your account when you are using Vocabustudy.
+    #home.page
+        section.hero.is-primary.is-small
+            .hero-body.has-text-centered
+                h1.title.is-2.mb-4 Vocabustudy Help Center
+                p.is-size-4 How-tos, tips, and instructions!
+                br
+                p.is-size-6 #[a.is-underlined(href="https://docs.google.com/forms/d/e/1FAIpQLSfeilfZ712jPXBDfXtDPTU8k-mSLXiZX-wDSMfNxKpdXH178g/viewform" target="_blank" rel="noreferrer noopener nofollow") Bugs and Feedback Form] · #[a.is-underlined(href='mailto:management@vocabustudy.org') management@vocabustudy.org]
+        .container.is-max-desktop(style="margin-top: 300px;")
+            section.py-6.featured
+                .level.pb-3
+                    .level-left
+                        .level-item
+                            h2.subtitle.has-text-primary(style="font-weight: 600;") Featured Articles
+                    .level-right
+                        .level-item
+                            .field.has-addons.has-addons-centered
+                                .control
+                                    button.button.is-small(disabled)
+                                        span.icon
+                                            i.material-symbols-rounded(aria-hidden="true") chevron_left
+                                .control
+                                    button.button.is-small(disabled)
+                                        span.icon
+                                            i.material-symbols-rounded(aria-hidden="true") chevron_right
+                .columns
+                    each category in articleCategories
+                        each article in category.articles.filter(article => article.featured)
+                            .column.is-3
+                                article
+                                    a.is-block(href=`#${article.hash}`)
+                                        figure.image.is-5by3
+                                            img.ignore-user-hue(src='https://i.ibb.co/fq8hSGQ/placeholder-image-368x246.png' alt="Placeholder")
+                                        h2.subtitle(style="margin-bottom: 0.5rem;")= article.title
+                                        span.tag.is-rounded= category.name
+            section.my-5
+                .columns.is-multiline
+                    each category in articleCategories
+                        .column.is-6
+                            .category
+                                h1.title.is-5= category.name
+                                    span #{category.articles.length} article#{category.articles.length !== 1 ? "s" : ""}
+                                hr.mb-0
+                                ul
+                                    each article in category.articles
+                                        li.pt-4
+                                            a.is-block.has-text-dark(href=`#${article.hash}`)= article.title
+                                                span.icon.is-pulled-right
+                                                    i.material-symbols-rounded(aria-hidden="true") arrow_forward
+append scripts-footer
+    script(src="js/help-center.js" type="module")

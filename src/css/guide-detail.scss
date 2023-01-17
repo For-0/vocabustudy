@@ -1,0 +1,50 @@
+@import "styles.scss";
+.field-description {
+    word-break: break-word;
+}
+.field-name {
+    max-width: calc(100% - 180px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+}
+.guide-item {
+    width: 100%;
+    overflow-wrap: break-word;
+    li {
+        list-style: revert !important;
+        display: revert !important;
+    }
+}
+.page img {
+    max-width: 25%;
+    max-height: 25%;
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 2px;
+}
+quiz-question {
+    &.correct {
+        .input {
+            border-color: var(--success);
+        }
+        .is-checkradio.option-correct + label::after {
+            background-color: var(--success);
+        }
+    }
+    &.incorrect {
+        .input {
+            border-color: var(--danger);
+        }
+        .help {
+            color: var(--danger);
+        }
+        .is-checkradio:checked + label::after {
+            background-color: var(--danger);
+        }
+        .is-checkradio.option-correct + label::before {
+            border-color: var(--success);
+        }
+    }
+}

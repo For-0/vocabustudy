@@ -1,0 +1,32 @@
+name: Deploy Nightly
+'on':
+  release:
+    types: [prereleased]
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.16.0
+      - run: npm ci && npx parcel build
+      - name: Create Sentry Release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_RELEASES_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: 'staging'
+          sourcemaps: './dist'
+          version: ${{ github.event.release.tag_name }}
+          version_prefix: vocabustudy@
+      - run: npm run delete-maps
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOCAB_U_STUDY }}'
+          channelId: live
+          projectId: vocab-u-study
+          target: "nightly"
