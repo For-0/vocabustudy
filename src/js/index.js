@@ -7,7 +7,7 @@ import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAu
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
-import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
+import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove, styleAndSanitize } from "./utils";
 
 /* global google */
 
@@ -47,7 +47,7 @@ const { db, auth } = initialize(async user => {
                     createElement("p", [], {innerText: a.title}),
                     deleteButton
                 ]),
-                createElement("div", ["message-body"], {innerText: a.message})
+                createElement("div", ["message-body"], {innerHTML: styleAndSanitize(a.message)})
             ]));
             deleteButton.addEventListener("click", () => {
                 zoomOutRemove(announcement);
