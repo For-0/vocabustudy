@@ -60,12 +60,6 @@ export function checkAnswers(answer, correct) {
     let possibleCorrect = [correct, correct.split(","), correct.split("/")].flat().map(el => el = normalizeAnswer(el).toUpperCase());
     return possibleCorrect.includes(cleanAnswer);
 }
-export function toLocaleDate(dateData) {
-    switch (typeof dateData) {
-        case "number": return new Date(dateData * 1000).toLocaleString();
-        default: return new Date(Date.parse(dateData)).toLocaleString();
-    }
-}
 /**
  * Apply markdown styling 
  * @param {string} text 
@@ -294,7 +288,6 @@ export async function createSetCardOwner(set, id, linkCreator=false) {
     buttons[2].addEventListener("click", e => e.preventDefault());
     if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${set.uid}/`, innerText: "More by User"}));
     let likeText = set.visibility !== 0 ? ` - ${set.likes || "0"} likes` : "";
-    console.log(id, set.visibility);
     let visibilityData = SET_VISIBILITIES[Array.isArray(set.visibility) ? 3 : set.visibility];
     let cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
         createElement("header", ["card-header"], {}, [
@@ -452,9 +445,11 @@ export function initQuickview(quickview, toggleButton) {
     quickview.querySelector(".delete").addEventListener("click", () => quickview.classList.remove("is-active"));
 }
 export async function getLocalDb() {
-    return await openDB("vocabustudy-database", 1, {
-        upgrade(db) {
-            db.createObjectStore("autosave-backups", { keyPath: "setId" });
+    return await openDB("vocabustudy-database", 2, {
+        upgrade(db, oldVersion) {
+            if (oldVersion === 0)
+                db.createObjectStore("autosave-backups", { keyPath: "setId" });
+            db.createObjectStore("general");
         }
     });
 }

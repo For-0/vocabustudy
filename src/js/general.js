@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
+import { Auth, getCurrentUser, refreshCurrentUser, setCurrentUser } from "./firebase-rest-api/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
 
 function setLoginButtonsState(state, isAdmin) {
@@ -21,7 +22,7 @@ const firebaseConfig = {
 /**
  * Callback for when the auth state changes
  * @callback authStateChangedCallback
- * @param {import("firebase/auth").User} user The user that signed in if available
+ * @param {import("./firebase-rest-api/auth").User} user The user that signed in if available
  */
 /**
  * Callback for when remote config has been activated
@@ -42,6 +43,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         popupRedirectResolver: browserPopupRedirectResolver
     });
     auth.setPersistence(browserLocalPersistence);
+    const newAuth = new Auth();
     if (remoteConfigActivatedCallback !== null) {
         import("firebase/remote-config").then(async ({getRemoteConfig, fetchAndActivate}) => {
             let remoteConfig = getRemoteConfig(app);
@@ -60,6 +62,7 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") {
         connectAuthEmulator(auth, "http://localhost:9099", {disableWarnings: true});
+        newAuth.emulatorUrl = "http://localhost:9099";
         connectFirestoreEmulator(db, "localhost", 8080);
     } else if (process.env.CODESPACES) {
         connectAuthEmulator(auth, `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`, {disableWarnings: true});
@@ -68,11 +71,12 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
         connectAuthEmulator(auth, `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`, {disableWarnings: true});
         connectFirestoreEmulator(db, `${8080}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}`, 443);
     }
-    window.signOut = () => auth.signOut(); // TODO move all to SW, as this will not work on some pages. ALso may disable tree shaking
-    auth.onAuthStateChanged(async user => {
-        window.sentrySetUser?.call(window, user);
-        if (user) setLoginButtonsState(true, (await user.getIdTokenResult()).claims.admin); else setLoginButtonsState(false, false);
+    window.signOut = () => setCurrentUser(newAuth, null);
+    newAuth.on("statechange", async () => {
+        let user = await getCurrentUser();
+        if (user) setLoginButtonsState(true, user.customAttributes.admin); else setLoginButtonsState(false, false);
         authStateChangedCallback(user);
     });
-    return {app, db, auth};
+    refreshCurrentUser(newAuth);
+    return {app, db, auth, newAuth};
 }

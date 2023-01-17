@@ -3,16 +3,17 @@ import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 // eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, sendPasswordResetEmail, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, updatePassword, updateProfile } from "firebase/auth";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
-import { getWords, createSetCard, createSetCardOwner, showCollections, toLocaleDate, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
+import { getWords, createSetCard, createSetCardOwner, showCollections, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
+import { getCurrentUser, sendEmailVerification, deleteCurrentUser, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithGoogleCredential, signInWithEmailAndPassword, updatePassword, showGooglePopup } from "./firebase-rest-api/auth";
 
 /* global google */
 
 const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
-const { db, auth } = initialize(async user => {
+let emailVerificationShown = false;
+const { db, newAuth: auth } = initialize(async user => {
     if (user) {
         if (location.hash === "#login") pages.login.show()
         else if (location.hash === "#saved-sets") showLikedSets();
@@ -21,8 +22,8 @@ const { db, auth } = initialize(async user => {
             showMyCollections();
         }
         verifyAdmin();
-        showAccountInfo(auth.currentUser);
-        if (!user.emailVerified) verifyEmail();
+        showAccountInfo(user);
+        if (!user.emailVerified && !emailVerificationShown) verifyEmail();
     } else {
         if (restrictedUrls.includes(location.hash)) {
             localStorage.setItem("redirect_after_login", location.href);
@@ -98,13 +99,13 @@ const pages = {
         checkTos: document.querySelector("#login-accept-tos"),
         btnSubmit: document.querySelector("#login button[type=submit]"),
         onetapLoaded: false,
-        show(switchMode = true) {
+        async show(switchMode = true) {
             this.btnSubmit.disabled = false;
             if (switchMode) this.page.dataset.mode = "login";
             this.btnSubmit.classList.remove("is-loading");
             this.form.reset();
             this.form.classList.remove("has-validated-inputs");
-            if (auth.currentUser) 
+            if (await getCurrentUser()) 
                 return location.hash = "#account";
             if (!this.onetapLoaded) {
                 if (process.env.NODE_ENV !== "development") {
@@ -113,9 +114,8 @@ const pages = {
                 } else {
                     let btn = document.getElementById("google-onetap-container").appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
                     btn.addEventListener("click", async () => {
-                        const provider = new GoogleAuthProvider();
                         try {
-                            await signInWithPopup(auth, provider);
+                            await showGooglePopup(auth);
                             pages.login.restoreState();
                         } catch (err) {
                             switch(err.code) {
@@ -151,9 +151,8 @@ const pages = {
                     ux_mode: "popup",
                     auto_select: true,
                     callback: async function (response) {
-                        const credential = GoogleAuthProvider.credential(response.credential);
                         try {
-                            await signInWithCredential(auth, credential);
+                            await signInWithGoogleCredential(auth, response.credential);
                             pages.login.restoreState();
                         } catch (err) {
                             switch(err.code) {
@@ -229,21 +228,15 @@ const pages = {
 };
 
 async function reauthenticateUser() {
-    switch (auth.currentUser.providerData[0].providerId) {
-        case GoogleAuthProvider.PROVIDER_ID: {
-            let provider = new GoogleAuthProvider();
-            provider.setCustomParameters({
-                prompt: "consent",
-                login_hint: auth.currentUser.email
-            })
-            await reauthenticateWithPopup(auth.currentUser, provider);
-            return true;
-        } case EmailAuthProvider.PROVIDER_ID: {
-            pages.modals.reauthenticatePasswordInput.value = "";
-            pages.modals.reauthenticatePasswordInput.setCustomValidity("");
-            let result = await bulmaModalPromise(pages.modals.reauthenticatePassword);
-            return result;
-        }
+    let currentUser = await getCurrentUser();
+    if (currentUser.providers.includes("google.com")) {
+        await showGooglePopup(auth, true);
+        return true;
+    } else {
+        pages.modals.reauthenticatePasswordInput.value = "";
+        pages.modals.reauthenticatePasswordInput.setCustomValidity("");
+        let result = await bulmaModalPromise(pages.modals.reauthenticatePassword);
+        return result;
     }
 }
 async function changePassword() {
@@ -251,31 +244,30 @@ async function changePassword() {
     pages.modals.changePasswordInputs.forEach(el => el.value = "");
     pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
     let result = await bulmaModalPromise(pages.modals.changePassword);
-    if (result) await updatePassword(auth.currentUser, pages.modals.changePasswordInputs[0].value);
+    if (result) await updatePassword(pages.modals.changePasswordInputs[0].value);
 }
 async function changeName() {
     pages.modals.changeNameInput.value = "";
     let result = await bulmaModalPromise(pages.modals.changeName);
-    if (result) await updateProfile(auth.currentUser, { displayName: pages.modals.changeNameInput.value });
+    if (result) await updateProfile(auth, { displayName: pages.modals.changeNameInput.value });
 }
 /**
  * Show account info
- * @param {import("firebase/auth").User} param0
+ * @param {import("./firebase-rest-api/auth").User} param0
  */
-function showAccountInfo({ displayName, email, emailVerified, metadata: { creationTime } }) {
+function showAccountInfo({ displayName, email, emailVerified, created }) {
     pages.account.name.innerText = displayName;
     pages.account.email.innerText = email;
     pages.account.emailVerified.hidden = !emailVerified;
     pages.account.emailNotVerified.hidden = emailVerified;
     pages.account.btnVerifyEmail.parentElement.hidden = emailVerified;
-    if (creationTime) pages.account.created.innerText = toLocaleDate(creationTime);
-    else if (auth.currentUser)
-        auth.currentUser.reload().then(() => pages.account.created.innerText = toLocaleDate(auth.currentUser.metadata.creationTime));
+    if (created) pages.account.created.innerText = created.toLocaleString();
 }
 
 async function showMySets(el = pages.mySets.sets, showAll = false) {
     el.textContent = "Loading sets...";
-    let mQuery = showAll ? query(collection(db, "meta_sets")) : query(collection(db, "meta_sets"), where("uid", "==", auth.currentUser.uid));
+    let currentUser = await getCurrentUser();
+    let mQuery = showAll ? query(collection(db, "meta_sets")) : query(collection(db, "meta_sets"), where("uid", "==", currentUser.uid));
     let extraParams = showAll ? [] : [[0], ["likes", "desc"]];
     await paginateQueries([mQuery], el.nextElementSibling, docs => {
         docs.forEach(async docSnap => {
@@ -348,7 +340,8 @@ function registerCustomCollectionCard(docSnap) {
 }
 async function showMyCollections() {
     pages.mySets.collections.textContent = "Loading collections...";
-    let docs = await getDocs(query(collection(db, "collections"), where("uid", "==", auth.currentUser.uid)));
+    let currentUser = await getCurrentUser();
+    let docs = await getDocs(query(collection(db, "collections"), where("uid", "==", currentUser.uid)));
     pages.mySets.collections.textContent = "";
     docs.forEach(docSnap => registerCustomCollectionCard(docSnap));
 }
@@ -400,9 +393,10 @@ async function search() {
     pages.search.sets[1].textContent = "";
 }
 async function showLikedSets() {
-    if (auth.currentUser) {
+    let currentUser = await getCurrentUser();
+    if (currentUser) {
         pages.savedSets.likedSets.textContent = "Loading sets...";
-        let mQuery = query(collectionGroup(db, "social"), where("uid", "==", auth.currentUser.uid), where("like", "==", true));
+        let mQuery = query(collectionGroup(db, "social"), where("uid", "==", currentUser.uid), where("like", "==", true));
         await paginateQueries([mQuery], pages.savedSets.likedSets.nextElementSibling, async docs => {
             let setIds = docs.map(el => el.ref.parent.parent.id);
             if (setIds.length < 1) return;
@@ -416,12 +410,14 @@ async function showLikedSets() {
     }
 }
 async function verifyAdmin() {
-    let token = await auth.currentUser.getIdTokenResult();
-    if (!token.claims.admin && location.hash === "#admin") location.hash = "#";
-    return token.claims.admin;
+    let currentUser = await getCurrentUser()
+    if (!currentUser?.customAttributes.admin && location.hash === "#admin") location.hash = "#";
+    return currentUser?.customAttributes.admin;
 }
-function verifyEmail() {
-    if (auth.currentUser) {
+async function verifyEmail() {
+    let currentUser = await getCurrentUser();
+    if (currentUser) {
+        emailVerificationShown = true;
         new Alert().alert({
             type: "warning",
             title: "Verify Email Address",
@@ -429,7 +425,7 @@ function verifyEmail() {
             confirm: {
                 label: "Send Verification Email",
                 onClick: () => 
-                    sendEmailVerification(auth.currentUser).then(() => toast({message: "Verification email sent. Reload once you have verified your email.", type: "is-success", dismissible: true, position: "bottom-center", duration: 7000}))
+                    sendEmailVerification(auth, currentUser).then(() => toast({message: "Verification email sent. Reload once you have verified your email.", type: "is-success", dismissible: true, position: "bottom-center", duration: 7000}))
             },
             cancel: {
                 label: "Not Now"
@@ -448,14 +444,16 @@ addEventListener("DOMContentLoaded", () => {
     pages.modals.reauthenticatePassword.validateInput = async () => {
         pages.modals.reauthenticatePasswordInput.setCustomValidity("");
         if (pages.modals.reauthenticatePasswordInput.reportValidity()) {
-            let credential = EmailAuthProvider.credential(auth.currentUser.email, pages.modals.reauthenticatePasswordInput.value);
-            try {
-                await reauthenticateWithCredential(auth.currentUser, credential);
-                return true;
-            } catch {
-                pages.modals.reauthenticatePasswordInput.setCustomValidity("Incorrect Password");
-                pages.modals.reauthenticatePasswordInput.reportValidity();
-                return false;
+            let currentUser = await getCurrentUser();
+            if (currentUser) {
+                try {
+                    await signInWithEmailAndPassword(auth, currentUser.email, pages.modals.reauthenticatePasswordInput.value);
+                    return true;
+                } catch {
+                    pages.modals.reauthenticatePasswordInput.setCustomValidity("Incorrect Password");
+                    pages.modals.reauthenticatePasswordInput.reportValidity();
+                    return false;
+                }
             }
         }
     };
@@ -476,14 +474,15 @@ addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("theme_hue", pages.modals.changeHueInput.value);
         setHue(pages.modals.changeHueInput.valueAsNumber);
     });
-    pages.account.btnVerifyEmail.addEventListener("click", () => auth.currentUser.emailVerified ? location.reload() : verifyEmail());
+    pages.account.btnVerifyEmail.addEventListener("click", () => getCurrentUser().then(user => user.emailVerified ? location.reload : verifyEmail()));
     pages.account.btnChangePassword.addEventListener("click", async () => {
         let result = await reauthenticateUser();
         if (result) await changePassword();
     });
     pages.account.btnChangeName.addEventListener("click", async () => {
         await changeName();
-        showAccountInfo(auth.currentUser);
+        let currentUser = await getCurrentUser();
+        showAccountInfo(currentUser);
     });
     pages.account.btnDeleteAccount.addEventListener("click", async () => {
         let result = await reauthenticateUser();
@@ -494,7 +493,7 @@ addEventListener("DOMContentLoaded", () => {
                 body: "Are you sure you would like to delete your account? Your sets will not be deleted.",
                 confirm: {
                     label: "OK",
-                    onClick: () => deleteUser(auth.currentUser)
+                    onClick: () => deleteCurrentUser(auth)
                 },
                 cancel: {
                     label: "Cancel"
@@ -519,7 +518,8 @@ addEventListener("DOMContentLoaded", () => {
         let result = await bulmaModalPromise(pages.modals.changeName);
         if (result) {
             let docRef = doc(collection(db, "collections"));
-            await setDoc(docRef, {name: pages.modals.changeNameInput.value, sets: [], uid: auth.currentUser.uid});
+            let { uid } = await getCurrentUser();
+            await setDoc(docRef, {name: pages.modals.changeNameInput.value, sets: [], uid});
             let docSnap = await getDoc(docRef);
             registerCustomCollectionCard(docSnap);
         }
@@ -534,7 +534,7 @@ addEventListener("DOMContentLoaded", () => {
                     if (pages.login.inputPassword.value === pages.login.inputConfirmPassword.value) {
                         try {
                             await createUserWithEmailAndPassword(auth, pages.login.inputEmail.value, pages.login.inputPassword.value);
-                            await updateProfile(auth.currentUser, { displayName: pages.login.inputDisplayName.value });
+                            await updateProfile(auth, { displayName: pages.login.inputDisplayName.value });
                             pages.login.restoreState();
                         } catch(err) {
                             if (err.name !== "FirebaseError") throw err;
@@ -624,8 +624,9 @@ addEventListener("DOMContentLoaded", () => {
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
     if (location.hash === "#login") pages.login.show();
 });
-window.addEventListener("hashchange", () => {
-    if (!auth.currentUser && restrictedUrls.includes(location.hash)) {
+window.addEventListener("hashchange", async () => {
+    let currentUser = await getCurrentUser();
+    if (!currentUser && restrictedUrls.includes(location.hash)) {
         localStorage.setItem("redirect_after_login", location.href);
         location.hash = "#login";
         return;

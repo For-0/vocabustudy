@@ -52,6 +52,7 @@
     "@sentry/browser": "^7.28.1",
     "@sentry/tracing": "^7.28.1",
     "@vizuaalog/bulmajs": "^0.12.2",
+    "broadcast-channel": "^4.20.1",
     "bulma": "^0.9.4",
     "bulma-checkradio": "^2.1.3",
     "bulma-list": "^1.2.0",
