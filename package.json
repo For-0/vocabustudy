@@ -39,7 +39,9 @@
     "delete-maps": "npm run delete-maps:references",
     "delete-maps:files": "find ./dist -name '*.map' -delete",
     "delete-maps:references": "find ./dist -regex \".*\\.\\(js\\|css\\)\" -exec sed -i -E \"\\/[\\*\\/]#\\ssourceMappingURL=.*(\\.[0-9a-f]+)?\\.(css|js)\\.map(\\*\\/)?/g\" {} +",
-    "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\""
+    "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\"",
+    "lint": "eslint src/js && stylelint src/css && pug-lint src",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "Siddhant Kameswar",
@@ -76,6 +78,7 @@
     "@parcel/transformer-sass": "^2.8.2",
     "@parcel/transformer-webmanifest": "^2.8.2",
     "eslint": "^8.28.0",
+    "husky": "^8.0.3",
     "mocha": "^10.2.0",
     "parcel": "^2.8.2",
     "process": "^0.11.10",

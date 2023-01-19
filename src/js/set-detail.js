@@ -364,7 +364,8 @@ const pages = {
          * @param {KeyboardEvent} e
          */
         onKeyUp(e) {
-            if (["1", "2"].includes(this.msgDone.parentElement.dataset.mode) && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) this.generateQuestion();
+            if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
+            if (["1", "2"].includes(this.msgDone.parentElement.dataset.mode)) this.generateQuestion();
             else if (!this.answerMC.hidden && !this.answerMC.disabled) this.answerMC.elements[parseInt(e.key) - 1]?.click();
         },
         show() {

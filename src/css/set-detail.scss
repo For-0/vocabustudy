@@ -409,7 +409,7 @@ main,
                         padding: 4px;
                         &.over {
                             border-style: dotted;
-                            background-color: lighten($theme-color, 30%);
+                            background-color: hsla(var(--primary-h), var(--primary-s), calc(var(--primary-l) + 30%), var(--primary-a));
                             &:not(:empty) > div {
                                 opacity: 0.4;
                             }
@@ -433,7 +433,7 @@ main,
                     overflow-wrap: break-word;
                     box-shadow: 0 0.5em 1em -0.125em #79554844;
                     &.selected {
-                        background-color: darken($theme-color, 10%);
+                        --primary: hsla(var(--primary-h), var(--primary-s), calc(var(--primary-l) - 10%), var(--primary-a));
                     }
                 }
                 img {
