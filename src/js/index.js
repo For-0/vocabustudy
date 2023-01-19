@@ -1,6 +1,7 @@
 import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
+// eslint-disable-next-line no-unused-vars
 import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
 // eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
