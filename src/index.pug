@@ -348,17 +348,6 @@ block content
                             span Sign Up
 append scripts-footer
     .announcements-container
-    #modal-reauthenticate-password.modal
-        .modal-background
-        .modal-card
-            header.modal-card-head
-                p.modal-card-title Re-Authenticate
-                button.delete(aria-label="close")
-            section.modal-card-body
-                p To verify your identity, please sign in again:
-                input.input(type="password" required placeholder="Password")
-            footer.modal-card-foot
-                button.button.is-success(type="button") OK
     #modal-change-password.modal
         .modal-background
         .modal-card
@@ -366,10 +355,21 @@ append scripts-footer
                 p.modal-card-title Change Password
                 button.delete(aria-label="close")
             section.modal-card-body
+                input.input(type="password" required placeholder="Current Password")
                 input.input(type="password" required placeholder="Password" minlength="6")
                 input.input(type="password" required placeholder="Confirm Password" minlength="6")
             footer.modal-card-foot
                 button.button.is-success(type="button") OK
+    #modal-delete-account.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Delete Account
+                button.delete(aria-label="close")
+            section.modal-card-body
+                input.input(type="password" required placeholder="Current Password")
+            footer.modal-card-foot
+                button.button.is-danger(type="button") Delete Account
     #modal-change-name.modal
         .modal-background
         .modal-card

@@ -7,7 +7,7 @@ import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDoc
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
 import { getWords, createSetCard, createSetCardOwner, showCollections, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
-import { getCurrentUser, sendEmailVerification, deleteCurrentUser, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithGoogleCredential, signInWithEmailAndPassword, updatePassword, showGooglePopup } from "./firebase-rest-api/auth";
+import { getCurrentUser, sendEmailVerification, deleteCurrentUser, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithGoogleCredential, signInWithEmailAndPassword, updatePassword, showGooglePopup, setCurrentUser } from "./firebase-rest-api/auth";
 
 /* global google */
 
@@ -209,8 +209,6 @@ const pages = {
         likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
-        reauthenticatePassword: new Modal("#modal-reauthenticate-password").modal(),
-        reauthenticatePasswordInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-reauthenticate-password input"))),
         changePassword: new Modal("#modal-change-password").modal(),
         changePasswordInputs: (/** @type {HTMLInputElement[]} */ ([...document.querySelectorAll("#modal-change-password input")])),
         changeName: new Modal("#modal-change-name").modal(),
@@ -228,16 +226,8 @@ const pages = {
 };
 
 async function reauthenticateUser() {
-    let currentUser = await getCurrentUser();
-    if (currentUser.providers.includes("google.com")) {
-        await showGooglePopup(auth, true);
-        return true;
-    } else {
-        pages.modals.reauthenticatePasswordInput.value = "";
-        pages.modals.reauthenticatePasswordInput.setCustomValidity("");
-        let result = await bulmaModalPromise(pages.modals.reauthenticatePassword);
-        return result;
-    }
+    await setCurrentUser(auth, null);
+    toast({type: "is-danger", message: "To verify your identity, please sign in again"})
 }
 async function changePassword() {
     pages.modals.changePassword.open();
@@ -440,32 +430,26 @@ addEventListener("DOMContentLoaded", () => {
         listPreviewCollections(collections);
     };
     pages.modals.changeHue.onclose = () => {};
-    initBulmaModals([pages.modals.reauthenticatePassword, pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, ...pages.modals.contributers]);
-    pages.modals.reauthenticatePassword.validateInput = async () => {
-        pages.modals.reauthenticatePasswordInput.setCustomValidity("");
-        if (pages.modals.reauthenticatePasswordInput.reportValidity()) {
+    initBulmaModals([pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, ...pages.modals.contributers]);
+    pages.modals.changePassword.validateInput = async () => {
+        pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
+        if (pages.modals.changePasswordInputs.every(el => el.reportValidity())) {
             let currentUser = await getCurrentUser();
             if (currentUser) {
                 try {
-                    await signInWithEmailAndPassword(auth, currentUser.email, pages.modals.reauthenticatePasswordInput.value);
-                    return true;
+                    await signInWithEmailAndPassword(auth, currentUser.email, pages.modals.changePasswordInputs[0].value);
+                    if (pages.modals.changePasswordInputs[1].value === pages.modals.changePasswordInputs[2].value) return true;
+                    else {
+                        pages.modals.changePasswordInputs[1].setCustomValidity("Passwords do not match");
+                        pages.modals.changePasswordInputs[1].reportValidity();
+                        return false;
+                    }
                 } catch {
-                    pages.modals.reauthenticatePasswordInput.setCustomValidity("Incorrect Password");
-                    pages.modals.reauthenticatePasswordInput.reportValidity();
+                    pages.modals.changePasswordInputs[0].setCustomValidity("Incorrect Password");
+                    pages.modals.changePasswordInputs[0].reportValidity();
                     return false;
                 }
-            }
-        }
-    };
-    pages.modals.changePassword.validateInput = () => {
-        pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
-        if (pages.modals.changePasswordInputs.every(el => el.reportValidity())) {
-            if (pages.modals.changePasswordInputs[0].value === pages.modals.changePasswordInputs[1].value) return true;
-            else {
-                pages.modals.changePasswordInputs[0].setCustomValidity("Passwords do not match");
-                pages.modals.changePasswordInputs[0].reportValidity();
-                return false;
-            }
+            } else return false;
         }
     };
     pages.modals.changeName.validateInput = () => pages.modals.changeNameInput.reportValidity();
@@ -476,8 +460,11 @@ addEventListener("DOMContentLoaded", () => {
     });
     pages.account.btnVerifyEmail.addEventListener("click", () => getCurrentUser().then(user => user.emailVerified ? location.reload : verifyEmail()));
     pages.account.btnChangePassword.addEventListener("click", async () => {
-        let result = await reauthenticateUser();
-        if (result) await changePassword();
+        let currentUser = await getCurrentUser();
+        if (currentUser.providers.includes("google.com"))
+            await reauthenticateUser();
+        else await changePassword(); // TODO do this stuff:
+        // delete acct and change password modals should have "current password" for reauthenticating. If signinwith google, then just logout and prompt to sign in at login page
     });
     pages.account.btnChangeName.addEventListener("click", async () => {
         await changeName();

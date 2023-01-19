@@ -3,7 +3,7 @@ import { createElement, getLocalDb } from "../utils.js";
 import { BroadcastChannel } from "broadcast-channel";
 
 /* global gapi */
-
+window.getLocalDb = getLocalDb;
 export class Auth {
     constructor() {
         this.channel = new BroadcastChannel("auth-updates", {
@@ -234,8 +234,8 @@ export async function refreshCurrentUser(auth) {
     let user = null;
     if (currentUser) {
         try {
-            if (Date.now >= currentUser.token.expirationTime) {
-                let res = await fetch(`https://securetoken.googleapis.com/v1/token?key=${apiKey}`, {
+            if (Date.now() >= currentUser.token.expirationTime) {
+                let res = await fetch(`${auth.emulatorUrl ?? "https:/"}/securetoken.googleapis.com/v1/token?key=${apiKey}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -245,7 +245,8 @@ export async function refreshCurrentUser(auth) {
                         refresh_token: currentUser.token.refresh
                     })
                 });
-                user = await idTokenToUser(auth, await res.json());
+                let { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json();
+                user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
             } else
                 user = await idTokenToUser(auth, { idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
         } catch (err) {
