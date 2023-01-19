@@ -44,7 +44,7 @@ block content
                                     .divider.my-4 Or
                                 #google-onetap-container
                             small.is-block.mt-3
-                                em 
+                                em
                                     span.is-hidden-mobile You must be at least 13 years old to use an account, or you must have permission from a parent/guardian.
                                     span.is-hidden-tablet You must be at least 13 or have parental permission to use an account.
                 .column.is-8.is-offset-2.p-0
@@ -60,7 +60,7 @@ block content
     #account.page(data-nosnippet)
         h1 My Account
         p Only your display name is public.
-        .card 
+        .card
             .card-content
                 .content
                     .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
@@ -68,7 +68,7 @@ block content
                         span.field-email
                         span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-1.is-danger(hidden) Email Not Verified
                         span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-1.is-success(hidden) Email Verified
-                    .supporting-text 
+                    .supporting-text
                         strong Account Created: 
                         span.field-created
             footer.card-footer.is-flex-wrap-wrap
@@ -237,26 +237,47 @@ block content
             ul(style="margin-bottom: 2rem; margin-top: 1rem;")
                 li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
                 li Thank you to all moderators and helpers on the Vocabustudy Discord Server.
-    #donate.page(data-nosnippet)
-        h1 Donate
+    #support-us.page(data-nosnippet)
+        h1 Support Us
         p.title.is-size-3 Your donations help!
-        p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
-        p Donations will help us pay for the domain. It is $12 per year.
-        p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
-        p If you'd like to donate, there are two ways you can help out!
+        p Vocabustudy is a free website, but donations do serve a purpose. #[span(style="font-weight: 600") Your ability to donate won't affect how you are treated on the site.]
+        p Donating helps us with paying the $12 domain and working towards improving infrastructure.
+        p.subtitle.is-size-5 How can you help out?
+        .tabs-wrapper
+            .tabs.is-large.is-toggle.is-primary
+                ul
+                    li.is-active
+                        a Support us for free!
+                    li
+                        a Electronic Donation
+                    li
+                        a Physical Donation
+            .tabs-content
+                ul
+                    li.is-active
+                        p.title.is-size-3 Support us #[span(style="font-weight: 600") for free!]
+                        p Can't donate? No problem! You can help us just as much by doing the following:
+                        br
+                        ul
+                            p.li-tab #[strong Share Vocabustudy with your friends] and family. The more people who use Vocabustudy, the more we can improve it.
+                            p.li-tab #[strong Report bugs] and #[strong request features] on #[a(href="https://github.com/For-0/vocabustudy") Vocabustudy's GitHub page]. The more bugs we find, the more stable the site will be.
+                            p.li-tab #[strong Follow us!] Create a GitHub account and consider clicking the star button on #[a(href="https://github.com/For-0/vocabustudy") Vocabustudy's GitHub page]. This helps us get more attention to the project.
+                            p.li-tab #[strong Use Vocabustudy] and be sure to comment and like sets. Your comments and likes motivate creators to make more sets.
+                            p.li-tab #[strong Make sets!] Making sets will help other people learn. The more sets we have, the more useful Vocabustudy will be.
+                    li
+                        p.title.is-size-3 BuyMeACoffee
+                        p If you can donate electronically, please consider buying us a coffee.
+                        br
+                        a(href="https://www.buymeacoffee.com/forzero" target="_blank") #[img.ignore-user-hue(src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;")]
+
+                    li
+                        p.title.is-size-3 Physical Donation
+                        p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell (next to Ms. Krull's room). #[b Coins do not fit through the slot. Only bills do.]
+                        ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
         br
-        p.title.is-size-3 1. BuyMeACoffee
-        p If you can donate electronically, please consider buying us a coffee.
         br
-        a(href="https://www.buymeacoffee.com/forzero" target="_blank") #[img.ignore-user-hue(src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;")]
-        br
-        br
-        p.title.is-size-3 2. Physical Donation
-        
-        p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell (next to Ms. Krull's room). #[b Coins do not fit through the slot. Only bills do.]
-        ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
-        br
-        h2.title.is2 Thank you for your donations! Even a dollar can help us improve this website.
+        hr
+        h2.title.is2 Thank you for helping us! Even a dollar or a follower can help us improve this website.
     #discord.page(data-nosnippet)
         h1 Discord
         p.title.is-size-5 Vocabustudy Discord Server
@@ -298,7 +319,7 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") tune
                             .list-item-content
                                 .list-item-title Multiple Study Modes
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Don't like flashcards? You can take a mock test, match terms, and more!
                                     span.is-hidden-tablet Flashcards, learn, test, and match
                         li.list-item.is-flex-wrap-nowrap.pb-0
@@ -307,16 +328,16 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") category
                             .list-item-content
                                 .list-item-title Collections
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Transform your learning with designed collections of vocab sets.
                                     span.is-hidden-tablet Find sets about a specific topic
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon
                                     i.material-symbols-rounded(aria-hidden="true") rule
-                            .list-item-content 
+                            .list-item-content
                                 .list-item-title Effective Test Prep
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Ace your test with customized sets for your classes.
                                     span.is-hidden-tablet Find sets about relevant topics
                         li.list-item.is-flex-wrap-nowrap.pb-0.is-clickable(onclick="window.open('https://github.com/For-0')")
@@ -325,7 +346,7 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") money_off
                             .list-item-content
                                 .list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Fast, simple, effective, and completely free.
                                     span.is-hidden-tablet Forever free
                         li.list-item.is-flex-wrap-nowrap.pb-0
@@ -334,7 +355,7 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") school
                             .list-item-content
                                 .list-item-title Study Guides
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Learn and quiz yourself about a topic
                                     span.is-hidden-tablet Learning and quizzing combined
                     .buttons.has-addons.is-centered.mt-4

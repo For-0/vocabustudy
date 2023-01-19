@@ -288,3 +288,13 @@ body > .announcements-container {
         text-decoration: underline;
     }
 }
+.tabs-content li {
+    display: none;
+    list-style: none;
+}
+.tabs-content li.is-active {
+    display: block;
+}
+.li-tab {
+    margin-bottom: 0.2rem;
+}

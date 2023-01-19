@@ -1,6 +1,7 @@
 import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
+import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
 // eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
 import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, sendEmailVerification, sendPasswordResetEmail, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, updatePassword, updateProfile } from "firebase/auth";
@@ -66,7 +67,7 @@ const hashTitles = {
     "#search": "Browse Sets",
     "#account": "My Account",
     "#discord":"Discord",
-    "#donate": "Donate",
+    "#support-us": "Support Us",
     "#youtube": "YouTube",
     "#credits": "Credits"
 };
