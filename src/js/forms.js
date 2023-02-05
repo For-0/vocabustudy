@@ -74,6 +74,7 @@ async function sendBug() {
     const bug = {
         name: forms.bug.name.value,
         email: forms.bug.email.value,
+        url: forms.bug.url.value,
         text: forms.bug.text.value,
         uid: auth.currentUser.uid
     };
