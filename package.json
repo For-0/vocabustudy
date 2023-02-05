@@ -17,7 +17,8 @@
         "src/google867623008d63d621.html",
         "src/help-center.pug",
         "src/tos.pug",
-        "src/auth-action.pug"
+        "src/auth-action.pug",
+        "src/forms.pug"
       ],
       "context": "browser",
       "distDir": "./dist"
