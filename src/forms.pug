@@ -8,32 +8,25 @@ block content
         .hero.is-medium.is-primary.py-1
             .hero-body.has-text-centered
                 .container
-                    h1.title
-                        | Feedback
-                    h2.subtitle
-                        | Vocabustudy Forms
+                    h1.title Feedback
+                    h2.subtitle Vocabustudy Forms
         .tile.is-ancestor(style="margin-top: 1em")
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Feedback
-                    p.subtitle
-                        | Do you have some feedback for us? Let us know! We'd love to hear from you. This includes suggestions for new features, improvements to some features, or just feedback on the site in general.  #[b We accept everything Vocabustudy-related, including the Blog, Help Center, Discord Server, and other external sites related to Vocabustudy.]
+                    p.title Feedback
+                    p.subtitle Do you have some feedback for us? Let us know! We'd love to hear from you. This includes suggestions for new features, improvements to some features, or just feedback on the site in general.  #[b We accept everything Vocabustudy-related, including the Blog, Help Center, Discord Server, and other external sites related to Vocabustudy.]
                     form#feedback-form
                         .field
                             .control
-                                label.label
-                                    | Your Name
+                                label.label Your Name
                                 input#name-feedback.input(type="text" name="name" placeholder="Your Name" required="required")
                         .field
                             .control
-                                label.label
-                                    | Your Email - If you use your student email, you will not receive a follow up email.
+                                label.label Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-feedback.input(type="email" name="email" placeholder="Your Email" required="required")
                         .field
                             .control
-                                label.label
-                                    | How would you rate Vocabustudy?
+                                label.label How would you rate Vocabustudy?
                                 .select
                                     select#rating-feedback(name="rating")
                                         option(value="1") 1
@@ -48,174 +41,130 @@ block content
                                         option(value="10") 10
                         .field
                             .control
-                                label.label
-                                    | Your Feedback
+                                label.label Your Feedback
                                 textarea#text-feedback.textarea(name="feedback" placeholder="Your Feedback" required="required")
                         .field
                             .control
-                                button#btn-feedback.button.is-primary(type='submit')
-                                    | Submit Feedback
+                                button#btn-feedback.button.is-primary(type='submit') Submit Feedback
     #bug.page
         .hero.is-medium.is-primary.py-1
             .hero-body.has-text-centered
                 .container
-                    h1.title
-                        | Bug Report
-                    h2.subtitle
-                        | Vocabustudy Forms
+                    h1.title Bug Report
+                    h2.subtitle Vocabustudy Forms
         .tile.is-ancestor(style="margin-top: 1em")
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Bug Report
-                    p.subtitle
-                        | Vocabustudy is constantly in development, and a few bugs are sure to sneak in! If you found a bug, let us know! We'll fix it as soon as possible.
+                    p.title Bug Report
+                    p.subtitle Vocabustudy is constantly in development, and a few bugs are sure to sneak in! If you found a bug, let us know! We'll fix it as soon as possible.
                         form#bug-form
                             .field
                                 .control
-                                    label.label
-                                        | Your Name
+                                    label.label Your Name
                                     input#name-bug.input(type="text" name="name" placeholder="Your Name" required="required")
                             .field
                                 .control
-                                    label.label
-                                        | Your Email - If you use your student email, you will not receive a follow up email.
+                                    label.label Your Email - If you use your student email, you will not receive a follow up email.
                                     input#email-bug.input(type="email" name="email" placeholder="Your Email" required="required")
                             .field
                                 .control
-                                    label.label
-                                        | If you're reporting a bug on a specific page, please include the URL.
+                                    label.label If you're reporting a bug on a specific page, please include the URL.
                                     input#url-bug.input(type="text" name="url" placeholder="URL (Vocabustudy page, set, etc.)")
                             .field
                                 .control
-                                    label.label
-                                        | What's wrong?
+                                    label.label What's wrong?
                                     textarea#text-bug.textarea(name="bug" placeholder="Bug Description" required="required")
                             .field
                                 .control
-                                    button#btn-bug.button.is-primary(type='submit')
-                                        | Submit Bug Report
+                                    button#btn-bug.button.is-primary(type='submit') Submit Bug Report
     #takedown.page
         .hero.is-medium.is-primary.py-1
             .hero-body.has-text-centered
                 .container
-                    h1.title
-                        | Takedown Request
-                    h2.subtitle
-                        | Vocabustudy Forms
+                    h1.title Takedown Request
+                    h2.subtitle Vocabustudy Forms
         .tile.is-ancestor(style="margin-top: 1em")
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Takedown Request
-                    p.subtitle
-                        | Vocabustudy prides itself on being a safe and friendly environment for all users. If you feel that a user is violating our Terms of Service, please let us know! We'll take care of it as soon as possible. #[b This includes inappropriate content, spam, and active test material.]
+                    p.title Takedown Request
+                    p.subtitle Vocabustudy prides itself on being a safe and friendly environment for all users. If you feel that a user is violating our Terms of Service, please let us know! We'll take care of it as soon as possible. #[b This includes inappropriate content, spam, and active test material.]
                     form#takedown-form
                         .field
                             .control
-                                label.label
-                                    | Your Name
+                                label.label Your Name
                                 input#name-takedown.input(type="text" name="name" placeholder="Your Name" required="required")
                         .field
                             .control
-                                label.label
-                                    | Your Email - If you use your student email, you will not receive a follow up email.
+                                label.label Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-takedown.input(type="email" name="email" placeholder="Your Email" required="required")
                         .field
                             .control
-                                label.label
-                                    | Set URL
+                                label.label Set URL
                                 input#url-takedown.input(type="text" name="name" placeholder="Set URL" required="required")
                         .field
                             .control
-                                label.label
-                                    | What's wrong?
+                                label.label What's wrong?
                                 textarea#text-takedown.textarea(name="takedown" placeholder="Takedown Description" required="required")
                         .field
                             .control
-                                button#btn-takedown.button.is-primary(type='submit')
-                                    | Submit Takedown Request
+                                button#btn-takedown.button.is-primary(type='submit') Submit Takedown Request
 
     #other.page
         .hero.is-medium.is-primary.py-1
             .hero-body.has-text-centered
                 .container
-                    h1.title
-                        | Get in Touch
-                    h2.subtitle
-                        | Vocabustudy Forms
+                    h1.title Get in Touch
+                    h2.subtitle Vocabustudy Forms
         .tile.is-ancestor(style="margin-top: 1em")
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Other
-                    p.subtitle
-                        | If you have a question that doesn't fit into any of the other categories, or want to get in touch with us, please let us know! We'll get back to you as soon as possible.
+                    p.title Other
+                    p.subtitle If you have a question that doesn't fit into any of the other categories, or want to get in touch with us, please let us know! We'll get back to you as soon as possible.
                     form#other-form
                         .field
                             .control
-                                label.label
-                                    | Your Name
+                                label.label Your Name
                                 input#name-other.input(type="text" name="name" placeholder="Your Name" required="required")
                         .field
                             .control
-                                label.label
-                                    | Your Email - If you use your student email, you will not receive a follow up email.
+                                label.label Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-other.input(type="email" name="email" placeholder="Your Email" required="required")
                         .field
                             .control
-                                label.label
-                                    | What's up?
+                                label.label What's up?
                                 textarea#text-other.textarea(name="other" placeholder="Description" required="required")
                         .field
                             .control
-                                button#btn-other.button.is-primary(type='submit')
-                                    | Submit Other Request
+                                button#btn-other.button.is-primary(type='submit') Submit Other Request
     #home.page
         // bulma form homepage, with medium hero and 4 tiles below it, with one tile for each form
         .hero.is-medium.is-primary.py-1
             .hero-body.has-text-centered
                 .container
-                    h1.title
-                        | Forms
-                    h2.subtitle
-                        | Submit built-in forms for Vocabustudy, and get in touch with us!
-                    h2.subtitle.is-bold
-                        | #[b Note: ] If we can, we'll send you an email to follow up on your response. So, #[b do not use your student email!]
+                    h1.title Forms
+                    h2.subtitle Submit built-in forms for Vocabustudy, and get in touch with us!
+                    h2.subtitle.is-bold #[b Note: ] If we can, we'll send you an email to follow up on your response. So, #[b do not use your student email!]
         .tile.is-ancestor(style="margin-top: 1em")
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Feedback
-                    p.subtitle
-                        | Do you have some feedback for us? Let us know! We'd love to hear from you. This includes suggestions for new features, improvements to some features, or just feedback on the site in general.  #[b We accept everything Vocabustudy-related, including the Blog, Help Center, Discord Server, and other external sites related to Vocabustudy.]
-                    a#to-feedback.button.is-primary.is-outlined(href="#feedback")
-                        | Submit Feedback
+                    p.title Feedback
+                    p.subtitle Do you have some feedback for us? Let us know! We'd love to hear from you. This includes suggestions for new features, improvements to some features, or just feedback on the site in general.  #[b We accept everything Vocabustudy-related, including the Blog, Help Center, Discord Server, and other external sites related to Vocabustudy.]
+                    a#to-feedback.button.is-primary.is-outlined(href="#feedback") Submit Feedback
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Bug Report
-                    p.subtitle
-                        | Vocabustudy is constantly in development, and a few bugs are sure to sneak in! If you found a bug, let us know! We'll fix it as soon as possible.
-                    p.subtitle.is-bold
-                        | We generally discourage use of this form, in favor of #[a(href="https://github.com/For-0/vocabustudy/issues") #[img(src="icons/brands/github.svg" style="height: 1em; vertical-align: middle; bottom: 2px; position: relative;")] GitHub Issues.] If you can, please use that instead.
-                    a#to-bug.button.is-primary.is-outlined(href="#bug")
-                        | Report a Bug
+                    p.title Bug Report
+                    p.subtitle Vocabustudy is constantly in development, and a few bugs are sure to sneak in! If you found a bug, let us know! We'll fix it as soon as possible.
+                    p.subtitle.is-bold We generally discourage use of this form, in favor of #[a.icon-text(href="https://github.com/For-0/vocabustudy/issues") #[span.icon.mr-2 #[img(src="icons/brands/github.svg")]] GitHub Issues.] If you can, please use that instead.
+                    a#to-bug.button.is-primary.is-outlined(href="#bug") Report a Bug
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Takedown Request
-                    p.subtitle
-                        | Vocabustudy prides itself on being a safe and friendly environment for all users. If you feel that a user is violating our Terms of Service, please let us know! We'll take care of it as soon as possible. #[b This includes inappropriate content, spam, and active test material.]
-                    a#to-takedown.button.is-primary.is-outlined(href="#takedown")
-                        | Request a Takedown
+                    p.title Takedown Request
+                    p.subtitle Vocabustudy prides itself on being a safe and friendly environment for all users. If you feel that a user is violating our Terms of Service, please let us know! We'll take care of it as soon as possible. #[b This includes inappropriate content, spam, and active test material.]
+                    a#to-takedown.button.is-primary.is-outlined(href="#takedown") Request a Takedown
             .tile.is-parent
                 .tile.is-child.box
-                    p.title
-                        | Other
-                    p.subtitle
-                        | If you have a question that doesn't fit into any of the other categories, or want to get in touch with us, please let us know! We'll get back to you as soon as possible.
-                    a#to-other.button.is-primary.is-outlined(href="#other")
-                        | Get in Touch
+                    p.title Other
+                    p.subtitle If you have a question that doesn't fit into any of the other categories, or want to get in touch with us, please let us know! We'll get back to you as soon as possible.
+                    a#to-other.button.is-primary.is-outlined(href="#other") Get in Touch
 block scripts-footer
     script(src="js/forms.js" type="module")
