@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, addDoc } from "firebase/firestore/lite";
+import { collection, addDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
 
 const feedbackName = document.getElementById("name-feedback");
@@ -29,65 +29,78 @@ const toBug = document.getElementById("to-bug");
 const toTakedown = document.getElementById("to-takedown");
 const toOther = document.getElementById("to-other");
 
-const { db, auth } = initialize(async user => {
+const feedbackForm = document.getElementById("feedback-form");
+const bugForm = document.getElementById("bug-form");
+const takedownForm = document.getElementById("takedown-form");
+const otherForm = document.getElementById("other-form");
+
+const {db, auth} = initialize(async user => {
     if (user) {
-        feedbackBtn.addEventListener("click", async (e) => {
+        feedbackForm.addEventListener('submit',  async (e) => {
             e.preventDefault();
             feedbackBtn.classList.add("is-loading");
-            await sendFeedback(user);
+            await sendFeedback();
         });
-        bugBtn.addEventListener("click", async (e) => {
+        bugForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             bugBtn.classList.add("is-loading");
-            await sendBug(user);
+            await sendBug();
         });
-        takedownBtn.addEventListener("click", async (e) => {
+        takedownForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             takedownBtn.classList.add("is-loading");
-            await sendTakedown(user);
+            await sendTakedown();
         });
-        otherBtn.addEventListener("click", async (e) => {
+        otherForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             otherBtn.classList.add("is-loading");
-            await sendOther(user);
+            await sendOther();
         });
-    }
-    else {
+    } else {
         toFeedback.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         toBug.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         toTakedown.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         toOther.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         feedbackBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         bugBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         takedownBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
         otherBtn.addEventListener("click", async (e) => {
             e.preventDefault();
-            location.href="/#login";
+            localStorage.setItem("redirect_after_login", location.href);
+            location.href = "/#login";
         });
     }
 });
-async function sendFeedback(user) {
+
+async function sendFeedback() {
     const feedback = {
         name: feedbackName.value,
         email: feedbackEmail.value,
@@ -101,7 +114,8 @@ async function sendFeedback(user) {
         feedbackBtn.innerHTML = "Submitted!";
     })
 }
-async function sendBug(user) {
+
+async function sendBug() {
     const bug = {
         name: bugName.value,
         email: bugEmail.value,
@@ -115,7 +129,8 @@ async function sendBug(user) {
         bugBtn.innerHTML = "Submitted!";
     })
 }
-async function sendTakedown(user) {
+
+async function sendTakedown() {
     const takedown = {
         name: takedownName.value,
         email: takedownEmail.value,
@@ -129,7 +144,8 @@ async function sendTakedown(user) {
         takedownBtn.innerHTML = "Submitted!";
     })
 }
-async function sendOther(user) {
+
+async function sendOther() {
     const other = {
         name: otherName.value,
         email: otherEmail.value,
