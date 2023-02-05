@@ -28,7 +28,7 @@ block content
                         .field
                             .control
                                 label.label
-                                    | Your Email
+                                    | Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-feedback.input(type="email" name="email" placeholder="Your Email")
                         .field
                             .control
@@ -79,7 +79,7 @@ block content
                         .field
                             .control
                                 label.label
-                                    | Your Email
+                                    | Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-bug.input(type="email" name="email" placeholder="Your Email")
                         .field
                             .control
@@ -119,7 +119,7 @@ block content
                         .field
                             .control
                                 label.label
-                                    | Your Email
+                                    | Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-takedown.input(type="email" name="email" placeholder="Your Email")
                         .field
                             .control
@@ -160,7 +160,7 @@ block content
                         .field
                             .control
                                 label.label
-                                    | Your Email
+                                    | Your Email - If you use your student email, you will not receive a follow up email.
                                 input#email-other.input(type="email" name="email" placeholder="Your Email")
                         .field
                             .control
@@ -179,7 +179,9 @@ block content
                     h1.title
                         | Forms
                     h2.subtitle
-                        | Vocabustudy Forms
+                        | Submit built-in forms for Vocabustudy, and get in touch with us!
+                    h2.subtitle.is-bold
+                        | #[b Note: ] If we can, we'll send you an email to follow up on your response. So, #[b do not use your student email!]
         .tile.is-ancestor(style="margin-top: 1em")
             .tile.is-parent
                 .tile.is-child.box
@@ -195,8 +197,10 @@ block content
                             | Bug Report
                         p.subtitle
                             | Vocabustudy is constantly in development, and a few bugs are sure to sneak in! If you found a bug, let us know! We'll fix it as soon as possible.
+                        p.subtitle.is-bold
+                            | We generally discourage use of this form, in favor of #[a(href="https://github.com/For-0/vocabustudy/issues") #[img(src="icons/brands/github.svg" style="height: 1em; vertical-align: middle; bottom: 2px; position: relative;")] GitHub Issues.] If you can, please use that instead.
                         a#to-bug.button.is-primary.is-outlined(href="#bug")
-                            | Report a Bug
+                                    | Report a Bug
             .tile.is-parent
                 .tile.is-child.box
                         p.title
