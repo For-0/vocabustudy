@@ -3,9 +3,16 @@ block variables
     - var title = "Forms";
     - var description = "Vocabustudy Forms";
 block extrahead
+    // i'm not making a scss file just for 3 lines of css
+    style.
+        .hero {
+            left: -1rem;
+            position: relative;
+            width: calc(100% + 2rem);
+        }
 block content
     #feedback.page
-        .hero.is-medium.is-primary.py-1
+        .hero.is-primary.py-1
             .hero-body.has-text-centered
                 .container
                     h1.title Feedback
@@ -19,11 +26,11 @@ block content
                         .field
                             .control
                                 label.label Your Name
-                                input#name-feedback.input(type="text" name="name" placeholder="Your Name" required="required")
+                                input#name-feedback.input(type="text" name="name" placeholder="Your Name" required)
                         .field
                             .control
                                 label.label Your Email - If you use your student email, you will not receive a follow up email.
-                                input#email-feedback.input(type="email" name="email" placeholder="Your Email" required="required")
+                                input#email-feedback.input(type="email" name="email" placeholder="Your Email" required)
                         .field
                             .control
                                 label.label How would you rate Vocabustudy?
@@ -42,12 +49,12 @@ block content
                         .field
                             .control
                                 label.label Your Feedback
-                                textarea#text-feedback.textarea(name="feedback" placeholder="Your Feedback" required="required")
+                                textarea#text-feedback.textarea(name="feedback" placeholder="Your Feedback" required)
                         .field
                             .control
                                 button#btn-feedback.button.is-primary(type='submit') Submit Feedback
     #bug.page
-        .hero.is-medium.is-primary.py-1
+        .hero.is-primary.py-1
             .hero-body.has-text-centered
                 .container
                     h1.title Bug Report
@@ -61,11 +68,11 @@ block content
                             .field
                                 .control
                                     label.label Your Name
-                                    input#name-bug.input(type="text" name="name" placeholder="Your Name" required="required")
+                                    input#name-bug.input(type="text" name="name" placeholder="Your Name" required)
                             .field
                                 .control
                                     label.label Your Email - If you use your student email, you will not receive a follow up email.
-                                    input#email-bug.input(type="email" name="email" placeholder="Your Email" required="required")
+                                    input#email-bug.input(type="email" name="email" placeholder="Your Email" required)
                             .field
                                 .control
                                     label.label If you're reporting a bug on a specific page, please include the URL.
@@ -73,12 +80,12 @@ block content
                             .field
                                 .control
                                     label.label What's wrong?
-                                    textarea#text-bug.textarea(name="bug" placeholder="Bug Description" required="required")
+                                    textarea#text-bug.textarea(name="bug" placeholder="Bug Description" required)
                             .field
                                 .control
                                     button#btn-bug.button.is-primary(type='submit') Submit Bug Report
     #takedown.page
-        .hero.is-medium.is-primary.py-1
+        .hero.is-primary.py-1
             .hero-body.has-text-centered
                 .container
                     h1.title Takedown Request
@@ -92,25 +99,25 @@ block content
                         .field
                             .control
                                 label.label Your Name
-                                input#name-takedown.input(type="text" name="name" placeholder="Your Name" required="required")
+                                input#name-takedown.input(type="text" name="name" placeholder="Your Name" required)
                         .field
                             .control
                                 label.label Your Email - If you use your student email, you will not receive a follow up email.
-                                input#email-takedown.input(type="email" name="email" placeholder="Your Email" required="required")
+                                input#email-takedown.input(type="email" name="email" placeholder="Your Email" required)
                         .field
                             .control
                                 label.label Set URL
-                                input#url-takedown.input(type="text" name="name" placeholder="Set URL" required="required")
+                                input#url-takedown.input(type="text" name="name" placeholder="Set URL" required)
                         .field
                             .control
                                 label.label What's wrong?
-                                textarea#text-takedown.textarea(name="takedown" placeholder="Takedown Description" required="required")
+                                textarea#text-takedown.textarea(name="takedown" placeholder="Takedown Description" required)
                         .field
                             .control
                                 button#btn-takedown.button.is-primary(type='submit') Submit Takedown Request
 
     #other.page
-        .hero.is-medium.is-primary.py-1
+        .hero.is-primary.py-1
             .hero-body.has-text-centered
                 .container
                     h1.title Get in Touch
@@ -124,21 +131,21 @@ block content
                         .field
                             .control
                                 label.label Your Name
-                                input#name-other.input(type="text" name="name" placeholder="Your Name" required="required")
+                                input#name-other.input(type="text" name="name" placeholder="Your Name" required)
                         .field
                             .control
                                 label.label Your Email - If you use your student email, you will not receive a follow up email.
-                                input#email-other.input(type="email" name="email" placeholder="Your Email" required="required")
+                                input#email-other.input(type="email" name="email" placeholder="Your Email" required)
                         .field
                             .control
                                 label.label What's up?
-                                textarea#text-other.textarea(name="other" placeholder="Description" required="required")
+                                textarea#text-other.textarea(name="other" placeholder="Description" required)
                         .field
                             .control
                                 button#btn-other.button.is-primary(type='submit') Submit Other Request
     #home.page
         // bulma form homepage, with medium hero and 4 tiles below it, with one tile for each form
-        .hero.is-medium.is-primary.py-1
+        .hero.is-primary.py-1
             .hero-body.has-text-centered
                 .container
                     h1.title Forms
