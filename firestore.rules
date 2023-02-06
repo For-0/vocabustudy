@@ -61,5 +61,9 @@ service cloud.firestore {
     match /{path=**}/social/{uid} {
       allow list: if auth() && request.auth.uid == resource.data.uid;
     }
+    match /form_data/types/{test=**} {
+      allow get: if request.auth.token.admin == true;
+      allow create: if true;
+    }
   }
 }

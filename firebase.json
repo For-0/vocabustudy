@@ -48,6 +48,10 @@
         {
           "source": "/help-center/",
           "destination": "/help-center.html"
+        },
+        {
+          "source": "/forms/",
+          "destination": "/forms.html"
         }
       ],
       "trailingSlash": true
@@ -96,6 +100,10 @@
           {
             "source": "/help-center/",
             "destination": "/help-center.html"
+          },
+          {
+            "source": "/forms/",
+            "destination": "/forms.html"
           }
         ],
         "trailingSlash": true
