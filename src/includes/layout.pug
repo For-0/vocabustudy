@@ -112,7 +112,6 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                         img.credits-brandicons(src="icons/brands/discord.svg" style="height: 1.5rem; width: 1.5rem;" alt="Discord")
         block scripts-footer
             script.
-                console.info("%cOrchestra is better than Band*\n%c*But Art is the best", "background-color: #795548; color: white; font-size: 96px; font-weight: bold; border-radius: 4px; font-style: italic;", "font-size: 12px; font-style: italic;");
                 if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) location.host = "vocabustudy.org";
                 const navbar = {
                     btnLogout: document.getElementById("btn-logout"),
