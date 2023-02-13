@@ -34,6 +34,10 @@ service cloud.firestore {
         (resource.data.visibility is list && auth() && resource.data.visibility.hasAny([request.auth.token.email])) ||
         isCreator();
     }
+    function validateFormResponse(additionalKeys) {
+      let requiredFields = ["name", "email", "text", "uid"];
+      return limitResourceKeys(requiredFields.concat(additionalKeys), []);
+    }
     match /sets/{set_id} {
       allow get: if resource == null || canView();
       allow delete: if isCreator() && canAdminDelete();
@@ -61,9 +65,10 @@ service cloud.firestore {
     match /{path=**}/social/{uid} {
       allow list: if auth() && request.auth.uid == resource.data.uid;
     }
-    match /form_data/types/{test=**} {
-      allow get: if request.auth.token.admin == true;
-      allow create: if true;
+    match /form_data/types/{form_type}/{submission_id} {
+      allow get: if resource == null || isCreator();
+      allow list, delete: if isCreator();
+      allow create: if auth() && (form_type in ["feedback", "bug", "takedown", "other"]) && ((form_type == 'feedback' && validateFormResponse(['rating'])) || (form_type == 'bug' && validateFormResponse(['url'])) ||(form_type == 'takedown' && validateFormResponse(['url'])) ||(form_type == 'other' && validateFormResponse([])));
     }
   }
 }

@@ -47,6 +47,7 @@ const {db, auth} = initialize(async user => {
                 e.preventDefault();
                 form.btn.classList.add("is-loading");
                 await form.function();
+                form.form.reset();
             });
         });
     } else {
