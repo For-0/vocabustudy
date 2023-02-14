@@ -141,8 +141,14 @@
         margin-bottom: 1rem;
     }
 }
-#support-us, #social {
-    .tabs.is-large.is-toggle > ul > li.is-active > a  {
+#support-us {
+    .tabs.is-large.is-toggle > ul > li.is-active > a {
+        background: #795548 !important;
+        border: #795548 !important;
+    }
+}
+#social {
+    .tabs.is-large.is-toggle > ul > li.is-active > a {
         background: #795548 !important;
         border: #795548 !important;
     }
