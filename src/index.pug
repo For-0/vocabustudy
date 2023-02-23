@@ -59,27 +59,36 @@ block content
         img.ignore-user-hue.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     #account.page(data-nosnippet)
         h1 My Account
-        p Only your display name is public.
-        .card
-            .card-content
-                .content
-                    .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
-                    .supporting-text
-                        span.field-email
-                        span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-1.is-danger(hidden) Email Not Verified
-                        span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-1.is-success(hidden) Email Verified
-                    .supporting-text
-                        strong Account Created: 
-                        span.field-created
-            footer.card-footer.is-flex-wrap-wrap
-                p.card-footer-item(hidden)
-                    button.button.is-ghost.has-text-primary.btn-verify-email Verify Email
-                p.card-footer-item
-                    button.button.is-ghost.has-text-primary.btn-change-name Change Display Name
-                p.card-footer-item
-                    button.button.is-ghost.has-text-primary.btn-change-password Change Password
-                p.card-footer-item
-                    button.button.is-ghost.btn-delete-account.has-text-danger.ignore-user-hue Delete Account
+        .column.is-offset-2-desktop
+            h1.fw-bold.title.is-4 Profile
+            hr(style="max-width: 500px;")
+            .title.is-size-3.fw-bold.mb-2(style="word-break:break-word;")
+                span.field-name
+                button.button.icon.is-ghost.btn-change-name.is-small(style="margin-left: 0.2rem; text-decoration: none; position: relative; top: 6px;")
+                    i(style="font-size: 1.4rem;").material-symbols-rounded.account-edit-icon edit
+            .title.is-size-5.fw-bold.mb-2(style="word-break:break-word;")
+                span.field-email
+                span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-2.is-danger(hidden data-tooltip="You have not verified your email, so features are limited. Verify your email to gain full access.") Email Not Verified
+                span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-2.is-success(hidden data-tooltip="You verified your email, so you have full access to Vocabustudy.") Email Verified
+            .title.is-size-6.has-text-grey(style="word-break:break-word;")
+                strong.mr-1 Account Created:
+                span.field-created
+            article.message(style="max-width: 500px; margin-top: 1rem;")
+                .message-body Only your display name is visible to other users.
+
+            hr(style="max-width: 500px;")
+            p(hidden)
+                button.button.is-success.mb-3.btn-verify-email
+                    i.material-symbols-rounded.mr-1 email
+                    | Verify Email
+            p
+                button.button.btn-change-password.is-info.is-outlined.mb-3
+                    i.material-symbols-rounded.mr-1 lock
+                    | Change Password
+            p
+                button.button.btn-delete-account.ignore-user-hue.is-danger.is-outlined
+                    i.material-symbols-rounded.mr-1 delete
+                    | Delete Account
     #mysets.page(data-nosnippet)
         h1 My Sets:
             .dropdown.is-pulled-right
@@ -402,7 +411,7 @@ append scripts-footer
         .modal-background
         .modal-card
             header.modal-card-head
-                p.modal-card-title Set Name
+                p.modal-card-title Change Name
                 button.delete(aria-label="close")
             section.modal-card-body
                 input.input(type="text" required placeholder="Name")

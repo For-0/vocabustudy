@@ -83,10 +83,15 @@
     }
 }
 #account {
-    text-align: center;
+    //text-align: center;
     /* stylelint-disable-next-line no-descending-specificity */
     div {
         margin: auto;
+    }
+    .account-edit-icon {
+        &:hover {
+            color: lightgrey !important;
+        }
     }
 }
 #search {
