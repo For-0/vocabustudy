@@ -73,22 +73,22 @@ block content
             .title.is-size-6.has-text-grey(style="word-break:break-word;")
                 strong.mr-1 Account Created:
                 span.field-created
-            article.message(style="max-width: 500px; margin-top: 1rem;")
+            article.message.mt-4(style="max-width: 500px;")
                 .message-body Only your display name is visible to other users.
 
             hr(style="max-width: 500px;")
             p(hidden)
                 button.button.is-success.mb-3.btn-verify-email
                     i.material-symbols-rounded.mr-1 email
-                    | Verify Email
+                    span Verify Email
             p
                 button.button.btn-change-password.is-info.is-outlined.mb-3
                     i.material-symbols-rounded.mr-1 lock
-                    | Change Password
+                    span Change Password
             p
                 button.button.btn-delete-account.ignore-user-hue.is-danger.is-outlined
                     i.material-symbols-rounded.mr-1 delete
-                    | Delete Account
+                    span Delete Account
     #mysets.page(data-nosnippet)
         h1 My Sets:
             .dropdown.is-pulled-right
