@@ -68,7 +68,7 @@ service cloud.firestore {
     match /form_data/types/{form_type}/{submission_id} {
       allow get: if resource == null || isCreator();
       allow list, delete: if isCreator();
-      allow create: if auth() && (form_type in ["feedback", "bug", "takedown", "other"]) && ((form_type == 'feedback' && validateFormResponse(['rating'])) || (form_type == 'bug' && validateFormResponse(['url'])) ||(form_type == 'takedown' && validateFormResponse(['url'])) ||(form_type == 'other' && validateFormResponse([])));
+      allow create: if request.auth != null && (form_type in ["feedback", "bug", "takedown", "other"]) && ((form_type == 'feedback' && validateFormResponse(['rating'])) || (form_type == 'bug' && validateFormResponse(['url'])) ||(form_type == 'takedown' && validateFormResponse(['url'])) ||(form_type == 'other' && validateFormResponse([])));
     }
   }
 }
