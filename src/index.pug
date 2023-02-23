@@ -75,7 +75,10 @@ block content
                 span.field-created
             article.message.mt-4(style="max-width: 500px;")
                 .message-body Only your display name is visible to other users.
-
+            p
+                button#btn-log-out.button.is-outlined.is-primary.is-medium
+                    i.material-symbols-rounded.mr-1 logout
+                    span Sign Out
             hr(style="max-width: 500px;")
             p(hidden)
                 button.button.is-success.mb-3.btn-verify-email
@@ -442,3 +445,5 @@ append scripts-footer
             footer.modal-card-foot
                 button.button.is-primary.action-close(type="button") OK
     script(src="js/index.js" type="module")
+    script(type="module").
+        document.getElementById("btn-log-out").addEventListener("click", () => window.signOut());
