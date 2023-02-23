@@ -72,6 +72,5 @@ rd/
 .idea/
 .log/
 parcel-bundle-reports/
-.gitpod.yml
 .replit
 replit.nix
