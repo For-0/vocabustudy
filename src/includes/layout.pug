@@ -57,18 +57,19 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     .navbar-start
                         a.navbar-item(href="/#") Home
                         a.navbar-item(href="/#search") Browse Sets
-                        a.navbar-item(href="https://blog.vocabustudy.org/") Blog
                         a.navbar-item(href="/#support-us") Support Us
                         a.navbar-item(href="/help-center/") Help
-                        a.navbar-item(href="/forms/" style="font-weight: 600;") Forms #[small(style="font-size: 0.6rem; margin-left: 0.1rem;") NEW!]
-                        // ^^^ temporary typographical emphasis to attract attention
+                        a.navbar-item(href="https://blog.vocabustudy.org/") Blog
+                        a.navbar-item(href="/forms/") Forms
+                        //- a.navbar-item(href="/forms/" style="font-weight: 600;") Forms #[small(style="font-size: 0.6rem; margin-left: 0.1rem;") NEW!]
+                        //- ^^^ temporary typographical emphasis to attract attention
                     .navbar-end
                         .navbar-item.has-dropdown.is-hoverable
                             a.navbar-link.is-arrowless 
                                 i.material-symbols-rounded.is-filled.is-hidden-touch account_circle
                                 span.is-hidden-desktop Account
                                 i.material-symbols-rounded.is-hidden-touch arrow_drop_down
-                            .navbar-dropdown.is-right.is-centered.is-boxed(style="border-top-left-radius: 6px;")
+                            .navbar-dropdown.is-right.is-centered.is-boxed
                                 a.navbar-item(href="/#saved-sets") Saved Sets
                                 a.navbar-item.loggedin(hidden href="/#mysets") My Sets
                                 a.navbar-item.loggedin.adminonly(hidden href="/#admin") Admin Portal
