@@ -63,7 +63,6 @@ class StarButton extends HTMLElement {
      */
     toggleOn(force) {
         this.querySelector("i")?.classList?.toggle("is-filled", force);
-        this.querySelector("span")?.classList?.toggle("has-text-warning-dark", force);
     }
     connectedCallback() {
         if (this.isConnected && !this.initialized) {
