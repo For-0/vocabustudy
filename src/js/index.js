@@ -2,11 +2,13 @@ import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 // eslint-disable-next-line no-unused-vars
+import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
+// eslint-disable-next-line no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
-import { getWords, createSetCard, createSetCardOwner, showCollections, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove } from "./utils";
+import { getWords, createSetCard, createSetCardOwner, showCollections, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove, styleAndSanitize } from "./utils";
 import { getCurrentUser, sendEmailVerification, deleteCurrentUser, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithGoogleCredential, signInWithEmailAndPassword, updatePassword, showGooglePopup, setCurrentUser } from "./firebase-rest-api/auth";
 
 /* global google */
@@ -48,7 +50,7 @@ const { db, newAuth: auth } = initialize(async user => {
                     createElement("p", [], {innerText: a.title}),
                     deleteButton
                 ]),
-                createElement("div", ["message-body"], {innerText: a.message})
+                createElement("div", ["message-body"], {innerHTML: styleAndSanitize(a.message)})
             ]));
             deleteButton.addEventListener("click", () => {
                 zoomOutRemove(announcement);
@@ -66,9 +68,8 @@ const hashTitles = {
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
     "#account": "My Account",
-    "#discord":"Discord",
-    "#donate": "Donate",
-    "#youtube": "YouTube",
+    "#social":"Social",
+    "#support-us": "Support Us",
     "#credits": "Credits"
 };
 const pages = {
@@ -411,7 +412,7 @@ async function verifyEmail() {
         new Alert().alert({
             type: "warning",
             title: "Verify Email Address",
-            body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address:\nNote: If it does not work, contact Omkar Patil (Vocabustudy Co-Admin) or Nikhil Gupta (Server Owner + Co-Admin) on Discord in order to get your email verified manually.",
+            body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address.\nMake sure to check any spam, junk, or promotions folders for the email. If something went wrong, submit an Other form with this concern at vocabustudy.org/forms/#other.",
             confirm: {
                 label: "Send Verification Email",
                 onClick: () => 

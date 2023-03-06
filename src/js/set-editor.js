@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getBlooketSet, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb } from "./utils.js";
+import { createElement, createTextFieldWithHelper, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb } from "./utils.js";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
 import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
@@ -71,8 +71,6 @@ customElements.define("quiz-question", QuizQuestion);
 const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w- ]+)\/edit\/?/)[1] || (location.pathname = "/");
 let setType = 0;
 let creator = null;
-const blooketDashboardRe = /https:\/\/dashboard\.blooket\.com\/set\/(\w+)\/?/;
-const blooketHwRe = /https:\/\/play\.blooket\.com\/play\?hwId=(\w+)/;
 const {db, auth} = initialize(async user => {
     if (!user) {
         localStorage.setItem("redirect_after_login", location.href);
@@ -168,8 +166,6 @@ const fields = {
     shareDialog: new Modal("#dialog-configure-shared").modal(),
     shareDialogInput: new BulmaTagsInput("#dialog-configure-shared input[type=text]", {delimiter: " ", minChars: 3, tagClass: "is-link is-light is-family-code", selectable: false}),
     collections: document.querySelector(".field-collections"),
-    btnImportBlooket: document.querySelector(".btn-import-blooket"),
-    fieldImportBlooket:document.querySelector(".field-import-blooket"),
     warningDuplicateTerms: document.querySelector(".warning-duplicate"),
 };
 const ratelimit = {
@@ -509,23 +505,6 @@ onbeforeunload = () => {
 };
 fields.importDialog.validateInput = () => fields.importDialogInput.reportValidity();
 fields.shareDialog.onclose = () => {};
-fields.btnImportBlooket.addEventListener("click", async () => {
-    if (fields.fieldImportBlooket.reportValidity()) {
-        let dashRes = fields.fieldImportBlooket.value.match(blooketDashboardRe);
-        let hwRe = fields.fieldImportBlooket.value.match(blooketHwRe);
-        if (dashRes) {
-            let setId = dashRes[1];
-            let data = await getBlooketSet(setId, "set");
-            fields.importDialogInput.value += data;
-            fields.fieldImportBlooket.value = "";
-        } else if (hwRe) {
-            let setId = hwRe[1];
-            let data = await getBlooketSet(setId, "hw");
-            fields.importDialogInput.value += data;
-            fields.fieldImportBlooket.value = "";
-        }
-    }
-});
 fields.visibilityButton.addEventListener("click", e => {
     e.stopPropagation();
     fields.visibilityDropdown.classList.add("is-active");

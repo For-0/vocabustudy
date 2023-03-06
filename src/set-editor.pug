@@ -107,17 +107,6 @@ append scripts-footer
                     summary Import from Quizlet 
                     a(href="javascript: (function () {if (location.pathname.match(/^\\/\\d+\\/[\\w-]+\\/?$/)) navigator.clipboard.writeText(Object.values(Quizlet.setPageData.termIdToTermsMap).map(el => {let a = {term: el.word, definition: el.definition}; if (el._imageUrl) a.term += ` ![image](${el._imageUrl})`;return a}).map(e => `${e.term}  ${e.definition}`).join('\\n')).then(() => alert('Copied terms to clipboard! Paste this into \"Import Terms\" in Vocabustudy.')).catch(err => alert(`An error occurred: ${err.toString}`)); else alert('You must do this on a Quizlet set page');}())") Drag this url to the bookmarks bar
                     | . Then, click the bookmark while on a Quizlet set page.
-                details.mb-4
-                    summary Import from Blooket
-                    .columns.is-mobile
-                        .column
-                            .field.mr-3(style="width: 100%;")
-                                label.label Blooket URL
-                                .control
-                                    input.input.field-import-blooket(text="url" required maxlength="500")
-                                p.help Enter a URL like #[kbd https://dashboard.blooket.com/set/.....] or #[kbd https://play.blooket.com/play?hwId=.....]
-                        .column.is-narrow
-                            button.button.is-outlined.is-success.btn-import-blooket.mt-4(type="button") Go
                 .field
                     label.label Import Manually
                     .control

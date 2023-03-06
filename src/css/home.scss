@@ -78,12 +78,19 @@
             }
         }
     }
+    .btn-show-features:hover {
+        text-decoration: none !important;
+    }
 }
 #account {
-    text-align: center;
     /* stylelint-disable-next-line no-descending-specificity */
     div {
         margin: auto;
+    }
+    .account-edit-icon {
+        &:hover {
+            color: lightgrey !important;
+        }
     }
 }
 #search {
@@ -136,6 +143,18 @@
 #credits {
     ul > li {
         margin-bottom: 1rem;
+    }
+}
+#support-us {
+    .tabs.is-large.is-toggle > ul > li.is-active > a {
+        background: #795548 !important;
+        border: #795548 !important;
+    }
+}
+#social {
+    .tabs.is-large.is-toggle > ul > li.is-active > a {
+        background: #795548 !important;
+        border: #795548 !important;
     }
 }
 #login {
@@ -287,4 +306,14 @@ body > .announcements-container {
     > span:nth-child(2) {
         text-decoration: underline;
     }
+}
+.tabs-content li {
+    display: none;
+    list-style: none;
+}
+.tabs-content li.is-active {
+    display: block;
+}
+.li-tab {
+    margin-bottom: 0.2rem;
 }

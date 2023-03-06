@@ -42,9 +42,9 @@ block content
                                 button.button.is-primary.is-medium.is-fullwidth(type="submit")
                                 div
                                     .divider.my-4 Or
-                                #google-onetap-container
+                                #google-onetap-container.ignore-user-hue
                             small.is-block.mt-3
-                                em 
+                                em
                                     span.is-hidden-mobile You must be at least 13 years old to use an account, or you must have permission from a parent/guardian.
                                     span.is-hidden-tablet You must be at least 13 or have parental permission to use an account.
                 .column.is-8.is-offset-2.p-0
@@ -59,27 +59,39 @@ block content
         img.ignore-user-hue.is-hidden-mobile(src="./icons/brands/vocabustudy-transparent-brownV.svg" alt="Vocabustudy Logo")
     #account.page(data-nosnippet)
         h1 My Account
-        p Only your display name is public.
-        .card 
-            .card-content
-                .content
-                    .title.is-size-5.fw-bold.field-name(style="word-break:break-word;")
-                    .supporting-text
-                        span.field-email
-                        span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-1.is-danger(hidden) Email Not Verified
-                        span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-1.is-success(hidden) Email Verified
-                    .supporting-text 
-                        strong Account Created: 
-                        span.field-created
-            footer.card-footer.is-flex-wrap-wrap
-                p.card-footer-item(hidden)
-                    button.button.is-ghost.has-text-primary.btn-verify-email Verify Email
-                p.card-footer-item
-                    button.button.is-ghost.has-text-primary.btn-change-name Change Display Name
-                p.card-footer-item
-                    button.button.is-ghost.has-text-primary.btn-change-password Change Password
-                p.card-footer-item
-                    button.button.is-ghost.btn-delete-account.has-text-danger.ignore-user-hue Delete Account
+        .column.is-offset-2-desktop
+            h1.fw-bold.title.is-4 Profile
+            hr(style="max-width: 500px;")
+            .title.is-size-3.fw-bold.mb-2(style="word-break:break-word;")
+                span.field-name
+                button.button.icon.is-ghost.btn-change-name.is-small(style="margin-left: 0.2rem; text-decoration: none; position: relative; top: 6px;")
+                    i.material-symbols-rounded.account-edit-icon(style="font-size: 1.4rem;") edit
+            .title.is-size-5.fw-bold.mb-2(style="word-break:break-word;")
+                span.field-email
+                span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-2.is-danger(hidden data-tooltip="You have not verified your email, so features are limited. Verify your email to gain full access.") Email Not Verified
+                span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-2.is-success(hidden data-tooltip="You verified your email, so you have full access to Vocabustudy.") Email Verified
+            .title.is-size-6.has-text-grey(style="word-break:break-word;")
+                strong.mr-1 Account Created:
+                span.field-created
+            article.message.mt-4(style="max-width: 500px;")
+                .message-body Only your display name is visible to other users.
+            p
+                button#btn-log-out.button.is-outlined.is-primary.is-medium
+                    i.material-symbols-rounded.mr-1 logout
+                    span Sign Out
+            hr(style="max-width: 500px;")
+            p(hidden)
+                button.button.is-success.mb-3.btn-verify-email
+                    i.material-symbols-rounded.mr-1 email
+                    span Verify Email
+            p
+                button.button.btn-change-password.is-info.is-outlined.mb-3
+                    i.material-symbols-rounded.mr-1 lock
+                    span Change Password
+            p
+                button.button.btn-delete-account.ignore-user-hue.is-danger.is-outlined
+                    i.material-symbols-rounded.mr-1 delete
+                    span Delete Account
     #mysets.page(data-nosnippet)
         h1 My Sets:
             .dropdown.is-pulled-right
@@ -131,7 +143,6 @@ block content
                 h2.title.is-size-4(style="display: inline;") Featured Sets
             .set-container.mt-4(style="cursor: auto;" data-empty="No featured sets") Loading featured sets...
         h2.title.is-size-4.mb-0 Search:
-        p.block Most sets are created by CVMS students for CVMS students
         .field-search-container.box.p-3
             .level.mb-2
                 .level-left.is-flex-grow-1
@@ -237,40 +248,69 @@ block content
             ul(style="margin-bottom: 2rem; margin-top: 1rem;")
                 li Thank you to everybody who reports bugs. Your reports help us make Vocabustudy better.
                 li Thank you to all moderators and helpers on the Vocabustudy Discord Server.
-    #donate.page(data-nosnippet)
-        h1 Donate
+    #support-us.page(data-nosnippet)
+        h1 Support Us
         p.title.is-size-3 Your donations help!
-        p Vocabustudy is a free website, but donations do serve a purpose. Your ability to donate won't affect how you are treated on the site.
-        p Donations will help us pay for the domain. It is $12 per year.
-        p If we get enough donations, we will use it to pay for a better plan, which means that we can afford more features and make the website better for all of us.
-        p If you'd like to donate, there are two ways you can help out!
+        p Vocabustudy is a free website, but donations do serve a purpose. #[span(style="font-weight: 600") Your ability to donate won't affect how you are treated on the site.]
+        p Donating helps us with paying the $12 domain and working towards improving infrastructure.
+        p.subtitle.is-size-5 How can you help out?
+        .tabs-wrapper
+            .tabs.is-large.is-toggle.is-primary
+                ul
+                    li.is-active
+                        a Support us for free!
+                    li
+                        a Electronic Donation
+                    li
+                        a Physical Donation
+            .tabs-content
+                ul
+                    li.is-active
+                        p.title.is-size-3 Support us #[span(style="font-weight: 600") for free!]
+                        p Can't donate? No problem! You can help us just as much by doing the following:
+                        br
+                        ul
+                            p.li-tab #[strong Share Vocabustudy with your friends] and family. The more people who use Vocabustudy, the more we can improve it.
+                            p.li-tab #[strong Report bugs] and #[strong request features] on #[a(href="https://github.com/For-0/vocabustudy") Vocabustudy's GitHub page]. The more bugs we find, the more stable the site will be.
+                            p.li-tab #[strong Follow us!] Create a GitHub account and consider clicking the star button on #[a(href="https://github.com/For-0/vocabustudy") Vocabustudy's GitHub page]. This helps us get more attention to the project.
+                            p.li-tab #[strong Use Vocabustudy] and be sure to comment and like sets. Your comments and likes motivate creators to make more sets.
+                            p.li-tab #[strong Make sets!] Making sets will help other people learn. The more sets we have, the more useful Vocabustudy will be.
+                    li
+                        p.title.is-size-3 BuyMeACoffee
+                        p If you can donate electronically, please consider buying us a coffee.
+                        br
+                        a(href="https://www.buymeacoffee.com/forzero" target="_blank") #[img.ignore-user-hue(src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;")]
+
+                    li
+                        p.title.is-size-3 Physical Donation
+                        p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell (next to Ms. Krull's room). #[b Coins do not fit through the slot. Only bills do.]
+                        ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
         br
-        p.title.is-size-3 1. BuyMeACoffee
-        p If you can donate electronically, please consider buying us a coffee.
         br
-        a(href="https://www.buymeacoffee.com/forzero" target="_blank") #[img.ignore-user-hue(src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;")]
-        br
-        br
-        p.title.is-size-3 2. Physical Donation
-        
-        p Donations can also be deposited at Omkar's locker. It is on the 4th floor next to the A stairwell (next to Ms. Krull's room). #[b Coins do not fit through the slot. Only bills do.]
-        ////It's pretty hard to miss because it has his name and a Vocabustudy advertisement on it.  (When I put it then I will un comment this
-        br
-        h2.title.is2 Thank you for your donations! Even a dollar can help us improve this website.
-    #discord.page(data-nosnippet)
-        h1 Discord
-        p.title.is-size-5 Vocabustudy Discord Server
-        p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
-        p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderation by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
-        p For any questions about the Discord server, please contact "OP#1192" or "Nikhilatvocabustudy#4578" in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
-        p If you wish to join, you can join #[a(href="https://discord.gg/UrRs7Bbr6d") here].
-    #youtube.page(data-nosnippet)
-        h1 YouTube
-        .has-text-centered
-            p.title.is-4 Check out our YouTube channel #[a(href="https://www.youtube.com/@forzero") here!]
-            p Our channel is a work in progress, so we don't have much content as of now. However, we'll be adding more content soon, so #[b stay tuned]!
-            a.ignore-user-hue(href="https://www.youtu.be/vZMAcyIOIok")
-                img(src="https://img.youtube.com/vi/vZMAcyIOIok/hqdefault.jpg" alt='What is Vocabustudy')
+        hr
+        h2.title.is2 Thank you for helping us! Even a dollar or a follower can help us improve this website.
+    #social.page(data-nosnippet)
+        h1 Social
+        h1.subtitle.title.is-3 Follow and connect with us!
+        .tabs-wrapper
+            .tabs.is-large.is-toggle.is-primary
+                ul
+                    li.is-active
+                        a Discord
+                    li
+                        a YouTube
+            .tabs-content
+                ul
+                    li.is-active
+                        h1.title.is-size-3 Discord Server
+                        p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
+                        p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderated by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
+                        p For any questions about the Discord server, please contact #[b OP#1192] or #[b Nikhilatvocabustudy#4578] in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
+                        p If you wish to join, you can join #[a(href="https://discord.gg/UrRs7Bbr6d") here].
+                    li
+                        p.title.is-size-3 YouTube
+                        p.title.is-4 Check out our YouTube channel #[a(href="https://www.youtube.com/@forzero") here!]
+                        p Our channel is a work in progress, so we don't have much content as of now. However, we'll be adding more content soon, so #[b stay tuned]!
     #home.page.homepage-lead
         .custom-scrollbar
             div
@@ -298,7 +338,7 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") tune
                             .list-item-content
                                 .list-item-title Multiple Study Modes
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Don't like flashcards? You can take a mock test, match terms, and more!
                                     span.is-hidden-tablet Flashcards, learn, test, and match
                         li.list-item.is-flex-wrap-nowrap.pb-0
@@ -307,16 +347,16 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") category
                             .list-item-content
                                 .list-item-title Collections
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Transform your learning with designed collections of vocab sets.
                                     span.is-hidden-tablet Find sets about a specific topic
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon
                                     i.material-symbols-rounded(aria-hidden="true") rule
-                            .list-item-content 
+                            .list-item-content
                                 .list-item-title Effective Test Prep
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Ace your test with customized sets for your classes.
                                     span.is-hidden-tablet Find sets about relevant topics
                         li.list-item.is-flex-wrap-nowrap.pb-0.is-clickable(onclick="window.open('https://github.com/For-0')")
@@ -325,7 +365,7 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") money_off
                             .list-item-content
                                 .list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Fast, simple, effective, and completely free.
                                     span.is-hidden-tablet Forever free
                         li.list-item.is-flex-wrap-nowrap.pb-0
@@ -334,7 +374,7 @@ block content
                                     i.material-symbols-rounded(aria-hidden="true") school
                             .list-item-content
                                 .list-item-title Study Guides
-                                .list-item-description 
+                                .list-item-description
                                     span.is-hidden-mobile Learn and quiz yourself about a topic
                                     span.is-hidden-tablet Learning and quizzing combined
                     .buttons.has-addons.is-centered.mt-4
@@ -374,7 +414,7 @@ append scripts-footer
         .modal-background
         .modal-card
             header.modal-card-head
-                p.modal-card-title Set Name
+                p.modal-card-title Change Name
                 button.delete(aria-label="close")
             section.modal-card-body
                 input.input(type="text" required placeholder="Name")
@@ -405,3 +445,5 @@ append scripts-footer
             footer.modal-card-foot
                 button.button.is-primary.action-close(type="button") OK
     script(src="js/index.js" type="module")
+    script(type="module").
+        document.getElementById("btn-log-out").addEventListener("click", () => window.signOut());

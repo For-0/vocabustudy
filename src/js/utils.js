@@ -226,16 +226,6 @@ function createCollectionParentListItem(name) {
     return {listItem, childList};
 }
 
-export function getBlooketSet(setId, setType) {
-    return new Promise(resolve => {
-        let setUrl = new URL("https://script.google.com/macros/s/AKfycbzL3cHHAG_HxXH_n_3gDsM0GWPpUvKi1LldczWV3y5YFHssbelIJtDNncNB_n-utv8/exec");
-        setUrl.search = new URLSearchParams({type: "blooket", bType: setType, callback: "resolveBlooket", set: setId}).toString();
-        let el = document.createElement("script");
-        window.resolveBlooket = e => {el.remove(); resolve(e);}
-        el.src = setUrl;
-        document.body.appendChild(el);
-    });
-}
 export async function parseCollections(collections, allCollections=null) {
     let {c} = allCollections || await loadCollections();
     let parsedCollections = collections.map(el => el.split(":").map(el => parseInt(el)));
