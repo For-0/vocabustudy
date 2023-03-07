@@ -14,47 +14,32 @@
       ],
       "rewrites": [
         {
-          "source": "/set/*/view/",
+          "source": "/set/*/view{,/}",
           "destination": "/set-detail.html"
         },
         {
-          "source": "/timeline/*/view/",
+          "source": "/timeline/*/view{,/}",
           "destination": "/set-detail.html"
         },
         {
-          "source": "/guide/*/view/",
+          "source": "/guide/*/view{,/}",
           "destination": "/guide-detail.html"
         },
         {
-          "source": "/set/*/edit/",
+          "source": "/set/*/edit{,/}",
           "destination": "/set-editor.html"
         },
         {
-          "source": "/user/*/",
+          "source": "/user/*{,/}",
           "destination": "/user-sets.html"
         },
         {
-          "source": "/collection/*/",
+          "source": "/collection/*{,/}",
           "destination": "/custom-collections.html"
-        },
-        {
-          "source": "/privacy/",
-          "destination": "/privacy-policy.html"
-        },
-        {
-            "source": "/terms/",
-            "destination": "/tos.html"
-        },
-        {
-          "source": "/help-center/",
-          "destination": "/help-center.html"
-        },
-        {
-          "source": "/forms/",
-          "destination": "/forms.html"
         }
       ],
-      "trailingSlash": true
+      "trailingSlash": true,
+      "cleanUrls": true
     },
     {
         "public": "dist",
@@ -66,47 +51,32 @@
         ],
         "rewrites": [
           {
-            "source": "/set/*/view/",
+            "source": "/set/*/view{,/}",
             "destination": "/set-detail.html"
           },
           {
-            "source": "/timeline/*/view/",
+            "source": "/timeline/*/view{,/}",
             "destination": "/set-detail.html"
           },
           {
-            "source": "/guide/*/view/",
+            "source": "/guide/*/view{,/}",
             "destination": "/guide-detail.html"
           },
           {
-            "source": "/set/*/edit/",
+            "source": "/set/*/edit{,/}",
             "destination": "/set-editor.html"
           },
           {
-            "source": "/user/*/",
+            "source": "/user/*{,/}",
             "destination": "/user-sets.html"
           },
           {
-            "source": "/collection/*/",
+            "source": "/collection/*{,/}",
             "destination": "/custom-collections.html"
-          },
-          {
-            "source": "/privacy/",
-            "destination": "/privacy-policy.html"
-          },
-          {
-            "source": "/terms/",
-            "destination": "/tos.html"
-          },
-          {
-            "source": "/help-center/",
-            "destination": "/help-center.html"
-          },
-          {
-            "source": "/forms/",
-            "destination": "/forms.html"
           }
         ],
-        "trailingSlash": true
+        "trailingSlash": true,
+        "cleanUrls": true
       },
     {
       "public": "rd",

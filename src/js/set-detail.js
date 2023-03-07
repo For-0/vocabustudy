@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate, preventBreaking, initBulmaModals } from "./utils.js";
+import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate, preventBreaking, initBulmaModals, navigateLoginSaveState } from "./utils.js";
 import fitty from "fitty";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal.js";
 import { toast } from "bulma-toast";
@@ -1211,10 +1211,8 @@ addEventListener("DOMContentLoaded", async () => {
             }, 100);
         })
         pages.setOverview.btnLike.addEventListener("click", async () => {
-            if (!auth.currentUser) {
-                localStorage.setItem("redirect_after_login", location.href);
-                location.href = "/#login";
-            } else if (socialRef) {
+            if (!auth.currentUser) navigateLoginSaveState()
+            else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
                 await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
@@ -1268,9 +1266,8 @@ addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error(err);
         if (err.message.includes("Forbidden") || err.code === "permission-denied") {
-            localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();
-            location.href = "/#login";
+            navigateLoginSaveState();
             return;
         } else window.sentryCaptureException?.call(globalThis, err);
     }

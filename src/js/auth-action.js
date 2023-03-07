@@ -50,7 +50,7 @@ fields.resetPwForm.addEventListener("submit", async e => {
             fields.resetPwForm.hidden = true;
             fields.successNotification.hidden = false;
             fields.successNotification.innerText = "Your password was successfully changed! You can now login with your new credentials.";
-            fields.successNotification.appendChild(createElement("a", ["has-text-primary", "is-block"], {innerText: "Log In", href: "/#login"}));
+            fields.successNotification.appendChild(createElement("a", ["has-text-primary", "is-block"], {innerText: "Log In", href: "/login/"}));
         }
     } else {
         fields.password.setCustomValidity("Passwords do not match");

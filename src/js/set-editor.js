@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb } from "./utils.js";
+import { createElement, createTextFieldWithHelper, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb, navigateLoginSaveState } from "./utils.js";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
 import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
@@ -72,10 +72,8 @@ const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w- ]+)\/edi
 let setType = 0;
 let creator = null;
 const {db, auth} = initialize(async user => {
-    if (!user) {
-        localStorage.setItem("redirect_after_login", location.href);
-        location.href = "/#login";
-    } else if (setId.match(/^new(-\w+)?$/)) {
+    if (!user) navigateLoginSaveState();
+    else if (setId.match(/^new(-\w+)?$/)) {
         switch(setId) {
             case "new":
                 document.title = "New Set - Vocabustudy";
@@ -119,9 +117,8 @@ const {db, auth} = initialize(async user => {
         const currentSet = setSnap.data();
         const currentSetMeta = setMetaSnap.data();
         if (!isAdmin && currentSet.uid !== user.uid) {
-            localStorage.setItem("redirect_after_login", location.href);
             await auth.signOut();
-            location.href = "/#login";
+            navigateLoginSaveState();
         }
         await showAutosaveToast();
         displayExistingSet(user, currentSet, currentSetMeta);

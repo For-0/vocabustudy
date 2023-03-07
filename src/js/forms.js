@@ -1,5 +1,6 @@
 import { collection, addDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
+import { navigateLoginSaveState } from "./utils.js";
 
 // collapse the below code into a single const array
 const forms = {
@@ -50,10 +51,7 @@ const {db, auth} = initialize(async user => {
                 form.form.reset();
             });
         });
-    } else {
-        localStorage.setItem("redirect_after_login", location.href);
-        location.href = "/#login";
-    }
+    } else navigateLoginSaveState();
 });
 
 async function sendFeedback() {

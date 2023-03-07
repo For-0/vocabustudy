@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize } from "./utils.js";
+import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize, navigateLoginSaveState } from "./utils.js";
 import { toast } from "bulma-toast";
 import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
 
@@ -205,10 +205,8 @@ addEventListener("DOMContentLoaded", async () => {
         for (let [i, term] of currentSet.terms.entries()) createItem(term, i);
         new Tabs(document.querySelector("#home .tabs-wrapper")).tabs();
         pages.setOverview.btnLike.addEventListener("click", async () => {
-            if (!auth.currentUser) {
-                localStorage.setItem("redirect_after_login", location.href);
-                location.href = "/#login";
-            } else if (socialRef) {
+            if (!auth.currentUser) navigateLoginSaveState()
+            else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
                 await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
@@ -231,9 +229,8 @@ addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error(err);
         if (err.message.includes("Forbidden") || err.code === "permission-denied") {
-            localStorage.setItem("redirect_after_login", location.href);
             if (auth.currentUser) await auth.signOut();
-            location.href = "/#login";
+            navigateLoginSaveState();
             return;
         } else window.sentryCaptureException?.call(globalThis, err)
     }

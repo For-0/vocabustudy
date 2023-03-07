@@ -8,30 +8,21 @@ import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
 import initialize from "./general";
-import { getWords, createSetCard, createSetCardOwner, showCollections, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove, styleAndSanitize } from "./utils";
-import { getCurrentUser, sendEmailVerification, deleteCurrentUser, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, signInWithGoogleCredential, signInWithEmailAndPassword, updatePassword, showGooglePopup, setCurrentUser } from "./firebase-rest-api/auth";
+import { getWords, createSetCard, createSetCardOwner, showCollections, paginateQueries, createCustomCollectionCard, createTextFieldWithHelper, parseCollections, initBulmaModals, bulmaModalPromise, createElement, zoomOutRemove, styleAndSanitize, navigateLoginSaveState } from "./utils";
+import { getCurrentUser } from "./firebase-rest-api/auth";
 
-/* global google */
+const restrictedUrls = ["#mysets", "#editor", "#admin"];
 
-const restrictedUrls = ["#account", "#mysets", "#editor", "#admin"];
-let emailVerificationShown = false;
-const { db, newAuth: auth } = initialize(async user => {
+const { db } = initialize(async user => {
     if (user) {
-        if (location.hash === "#login") pages.login.show()
-        else if (location.hash === "#saved-sets") showLikedSets();
+        if (location.hash === "#saved-sets") showLikedSets();
         else if (location.hash === "#mysets") {
             showMySets();
             showMyCollections();
         }
         verifyAdmin();
-        showAccountInfo(user);
-        if (!user.emailVerified && !emailVerificationShown) verifyEmail();
     } else {
-        if (restrictedUrls.includes(location.hash)) {
-            localStorage.setItem("redirect_after_login", location.href);
-            location.hash = "#login";
-        }
-        showAccountInfo({displayName: "", email: "", emailVerified: true, metadata: { creationTime: "" } });
+        if (restrictedUrls.includes(location.hash)) navigateLoginSaveState();
     }
 }, async remoteConfig => {
     if (remoteConfig) {
@@ -62,12 +53,10 @@ const { db, newAuth: auth } = initialize(async user => {
     } else pages.search.sets[0].textContent = "Failed to load featured sets";
 });
 const hashTitles = {
-    "#login": "Log In",
     "#mysets": "My Sets",
     "#saved-sets": "Saved Sets",
     "#admin": "Admin Portal",
     "#search": "Browse Sets",
-    "#account": "My Account",
     "#social":"Social",
     "#support-us": "Support Us",
     "#credits": "Credits"
@@ -76,122 +65,6 @@ const pages = {
     home: {
         el: document.getElementById("page-home"),
         btnShowFeatures: document.querySelector(".btn-show-features")
-    },
-    account: {
-        name: document.querySelector("#account .field-name"),
-        email: document.querySelector("#account .field-email"),
-        created: document.querySelector("#account .field-created"),
-        emailVerified: document.querySelector("#account .field-email-verified"),
-        emailNotVerified: document.querySelector("#account .field-email-not-verified"),
-        btnVerifyEmail: document.querySelector("#account .btn-verify-email"),
-        btnChangePassword: document.querySelector("#account .btn-change-password"),
-        btnChangeName: document.querySelector("#account .btn-change-name"),
-        btnDeleteAccount: document.querySelector("#account .btn-delete-account")
-    },
-    login: {
-        page: document.getElementById("login"),
-        form: document.querySelector("#login form"),
-        btnsSwitchMode: document.querySelectorAll("#login .btn-switch-mode, #login .prompt-switch-mode a"),
-        btnForgotPassword: document.querySelector("#login .btn-forgot-password"),
-        inputEmail: document.querySelector("#login-email"),
-        inputDisplayName: document.querySelector("#login-display-name"),
-        inputPassword: document.querySelector("#login-password"),
-        inputConfirmPassword: document.querySelector("#login-confirm-password"),
-        checkTos: document.querySelector("#login-accept-tos"),
-        btnSubmit: document.querySelector("#login button[type=submit]"),
-        onetapLoaded: false,
-        async show(switchMode = true) {
-            this.btnSubmit.disabled = false;
-            if (switchMode) this.page.dataset.mode = "login";
-            this.btnSubmit.classList.remove("is-loading");
-            this.form.reset();
-            this.form.classList.remove("has-validated-inputs");
-            if (await getCurrentUser()) 
-                return location.hash = "#account";
-            if (!this.onetapLoaded) {
-                if (process.env.NODE_ENV !== "development") {
-                    if ("google" in window) this.setupGoogleButton();
-                    else window.onGoogleLibraryLoad = () => this.setupGoogleButton();
-                } else {
-                    let btn = document.getElementById("google-onetap-container").appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
-                    btn.addEventListener("click", async () => {
-                        try {
-                            await showGooglePopup(auth);
-                            pages.login.restoreState();
-                        } catch (err) {
-                            switch(err.code) {
-                                case "auth/popup-blocked":
-                                    toast({message: "The popup was blocked", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
-                                    break;
-                                case "auth/popup-closed-by-user":
-                                    toast({message: "Operation Cancelled", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
-                                    break;
-                                case "auth/too-many-requests":
-                                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                    break;
-                                case "auth/user-disabled":
-                                    toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                                    break;
-                                case "auth/account-exists-with-different-credential":
-                                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                    break;
-                            }
-                        } finally {
-                            pages.login.show();
-                        }
-                    });
-                    this.onetapLoaded = true;
-                }
-            }
-        },
-        setupGoogleButton() {
-            if (process.env.NODE_ENV !== "development") {
-                google.accounts.id.initialize({
-                    client_id: "230085427328-qenpln5lodm47t04dqqgeiuc5acpm7sv.apps.googleusercontent.com",
-                    context: "signin",
-                    ux_mode: "popup",
-                    auto_select: true,
-                    callback: async function (response) {
-                        try {
-                            await signInWithGoogleCredential(auth, response.credential);
-                            pages.login.restoreState();
-                        } catch (err) {
-                            switch(err.code) {
-                                case "auth/too-many-requests":
-                                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                    break;
-                                case "auth/user-disabled":
-                                    toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                                    break;
-                                case "auth/unauthorized-continue-uri":
-                                    toast({message: "Invalid domain", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                                    break;
-                                case "auth/account-exists-with-different-credential":
-                                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                    break;
-                            }
-                        } finally {
-                            pages.login.show();
-                        }
-                    }
-                });
-                google.accounts.id.renderButton(document.getElementById("google-onetap-container"), {
-                    type: "standard",
-                    shape: "rectangular",
-                    theme: "outline",
-                    text: "continue_with",
-                    size: "large",
-                    logo_alignment: "left",
-                    width: 215
-                });
-                this.onetapLoaded = true;
-            }
-        },
-        restoreState() {
-            let afterLogin = localStorage.getItem("redirect_after_login");
-            localStorage.removeItem("redirect_after_login");
-            location.href = afterLogin || "#account";
-        }
     },
     mySets: {
         sets: document.querySelector('#mysets .set-container'),
@@ -225,35 +98,6 @@ const pages = {
         sets: document.querySelector('#admin .set-container'),
     }
 };
-
-async function reauthenticateUser() {
-    await setCurrentUser(auth, null);
-    toast({type: "is-danger", message: "To verify your identity, please sign in again"})
-}
-async function changePassword() {
-    pages.modals.changePassword.open();
-    pages.modals.changePasswordInputs.forEach(el => el.value = "");
-    pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
-    let result = await bulmaModalPromise(pages.modals.changePassword);
-    if (result) await updatePassword(pages.modals.changePasswordInputs[0].value);
-}
-async function changeName() {
-    pages.modals.changeNameInput.value = "";
-    let result = await bulmaModalPromise(pages.modals.changeName);
-    if (result) await updateProfile(auth, { displayName: pages.modals.changeNameInput.value });
-}
-/**
- * Show account info
- * @param {import("./firebase-rest-api/auth").User} param0
- */
-function showAccountInfo({ displayName, email, emailVerified, created }) {
-    pages.account.name.innerText = displayName;
-    pages.account.email.innerText = email;
-    pages.account.emailVerified.hidden = !emailVerified;
-    pages.account.emailNotVerified.hidden = emailVerified;
-    pages.account.btnVerifyEmail.parentElement.hidden = emailVerified;
-    if (created) pages.account.created.innerText = created.toLocaleString();
-}
 
 async function showMySets(el = pages.mySets.sets, showAll = false) {
     el.textContent = "Loading sets...";
@@ -405,25 +249,7 @@ async function verifyAdmin() {
     if (!currentUser?.customAttributes.admin && location.hash === "#admin") location.hash = "#";
     return currentUser?.customAttributes.admin;
 }
-async function verifyEmail() {
-    let currentUser = await getCurrentUser();
-    if (currentUser) {
-        emailVerificationShown = true;
-        new Alert().alert({
-            type: "warning",
-            title: "Verify Email Address",
-            body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address.\nMake sure to check any spam, junk, or promotions folders for the email. If something went wrong, submit an Other form with this concern at vocabustudy.org/forms/#other.",
-            confirm: {
-                label: "Send Verification Email",
-                onClick: () => 
-                    sendEmailVerification(auth, currentUser).then(() => toast({message: "Verification email sent. Reload once you have verified your email.", type: "is-success", dismissible: true, position: "bottom-center", duration: 7000}))
-            },
-            cancel: {
-                label: "Not Now"
-            },
-        });
-    }
-}
+
 addEventListener("DOMContentLoaded", () => {
     pages.modals.filterCollection.onclose = () => {
         let collections = [...pages.modals.filterCollectionList.querySelectorAll("input:checked")].map(el => el.value).filter(el => el);
@@ -431,62 +257,11 @@ addEventListener("DOMContentLoaded", () => {
         listPreviewCollections(collections);
     };
     pages.modals.changeHue.onclose = () => {};
-    initBulmaModals([pages.modals.changePassword, pages.modals.filterCollection, pages.modals.changeHue, pages.modals.changeName, ...pages.modals.contributers]);
-    pages.modals.changePassword.validateInput = async () => {
-        pages.modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
-        if (pages.modals.changePasswordInputs.every(el => el.reportValidity())) {
-            let currentUser = await getCurrentUser();
-            if (currentUser) {
-                try {
-                    await signInWithEmailAndPassword(auth, currentUser.email, pages.modals.changePasswordInputs[0].value);
-                    if (pages.modals.changePasswordInputs[1].value === pages.modals.changePasswordInputs[2].value) return true;
-                    else {
-                        pages.modals.changePasswordInputs[1].setCustomValidity("Passwords do not match");
-                        pages.modals.changePasswordInputs[1].reportValidity();
-                        return false;
-                    }
-                } catch {
-                    pages.modals.changePasswordInputs[0].setCustomValidity("Incorrect Password");
-                    pages.modals.changePasswordInputs[0].reportValidity();
-                    return false;
-                }
-            } else return false;
-        }
-    };
-    pages.modals.changeName.validateInput = () => pages.modals.changeNameInput.reportValidity();
+    initBulmaModals([pages.modals.filterCollection, pages.modals.changeHue, ...pages.modals.contributers]);
     pages.modals.changeHue.on("open", () => pages.modals.changeHueInput.value = localStorage.getItem("theme_hue") || 0);
     pages.modals.changeHueInput.addEventListener("change", () => {
         localStorage.setItem("theme_hue", pages.modals.changeHueInput.value);
         setHue(pages.modals.changeHueInput.valueAsNumber);
-    });
-    pages.account.btnVerifyEmail.addEventListener("click", () => getCurrentUser().then(user => user.emailVerified ? location.reload : verifyEmail()));
-    pages.account.btnChangePassword.addEventListener("click", async () => {
-        let currentUser = await getCurrentUser();
-        if (currentUser.providers.includes("google.com"))
-            await reauthenticateUser();
-        else await changePassword(); // TODO do this stuff:
-        // delete acct and change password modals should have "current password" for reauthenticating. If signinwith google, then just logout and prompt to sign in at login page
-    });
-    pages.account.btnChangeName.addEventListener("click", async () => {
-        await changeName();
-        let currentUser = await getCurrentUser();
-        showAccountInfo(currentUser);
-    });
-    pages.account.btnDeleteAccount.addEventListener("click", async () => {
-        let result = await reauthenticateUser();
-        if (result)
-            new Alert().alert({
-                type: "danger",
-                title: "Delete Account",
-                body: "Are you sure you would like to delete your account? Your sets will not be deleted.",
-                confirm: {
-                    label: "OK",
-                    onClick: () => deleteCurrentUser(auth)
-                },
-                cancel: {
-                    label: "Cancel"
-                }
-            });
     });
     pages.search.btnSearchGo.addEventListener("click", () => search());
     pages.search.searchInput.addEventListener("keyup", e => {
@@ -512,117 +287,16 @@ addEventListener("DOMContentLoaded", () => {
             registerCustomCollectionCard(docSnap);
         }
     });
-    pages.login.form.addEventListener("submit", async e => {
-        e.preventDefault();
-        pages.login.form.classList.add("has-validated-inputs");
-        switch (pages.login.page.dataset.mode) {
-            case "sign-up":
-                pages.login.inputPassword.setCustomValidity("");
-                if (pages.login.inputEmail.reportValidity() && pages.login.inputPassword.reportValidity() && pages.login.inputConfirmPassword.reportValidity() && pages.login.inputDisplayName.reportValidity() && pages.login.checkTos.reportValidity()) {
-                    if (pages.login.inputPassword.value === pages.login.inputConfirmPassword.value) {
-                        try {
-                            await createUserWithEmailAndPassword(auth, pages.login.inputEmail.value, pages.login.inputPassword.value);
-                            await updateProfile(auth, { displayName: pages.login.inputDisplayName.value });
-                            pages.login.restoreState();
-                        } catch(err) {
-                            if (err.name !== "FirebaseError") throw err;
-                            switch(err.code) {
-                                case "auth/email-already-in-use":
-                                    toast({message: "An account with that email address already exists", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
-                                    break;
-                                case "auth/too-many-requests":
-                                    toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                    break;
-                                case "auth/weak-password":
-                                    toast({message: "That password is too weak", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                                    break;
-                            }
-                        } finally {
-                            pages.login.show(false);
-                        }
-                    } else {
-                        pages.login.inputPassword.setCustomValidity("Passwords do not match");
-                        pages.login.inputPassword.reportValidity();
-                    }
-                }
-                break;
-            case "forgot-password":
-                if (pages.login.inputEmail.reportValidity()) {
-                    pages.login.btnSubmit.disabled = true;
-                    pages.login.btnSubmit.classList.add("is-loading");
-                    try {
-                        await sendPasswordResetEmail(auth, pages.login.inputEmail.value);
-                        toast({message: "Email sent!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000});
-                    } catch(err) {
-                        if (err.name !== "FirebaseError") throw err;
-                        switch(err.code) {
-                            case "auth/user-not-found":
-                                toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
-                                break;
-                            case "auth/too-many-requests":
-                                toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                break;
-                        }
-                    } finally {
-                        pages.login.show(false);
-                    }
-                }
-                break;
-            default:
-                if (pages.login.inputEmail.reportValidity() && pages.login.inputPassword.reportValidity()) {
-                    try {
-                        pages.login.btnSubmit.disabled = true;
-                        pages.login.btnSubmit.classList.add("is-loading");
-                        await signInWithEmailAndPassword(auth, pages.login.inputEmail.value, pages.login.inputPassword.value);
-                        pages.login.restoreState();
-                    } catch(err) {
-                        if (err.name !== "FirebaseError") throw err;
-                        switch(err.code) {
-                            case "auth/user-not-found":
-                                toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
-                                break;
-                            case "auth/wrong-password":
-                                toast({message: "Incorrect password", type: "is-danger", dismissible: true, position: "bottom-center", duration: 5000});
-                                break;
-                            case "auth/too-many-requests":
-                                toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                break;
-                            case "auth/user-disabled":
-                                toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                                break;
-                            case "auth/account-exists-with-different-credential":
-                                toast({message: "Use Sign In with Google for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                                break;
-                        }
-                    } finally {
-                        pages.login.show();
-                    }
-                }
-                break;
-        }
-    });
-    pages.login.btnsSwitchMode.forEach(el => el.addEventListener("click", () => {
-        if (pages.login.page.dataset.mode === "sign-up" || pages.login.page.dataset.mode === "forgot-password") pages.login.page.dataset.mode = "login";
-        else pages.login.page.dataset.mode = "sign-up";
-    }));
-    pages.login.btnForgotPassword.addEventListener("click", () => pages.login.page.dataset.mode = "forgot-password");
+    
     document.querySelector(".btn-change-hue").addEventListener("click", () => pages.modals.changeHue.open());
     document.querySelector(".btn-change-hue").hidden = false;
     document.querySelectorAll(".button.is-credit").forEach((el, i) => el.addEventListener("click", () => pages.modals.contributers[i].open()))
     showCollections(pages.modals.filterCollectionList).then(collections => location.hash === "#search" && loadPreviousSearch(collections));
-    if (location.hash === "#login") pages.login.show();
 });
 window.addEventListener("hashchange", async () => {
     let currentUser = await getCurrentUser();
-    if (!currentUser && restrictedUrls.includes(location.hash)) {
-        localStorage.setItem("redirect_after_login", location.href);
-        location.hash = "#login";
-        return;
-    }
+    if (!currentUser && restrictedUrls.includes(location.hash)) return navigateLoginSaveState();
     switch (location.hash) {
-        case "#login":
-            pages.login.show();
-            break;
         case "#mysets":
             showMySets();
             showMyCollections();

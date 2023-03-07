@@ -1,0 +1,125 @@
+@import "styles.scss";
+.login-background {
+    background-color: var(--primary);
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        display: inline-block;
+        background: url("../images/login-background.svg") no-repeat center center;
+        background-size: 100% 100%;
+    }
+    .column.is-8:first-child {
+        background-color: var(--scheme-main-bis);
+        border-radius: 10px;
+        @media (max-height: 650px) {
+            .column.is-5 {
+                display: none;
+            }
+            .column:last-child {
+                padding: 1.5rem !important;
+            }
+        }
+    }
+    .column.is-8:last-child {
+        @media (max-width: 768px) {
+            .level-left,
+            .level-right,
+            .level-item {
+                display: inline;
+            }
+        }
+    }
+    .container {
+        top: 50%;
+        position: relative;
+        transform: translateY(-50%);
+        z-index: 2;
+    }
+    > img {
+        position: absolute;
+        left: 1rem;
+        bottom: calc(43px + 2rem);
+        z-index: 2;
+        height: 8rem;
+        width: 8rem;
+    }
+    &[data-mode="sign-up"] {
+        .btn-switch-mode::after {
+            content: "Log In";
+        }
+        :is(form button[type="submit"], .form-title)::after {
+            content: "Sign Up";
+        }
+        .prompt-switch-mode span:last-child {
+            display: none;
+        }
+        #google-onetap-container {
+            height: 50px;
+            iframe {
+                height: 50px !important;
+            }
+        }
+    }
+    &[data-mode="forgot-password"] {
+        .btn-switch-mode {
+            &::after {
+                content: "Log In";
+            }
+            + a,
+            span {
+                display: none;
+            }
+        }
+        :is(form button[type="submit"], .form-title)::after {
+            content: "Reset Password";
+        }
+        #google-onetap-container,
+        .divider {
+            display: none;
+        }
+        #login-display-name,
+        #login-password,
+        #login-confirm-password,
+        #login-accept-tos,
+        #login-accept-tos + label {
+            display: none;
+        }
+        .prompt-switch-mode span:first-child {
+            display: none;
+        }
+    }
+    &:not([data-mode="sign-up"], [data-mode="forgot-password"]) {
+        .btn-switch-mode::after {
+            content: "Sign Up";
+        }
+        :is(form button[type="submit"], .form-title)::after {
+            content: "Log In";
+        }
+        #login-display-name,
+        #login-confirm-password {
+            display: none;
+        }
+        .prompt-switch-mode span:first-child,
+        #login-accept-tos,
+        #login-accept-tos + label {
+            display: none;
+        }
+    }
+    #google-onetap-container {
+        height: 49px;
+        iframe {
+            height: 49px !important;
+            left: 50% !important;
+            transform: translateX(-50%);
+            margin: 0 !important;
+        }
+        div[role="button"] {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+}

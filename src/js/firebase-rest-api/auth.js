@@ -1,8 +1,9 @@
-import { apiKey } from "./project-config.json";
+import { apiKey, clientId } from "./project-config.json";
 import { createElement, getLocalDb } from "../utils.js";
 import { BroadcastChannel } from "broadcast-channel";
 
-/* global gapi */
+
+/* global gapi, google */
 window.getLocalDb = getLocalDb;
 export class Auth {
     constructor() {
@@ -150,7 +151,7 @@ const AuthPopup = {
 
 /**
  * A Firebase Auth user
- * @typedef {{created: Date, displayName: string, email: string, emailVerified: boolean, lastLogin: Date, photoUrl: string, token: {refresh: string, access: string, expirationTime: number}, uid: string, customAttributes: Object, providers: ("password"|"google")[]}} User
+ * @typedef {{created: Date, displayName: string, email: string, emailVerified: boolean, lastLogin: Date, photoUrl: string, token: {refresh: string, access: string, expirationTime: number}, uid: string, customAttributes: Object, providers: ("password"|"google.com")[]}} User
  */
 
 const requestUri = `${location.protocol}//${location.hostname}`;
@@ -398,7 +399,7 @@ export async function showGooglePopup(auth, isReauth=false) {
         actionUrl.searchParams.set("customParameters", JSON.stringify({prompt: "consent", login_hint: currentUser.email}));
     }
     let popupWindow = AuthPopup.openPopup(actionUrl);
-    let pollId; // TODO: decode firebase auth to find out how they do it
+    let pollId;
     const pollClosed = () => {
         if (popupWindow.closed) {
             // wait for stuff to complete before rejection
@@ -432,5 +433,24 @@ export async function showGooglePopup(auth, isReauth=false) {
             }
             else return { status: "ERROR" };
         }, gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);
+    });
+}
+
+export function renderGoogleButton(oneTapContainer, callback) {
+    google.accounts.id.initialize({
+        client_id: clientId,
+        context: "signin",
+        ux_mode: "popup",
+        auto_select: true,
+        callback
+    });
+    google.accounts.id.renderButton(oneTapContainer, {
+        type: "standard",
+        shape: "rectangular",
+        theme: "outline",
+        text: "continue_with",
+        size: "large",
+        logo_alignment: "left",
+        width: 215
     });
 }

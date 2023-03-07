@@ -87,6 +87,10 @@ export function preventBreaking(node) {
         }
     }
 }
+export function navigateLoginSaveState() {
+    localStorage.setItem("redirect_after_login", location.href);
+    location.href = "/login/";
+}
 /**
  * Creates an element
  * @template {keyof HTMLElementTagNameMap} T
