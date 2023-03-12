@@ -1,9 +1,9 @@
 import initialize from "./general";
 import { createElement } from "./utils";
 import { toast } from "bulma-toast";
-import { getCurrentUser, updateProfile, signInWithGoogleCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, showGooglePopup, sendPasswordResetEmail, renderGoogleButton } from "./firebase-rest-api/auth";
+import { getCurrentUser, signInWithGoogleCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, showGooglePopup, sendPasswordResetEmail, renderGoogleButton } from "./firebase-rest-api/auth";
 
-const { newAuth: auth } = initialize(() => initLogin());
+const { auth } = initialize(() => initLogin());
 
 let onetapLoaded = false;
 
@@ -20,12 +20,16 @@ const fields = {
     btnSubmit: document.querySelector("#home button[type=submit]"),
 }
 
-async function initLogin(switchMode = true) {
+function resetFormState() {
     fields.btnSubmit.disabled = false;
-    if (switchMode) fields.page.dataset.mode = "login";
     fields.btnSubmit.classList.remove("is-loading");
-    fields.form.reset();
     fields.form.classList.remove("has-validated-inputs");
+}
+
+async function initLogin(switchMode = true) {
+    resetFormState();
+    fields.form.reset();
+    if (switchMode) fields.page.dataset.mode = "login";
     if (await getCurrentUser()) 
         return location.href = "/account/";
     if (!onetapLoaded) {
@@ -39,20 +43,18 @@ async function initLogin(switchMode = true) {
                     await showGooglePopup(auth);
                     restoreState();
                 } catch (err) {
-                    switch(err.code) {
-                        case "auth/popup-blocked":
-                            toast({message: "The popup was blocked", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
-                            break;
-                        case "auth/popup-closed-by-user":
+                    console.log(err);
+                    switch(err.message) {
+                        case "popup-closed":
                             toast({message: "Operation Cancelled", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
                             break;
-                        case "auth/too-many-requests":
+                        case "TOO_MANY_ATTEMPTS_TRY_LATER":
                             toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
-                        case "auth/user-disabled":
+                        case "USER_DISABLED":
                             toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
                             break;
-                        case "auth/account-exists-with-different-credential":
+                        case "INVALID_IDP_RESPONSE":
                             toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
                     }
@@ -70,17 +72,17 @@ function setupGoogleButton() {
             await signInWithGoogleCredential(auth, response.credential);
             restoreState();
         } catch (err) {
-            switch(err.code) {
-                case "auth/too-many-requests":
+            switch(err.message) {
+                case "TOO_MANY_ATTEMPTS_TRY_LATER":
                     toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                     break;
-                case "auth/user-disabled":
+                case "USER_DISABLED":
                     toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
                     break;
-                case "auth/unauthorized-continue-uri":
+                case "UNAUTHORIZED_DOMAIN":
                     toast({message: "Invalid domain", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
                     break;
-                case "auth/account-exists-with-different-credential":
+                case "INVALID_IDP_RESPONSE": // TODO: check if this is the correct error message
                     toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                     break;
             }
@@ -104,24 +106,22 @@ fields.form.addEventListener("submit", async e => {
             if (fields.inputEmail.reportValidity() && fields.inputPassword.reportValidity() && fields.inputConfirmPassword.reportValidity() && fields.inputDisplayName.reportValidity() && fields.checkTos.reportValidity()) {
                 if (fields.inputPassword.value === fields.inputConfirmPassword.value) {
                     try {
-                        await createUserWithEmailAndPassword(auth, fields.inputEmail.value, fields.inputPassword.value);
-                        await updateProfile(auth, { displayName: fields.inputDisplayName.value });
+                        await createUserWithEmailAndPassword(auth, fields.inputEmail.value, fields.inputPassword.value, fields.inputDisplayName.value);
                         restoreState();
                     } catch(err) {
-                        if (err.name !== "FirebaseError") throw err;
-                        switch(err.code) {
-                            case "auth/email-already-in-use":
+                        switch(err.message.split(" ")[0]) {
+                            case "EMAIL_EXISTS":
                                 toast({message: "An account with that email address already exists", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
                                 break;
-                            case "auth/too-many-requests":
+                            case "TOO_MANY_ATTEMPTS_TRY_LATER":
                                 toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                                 break;
-                            case "auth/weak-password":
-                                toast({message: "That password is too weak", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
+                            case "WEAK_PASSWORD":
+                                toast({message: "Your password must be at least 6 characters", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
                                 break;
                         }
                     } finally {
-                        initLogin(false);
+                        resetFormState();
                     }
                 } else {
                     fields.inputPassword.setCustomValidity("Passwords do not match");
@@ -137,12 +137,12 @@ fields.form.addEventListener("submit", async e => {
                     await sendPasswordResetEmail(auth, fields.inputEmail.value);
                     toast({message: "Email sent!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000});
                 } catch(err) {
-                    if (err.name !== "FirebaseError") throw err;
-                    switch(err.code) {
-                        case "auth/user-not-found":
+                    switch(err.message) {
+                        case "EMAIL_NOT_FOUND":
                             toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
-                        case "auth/too-many-requests":
+                        case "TOO_MANY_ATTEMPTS_TRY_LATER":
+                        case "RESET_PASSWORD_EXCEED_LIMIT":
                             toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
                     }
@@ -159,26 +159,22 @@ fields.form.addEventListener("submit", async e => {
                     await signInWithEmailAndPassword(auth, fields.inputEmail.value, fields.inputPassword.value);
                     restoreState();
                 } catch(err) {
-                    if (err.name !== "FirebaseError") throw err;
-                    switch(err.code) {
-                        case "auth/user-not-found":
+                    switch(err.message) {
+                        case "EMAIL_NOT_FOUND":
                             toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
-                        case "auth/wrong-password":
+                        case "INVALID_PASSWORD":
                             toast({message: "Incorrect password", type: "is-danger", dismissible: true, position: "bottom-center", duration: 5000});
                             break;
-                        case "auth/too-many-requests":
+                        case "TOO_MANY_ATTEMPTS_TRY_LATER":
                             toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
-                        case "auth/user-disabled":
+                        case "USER_DISABLED":
                             toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
-                            break;
-                        case "auth/account-exists-with-different-credential":
-                            toast({message: "Use Sign In with Google for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
                     }
                 } finally {
-                    initLogin();
+                    resetFormState();
                 }
             }
             break;

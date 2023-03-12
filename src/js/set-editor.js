@@ -1,9 +1,10 @@
 import { collection, doc, getDoc, writeBatch } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb, navigateLoginSaveState } from "./utils.js";
+import { createElement, createTextFieldWithHelper, getWords, showCollections, bulmaModalPromise, initBulmaModals, optionalAnimate, cardSlideInAnimation, zoomOutRemove, switchElements, getLocalDb, navigateLoginSaveState } from "./utils";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import { toast } from "bulma-toast";
 import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
+import { getCurrentUser, setCurrentUser } from "./firebase-rest-api/auth.js";
 
 window.BulmaTagsInput = BulmaTagsInput; // prevent parcel from tree shaking proper
 
@@ -71,7 +72,7 @@ customElements.define("quiz-question", QuizQuestion);
 const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w- ]+)\/edit\/?/)[1] || (location.pathname = "/");
 let setType = 0;
 let creator = null;
-const {db, auth} = initialize(async user => {
+const { db, auth } = initialize(async user => {
     if (!user) navigateLoginSaveState();
     else if (setId.match(/^new(-\w+)?$/)) {
         switch(setId) {
@@ -112,12 +113,10 @@ const {db, auth} = initialize(async user => {
         let setSnap = await getDoc(doc(db, "sets", setId));
         let setMetaSnap = await getDoc(doc(db, "meta_sets", setId));
         if (!setSnap.exists() || !setMetaSnap.exists()) return location.href = "/404";
-        let userIdToken = await user.getIdTokenResult();
-        let isAdmin = userIdToken.claims.admin;
         const currentSet = setSnap.data();
         const currentSetMeta = setMetaSnap.data();
-        if (!isAdmin && currentSet.uid !== user.uid) {
-            await auth.signOut();
+        if (!user.customAttributes.admin && currentSet.uid !== user.uid) {
+            await setCurrentUser(auth, null);
             navigateLoginSaveState();
         }
         await showAutosaveToast();
@@ -266,7 +265,7 @@ async function showAutosaveToast() {
         let deleteBackupBtn = createElement("button", ["button", "is-danger", "is-outlined"], {type: "button", innerText: "Delete"});
         deleteBackupBtn.addEventListener("click", () => localDb.delete("autosave-backups", setId));
         restoreBackupBtn.addEventListener("click", async () => {
-            displayExistingSet(auth.currentUser, existingAutosave.set, existingAutosave.meta);
+            displayExistingSet(await getCurrentUser(), existingAutosave.set, existingAutosave.meta);
             await localDb.delete("autosave-backups", setId);
         })
         toast({message: createElement("div", [], {}, [
@@ -467,16 +466,16 @@ fields.formEdit.addEventListener("submit", async e => {
     let setData = serializeSet();
     if (setData.meta.numTerms < 4 && setType !== 2) return toast({message: "You must have at least 4 terms in a set", type: "is-warning", dismissible: true, position: "bottom-center"});
     let batch = writeBatch(db);
-    await auth.currentUser.reload();
+    let currentUser = await getCurrentUser();
     if (setId === "new" || setId === "new-timeline" || setId === "new-guide") {
         let setRef = doc(collection(db, "sets"));
         let setMetaRef = doc(db, "meta_sets", setRef.id);
-        batch.set(setMetaRef, { ...setData.meta, creator: creator || auth.currentUser.displayName, uid: auth.currentUser.uid, likes: 0});
-        batch.set(setRef, { ...setData.set,  uid: auth.currentUser.uid });
+        batch.set(setMetaRef, { ...setData.meta, creator: creator || currentUser.displayName, uid: currentUser.uid, likes: 0});
+        batch.set(setRef, { ...setData.set,  uid: currentUser.uid });
     } else {
         let setRef = doc(db, "sets", setId);
         let setMetaRef = doc(db, "meta_sets", setId);
-        batch.update(setMetaRef, { ...setData.meta, creator: creator || auth.currentUser.displayName });
+        batch.update(setMetaRef, { ...setData.meta, creator: creator || currentUser.displayName });
         batch.update(setRef, setData.set);
     }
     try {

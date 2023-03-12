@@ -53,8 +53,11 @@ append scripts-footer
                 p.modal-card-title Reauthenticate
                 button.delete.action-close(aria-label="close")
             section.modal-card-body
-                p For your security, please reauthenticate.
-                input.input(type="password" required placeholder="Password")
+                p.mb-2 For your security, please reauthenticate.
+                .field
+                    label.label Current Password
+                    .control
+                        input.input(type="password" required placeholder="Password")
                 div
                     .divider.my-4 Or
                 .reauthenticate-google
@@ -68,8 +71,14 @@ append scripts-footer
                 p.modal-card-title Change Password
                 button.delete(aria-label="close")
             section.modal-card-body
-                input.input(type="password" required placeholder="Password" minlength="6")
-                input.input(type="password" required placeholder="Confirm Password" minlength="6")
+                .field
+                    label.label New Password
+                    .control
+                        input.input(type="password" required minlength="6")
+                .field
+                    label.label Confirm Password
+                    .control
+                        input.input(type="password" required minlength="6")
             footer.modal-card-foot
                 button.button.is-success(type="button") OK
     #modal-change-name.modal

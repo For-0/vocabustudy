@@ -24,11 +24,11 @@ const modals =  {
     reauthenticate: new Modal("#modal-reauthenticate").modal(),
     reauthenticateInputPassword: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-reauthenticate input"))),
     reauthenticateDivider: document.querySelector("#modal-reauthenticate .divider"),
-    reauthenticateGoogle: document.querySelector("#modal-reauthenticate .btn-google"),
+    reauthenticateGoogle: document.querySelector("#modal-reauthenticate .reauthenticate-google"),
     reauthenticateConfirm: document.querySelector("#modal-reauthenticate .button.is-success")
 };
 
-const { newAuth: auth } = initialize(async user => {
+const { auth } = initialize(async user => {
     if (user) {
         showAccountInfo(user);
         if (!user.emailVerified) verifyEmail();
@@ -40,15 +40,16 @@ let currentReauthenticateReason = null, reauthOnetapInitialized = false;
 
 async function reauthenticateUser() {
     let currentUser = await getCurrentUser();
-    [modals.reauthenticateInputPassword, modals.reauthenticateDivider, modals.reauthenticateGoogle].forEach(el => el.hidden = true);
+    [modals.reauthenticateInputPassword.parentElement.parentElement, modals.reauthenticateDivider, modals.reauthenticateGoogle].forEach(el => el.hidden = true);
     modals.reauthenticateInputPassword.value = "";
     modals.reauthenticateInputPassword.setCustomValidity("");
-    if (currentUser.providers.includes("password")) modals.reauthenticateInputPassword.hidden = false;
+    if (currentUser.providers.includes("password")) modals.reauthenticateInputPassword.parentElement.parentElement.hidden = false;
     if (currentUser.providers.includes("google.com")) {
         modals.reauthenticateGoogle.hidden = false;
         setupGoogleLogin();
     }
-    if (currentUser.providers.length > 1) modals.reauthenticateDivider.hidden = false;
+    modals.reauthenticateDivider.hidden = currentUser.providers.length <= 1;
+    modals.reauthenticateConfirm.hidden = !currentUser.providers.includes("password");
     modals.reauthenticate.open();
 }
 async function changePassword() {
@@ -56,18 +57,19 @@ async function changePassword() {
     modals.changePasswordInputs.forEach(el => el.value = "");
     modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
     let result = await bulmaModalPromise(modals.changePassword);
-    if (result) await updatePassword(modals.changePasswordInputs[0].value);
+    if (result) await updatePassword(auth, modals.changePasswordInputs[0].value);
 }
 async function changeName() {
     modals.changeNameInput.value = "";
     let result = await bulmaModalPromise(modals.changeName);
     if (result) await updateProfile(auth, { displayName: modals.changeNameInput.value });
 }
-async function handleReauthCompletion() {
+function handleReauthCompletion() {
+    console.log("reauth completed")
+    if (currentReauthenticateReason === "change_password") changePassword();
+    else if (currentReauthenticateReason === "delete") deleteAccount();
     modals.reauthenticate.close();
     currentReauthenticateReason = null;
-    if (currentReauthenticateReason === "change_password") await changePassword();
-    else if (currentReauthenticateReason === "delete") deleteAccount();
 }
 function deleteAccount() {
     new Alert().alert({
@@ -139,7 +141,7 @@ async function verifyEmail() {
         new Alert().alert({
             type: "warning",
             title: "Verify Email Address",
-            body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address.\nMake sure to check any spam, junk, or promotions folders for the email. If something went wrong, submit an Other form with this concern at vocabustudy.org/forms/#other.",
+            body: "You will not be able to use your account if you do not verify your email address.\nPress the button below to verify your email address.\nMake sure to check any spam, junk, or promotions folders for the email.",
             confirm: {
                 label: "Send Verification Email",
                 onClick: () => 
@@ -153,27 +155,6 @@ async function verifyEmail() {
 }
 modals.reauthenticate.onclose = () => currentReauthenticateReason = null;
 initBulmaModals([modals.changePassword, modals.changeName, modals.reauthenticate]);
-modals.changePassword.validateInput = async () => {
-    modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
-    if (modals.changePasswordInputs.every(el => el.reportValidity())) {
-        let currentUser = await getCurrentUser();
-        if (currentUser) {
-            try {
-                await signInWithEmailAndPassword(auth, currentUser.email, modals.changePasswordInputs[0].value);
-                if (modals.changePasswordInputs[1].value === modals.changePasswordInputs[2].value) return true;
-                else {
-                    modals.changePasswordInputs[1].setCustomValidity("Passwords do not match");
-                    modals.changePasswordInputs[1].reportValidity();
-                    return false;
-                }
-            } catch {
-                modals.changePasswordInputs[0].setCustomValidity("Incorrect Password");
-                modals.changePasswordInputs[0].reportValidity();
-                return false;
-            }
-        } else return false;
-    }
-};
 modals.changeName.validateInput = () => modals.changeNameInput.reportValidity();
 fields.btnVerifyEmail.addEventListener("click", () => getCurrentUser().then(user => user.emailVerified ? location.reload : verifyEmail()));
 fields.btnChangePassword.addEventListener("click", async () => {

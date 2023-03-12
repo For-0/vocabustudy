@@ -1,6 +1,6 @@
 import { collection, doc, documentId, getDoc, getDocs, query, where } from "firebase/firestore/lite";
 import initialize from "./general.js"
-import { createSetCard } from "./utils.js";
+import { createSetCard } from "./utils";
 
 const collectionId = decodeURIComponent(location.pathname).match(/\/collection\/([\w ]+)\/?/)[1] || goBack();
 

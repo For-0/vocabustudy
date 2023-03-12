@@ -160,3 +160,6 @@ input[type="text"] {
 [data-tooltip]::before {
     max-width: 80vw;
 }
+.alert .modal-card-body {
+    white-space: pre-wrap;
+}

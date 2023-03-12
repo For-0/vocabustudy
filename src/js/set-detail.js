@@ -1,9 +1,10 @@
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate, preventBreaking, initBulmaModals, navigateLoginSaveState } from "./utils.js";
+import { createElement, normalizeAnswer, checkAnswers, styleAndSanitize, initQuickview, optionalAnimate, preventBreaking, initBulmaModals, navigateLoginSaveState, addShowCommentsClickListener } from "./utils";
 import fitty from "fitty";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal.js";
 import { toast } from "bulma-toast";
+import { getCurrentUser, setCurrentUser } from "./firebase-rest-api/auth.js";
 
 /* global QRCode */
 
@@ -947,17 +948,18 @@ const pages = {
                     return { name: doc.name, time: doc.leaderboard, uid: el.id };
                 });
             }
-            if (!this.onlyStarred && auth.currentUser && socialRef) {
-                let possibleExisting = currentMatchLeaderboard.find(el => el.uid === auth.currentUser.uid);
+            let currentUser = await getCurrentUser();
+            if (!this.onlyStarred && currentUser && socialRef) {
+                let possibleExisting = currentMatchLeaderboard.find(el => el.uid === currentUser.uid);
                 if (possibleExisting) {
                     if (possibleExisting.time > time) possibleExisting.time = time;
                     else time = possibleExisting.time;
-                } else currentMatchLeaderboard.push({ name: auth.currentUser.displayName, uid: auth.currentUser.uid, time });
-                await setDoc(socialRef, { leaderboard: time, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+                } else currentMatchLeaderboard.push({ name: currentUser.displayName, uid: currentUser.uid, time });
+                await setDoc(socialRef, { leaderboard: time, name: currentUser.displayName, uid: currentUser.uid }, { merge: true });
             }
             let actualLeaderboard = [...currentMatchLeaderboard];
             if (this.onlyStarred) actualLeaderboard.push({ name: "Play a full round to save!", time });
-            else if (!auth.currentUser) actualLeaderboard.push({ name: "Sign in to save!", time });
+            else if (!currentUser) actualLeaderboard.push({ name: "Sign in to save!", time });
             actualLeaderboard.sort((a, b) => a.time - b.time);
             this.completedDialogList.textContent = "";
             for (let [i, item] of actualLeaderboard.entries()) {
@@ -1076,27 +1078,7 @@ function createTermCard({ term, definition }, index, isStarred) {
     } else cardEl.appendChild(document.createElement("p")).innerHTML = styleAndSanitize(definition);
     pages.setOverview.terms.appendChild(createElement("div", ["column", "is-one-quarter-desktop", "is-half-tablet"], {}, [cardEl]));
 }
-function createCommentCard({ name, comment, like }, id) {
-    let isMyComment = auth.currentUser?.uid === id;
-    if (isMyComment)
-        pages.comment.inputComment.value = comment;
-    else
-        pages.comment.container.appendChild(createElement("div", ["list-item"], {}, [
-            createElement("div", ["list-item-content"], {}, [
-                createElement("div", ["list-item-title"], {}, [
-                    createElement("div", ["list-item-title", "is-flex", "is-justify-content-space-between"], {}, [
-                        createElement("span", [], {innerText: name}),
-                        ...(like ? [createElement("span", ["tag", "is-success", "has-tooltip-arrow", "has-tooltip-info", "has-tooltip-left"], {dataset: {tooltip: `${name} likes this set`}}, [
-                            createElement("span", ["icon"], {}, [
-                                createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "thumb_up", style: {verticalAlign: "middle", fontSize: "1rem", cursor: "auto"}})
-                            ])
-                        ])] : [])
-                    ])
-                ]),
-                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment, true)})
-            ])
-        ]));
-}
+
 // #endregion
 function navigate() {
     switch (location.hash) {
@@ -1211,21 +1193,20 @@ addEventListener("DOMContentLoaded", async () => {
             }, 100);
         })
         pages.setOverview.btnLike.addEventListener("click", async () => {
-            if (!auth.currentUser) navigateLoginSaveState()
+            let currentUser = await getCurrentUser();
+            if (!currentUser) navigateLoginSaveState()
             else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
-                await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+                await setDoc(socialRef, { like: !currentLikeStatus, name: currentUser.displayName, uid: currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }
         });
-        pages.comment.btnShowComments.addEventListener("click", async () => { // TODO modularize
-            let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
-            comments.forEach(comment => createCommentCard(comment.data(), comment.id));
-        }, { once: true });
+        addShowCommentsClickListener(pages.comment, setRef);
         pages.comment.inputComment.addEventListener("input", () => pages.comment.btnSaveComment.disabled = false);
         pages.comment.btnSaveComment.addEventListener("click", async () => {
-            if (auth.currentUser && pages.comment.inputComment.reportValidity()) {
-                await setDoc(socialRef, { comment: pages.comment.inputComment.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+            let currentUser = await getCurrentUser();
+            if (currentUser && pages.comment.inputComment.reportValidity()) {
+                await setDoc(socialRef, { comment: pages.comment.inputComment.value, name: currentUser.displayName, uid: currentUser.uid }, { merge: true });
                 toast({message: "Comment saved!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000})
                 pages.comment.btnSaveComment.disabled = true;
             }
@@ -1266,7 +1247,7 @@ addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error(err);
         if (err.message.includes("Forbidden") || err.code === "permission-denied") {
-            if (auth.currentUser) await auth.signOut();
+            if (await getCurrentUser()) await setCurrentUser(auth, null);
             navigateLoginSaveState();
             return;
         } else window.sentryCaptureException?.call(globalThis, err);

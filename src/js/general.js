@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import { initializeApp } from "firebase/app";
-import { browserLocalPersistence, browserPopupRedirectResolver, connectAuthEmulator, initializeAuth } from "firebase/auth";
 import { Auth, getCurrentUser, refreshCurrentUser, setCurrentUser } from "./firebase-rest-api/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore/lite";
 
@@ -38,12 +37,7 @@ const firebaseConfig = {
 export default function initialize(authStateChangedCallback = () => {}, remoteConfigActivatedCallback = null) {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = initializeAuth(app, {
-        persistence: browserLocalPersistence,
-        popupRedirectResolver: browserPopupRedirectResolver
-    });
-    auth.setPersistence(browserLocalPersistence);
-    const newAuth = new Auth();
+    const auth = new Auth();
     if (remoteConfigActivatedCallback !== null) {
         import("firebase/remote-config").then(async ({getRemoteConfig, fetchAndActivate}) => {
             let remoteConfig = getRemoteConfig(app);
@@ -61,22 +55,21 @@ export default function initialize(authStateChangedCallback = () => {}, remoteCo
     }
     
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") {
-        connectAuthEmulator(auth, "http://localhost:9099", {disableWarnings: true});
-        newAuth.emulatorUrl = "http://localhost:9099";
+        auth.emulatorUrl = "http://localhost:9099";
         connectFirestoreEmulator(db, "localhost", 8080);
     } else if (process.env.CODESPACES) {
-        connectAuthEmulator(auth, `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`, {disableWarnings: true});
+        auth.emulatorUrl = `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`;
         connectFirestoreEmulator(db, `${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`, 443);
     } else if (process.env.GITPOD_WORKSPACE_URL) {
-        connectAuthEmulator(auth, `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`, {disableWarnings: true});
+        auth.emulatorUrl = `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
         connectFirestoreEmulator(db, `${8080}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}`, 443);
     }
-    window.signOut = () => setCurrentUser(newAuth, null);
-    newAuth.on("statechange", async () => {
+    window.signOut = () => setCurrentUser(auth, null);
+    auth.on("statechange", async () => {
         let user = await getCurrentUser();
         if (user) setLoginButtonsState(true, user.customAttributes.admin); else setLoginButtonsState(false, false);
         authStateChangedCallback(user);
     });
-    refreshCurrentUser(newAuth);
-    return {app, db, auth, newAuth};
+    refreshCurrentUser(auth);
+    return {app, db, auth};
 }

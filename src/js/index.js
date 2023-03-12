@@ -1,9 +1,9 @@
 import { toast } from "bulma-toast";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Dropdown from "@vizuaalog/bulmajs/src/plugins/dropdown";
 import { collection, collectionGroup, deleteDoc, doc, documentId, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore/lite";
 import { getValue } from "firebase/remote-config";
@@ -83,10 +83,6 @@ const pages = {
         likedSets: document.querySelector("#saved-sets .liked-container"),
     },
     modals: {
-        changePassword: new Modal("#modal-change-password").modal(),
-        changePasswordInputs: (/** @type {HTMLInputElement[]} */ ([...document.querySelectorAll("#modal-change-password input")])),
-        changeName: new Modal("#modal-change-name").modal(),
-        changeNameInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-name input"))),
         filterCollection: new Modal("#modal-filter-collection").modal(),
         filterCollectionList: document.querySelector("#modal-filter-collection .menu > ul"),
         changeHue: new Modal("#modal-change-hue").modal(),
@@ -133,15 +129,14 @@ async function showMySets(el = pages.mySets.sets, showAll = false) {
 function registerCustomCollectionCard(docSnap) {
     let els = createCustomCollectionCard(docSnap.data(), docSnap.id);
     pages.mySets.collections.appendChild(els.card);
-    els.card.addEventListener("change", () => els.buttons[2].disabled = false);
-    //els.inputs.forEach(t => t.addEventListener("change", () => els.buttons[2].disabled = false));
+    els.card.addEventListener("change", () => els.buttons[2].removeAttribute("disabled"));
     els.buttons[1].addEventListener("click", () => {
         if (els.card.querySelectorAll(".collection-sets > label").length >= 10) return alert("You can have at most 10 sets in a collection.");
         let cEls = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/", {pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"});
         els.card.querySelector(".collection-sets").append(cEls.textField, cEls.helperLine);
     });
     els.buttons[2].addEventListener("click", async () => {
-        els.buttons[2].disabled = true;
+        els.buttons[2].setAttribute("disabled", "");
         els.card.querySelectorAll(".collection-sets > label").forEach(el => {
             if (!el.querySelector("input").value) {
                 el.nextElementSibling.remove();

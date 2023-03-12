@@ -1,6 +1,6 @@
 import { collection, addDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { navigateLoginSaveState } from "./utils.js";
+import { navigateLoginSaveState } from "./utils";
 
 // collapse the below code into a single const array
 const forms = {
@@ -11,6 +11,7 @@ const forms = {
         text: document.getElementById("text-feedback"),
         btn: document.getElementById("btn-feedback"),
         form: document.getElementById("feedback-form"),
+        collection: "feedback",
         function: sendFeedback
     },
     bug: {
@@ -20,6 +21,7 @@ const forms = {
         text: document.getElementById("text-bug"),
         btn: document.getElementById("btn-bug"),
         form: document.getElementById("bug-form"),
+        collection: "bug",
         function: sendBug
     },
     takedown: {
@@ -29,6 +31,7 @@ const forms = {
         text: document.getElementById("text-takedown"),
         btn: document.getElementById("btn-takedown"),
         form: document.getElementById("takedown-form"),
+        collection: "takedown",
         function: sendTakedown
     },
     other: {
@@ -37,17 +40,22 @@ const forms = {
         text: document.getElementById("text-other"),
         btn: document.getElementById("btn-other"),
         form: document.getElementById("other-form"),
+        collection: "other",
         function: sendOther
     }
 };
 
-const {db, auth} = initialize(async user => {
+const { db } = initialize(async user => {
     if (user) {
         Object.values(forms).forEach(form => {
-            form.form.addEventListener('submit', async (e) => {
+            form.form.addEventListener("submit", async e => {
                 e.preventDefault();
                 form.btn.classList.add("is-loading");
-                await form.function();
+                let data = form.function();
+                await addDoc(collection(db, "form_data", "types", form.collection), { uid: user.uid, ...data });
+                forms.btn.classList.remove("is-loading");
+                forms.btn.disabled = true;
+                forms.btn.innerText = "Submitted!"; // TODO change to toast
                 form.form.reset();
             });
         });
@@ -55,60 +63,36 @@ const {db, auth} = initialize(async user => {
 });
 
 async function sendFeedback() {
-    const feedback = {
+    return {
         name: forms.feedback.name.value,
         email: forms.feedback.email.value,
         rating: forms.feedback.rating.value,
-        text: forms.feedback.text.value,
-        uid: auth.currentUser.uid
+        text: forms.feedback.text.value
     };
-    await addDoc(collection(db, "form_data", "types", "feedback"), feedback).then(() => {
-        forms.feedback.btn.classList.remove("is-loading");
-        forms.feedback.btn.disabled = true;
-        forms.feedback.btn.innerText = "Submitted!";
-    })
 }
 
 async function sendBug() {
-    const bug = {
+   return {
         name: forms.bug.name.value,
         email: forms.bug.email.value,
         url: forms.bug.url.value,
-        text: forms.bug.text.value,
-        uid: auth.currentUser.uid
+        text: forms.bug.text.value
     };
-    await addDoc(collection(db, "form_data", "types", "bug"), bug).then(() => {
-        forms.bug.btn.classList.remove("is-loading");
-        forms.bug.btn.disabled = true;
-        forms.bug.btn.innerText = "Submitted!";
-    })
 }
 
 async function sendTakedown() {
-    const takedown = {
+    return {
         name: forms.takedown.name.value,
         email: forms.takedown.email.value,
         url: forms.takedown.url.value,
-        text: forms.takedown.text.value,
-        uid: auth.currentUser.uid
+        text: forms.takedown.text.value
     };
-    await addDoc(collection(db, "form_data", "types", "takedown"), takedown).then(() => {
-        forms.takedown.btn.classList.remove("is-loading");
-        forms.takedown.btn.disabled = true;
-        forms.takedown.btn.innerText = "Submitted!";
-    })
 }
 
 async function sendOther() {
-    const other = {
+    return {
         name: forms.other.name.value,
         email: forms.other.email.value,
-        text: forms.other.text.value,
-        uid: auth.currentUser.uid
+        text: forms.other.text.value
     };
-    await addDoc(collection(db, "form_data", "types", "other"), other).then(() => {
-        forms.other.btn.classList.remove("is-loading");
-        forms.other.btn.disabled = true;
-        forms.other.btn.innerText = "Submitted!";
-    })
 }

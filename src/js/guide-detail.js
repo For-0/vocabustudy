@@ -1,8 +1,9 @@
-import { collection, doc, getDoc, getDocs, orderBy, query, setDoc } from "firebase/firestore/lite";
+import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 import initialize from "./general.js";
-import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize, navigateLoginSaveState } from "./utils.js";
+import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize, navigateLoginSaveState, addShowCommentsClickListener } from "./utils";
 import { toast } from "bulma-toast";
 import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
+import { getCurrentUser, setCurrentUser } from "./firebase-rest-api/auth.js";
 
 class QuizQuestion extends HTMLElement {
     constructor() {
@@ -157,27 +158,7 @@ function createItem(item, index) {
         return pages.setOverview.terms.appendChild(cardEl);
     }
 }
-function createCommentCard({ name, comment, like }, id) {
-    let isMyComment = auth.currentUser?.uid === id;
-    if (isMyComment)
-        pages.comment.inputComment.value = comment;
-    else
-        pages.comment.container.appendChild(createElement("div", ["list-item"], {}, [
-            createElement("div", ["list-item-content"], {}, [
-                createElement("div", ["list-item-title"], {}, [
-                    createElement("div", ["list-item-title", "is-flex", "is-justify-content-space-between"], {}, [
-                        createElement("span", [], {innerText: name}),
-                        ...(like ? [createElement("span", ["tag", "is-success", "has-tooltip-arrow", "has-tooltip-info", "has-tooltip-left"], {dataset: {tooltip: `${name} likes this set`}}, [
-                            createElement("span", ["icon"], {}, [
-                                createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "thumb_up", style: {verticalAlign: "middle", fontSize: "1rem", cursor: "auto"}})
-                            ])
-                        ])] : [])
-                    ])
-                ]),
-                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment, true)})
-            ])
-        ]));
-}
+
 function shuffle(arr) {
     let currentIndex = arr.length, randomIndex;
     while (currentIndex > 0) {
@@ -205,21 +186,21 @@ addEventListener("DOMContentLoaded", async () => {
         for (let [i, term] of currentSet.terms.entries()) createItem(term, i);
         new Tabs(document.querySelector("#home .tabs-wrapper")).tabs();
         pages.setOverview.btnLike.addEventListener("click", async () => {
-            if (!auth.currentUser) navigateLoginSaveState()
+            // If the user is logged in, toggle the like status. Otherwise, navigate to the login page.
+            let currentUser = await getCurrentUser();
+            if (currentUser) navigateLoginSaveState()
             else if (socialRef) {
                 let currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
-                await setDoc(socialRef, { like: !currentLikeStatus, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+                await setDoc(socialRef, { like: !currentLikeStatus, name: currentUser.displayName, uid: currentUser.uid }, { merge: true });
                 showLikeStatus(!currentLikeStatus);
             }
         });
-        pages.comment.btnShowComments.addEventListener("click", async () => { // TODO modularize
-            let comments = await getDocs(query(collection(setRef, "social"), orderBy("comment")));
-            comments.forEach(comment => createCommentCard(comment.data(), comment.id));
-        }, { once: true });
+        addShowCommentsClickListener(pages.comment, setRef);
         pages.comment.inputComment.addEventListener("input", () => pages.comment.btnSaveComment.disabled = false);
         pages.comment.btnSaveComment.addEventListener("click", async () => {
-            if (auth.currentUser && pages.comment.inputComment.reportValidity()) {
-                await setDoc(socialRef, { comment: pages.comment.inputComment.value, name: auth.currentUser.displayName, uid: auth.currentUser.uid }, { merge: true });
+            let currentUser = await getCurrentUser();
+            if (currentUser && pages.comment.inputComment.reportValidity()) {
+                await setDoc(socialRef, { comment: pages.comment.inputComment.value, name: currentUser.displayName, uid: currentUser.uid }, { merge: true });
                 toast({message: "Comment saved!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000})
                 pages.comment.btnSaveComment.disabled = true;
             }
@@ -229,7 +210,7 @@ addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error(err);
         if (err.message.includes("Forbidden") || err.code === "permission-denied") {
-            if (auth.currentUser) await auth.signOut();
+            if (await getCurrentUser()) await setCurrentUser(auth, null);
             navigateLoginSaveState();
             return;
         } else window.sentryCaptureException?.call(globalThis, err)

@@ -1,11 +1,25 @@
 import { apiKey, clientId } from "./project-config.json";
-import { createElement, getLocalDb } from "../utils.js";
+import { createElement, getLocalDb } from "../utils";
 import { BroadcastChannel } from "broadcast-channel";
 
+declare global {
+    interface Window {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        ___jsl: any;
+        gapi: any;
+        google: any;
+        /* eslint-enable */
+    }
+}
 
-/* global gapi, google */
-window.getLocalDb = getLocalDb;
-export class Auth {
+interface AuthEndpointConfig {
+    emulatorUrl: string | null;
+}
+
+export class Auth implements AuthEndpointConfig {
+    channel: BroadcastChannel;
+    emulatorUrl: string | null;
+    handlers: {eventName: "statechange", handler: () => void}[];
     constructor() {
         this.channel = new BroadcastChannel("auth-updates", {
             webWorkerSupport: false
@@ -17,7 +31,7 @@ export class Auth {
      * Add an event listener on the Auth object
      * @param {"statechange"} eventName The name of the event to listen to
      */
-    on(eventName, handler) {
+    on(eventName: "statechange", handler: () => void) {
         this.handlers.push({eventName, handler});
         this.channel.addEventListener("message", msg => {
             if (msg === eventName) handler();
@@ -50,11 +64,10 @@ const AuthPopup = {
     },
     /**
      * Open a popup, preferably for an oauth signin
-     * @param {Url} url 
      * @returns the window object of the popup
      */
-    openPopup(url) {
-        let options = {
+    openPopup(url: URL) {
+        const options = {
             width: "500",
             height: "600",
             top: Math.max((window.screen.availHeight - 600) / 2, 0).toString(),
@@ -65,13 +78,13 @@ const AuthPopup = {
             toolbar: "no",
             scrollbars: "yes"
         };
-        let optionsString = Object.entries(options).reduce((prev, [key, val]) => `${prev}${key}=${val}`, "");
+        const optionsString = Object.entries(options).reduce((prev, [key, val]) => `${prev}${key}=${val}`, "");
         return this.currentPopup.window = open(url, generateEventId(), optionsString);
     },
     resetUnloadedGapiModules() {
-        let b = window.___jsl;
+        const b = window.___jsl;
         if (b?.H) {
-            for (let hint of Object.keys(b.H)) {
+            for (const hint of Object.keys(b.H)) {
                 b.H[hint].r = b.H[hint].r || []; // trying to emulate what the AUth SDK does (packages/auth/src/platform_browser/iframe/gapi.ts)
                 b.H[hint].L = b.H[hint].L || [];
                 b.H[hint].r = [...b.H[hint].L];
@@ -87,8 +100,8 @@ const AuthPopup = {
             function loadIframe() {
                 // resets unloaded modules
                 AuthPopup.resetUnloadedGapiModules();
-                gapi.load("gapi.iframes", {
-                    callback: () => resolve(gapi.iframes.getContext()),
+                window.gapi.load("gapi.iframes", {
+                    callback: () => resolve(window.gapi.iframes.getContext()),
                     ontimeout: () => {
                         AuthPopup.resetUnloadedGapiModules();
                         reject("NETWORK_REQUEST_FAILED");
@@ -96,16 +109,16 @@ const AuthPopup = {
                     timeout: 30000
                 });
             }
-            if (window.gapi?.iframes?.Iframe) resolve(gapi.iframes.getContext())
+            if (window.gapi?.iframes?.Iframe) resolve(window.gapi.iframes.getContext())
             else if (window.gapi?.load) loadIframe();
             else {
-                let callbackName = `__iframefcb${Math.floor(Math.random() * 1000000)}`;
+                const callbackName = `__iframefcb${Math.floor(Math.random() * 1000000)}`;
                 window[callbackName] = () => {
-                    if (gapi.load) loadIframe();
+                    if (window.gapi.load) loadIframe();
                     else reject("NETWORK_REQUEST_FAILED");
                 };
                 return new Promise((resolve, reject) => {
-                    let scriptEl = createElement("script", [], {onload: resolve, onerror: () => reject("INTERNAL_ERROR"), type: "text/javascript", charset: "UTF-8"});
+                    const scriptEl = createElement("script", [], {onload: resolve, onerror: () => reject("INTERNAL_ERROR"), type: "text/javascript", charset: "UTF-8"});
                     scriptEl.setAttribute("src", `https://apis.google.com/js/api.js?onload=${callbackName}`);
                     document.head.appendChild(scriptEl);
                 }).catch(err => reject(err));
@@ -115,16 +128,16 @@ const AuthPopup = {
             throw err;
         }));
     },
-    async loadEmulatorIframe(auth) {
-        let context = await this.loadGoogleApi();
-        let iframeUrl = new URL(`${auth.emulatorUrl}/emulator/auth/iframe`);
+    async loadEmulatorIframe(auth: Auth) {
+        const context = await this.loadGoogleApi();
+        const iframeUrl = new URL(`${auth.emulatorUrl}/emulator/auth/iframe`);
         iframeUrl.searchParams.append("apiKey", apiKey);
         iframeUrl.searchParams.append("appName", "[DEFAULT]");
         iframeUrl.searchParams.append("eid", "p");
-        let iframe = await context.open({ 
+        const iframe = await context.open({ 
             where: document.body, 
             url: iframeUrl.href, 
-            messageHandlersFilter: gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER, 
+            messageHandlersFilter: window.gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER, 
             attributes: {
                 style: {
                     position: "absolute",
@@ -135,10 +148,10 @@ const AuthPopup = {
                 tabindex: "-1"
             },
             dontclear: true
-        // eslint-disable-next-line no-async-promise-executor
-        }, iframe => new Promise(async (resolve, reject) => {
+        // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-explicit-any
+        }, (iframe: any) => new Promise(async (resolve, reject) => {
             await iframe.restyle({setHideOnLeave: false});
-            let networkErrorTimer = setTimeout(() => reject("NETWORK_REQUEST_FAILED"), 5000);
+            const networkErrorTimer = setTimeout(() => reject("NETWORK_REQUEST_FAILED"), 5000);
             function clearTimerResolve() {
                 clearTimeout(networkErrorTimer);
                 resolve(iframe);
@@ -149,10 +162,18 @@ const AuthPopup = {
     }
 }
 
-/**
- * A Firebase Auth user
- * @typedef {{created: Date, displayName: string, email: string, emailVerified: boolean, lastLogin: Date, photoUrl: string, token: {refresh: string, access: string, expirationTime: number}, uid: string, customAttributes: Object, providers: ("password"|"google.com")[]}} User
- */
+interface User {
+    created: Date,
+    displayName: string,
+    email: string,
+    emailVerified: boolean,
+    lastLogin: Date,
+    photoUrl: string,
+    token: { refresh: string, access: string, expirationTime: number },
+    uid: string,
+    customAttributes: object,
+    providers: ("password" | "google.com")[]
+}
 
 const requestUri = `${location.protocol}//${location.hostname}`;
 
@@ -162,35 +183,45 @@ function generateEventId() {
 
 /**
  * Extract the error from an API response and throw it if it exists
- * @param {{error?: {errors: {domain: string, reason: string, message: string}[], code: number, message: string}}} response The JSON response from the identity toolkit API
+ * @param response The JSON response from the identity toolkit API
  * @throws {Error}
  * @returns response for chaining
  */
-function throwResponseError(response) {
+function throwResponseError(response: {error?: {errors: {domain: string, reason: string, message: string}[], code: number, message: string}}) {
     if (response.error) throw new Error(response.error.message);
     else return response;
 }
 
-async function authEndpointRequest([segment], body, {emulatorUrl}, isRetry=false) {
-    const res = await fetch(`${emulatorUrl ?? "https:/"}/identitytoolkit.googleapis.com/v1/accounts${segment}?key=${apiKey}`, {
+async function authEndpointRequest([segment]: TemplateStringsArray | [string], body: object, auth: Auth, isRetry=false) {
+    const res = await fetch(`${auth.emulatorUrl ?? "https:/"}/identitytoolkit.googleapis.com/v1/accounts${segment}?key=${apiKey}`, {
         headers: {
             "Content-Type": "application/json"
         },
         method: "POST",
         body: JSON.stringify(body)
     });
-    let resJson = await res.json();
+    const resJson = await res.json();
     try {
         return throwResponseError(resJson);
     } catch (err) {
         if (err.message === "INVALID_ID_TOKEN" && !isRetry) {
-            await refreshCurrentUser();
-            return authEndpointRequest([segment], body, {emulatorUrl}, true);
+            await refreshCurrentUser(auth);
+            return authEndpointRequest([segment], body, auth, true);
         } else throw err;
     }
 }
 
-function parseAccountResponse(user, {idToken, refreshToken, expiresIn}, expirationTime=null) {
+function parseAccountResponse(user: {
+    localId: string,
+    email: string,
+    emailVerified: boolean,
+    displayName: string,
+    photoUrl: string,
+    createdAt: string,
+    lastLoginAt: string,
+    customAttributes: string | null,
+    providerUserInfo: { providerId: "password" | "google.com" }[]
+}, { idToken, refreshToken, expiresIn } : { idToken: string, refreshToken: string, expiresIn: string | undefined }, expirationTime: number | null = null): User {
     return {
         uid: user.localId,
         email: user.email,
@@ -211,32 +242,35 @@ function parseAccountResponse(user, {idToken, refreshToken, expiresIn}, expirati
 
 /**
  * Convert an ID token to a User object by calling `accounts:lookup`
- * @param {{idToken: string, refreshToken: string, expiresIn: string}} param0 
- * @returns {Promise<User>}
  */
-export async function idTokenToUser(auth, {idToken, refreshToken, expiresIn}, expirationTime=null) {
+export async function idTokenToUser(auth: Auth, {idToken, refreshToken, expiresIn}: {idToken: string, refreshToken: string, expiresIn?: string}, expirationTime: number | null =null) {
     const res = await authEndpointRequest`:lookup${{idToken}}${auth}`;
-    let user = res.users[0];
+    const user = res.users[0];
     if (user) return parseAccountResponse(user, {idToken, refreshToken, expiresIn}, expirationTime);
+    else return null;
 }
 
 /**
  * Get the currently signed in user, or null if there is no signed in user
- * @returns {Promise<User | null>}
  */
-export async function getCurrentUser() {
-    let db = await getLocalDb();
-    let user = await db.get("general", "current-user");
-    return user;
+export async function getCurrentUser(): Promise<User | null> {
+    try {
+        const db = await getLocalDb();
+        const user = await db.get("general", "current-user");
+        return user;
+    } catch (err) {
+        if (err.name === "InvalidStateError") return JSON.parse(localStorage.getItem("current-user") || "null");
+        else throw err;
+    }
 }
 
-export async function refreshCurrentUser(auth) {
-    let currentUser = await getCurrentUser();
-    let user = null;
+export async function refreshCurrentUser(auth: Auth) {
+    const currentUser = await getCurrentUser();
+    let user: User | null = null;
     if (currentUser) {
         try {
             if (Date.now() >= currentUser.token.expirationTime) {
-                let res = await fetch(`${auth.emulatorUrl ?? "https:/"}/securetoken.googleapis.com/v1/token?key=${apiKey}`, {
+                const res = await fetch(`${auth.emulatorUrl ?? "https:/"}/securetoken.googleapis.com/v1/token?key=${apiKey}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -246,7 +280,7 @@ export async function refreshCurrentUser(auth) {
                         refresh_token: currentUser.token.refresh
                     })
                 });
-                let { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json();
+                const { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json();
                 user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
             } else
                 user = await idTokenToUser(auth, { idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
@@ -267,124 +301,107 @@ export async function refreshCurrentUser(auth) {
 
 /**
  * Fetch a user using the accounts:lookup method
- * @param {Auth} auth 
- * @param {{idToken: string, refreshToken: string, expiresIn: string}} param1 
  */
-async function fetchUser(auth, { idToken, refreshToken, expiresIn }) {
-    let user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
+async function fetchUser(auth: Auth, { idToken, refreshToken, expiresIn }: { idToken: string, refreshToken: string, expiresIn: string }) {
+    const user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
     await setCurrentUser(auth, user);
+    if (!user) throw new Error("USER_NOT_FOUND");
     return user;
 }
 
 /**
  * Store the currently signed in user. Broadcasts a statechange event
- * @param {Auth} auth The auth instance
- * @param {User|null} user The currently signed in user or null if there is no signed in user
+ * @param user The currently signed in user or null if there is no signed in user
  */
-export async function setCurrentUser(auth, user) {
-    let db = await getLocalDb();
-    await db.put("general", user, "current-user");
+export async function setCurrentUser(auth: Auth, user: User | null) {
+    try {
+        const db = await getLocalDb();
+        await db.put("general", user, "current-user");
+    } catch (err) {
+        // catch mutation not allowed in firefox private:
+        if (err.name === "InvalidStateError") localStorage.setItem("current-user", JSON.stringify(user)); // fallback to localStorage
+        else throw err;
+    }
     await auth.channel.postMessage("statechange");
     auth.handlers.forEach(el => el.eventName === "statechange" && el.handler());
 }
 
-/**
- * @param {Auth} auth the auth instance
- * @param {string} email the email
- * @param {string} password the password
- * @returns {Promise<User>}
- */
-export async function signInWithEmailAndPassword(auth, email, password) {
-    let res = await authEndpointRequest`:signInWithPassword${{email, password, returnSecureToken: true}}${auth}`;
+export async function signInWithEmailAndPassword(auth: Auth, email: string, password: string): Promise<User> {
+    const res = await authEndpointRequest`:signInWithPassword${{email, password, returnSecureToken: true}}${auth}`;
     return await fetchUser(auth, res);
 }
 
-/**
- * @param {Auth} auth the auth instance
- * @param {string} email the email
- * @param {string} password the password
- * @returns {Promise<User>}
- */
-export async function createUserWithEmailAndPassword(auth, email, password) {
-    let res = await authEndpointRequest`:signUp${{email, password, returnSecureToken: true}}${auth}`;
+export async function createUserWithEmailAndPassword(auth: Auth, email: string, password: string, displayName: string): Promise<User> {
+    const res = await authEndpointRequest`:signUp${{email, password, returnSecureToken: true}}${auth}`;
+    await authEndpointRequest`:update${{idToken: res.idToken, displayName}}${auth}`;
     return await fetchUser(auth, res);
 }
 
 /**
  * Sign in with a Google credential
- * @param {Auth} auth the auth instance
- * @param {string} googleIdToken the Google credential
- * @returns {Promise<User>}
  */
-export async function signInWithGoogleCredential(auth, googleIdToken) {
-    let res = await authEndpointRequest`:signInWithIdp${{postBody: `id_token=${googleIdToken}&providerId=google.com`, requestUri, returnSecureToken: true}}${auth}`;
+export async function signInWithGoogleCredential(auth: Auth, googleIdToken: string): Promise<User> {
+    const res = await authEndpointRequest`:signInWithIdp${{postBody: `id_token=${googleIdToken}&providerId=google.com`, requestUri, returnSecureToken: true}}${auth}`;
     return await fetchUser(auth, res);
 }
 
 /**
  * Deletes the current user and signs them out
- * @param {Auth} auth the auth instance
  */
-export async function deleteCurrentUser(auth) {
-    let currentUser = await getCurrentUser();
-    await setCurrentUser(auth, null);
-    if (currentUser)
-        return await authEndpointRequest`:delete${{idToken: currentUser.token.access}}${auth}`;
+export async function deleteCurrentUser(auth: Auth) {
+    const currentUser = await getCurrentUser();
+    if (currentUser) {
+        await authEndpointRequest`:delete${{idToken: currentUser.token.access}}${auth}`;
+        await setCurrentUser(auth, null);
+    }
 }
 
 /**
  * Sends an email verification for the current user
- * @param {User} currentUser the user to send it for
  */
-export async function sendEmailVerification(auth, currentUser) {
+export async function sendEmailVerification(auth: Auth, currentUser: User) {
     return await authEndpointRequest`:sendOobCode${{idToken: currentUser.token.access, requestType: "VERIFY_EMAIL"}}${auth}`
 }
 
 /**
- * Send a password reset email to the given address
- * @param {string} email 
+ * Send a password reset email to the given address 
  */
-export async function sendPasswordResetEmail(auth, email) {
+export async function sendPasswordResetEmail(auth: Auth, email: string) {
     return await authEndpointRequest`:sendOobCode${{requestType: "PASSWORD_RESET", email}}${auth}`;
 }
 
 /**
  * Update the current user's password
- * @param {string} password
  */
-export async function updatePassword(auth, password) {
-    let currentUser = await getCurrentUser();
+export async function updatePassword(auth: Auth, password: string) {
+    const currentUser = await getCurrentUser();
     if (currentUser) {
-        let res = await authEndpointRequest`:update${{idToken: currentUser.token.access, password, returnSecureToken: true}}${auth}`;
-        await refreshCurrentUser(auth);
-        return res;
+        const res = await authEndpointRequest`:update${{idToken: currentUser.token.access, password, returnSecureToken: true}}${auth}`;
+        await fetchUser(auth, res);
     }
 }
 
 /**
  * Update a user's display name or profile picture
- * @param {{displayName: string?, photoUrl: string?}} updatedProfile 
  */
-export async function updateProfile(auth, updatedProfile) {
-    let currentUser = await getCurrentUser();
+export async function updateProfile(auth: Auth, updatedProfile: {displayName?: string, photoUrl?: string}) {
+    const currentUser = await getCurrentUser();
     if (currentUser) {
-        let res = await authEndpointRequest`:update${{idToken: currentUser.token.access, returnSecureToken: true, ...updatedProfile}}${auth}`;
+        await authEndpointRequest`:update${{idToken: currentUser.token.access, returnSecureToken: true, ...updatedProfile}}${auth}`;
         await refreshCurrentUser(auth);
-        return res;
     }
 }
 
-function authEventUid(authEvent) {
+function authEventUid(authEvent: {type: string, eventId: string, sessionId: string, tenantId: string}) {
     return [authEvent.type, authEvent.eventId, authEvent.sessionId, authEvent.tenantId].filter(a => a).join("-");
 }
 /**
  * Show a Sign In With Google popup (EMULATOR ONLY)
- * @param {Auth} auth 
- * @param {boolean} isReauth If the user is reauthenticating
+ * @param isReauth If the user is reauthenticating
  */
-export async function showGooglePopup(auth, isReauth=false) {
+export async function showGooglePopup(auth: Auth, isReauth = false) {
     AuthPopup.rejectExistingPopup();
-    let actionUrl = new URL(`${auth.emulatorUrl}/emulator/auth/handler`);
+    const actionUrl = new URL(`${auth.emulatorUrl}/emulator/auth/handler`);
     actionUrl.searchParams.append("apiKey", apiKey);
     actionUrl.searchParams.append("appName", "[DEFAULT]");
     actionUrl.searchParams.append("authType", "signInViaPopup");
@@ -393,58 +410,59 @@ export async function showGooglePopup(auth, isReauth=false) {
     actionUrl.searchParams.append("eventId", generateEventId());
     actionUrl.searchParams.append("redirectUrl", location.href);
     if (isReauth) {
-        let currentUser = await getCurrentUser();
+        const currentUser = await getCurrentUser();
         if (!currentUser) return;
         actionUrl.searchParams.set("authType", "reauthViaPopup");
         actionUrl.searchParams.set("customParameters", JSON.stringify({prompt: "consent", login_hint: currentUser.email}));
     }
-    let popupWindow = AuthPopup.openPopup(actionUrl);
-    let pollId;
-    const pollClosed = () => {
-        if (popupWindow.closed) {
-            // wait for stuff to complete before rejection
-            pollId = window.setTimeout(() => {
-                pollId = null;
-                throw new Error("popup-closed");
-            }, 2000);
-            return;
-        }
-        pollId = window.setTimeout(pollClosed, 3000);
-    }
-    pollClosed();
-    let eventManager = {
-        lastProcessed: Date.now(),
-        cachedUids: new Set()
-    }
-    let iframe = await AuthPopup.loadEmulatorIframe(auth);
     await new Promise((resolve, reject) => {
-        iframe.register("authEvent", iframeEvent => {
-            if (Date.now() - eventManager.lastProcessed >= 10 * 60 * 1000) eventManager.cachedUids.clear();
-            if (eventManager.cachedUids.has(authEventUid(iframeEvent.authEvent))) return { status: "ERROR" };
-            else if (iframeEvent.authEvent.type === "unknown") return { status: "ACK" };
-            else if (["signInViaPopup", "reauthViaPopup"].includes(iframeEvent.authEvent.type) && iframeEvent.authEvent.eventId === actionUrl.searchParams.get("eventId")) {
-                clearTimeout(pollId);
-                popupWindow.close();
-                authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}${auth}`
-                .then(res => fetchUser(auth, res))
-                .then(user => resolve(user))
-                .catch(err => reject(err));
-                return { status: "ACK" };
+        const popupWindow = AuthPopup.openPopup(actionUrl);
+        let pollId: number | null = null;
+        const pollClosed = () => {
+            if (popupWindow?.closed) {
+                // wait for stuff to complete before rejection
+                pollId = window.setTimeout(() => {
+                    pollId = null;
+                    reject(new Error("popup-closed"));
+                }, 2000);
+                return;
             }
-            else return { status: "ERROR" };
-        }, gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);
+            pollId = window.setTimeout(pollClosed, 3000);
+        }
+        pollClosed();
+        const eventManager = {
+            lastProcessed: Date.now(),
+            cachedUids: new Set()
+        }
+        AuthPopup.loadEmulatorIframe(auth).then(iframe => {
+            iframe.register("authEvent", iframeEvent => {
+                if (Date.now() - eventManager.lastProcessed >= 10 * 60 * 1000) eventManager.cachedUids.clear();
+                if (eventManager.cachedUids.has(authEventUid(iframeEvent.authEvent))) return { status: "ERROR" };
+                else if (iframeEvent.authEvent.type === "unknown") return { status: "ACK" };
+                else if (["signInViaPopup", "reauthViaPopup"].includes(iframeEvent.authEvent.type) && iframeEvent.authEvent.eventId === actionUrl.searchParams.get("eventId")) {
+                    if (pollId) clearTimeout(pollId);
+                    popupWindow?.close();
+                    authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}${auth}`
+                    .then((res: { idToken: string, refreshToken: string, expiresIn: string }) => fetchUser(auth, res))
+                    .then((user: User) => resolve(user))
+                    .catch((err: any) => reject(err)); // eslint-disable-line @typescript-eslint/no-explicit-any
+                    return { status: "ACK" };
+                }
+                else return { status: "ERROR" };
+            }, window.gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);
+        });
     });
 }
 
 export function renderGoogleButton(oneTapContainer, callback) {
-    google.accounts.id.initialize({
+    window.google.accounts.id.initialize({
         client_id: clientId,
         context: "signin",
         ux_mode: "popup",
         auto_select: true,
         callback
     });
-    google.accounts.id.renderButton(oneTapContainer, {
+    window.google.accounts.id.renderButton(oneTapContainer, {
         type: "standard",
         shape: "rectangular",
         theme: "outline",
