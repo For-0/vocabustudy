@@ -7,8 +7,12 @@ block extrahead
 block content
     .page#home
         h1 Learn Results
-        .container-results(style="overflow-wrap: break-word;")
-        p This information never leaves your computer, and is deleted when you close Vocabustudy
+        .container-results.box(style="overflow-wrap: break-word;")
+        button.button.mb-3.btn-star-all(hidden)
+            span.icon
+                i.material-symbols-rounded star
+            span Star All Terms
+        small.is-block #[em This information never leaves your computer, and is deleted when you close Vocabustudy]
 append scripts-footer
     script. 
         let learnResults = opener?.temp_learnResults;
@@ -18,16 +22,17 @@ append scripts-footer
             else {
                 learnResults.results.forEach(el => {
                     let row = document.querySelector(".container-results").appendChild(document.createElement("p"));
+                    row.classList.add("my-3")
                     row.appendChild(document.createElement("strong")).innerText = el[1] + " ";
                     row.appendChild(document.createElement("span")).innerText = el[2];
                 });
-                let btn = document.querySelector(".container-results").appendChild(document.createElement("button"));
-                btn.classList.add("button", "is-primary");
-                btn.innerText = "Star All Terms"
+                let btn = document.querySelector(".btn-star-all");
+                btn.hidden = false;
                 btn.addEventListener("click", () => {
                     opener.StarredTerms.setStars(learnResults.results.map(el => el[0]), true);
                     btn.disabled = true;
-                    btn.innerText = "Starred";
+                    btn.firstElementChild.classList.add("is-filled");
+                    btn.lastElementChild.innerText = "Starred!";
                 });
             }
         }

@@ -42,11 +42,6 @@ block content
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
                         span Create Custom Collection
         .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
-    #admin.page(data-nosnippet)
-        h1 Admin Portal
-        button.button.is-warning.mb-4.btn-get-all.is-block Load All Sets
-        .set-container(data-empty="No Sets")
-        button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
     #saved-sets.page(data-nosnippet)
         h1 Saved Sets
         h2 Liked Sets:
@@ -237,8 +232,7 @@ block content
                             li 100% Free
                             li No Ads
                             li Relevant Vocab
-                    p.mb-0.is-size-5.has-text-weight-semibold(style="margin-top: 2rem;") Created by Siddhant Kameswar
-                    p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-semibold(href="/#credits" style="border-bottom: 1px solid white;") Credits]
+                    p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-semibold(href="/#credits") Credits]
                     p.mb-0.mt-4.is-size-7 VOCABUSTUDY - U STUDY VOCAB
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
@@ -328,4 +322,14 @@ append scripts-footer
                 input.slider.is-fullwidth.is-primary(min="0" max="360" type="range" value="0")
             footer.modal-card-foot
                 button.button.is-primary.action-close(type="button") OK
-    script(src="js/index.js" type="module")
+    #modal-change-collection-name.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Change Collection Name
+                button.delete(aria-label="close")
+            section.modal-card-body
+                input.input(type="text" required placeholder="Name")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    script(src="js/index.ts" type="module")

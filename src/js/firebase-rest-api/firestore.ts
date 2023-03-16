@@ -1,4 +1,16 @@
-import type { RawFirestoreField, FirestoreField, SetTerms, FirestoreFieldObject, RawFirestoreFieldObject, StructuredQuery, FieldFilter, AtLeastOne, BatchWriteWrite, FirestoreRestDocument, FirestoreFieldObjectGeneric } from "../types";
+import type { RawFirestoreField, FirestoreField, SetTerms, FirestoreFieldObject, RawFirestoreFieldObject, StructuredQuery, FieldFilter, FieldTransform, BatchWriteWrite, FirestoreRestDocument, ParsedRestDocument, FirestoreRestError } from "../types";
+
+function getRequestHeaders(idToken?: string) {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    if (idToken) headers.append("Authorization", `Bearer ${idToken}`);
+    return headers;
+}
+
+function throwResponseError(error?: { status: string }) {
+    if (error)
+        throw new Error(error.status);
+}
 
 export const Firestore = {
     dbServer: "https://firestore.googleapis.com/v1/",
@@ -22,7 +34,7 @@ export const Firestore = {
         if (typeof value === "number") return { doubleValue: value.toString() };
         if (typeof value === "boolean") return { booleanValue: value };
         if (typeof value === "string") return { stringValue: value };
-        if (value instanceof FSDocument) return { referenceValue: `${Firestore.projectPrefix}/${(value.constructor as typeof FSDocument).collectionKey}/${value.id}` };
+        if (value instanceof FSDocument) return { referenceValue: value.pathParts.join("/") };
         if (value instanceof Array) return { arrayValue: { values: value.map(Firestore.createField) } };
         if (value instanceof Object) return { mapValue: { fields: Firestore.specifyFields(value) } };
         return null;
@@ -33,27 +45,33 @@ export const Firestore = {
         for (const key in map.fields) result[key] = Firestore.parseField(map.fields[key]);
         return result;
     },
-    getFieldMask: (fields: string[] | null) => fields ? `?${new URLSearchParams(fields.map(field => ["mask.fieldPaths", field])).toString()}` : "",
-    getDocument: async function (collection: typeof FSDocument, documentId: string, fieldMask?: string[]) {
-        const res = await fetch(`${this.baseUrl}/${collection.collectionKey}/${documentId}${Firestore.getFieldMask(fieldMask)}`);
+    getFieldMask: (fields: string[] | null) => fields ? `?${new URLSearchParams(fields.map(field => [`mask.fieldPaths`, field])).toString()}` : "",
+    getDocument: async function (collection: string, documentId: string, fieldMask?: string[], idToken?: string): Promise<ParsedRestDocument> {
+        const res = await fetch(`${this.baseUrl}/${collection}/${documentId}${Firestore.getFieldMask(fieldMask)}`, {
+            headers: getRequestHeaders(idToken)
+        });
         const json: FirestoreRestDocument = await res.json();
+        if (json.error?.code === 404) return null;
+        throwResponseError(json.error);
         return {
-            id: documentId,
+            pathParts: json.name.split("/"),
             ...Firestore.parseMap(json),
             createTime: new Date(Date.parse(json.createTime)),
             updateTime: new Date(Date.parse(json.updateTime))
         };
     },
-    getDocuments: async function(structuredQuery: StructuredQuery) {
-        const res = await fetch(`${this.baseUrl}:runQuery`, {
+    getDocuments: async function(structuredQuery: StructuredQuery, idToken?: string, parentDocument = ""): Promise<ParsedRestDocument[]> {
+        const res = await fetch(`${this.baseUrl}${parentDocument}:runQuery`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getRequestHeaders(idToken),
             body: JSON.stringify({ structuredQuery })
         });
-        const json: {document: FirestoreRestDocument, done: boolean}[] = await res.json();
+        const json: {document: FirestoreRestDocument, done: boolean, }[] & FirestoreRestError = await res.json();
+        if ("error" in json && json.error) throwResponseError(json.error);
+        if (json.length === 1 && json[0].done && !json[0].document) return [];
         return json.map((info) => {
-            const docObj: BaseFirestoreDocument = {
-                id: info.document.name.split("/").pop(),
+            const docObj: ParsedRestDocument = {
+                pathParts: info.document.name.split("/"),
                 ...Firestore.parseMap(info.document),
                 createTime: new Date(Date.parse(info.document.createTime)),
                 updateTime: new Date(Date.parse(info.document.updateTime)),
@@ -62,31 +80,33 @@ export const Firestore = {
             return docObj
         });
     },
-    getDocumentsForIds: async function (collection: string, documentIds: string[], fieldMask?: string[]) {
+    getDocumentsForIds: async function (collection: string, documentIds: string[], fieldMask?: string[], idToken?: string) {
         const req: { documents: string[], mask?: { fieldPaths: string[] } } = { documents: documentIds.map(id => `${Firestore.projectPrefix}/${collection}/${id}`) };
         if (fieldMask) req.mask = { fieldPaths: fieldMask };
         const res = await fetch(`${Firestore.baseUrl}:batchGet`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getRequestHeaders(idToken),
             body: JSON.stringify(req)
         });
-        const json: {found: FirestoreRestDocument, missing: string}[] = await res.json();
-        return json.filter(doc => doc.found).map(({found: doc}) => ({
-            id: doc.name.split("/").pop(),
+        const json: {found: FirestoreRestDocument, missing: string}[] & FirestoreRestError = await res.json();
+        if ("error" in json && json.error) throwResponseError(json.error);
+        return json.filter(doc => doc.found).map(({found: doc}): ParsedRestDocument => ({
+            pathParts: doc.name.split("/"),
             ...Firestore.parseMap(doc),
             createTime: new Date(Date.parse(doc.createTime)),
             updateTime: new Date(Date.parse(doc.updateTime))
         }));
     },
-    createDocument: async function (collection: string, fields: FirestoreFieldObject, idToken: string) {
+    createDocument: async function (collection: string, fields: FirestoreFieldObject, idToken: string): Promise<ParsedRestDocument> {
         const res = await fetch(`${Firestore.baseUrl}/${collection}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+            headers: getRequestHeaders(idToken),
             body: JSON.stringify({ fields: Firestore.specifyFields(fields) })
         });
-        const json: { name: string, createTime: string, updateTime: string } = await res.json();
+        const json: FirestoreRestDocument = await res.json();
+        throwResponseError(json.error);
         return {
-            id: json.name.split("/").pop(),
+            pathParts: json.name.split("/"),
             ...fields,
             createTime: new Date(Date.parse(json.createTime)),
             updateTime: new Date(Date.parse(json.updateTime))
@@ -95,24 +115,27 @@ export const Firestore = {
     deleteDocument: async function (collection: string, documentId: string, idToken: string) {
         await fetch(`${Firestore.baseUrl}/${collection}/${documentId}`, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` }
+            headers: getRequestHeaders(idToken)
         });
     },
-    updateDocument: async function (collection: string, documentId: string, fields: FirestoreFieldObject, idToken: string) {
-        await fetch(`${Firestore.baseUrl}/${collection}/${documentId}?updateMask.fieldPaths=${Object.keys(fields).join(",")}&currentDocument.exists=true`, {
+    updateDocument: async function (collection: string, documentId: string, fields: FirestoreFieldObject, idToken: string, merge = false, requireExistence = null) {
+        const endpointUrl = new URL(`${Firestore.baseUrl}/${collection}/${documentId}`);
+        if (requireExistence !== null) endpointUrl.searchParams.append("currentDocument.exists", requireExistence.toString());
+        if (merge) Object.keys(fields).forEach(field => endpointUrl.searchParams.append("updateMask.fieldPaths", field));
+        await fetch(endpointUrl, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+            headers: getRequestHeaders(idToken),
             body: JSON.stringify({ fields: Firestore.specifyFields(fields) })
         });
     },
     commitWrites: async function (writes: BatchWriteWrite[], idToken: string) {
         await fetch(`${this.baseUrl}:commit`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+            headers: getRequestHeaders(idToken),
             body: JSON.stringify({
-                writes: writes.map(({collection, document, update}) => ({
+                writes: writes.map(({pathParts, update}) => ({
                     update: {
-                        name: `${this.projectPrefix}/${collection}/${document}`,
+                        name: `${this.projectPrefix}/${pathParts.join("/")}`,
                         fields: Firestore.specifyFields(update)
                     },
                     updateMask: { fieldPaths: Object.keys(update) }
@@ -126,57 +149,48 @@ if (location.hostname === "localhost")
     Firestore.dbServer = "http://localhost:8080/v1/";
 
 export abstract class BaseFirestoreDocument {
-    id: string;
+    get id(): string {
+        return this.pathParts[this.pathParts.length - 1];
+    }
     createTime: Date;
     updateTime: Date;
     last?: boolean;
+    pathParts: string[];
 }
 
 export class FSDocument extends BaseFirestoreDocument {
     static collectionKey: string;
-    constructor({id, createTime, updateTime, last}: FSDocument) {
+    constructor({ pathParts, createTime, updateTime, last }: { pathParts: string[], createTime: Date, updateTime: Date, last?: boolean }) {
         super();
-        this.id = id;
+        this.pathParts = pathParts;
         this.createTime = createTime;
         this.updateTime = updateTime;
         if (last) this.last = true;
     }
-    static async get<T extends typeof FSDocument>(this: T, id: string): Promise<InstanceType<T>> {
-        return new this(await Firestore.getDocument(this, id)) as InstanceType<T>;
+    static fromSingle<T extends typeof FSDocument>(this: T, doc: ParsedRestDocument) {
+        return doc ? new this(doc) as InstanceType<T> : null;
     }
-    static async getDocuments<T extends typeof FSDocument>(this: T, structuredQuery: StructuredQuery): Promise<InstanceType<T>[]> {
-        if (!structuredQuery.from) structuredQuery.from = structuredQuery.from = [{ collectionId: this.collectionKey }];
-        return (await Firestore.getDocuments(structuredQuery)).map(doc => new this(doc)) as InstanceType<T>[];
-    }
-    static async getDocumentsForIds<T extends typeof FSDocument>(this: T, documentIds: string[]): Promise<InstanceType<T>[]>{
-        return (await Firestore.getDocumentsForIds(this.collectionKey, documentIds)).map(doc => new this(doc)) as InstanceType<T>[];
-    }
-    static async create<T extends typeof FSDocument>(this: T, fields: FirestoreFieldObjectGeneric<InstanceType<T>>, idToken: string): Promise<InstanceType<T>> {
-        return new this(await Firestore.createDocument(this.collectionKey, fields, idToken)) as InstanceType<T>;
-    }
-    static async delete(documentId: string, idToken: string) {
-        await Firestore.deleteDocument(this.collectionKey, documentId, idToken);
-    }
-    static async update(documentId: string, fields: FirestoreFieldObject, idToken: string) {
-        await Firestore.updateDocument(this.collectionKey, documentId, fields, idToken);
+    static fromMultiple<T extends typeof FSDocument>(this: T, docs: ParsedRestDocument[]) {
+        return docs.map(doc => new this(doc)) as InstanceType<T>[];
     }
 }
 
-export class VocabSet extends FSDocument {
+export class VocabSet<T extends SetTerms = SetTerms> extends FSDocument {
     static collectionKey = "sets";
     name: string;
-    description: string;
+    description?: string;
     creator: string;
     uid: string;
     visibility: number | string[];
     collections: string[];
-    terms: SetTerms;
+    terms: T;
     likes: number;
     numTerms: number;
-    constructor({ name, description, creator, uid, visibility, collections, terms, numTerms, likes, id, createTime, updateTime, last }: VocabSet) {
-        super({ id, createTime, updateTime, last });
+    nameWords: string[];
+    constructor({ name, description, creator, uid, visibility, collections, terms, numTerms, likes, pathParts, nameWords, createTime, updateTime, last }: VocabSet & { terms: T }) {
+        super({ pathParts, createTime, updateTime, last });
         this.name = name;
-        this.description = description;
+        if (description) this.description = description;
         this.creator = creator;
         this.uid = uid;
         this.visibility = visibility;
@@ -184,6 +198,7 @@ export class VocabSet extends FSDocument {
         this.terms = terms;
         this.likes = likes;
         this.numTerms = numTerms;
+        this.nameWords = nameWords;
     }
 }
 
@@ -192,32 +207,28 @@ export class CustomCollection extends FSDocument {
     name: string;
     sets: string[];
     uid: string;
-    constructor({ name, sets, uid, id, createTime, updateTime, last }: CustomCollection) {
-        super({ id, createTime, updateTime, last });
+    constructor({ name, sets, uid, createTime, updateTime, last, pathParts }: CustomCollection) {
+        super({ pathParts, createTime, updateTime, last });
         this.name = name;
         this.sets = sets;
         this.uid = uid;
     }
 }
 
-export class Social extends BaseFirestoreDocument {
+export class Social extends FSDocument {
     static collectionKey = "social";
     name: string;
     uid: string;
     like?: boolean;
     comment?: string;
     leaderboard?: number;
-    constructor({ name, uid, like, comment, leaderboard, id, createTime, updateTime, last }: Social) {
-        super();
+    constructor({ name, uid, like, comment, leaderboard, pathParts, createTime, updateTime, last }: Social) {
+        super({ pathParts, createTime, updateTime, last });
         this.name = name;
         this.uid = uid;
         this.like = like;
         this.comment = comment;
         this.leaderboard = leaderboard;
-        this.id = id;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-        if (last) this.last = true;
     }
 }
 
@@ -256,9 +267,12 @@ export class QueryBuilder {
         this.query.offset = offset;
         return this;
     }
-    startAt(offsets: (number | FSDocument)[], before = false) {
+    /**
+     * @param offsets A number to start after the nth document, or a string to start after a document with that path
+     */
+    startAt(offsets: (number | string)[], before = false) {
         this.query.startAt = {
-            values: offsets.map(el => Firestore.createField(el)),
+            values: offsets.map(el => typeof el === "number" ? Firestore.createField(el) : { referenceValue: el }),
             before
         };
         return this;
@@ -273,11 +287,11 @@ export class BatchWriter {
     constructor() {
         this.writes = [];
     }
-    update<T extends FSDocument>(doc: T, fields: AtLeastOne<{ [K in keyof T]: FirestoreField }>) {
+    update<T extends FSDocument>(pathParts: string[], fields: Partial<{ [K in keyof T]: FirestoreField }>, fieldTransforms: FieldTransform[] = []) {
         this.writes.push({
-            collection: (doc.constructor as typeof FSDocument).collectionKey,
-            document: doc.id,
+            pathParts,
             update: fields,
+            updateTransforms: fieldTransforms
         });
         return this;
     }

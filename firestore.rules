@@ -10,9 +10,6 @@ service cloud.firestore {
     function onlyUpdated(keys) {
     	return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
     }
-    function isBigEnough() {
-      return request.resource.data.terms.size() >= 1;
-    }
     function canAdminDelete() {
       return !request.auth.token.admin || resource.data.uid == request.auth.uid;
     }
@@ -38,23 +35,20 @@ service cloud.firestore {
       let requiredFields = ["name", "email", "text", "uid"];
       return limitResourceKeys(requiredFields.concat(additionalKeys), []);
     }
+    function validateSet() {
+      return isNotImpersonating(false) && request.resource.data.terms.size() >= 1 && nameWordsMatchesName() && request.resource.data.numTerms == request.resource.data.terms.size();
+    }
     match /sets/{set_id} {
       allow get: if resource == null || canView();
+      allow list: if resource.data.visibility == 2 || isCreator();
       allow delete: if isCreator() && canAdminDelete();
-      allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility"]) && isBigEnough();
-      allow create: if auth() && limitResourceKeys(["name", "uid", "terms", "visibility"], ["description"]) && isNotImpersonating(true) && isBigEnough();
+      allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility", "creator", "nameWords", "numTerms", "collections"]) && validateSet();
+      allow create: if auth() && limitResourceKeys(["name", "uid", "terms", "visibility", "creator", "nameWords", "numTerms", "collections", "likes", "creationTime"], ["description"]) && request.resource.data.likes == 0 && validateSet() && request.resource.data.creationTime == request.time;
       match /social/{uid} {
         allow list, get: if true;
         allow delete: if auth() && uid == request.auth.uid;
         allow create, update: if auth() && uid == request.auth.uid && request.resource.data.keys().hasOnly(["name", "comment", "like", "leaderboard", "uid"]) && request.auth.uid == request.resource.data.uid && request.resource.data.name == request.auth.token.name;
       }
-    }
-    match /meta_sets/{set_id} {
-      allow get: if resource == null || canView();
-      allow list: if resource.data.visibility == 2 || isCreator();
-      allow delete: if isCreator() && canAdminDelete();
-      allow update: if isCreator() && onlyUpdated(["creator", "nameWords", "name", "numTerms", "collections", "visibility"]) && isNotImpersonating(false) && nameWordsMatchesName();
-      allow create: if auth() && limitResourceKeys(["creator", "nameWords", "name", "numTerms", "collections", "uid", "visibility"], ["likes"]) && request.resource.data.likes == 0 && isNotImpersonating(false) && nameWordsMatchesName();
     }
     match /collections/{collection_id} {
       allow read: if true;

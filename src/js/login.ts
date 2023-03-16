@@ -1,23 +1,28 @@
-import initialize from "./general";
 import { createElement } from "./utils";
 import { toast } from "bulma-toast";
-import { getCurrentUser, signInWithGoogleCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, showGooglePopup, sendPasswordResetEmail, renderGoogleButton } from "./firebase-rest-api/auth";
+import { getCurrentUser, signInWithGoogleCredential, signInWithEmailAndPassword, createUserWithEmailAndPassword, showGooglePopup, sendPasswordResetEmail, renderGoogleButton, initializeAuth } from "./firebase-rest-api/auth";
 
-const { auth } = initialize(() => initLogin());
+declare global {
+    interface Window {
+        onGoogleLibraryLoad: () => void;
+    }
+}
+
+const auth = initializeAuth(() => initLogin());
 
 let onetapLoaded = false;
 
 const fields = {
-    page: document.getElementById("home"),
-    form: document.querySelector("#home form"),
-    btnsSwitchMode: document.querySelectorAll("#home .btn-switch-mode, #home .prompt-switch-mode a"),
-    btnForgotPassword: document.querySelector("#home .btn-forgot-password"),
-    inputEmail: document.querySelector("#login-email"),
-    inputDisplayName: document.querySelector("#login-display-name"),
-    inputPassword: document.querySelector("#login-password"),
-    inputConfirmPassword: document.querySelector("#login-confirm-password"),
-    checkTos: document.querySelector("#login-accept-tos"),
-    btnSubmit: document.querySelector("#home button[type=submit]"),
+    page: document.getElementById("home")!,
+    form: document.querySelector<HTMLFormElement>("#home form")!,
+    btnsSwitchMode: document.querySelectorAll("#home .btn-switch-mode, #home .prompt-switch-mode a")!,
+    btnForgotPassword: document.querySelector("#home .btn-forgot-password")!,
+    inputEmail: document.querySelector<HTMLInputElement>("#login-email")!,
+    inputDisplayName: document.querySelector<HTMLInputElement>("#login-display-name")!,
+    inputPassword: document.querySelector<HTMLInputElement>("#login-password")!,
+    inputConfirmPassword: document.querySelector<HTMLInputElement>("#login-confirm-password")!,
+    checkTos: document.querySelector<HTMLInputElement>("#login-accept-tos")!,
+    btnSubmit: document.querySelector<HTMLButtonElement>("#home button[type=submit]")!,
 }
 
 function resetFormState() {
@@ -31,20 +36,19 @@ async function initLogin(switchMode = true) {
     fields.form.reset();
     if (switchMode) fields.page.dataset.mode = "login";
     if (await getCurrentUser()) 
-        return location.href = "/account/";
+        return restoreState();
     if (!onetapLoaded) {
         if (process.env.NODE_ENV !== "development") {
             if ("google" in window) setupGoogleButton();
             else window.onGoogleLibraryLoad = () => setupGoogleButton();
         } else {
-            let btn = document.getElementById("google-onetap-container").appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
+            const btn = document.getElementById("google-onetap-container")!.appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
             btn.addEventListener("click", async () => {
                 try {
                     await showGooglePopup(auth);
                     restoreState();
                 } catch (err) {
-                    console.log(err);
-                    switch(err.message) {
+                    switch((err as Error)?.message) {
                         case "popup-closed":
                             toast({message: "Operation Cancelled", type: "is-info", dismissible: true, position: "bottom-center", duration: 5000});
                             break;
@@ -54,12 +58,9 @@ async function initLogin(switchMode = true) {
                         case "USER_DISABLED":
                             toast({message: "Your account has been disabled", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
                             break;
-                        case "INVALID_IDP_RESPONSE":
-                            toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                            break;
                     }
                 } finally {
-                    initLogin();
+                    resetFormState();
                 }
             });
             onetapLoaded = true;
@@ -67,12 +68,12 @@ async function initLogin(switchMode = true) {
     }
 }
 function setupGoogleButton() {
-    renderGoogleButton(document.getElementById("google-onetap-container"), async response => {
+    renderGoogleButton(document.getElementById("google-onetap-container"), async (response: { credential: string }) => {
         try {
             await signInWithGoogleCredential(auth, response.credential);
             restoreState();
         } catch (err) {
-            switch(err.message) {
+            switch((err as Error)?.message) {
                 case "TOO_MANY_ATTEMPTS_TRY_LATER":
                     toast({message: "Too many attempts! Please try again later", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
                     break;
@@ -82,19 +83,15 @@ function setupGoogleButton() {
                 case "UNAUTHORIZED_DOMAIN":
                     toast({message: "Invalid domain", type: "is-warning", dismissible: true, position: "bottom-center", duration: 5000});
                     break;
-                case "INVALID_IDP_RESPONSE": // TODO: check if this is the correct error message
-                    toast({message: "Use email/password login for that account", type: "is-warning", dismissible: true, position: "bottom-center", duration: 7000});
-                    break;
             }
         } finally {
-            initLogin();
+            resetFormState();
         }
     });
     onetapLoaded = true;
 }
 function restoreState() {
-    let afterLogin = localStorage.getItem("redirect_after_login");
-    localStorage.removeItem("redirect_after_login");
+    const afterLogin = new URLSearchParams(location.search).get("next");
     location.href = afterLogin || "/account/";
 }
 fields.form.addEventListener("submit", async e => {
@@ -109,7 +106,7 @@ fields.form.addEventListener("submit", async e => {
                         await createUserWithEmailAndPassword(auth, fields.inputEmail.value, fields.inputPassword.value, fields.inputDisplayName.value);
                         restoreState();
                     } catch(err) {
-                        switch(err.message.split(" ")[0]) {
+                        switch((err as Error)?.message.split(" ")[0]) {
                             case "EMAIL_EXISTS":
                                 toast({message: "An account with that email address already exists", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
                                 break;
@@ -137,7 +134,7 @@ fields.form.addEventListener("submit", async e => {
                     await sendPasswordResetEmail(auth, fields.inputEmail.value);
                     toast({message: "Email sent!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000});
                 } catch(err) {
-                    switch(err.message) {
+                    switch((err as Error)?.message) {
                         case "EMAIL_NOT_FOUND":
                             toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
                             break;
@@ -159,7 +156,7 @@ fields.form.addEventListener("submit", async e => {
                     await signInWithEmailAndPassword(auth, fields.inputEmail.value, fields.inputPassword.value);
                     restoreState();
                 } catch(err) {
-                    switch(err.message) {
+                    switch((err as Error)?.message) {
                         case "EMAIL_NOT_FOUND":
                             toast({message: "There is no user with that email address", type: "is-danger", dismissible: true, position: "bottom-center", duration: 7000});
                             break;

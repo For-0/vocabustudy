@@ -7,7 +7,7 @@ block variables
 block main-stylesheet
     link(rel="stylesheet" href="css/set-detail.scss")
 block extrahead
-    script(src="js/qrcode.min.js")
+    script(src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@04f46c6/qrcode.min.js")
 block content
     #flashcards.page
         h1 Flashcards - #[span] #[+close_button]
@@ -313,4 +313,4 @@ append scripts-footer
                                         i.material-symbols-rounded(aria-hidden="true") content_paste
             footer.modal-card-foot
                 button.button.is-success.action-close(type="button") OK
-    script(src="js/set-detail.js" type="module")
+    script(src="js/set-detail.ts" type="module")

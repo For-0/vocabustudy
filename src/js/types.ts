@@ -13,13 +13,15 @@ export type OnlyProperties<T> = Pick<T,
 export type TermDefinition = { term: string, definition: string }; 
 
 /** A study guide reading */
-export type StudyGuideReading = {body: string, type: 0};
+export type StudyGuideReading = { body: string, type: 0, title: string };
 
 /** A study guide quiz */
-export type StudyGuideQuiz = {questions: {type: number, question: string, answers: string[]}, type: 1};
+export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string };
 
 /** The document `terms` field */
 export type SetTerms = TermDefinition[]|(StudyGuideQuiz|StudyGuideReading)[];
+
+export type StudyGuideQuizQuestion = StudyGuideQuiz["questions"][0];
 
 /** This is a Partial of T intersected with a union of all possible subsets of T */
 export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> & U[keyof U];
@@ -39,7 +41,7 @@ export type RawFirestoreFieldObject = { [key: string]: RawFirestoreField };
 export type FirestoreField = number | boolean | string | FSDocument | FirestoreField[] | FirestoreFieldObject;
 
 export type FirestoreFieldObject = { [key: string]: FirestoreField };
-export type FirestoreFieldObjectGeneric<T> = { [K in keyof OnlyProperties<T>]: FirestoreField };
+
 
 export type FieldFilter = {
     fieldFilter: {
@@ -71,11 +73,53 @@ export type StructuredQuery = Partial<{
     };
 }>;
 
-export type BatchWriteWrite = { collection: string, document: string, update: { [key: string]: FirestoreField } };
+export type BatchWriteWrite = { pathParts: string[], update: { [key: string]: FirestoreField }, updateTransforms: FieldTransform[] };
+
+export type FirestoreRestError = {
+    error?: { 
+        code: number;
+        message: string;
+        status: string;
+    };
+};
 
 export type FirestoreRestDocument = {
     name: string;
     fields: RawFirestoreFieldObject;
     createTime: string;
     updateTime: string;
+} & FirestoreRestError;
+
+export type ParsedRestDocument = {
+    pathParts: string[],
+    createTime: Date,
+    updateTime: Date,
+    last?: boolean
+};
+
+export type RemoteConfigAnnouncement = {
+    id: string,
+    message: string,
+    title: string,
+    type: "info" | "warning" | "danger" | "primary" | "success" | "secondary" | "light" | "dark"
+};
+
+export type CollectionJsonList = { c: (string | { n: string; s: string[]; o?: undefined; } | { n: string; s: string[]; o: string[]; })[] };
+
+export interface User {
+    created: Date,
+    displayName: string,
+    email: string,
+    emailVerified: boolean,
+    lastLogin: Date,
+    photoUrl: string,
+    token: { refresh: string, access: string, expirationTime: number },
+    uid: string,
+    customAttributes: { [key: string]: unknown },
+    providers: ("password" | "google.com")[]
+}
+
+export type FieldTransform = {
+    fieldPath: string;
+    setToServerValue: "REQUEST_TIME";
 };

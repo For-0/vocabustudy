@@ -1,14 +1,16 @@
 import { apiKey, clientId } from "./project-config.json";
 import { createElement, getLocalDb } from "../utils";
 import { BroadcastChannel } from "broadcast-channel";
+import type { User } from "../types";
 
 declare global {
     interface Window {
         /* eslint-disable @typescript-eslint/no-explicit-any */
         ___jsl: any;
         gapi: any;
-        google: any;
+        google?: any;
         /* eslint-enable */
+        signOut: () => void;
     }
 }
 
@@ -18,13 +20,12 @@ interface AuthEndpointConfig {
 
 export class Auth implements AuthEndpointConfig {
     channel: BroadcastChannel;
-    emulatorUrl: string | null;
+    emulatorUrl: string | null = null;
     handlers: {eventName: "statechange", handler: () => void}[];
     constructor() {
         this.channel = new BroadcastChannel("auth-updates", {
             webWorkerSupport: false
         });
-        this.emulatorUrl = null;
         this.handlers = [];
     }
     /**
@@ -33,9 +34,13 @@ export class Auth implements AuthEndpointConfig {
      */
     on(eventName: "statechange", handler: () => void) {
         this.handlers.push({eventName, handler});
-        this.channel.addEventListener("message", msg => {
+        this.channel.addEventListener("message", async msg => {
             if (msg === eventName) handler();
         });
+    }
+    async broadcastEvent(eventName: "statechange") {
+        this.handlers.forEach(el => el.eventName === eventName && el.handler());
+        await this.channel.postMessage(eventName);
     }
 }
 
@@ -53,7 +58,7 @@ const AuthPopup = {
             window: null,
             promise: {
                 resolve: () => {},
-                reject: () => {}
+                reject: (_reason?: string) => {}
             }
         };
     },
@@ -162,20 +167,24 @@ const AuthPopup = {
     }
 }
 
-interface User {
-    created: Date,
-    displayName: string,
-    email: string,
-    emailVerified: boolean,
-    lastLogin: Date,
-    photoUrl: string,
-    token: { refresh: string, access: string, expirationTime: number },
-    uid: string,
-    customAttributes: object,
-    providers: ("password" | "google.com")[]
-}
-
 const requestUri = `${location.protocol}//${location.hostname}`;
+
+export function initializeAuth(authStateChangedCallback?: (user: User) => void) {
+    const auth = new Auth();
+    auth.on("statechange", async () => {
+        const user = await getCurrentUser();
+        document.querySelectorAll<HTMLElement>(".only-logged-in").forEach(el => el.hidden = !user);
+        document.querySelectorAll<HTMLElement>(".only-logged-out").forEach(el => el.hidden = !!user);
+        if (authStateChangedCallback) authStateChangedCallback(user);
+    });
+    if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") auth.emulatorUrl = "http://localhost:9099";
+    else if (process.env.CODESPACES) auth.emulatorUrl = `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`;
+    else if (process.env.GITPOD_WORKSPACE_URL) auth.emulatorUrl = `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
+    else auth.emulatorUrl = null;
+    window.signOut = () => setCurrentUser(auth, null);
+    refreshCurrentUser(auth, true);
+    return auth;
+}
 
 function generateEventId() {
     return Array(10).fill(null).map(() => Math.floor(Math.random() * 10)).join("");
@@ -264,7 +273,14 @@ export async function getCurrentUser(): Promise<User | null> {
     }
 }
 
-export async function refreshCurrentUser(auth: Auth) {
+export async function getUpToDateIdToken(auth: Auth) {
+    const user = await refreshCurrentUser(auth);
+    if (user) return user.token.access;
+    else return null;
+}
+
+/** Refresh the auth token of the current user if needed. Sign them out if it's not possible */
+export async function refreshCurrentUser(auth: Auth, force = false): Promise<User | null> {
     const currentUser = await getCurrentUser();
     let user: User | null = null;
     if (currentUser) {
@@ -282,8 +298,9 @@ export async function refreshCurrentUser(auth: Auth) {
                 });
                 const { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json();
                 user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
-            } else
+            } else if (force)
                 user = await idTokenToUser(auth, { idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
+            else return currentUser;
         } catch (err) {
             switch(err.message) {
                 case "TOKEN_EXPIRED":
@@ -296,7 +313,8 @@ export async function refreshCurrentUser(auth: Auth) {
             }
         }
     }
-    await setCurrentUser(auth, user);
+    await setCurrentUser(auth, user, force);
+    return user;
 }
 
 /**
@@ -313,7 +331,8 @@ async function fetchUser(auth: Auth, { idToken, refreshToken, expiresIn }: { idT
  * Store the currently signed in user. Broadcasts a statechange event
  * @param user The currently signed in user or null if there is no signed in user
  */
-export async function setCurrentUser(auth: Auth, user: User | null) {
+export async function setCurrentUser(auth: Auth, user: User | null, forceUpdate = false) {
+    const currentUser = await getCurrentUser();
     try {
         const db = await getLocalDb();
         await db.put("general", user, "current-user");
@@ -322,8 +341,8 @@ export async function setCurrentUser(auth: Auth, user: User | null) {
         if (err.name === "InvalidStateError") localStorage.setItem("current-user", JSON.stringify(user)); // fallback to localStorage
         else throw err;
     }
-    await auth.channel.postMessage("statechange");
-    auth.handlers.forEach(el => el.eventName === "statechange" && el.handler());
+    if (((currentUser === null) !== (user === null)) || forceUpdate) // if there was a change in the user state
+        await auth.broadcastEvent("statechange");
 }
 
 export async function signInWithEmailAndPassword(auth: Auth, email: string, password: string): Promise<User> {

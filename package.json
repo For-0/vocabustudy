@@ -39,9 +39,6 @@
     "cleanup": "rm -rf .parcel-cache dist",
     "watch": "npm run cleanup && parcel watch --no-hmr",
     "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import ../vocabustudy-internals/emulator-data --export-on-exit",
-    "delete-maps": "npm run delete-maps:references",
-    "delete-maps:files": "find ./dist -name '*.map' -delete",
-    "delete-maps:references": "find ./dist -regex \".*\\.\\(js\\|css\\)\" -exec sed -i -E \"\\/[\\*\\/]#\\ssourceMappingURL=.*(\\.[0-9a-f]+)?\\.(css|js)\\.map(\\*\\/)?/g\" {} +",
     "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\"",
     "lint": "eslint src/js && stylelint src/css && pug-lint src"
   },
@@ -58,7 +55,6 @@
     "bulma-quickview": "^2.0.0",
     "bulma-toast": "^2.4.1",
     "dompurify": "^2.4.1",
-    "firebase": "^9.14.0",
     "fitty": "^2.3.6",
     "fscreen": "^1.2.0",
     "idb": "^7.1.1",
@@ -73,6 +69,7 @@
     "@parcel/transformer-sass": "^2.8.2",
     "@parcel/transformer-webmanifest": "^2.8.2",
     "@types/dompurify": "^2.4.0",
+    "@types/fscreen": "^1.0.1",
     "@types/marked": "^4.0.8",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "@typescript-eslint/parser": "^5.54.1",
@@ -84,7 +81,9 @@
     "sharp": "^0.31.2",
     "stylelint": "^14.16.1",
     "stylelint-config-standard-scss": "^6.1.0",
-    "typescript": "^4.9.5"
+    "typed-query-selector": "^2.9.2",
+    "typescript": "^4.9.5",
+    "firebase": "^9.14.0"
   },
   "@parcel/transformer-js": {
     "inlineEnvironment": [

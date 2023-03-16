@@ -2,33 +2,33 @@ import { toast } from "bulma-toast";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import { navigateLoginSaveState, bulmaModalPromise, initBulmaModals, createElement } from "./utils";
-import initialize from "./general";
-import { getCurrentUser, sendEmailVerification, deleteCurrentUser, updateProfile, signInWithEmailAndPassword, updatePassword, renderGoogleButton, signInWithGoogleCredential, showGooglePopup } from "./firebase-rest-api/auth";
+import { getCurrentUser, sendEmailVerification, deleteCurrentUser, updateProfile, signInWithEmailAndPassword, updatePassword, renderGoogleButton, signInWithGoogleCredential, showGooglePopup, initializeAuth } from "./firebase-rest-api/auth";
+import type { User } from "./types";
 
 const fields = {
-    name: document.querySelector(".field-name"),
-    email: document.querySelector(".field-email"),
-    created: document.querySelector(".field-created"),
-    emailVerified: document.querySelector(".field-email-verified"),
-    emailNotVerified: document.querySelector(".field-email-not-verified"),
-    btnVerifyEmail: document.querySelector(".btn-verify-email"),
-    btnChangePassword: document.querySelector(".btn-change-password"),
-    btnChangeName: document.querySelector(".btn-change-name"),
-    btnDeleteAccount: document.querySelector(".btn-delete-account")
+    name: document.querySelector<HTMLSpanElement>(".field-name"),
+    email: document.querySelector<HTMLSpanElement>(".field-email"),
+    created: document.querySelector<HTMLSpanElement>(".field-created"),
+    emailVerified: document.querySelector<HTMLSpanElement>(".field-email-verified"),
+    emailNotVerified: document.querySelector<HTMLSpanElement>(".field-email-not-verified"),
+    btnVerifyEmail: document.querySelector<HTMLButtonElement>(".btn-verify-email"),
+    btnChangePassword: document.querySelector<HTMLButtonElement>(".btn-change-password"),
+    btnChangeName: document.querySelector<HTMLButtonElement>(".btn-change-name"),
+    btnDeleteAccount: document.querySelector<HTMLButtonElement>(".btn-delete-account")
 };
 const modals =  {
     changePassword: new Modal("#modal-change-password").modal(),
-    changePasswordInputs: (/** @type {HTMLInputElement[]} */ ([...document.querySelectorAll("#modal-change-password input")])),
+    changePasswordInputs: [...document.querySelectorAll<HTMLInputElement>("#modal-change-password input")],
     changeName: new Modal("#modal-change-name").modal(),
-    changeNameInput: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-change-name input"))),
+    changeNameInput: document.querySelector<HTMLInputElement>("#modal-change-name input"),
     reauthenticate: new Modal("#modal-reauthenticate").modal(),
-    reauthenticateInputPassword: (/** @type {HTMLInputElement} */ (document.querySelector("#modal-reauthenticate input"))),
-    reauthenticateDivider: document.querySelector("#modal-reauthenticate .divider"),
-    reauthenticateGoogle: document.querySelector("#modal-reauthenticate .reauthenticate-google"),
-    reauthenticateConfirm: document.querySelector("#modal-reauthenticate .button.is-success")
+    reauthenticateInputPassword: document.querySelector<HTMLInputElement>("#modal-reauthenticate input"),
+    reauthenticateDivider: document.querySelector<HTMLDivElement>("#modal-reauthenticate .divider"),
+    reauthenticateGoogle: document.querySelector<HTMLDivElement>("#modal-reauthenticate .reauthenticate-google"),
+    reauthenticateConfirm: document.querySelector<HTMLButtonElement>("#modal-reauthenticate .button.is-success")
 };
 
-const { auth } = initialize(async user => {
+const auth = initializeAuth(async user => {
     if (user) {
         showAccountInfo(user);
         if (!user.emailVerified) verifyEmail();
@@ -39,7 +39,7 @@ const { auth } = initialize(async user => {
 let currentReauthenticateReason = null, reauthOnetapInitialized = false;
 
 async function reauthenticateUser() {
-    let currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser();
     [modals.reauthenticateInputPassword.parentElement.parentElement, modals.reauthenticateDivider, modals.reauthenticateGoogle].forEach(el => el.hidden = true);
     modals.reauthenticateInputPassword.value = "";
     modals.reauthenticateInputPassword.setCustomValidity("");
@@ -56,16 +56,15 @@ async function changePassword() {
     modals.changePassword.open();
     modals.changePasswordInputs.forEach(el => el.value = "");
     modals.changePasswordInputs.forEach(el => el.setCustomValidity(""));
-    let result = await bulmaModalPromise(modals.changePassword);
+    const result = await bulmaModalPromise(modals.changePassword);
     if (result) await updatePassword(auth, modals.changePasswordInputs[0].value);
 }
 async function changeName() {
     modals.changeNameInput.value = "";
-    let result = await bulmaModalPromise(modals.changeName);
+    const result = await bulmaModalPromise(modals.changeName);
     if (result) await updateProfile(auth, { displayName: modals.changeNameInput.value });
 }
 function handleReauthCompletion() {
-    console.log("reauth completed")
     if (currentReauthenticateReason === "change_password") changePassword();
     else if (currentReauthenticateReason === "delete") deleteAccount();
     modals.reauthenticate.close();
@@ -93,7 +92,7 @@ function setupGoogleLogin() {
                 handleReauthCompletion();
             });
         else {
-            let btn = modals.reauthenticateGoogle.appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
+            const btn = modals.reauthenticateGoogle.appendChild(createElement("button", ["button", "is-light", "is-medium", "is-fullwidth"], {type: "button", innerText: "wow what an amazing button"}));
             btn.addEventListener("click", async () => {
                 try {
                     await showGooglePopup(auth, true);
@@ -123,11 +122,8 @@ function setupGoogleLogin() {
     }
 }
 
-/**
- * Show account info
- * @param {import("./firebase-rest-api/auth").User} param0
- */
-function showAccountInfo({ displayName, email, emailVerified, created }) {
+/** Show account info */
+function showAccountInfo({ displayName, email, emailVerified, created }: User) {
     fields.name.innerText = displayName;
     fields.email.innerText = email;
     fields.emailVerified.hidden = !emailVerified;
@@ -136,7 +132,7 @@ function showAccountInfo({ displayName, email, emailVerified, created }) {
     if (created) fields.created.innerText = created.toLocaleString();
 }
 async function verifyEmail() {
-    let currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser();
     if (currentUser) {
         new Alert().alert({
             type: "warning",
@@ -156,14 +152,14 @@ async function verifyEmail() {
 modals.reauthenticate.onclose = () => currentReauthenticateReason = null;
 initBulmaModals([modals.changePassword, modals.changeName, modals.reauthenticate]);
 modals.changeName.validateInput = () => modals.changeNameInput.reportValidity();
-fields.btnVerifyEmail.addEventListener("click", () => getCurrentUser().then(user => user.emailVerified ? location.reload : verifyEmail()));
+fields.btnVerifyEmail.addEventListener("click", () => getCurrentUser().then(user => user.emailVerified ? location.reload() : verifyEmail()));
 fields.btnChangePassword.addEventListener("click", async () => {
     currentReauthenticateReason = "change_password";
     await reauthenticateUser();
 });
 fields.btnChangeName.addEventListener("click", async () => {
     await changeName();
-    let currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser();
     showAccountInfo(currentUser);
 });
 fields.btnDeleteAccount.addEventListener("click", async () => {

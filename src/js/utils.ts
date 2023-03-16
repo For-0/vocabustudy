@@ -1,8 +1,8 @@
 import { sanitize } from "dompurify";
 import { marked } from "marked";
 import { openDB } from "idb";
-import type { RecursivePartial, StructuredQuery } from "./types";
-import { CustomCollection, Firestore, BaseFirestoreDocument, QueryBuilder, Social, VocabSet } from "./firebase-rest-api/firestore";
+import type { CollectionJsonList, ParsedRestDocument, RecursivePartial, StructuredQuery } from "./types";
+import { Firestore, QueryBuilder, Social, VocabSet } from "./firebase-rest-api/firestore";
 
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
@@ -86,8 +86,9 @@ export function preventBreaking(node: Node) {
     }
 }
 export function navigateLoginSaveState() {
-    localStorage.setItem("redirect_after_login", location.href);
-    location.href = "/login/";
+    const url = new URL("/login/", location.href);
+    url.searchParams.set("next", location.pathname);
+    location.href = url.href;
 }
 /**
  * Creates an element
@@ -97,7 +98,7 @@ export function navigateLoginSaveState() {
  * @param children Children of the element
  * @returns The created element
  */
-export function createElement<T extends keyof HTMLElementTagNameMap>(type: T | [T, string], classes: string[] = [], attrs: RecursivePartial<HTMLElementTagNameMap[T]> = {}, children: HTMLElement[] = []): HTMLElementTagNameMap[T] {
+export function createElement<T extends keyof HTMLElementTagNameMap>(type: T | [T, string], classes: string[] = [], attrs: RecursivePartial<HTMLElementTagNameMap[T]> = {}, children: Node[] = []): HTMLElementTagNameMap[T] {
     let el: HTMLElementTagNameMap[T];
     if (typeof type === "string") el = document.createElement(type);// if it's a string, just pass it in. if it's not, assume it's a custom element
     else el = document.createElement(type[0], {is: type[1]});
@@ -158,7 +159,7 @@ export function getWords(string: string): string[] {
     return alphaNum.split(" ").map(el => el.trim()).filter(el => el);
 }
 
-type CollectionJsonList = { c: (string | { n: string; s: string[]; o?: undefined; } | { n: string; s: string[]; o: string[]; })[] };
+
 
 /**
  * Loads the collections, from cache if possible otherwise from network
@@ -175,7 +176,7 @@ export async function loadCollections(): Promise<CollectionJsonList> {
     localStorage.setItem("collections_cache", JSON.stringify({ data: { c }, expiration: newExpiration }));
     return { c };
 }
-export async function showCollections(listEl: HTMLDivElement) {
+export async function showCollections(listEl: HTMLUListElement) {
     const { c } = await loadCollections();
     for (const [i, collection] of c.entries()) {
         if (typeof collection === "string") listEl.appendChild(createCollectionListItem(collection, i.toString()));
@@ -266,7 +267,7 @@ export function createTextFieldWithHelper(innerText: string, helperText: string 
     return {textField, helperLine}
 }
 
-export async function createSetCardOwner({ collections, uid, likes, visibility, name, numTerms, creator }: VocabSet, id: string, linkCreator=false) {
+export async function createSetCardOwner({ collections, likes, visibility, name, numTerms, creator, id }: VocabSet) {
     const collectionLabels = await parseCollections(collections);
     const setType = collections.includes("-:0") ? "timeline" : (collections.includes("-:1") ? "guide" : "set");
     const buttons = [
@@ -275,7 +276,6 @@ export async function createSetCardOwner({ collections, uid, likes, visibility, 
         createElement("a", ["card-footer-item", "has-text-danger"], {href: "#", innerText: "Delete"})
     ];
     buttons[2].addEventListener("click", e => e.preventDefault());
-    if (linkCreator) buttons.push(createElement("a", ["card-footer-item", "has-text-primary"], {href: `/user/${uid}/`, innerText: "More by User"}));
     const likeText = visibility !== 0 ? ` - ${likes || "0"} likes` : "";
     const visibilityData = SET_VISIBILITIES[Array.isArray(visibility) ? 3 : visibility];
     const cardEl = createElement("div", ["card", "has-spreaded-content"], {}, [
@@ -303,10 +303,10 @@ export async function createSetCardOwner({ collections, uid, likes, visibility, 
 * @param {float} relevance Relevance, from 0 to 1
 * @returns The card and primary action
 */
-export async function createSetCard({ name, creator, numTerms, collections, likes, uid }: VocabSet, id: string, relevance: number | null = null) { // TODO remove id parameter as it can be taken from VocabSet
+export async function createSetCard({ name, creator, numTerms, collections, likes, uid, id }: VocabSet, relevance: number | null = null) {
     const collectionLabels = await parseCollections(collections);
     const textEls: HTMLElement[] = [];
-    if (relevance !== null) {
+    if (relevance) {
         textEls.push(createElement("p", ["m-0", "has-text-weight-bold"], { innerText: `Created by ${creator}`}));
         textEls.push(createElement("p", ["mt-0", "mb-1"], {innerText: `Confidence: ${Math.floor(relevance * 100)}%`})); // Display the relevance as a percent
     } else textEls.push(createElement("p", ["has-text-weight-bold", "mt-0", "mb-1"], { innerText: `Created by ${creator}` })); // Display the creator no matter what
@@ -347,47 +347,14 @@ export async function createSetCard({ name, creator, numTerms, collections, like
     optionalAnimate(cardEl, ...cardSlideInAnimation);
     return { card: cardEl };
 }
-export function createCustomCollectionCard({ sets, name }: CustomCollection, id: string) {
-    // CRUD buttons for the collection
-    const buttons = [
-        createElement("a", ["card-footer-item", "has-text-primary"], {href: `/collection/${id}/`, innerText: "View"}),
-        createElement("a", ["card-footer-item", "has-text-primary"], {href: "#", innerText: "Add Set"}),
-        createElement("a", ["card-footer-item", "has-text-primary"], {href: "#", innerText: "Save"}),
-        createElement("a", ["card-footer-item", "has-text-danger"], {href: "#", innerText: "Delete"})
-    ];
-    buttons[1].style.minWidth = "calc(60px + 1.5rem)"; // Ensure "Add Set" doesn't wrap
-    buttons[2].setAttribute("disabled", ""); // Disable the save button until the user makes a change
-    buttons.slice(1).forEach(el => el.addEventListener("click", e => e.preventDefault())); // Prevent the buttons (except the first) from using their hrefs
-    const textEls = sets.flatMap(setId => {
-        const { textField, helperLine } = createTextFieldWithHelper("Set ID", "vocabustudy.org/set/<SET ID>/view/", {pattern: "[0-9a-zA-Z]*", title: "Enter only the set id, not the full URL"});
-        const input = textField.querySelector("input");
-        if (input) input.value = setId;
-        return [textField, helperLine];
-    })
-    const cardEl = createElement("div", ["card", "has-spreaded-content", "has-validated-inputs"], {}, [
-        createElement("header", ["card-header"], {}, [
-            createElement("p", ["card-header-title"], {innerText: name, style: {overflowWrap: "anywhere"}}),
-            // A tag that displays the number of sets in the collection
-            createElement("span", ["card-header-icon"], {}, [
-                createElement("span", ["tag", "is-light"], {innerText: `${sets.length} sets`})
-            ])
-        ]),
-        createElement("div", ["card-content"], {}, [
-            createElement("div", ["content", "collection-sets"], {}, [...textEls]) // List of input fields for the set IDs
-        ]),
-        createElement("footer", ["card-footer"], {}, buttons)
-    ]);
-    optionalAnimate(cardEl, ...cardSlideInAnimation);
-    return { card: cardEl, buttons };
-}
 
 /**
  * Render a comment card. If isMyComment is true, the card will be rendered with an input field for editing the comment.
  */
 function createCommentCard({ inputComment, container }: { inputComment: HTMLInputElement, container: HTMLDivElement }, { name, comment, like }: Social, isMyComment: boolean) {
-    if (isMyComment)
-        inputComment.value = comment;
-    else
+    if (isMyComment) {
+        if (comment) inputComment.value = comment;
+    } else
         container.appendChild(createElement("div", ["list-item"], {}, [
             createElement("div", ["list-item-content"], {}, [
                 createElement("div", ["list-item-title"], {}, [
@@ -400,7 +367,7 @@ function createCommentCard({ inputComment, container }: { inputComment: HTMLInpu
                         ])] : [])
                     ])
                 ]),
-                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment, true)})
+                createElement("div", ["list-item-description"], {innerHTML: styleAndSanitize(comment as string, true)}) // We know comment is not null because otherwise the function wouldn't be called
             ])
         ]));
 }
@@ -410,8 +377,7 @@ function createCommentCard({ inputComment, container }: { inputComment: HTMLInpu
  */
 export function addShowCommentsClickListener({ inputComment, container, btnShowComments }: { inputComment: HTMLInputElement, container: HTMLDivElement, btnShowComments: HTMLButtonElement }, setId: string, userId: string) {
     btnShowComments.addEventListener("click", async () => {
-        const comments = (await Firestore.getDocuments(new QueryBuilder().from(`${this.collectionKey}/${setId}`).build()))
-            .map(doc => new Social(doc as Social));
+        const comments = Social.fromMultiple(await Firestore.getDocuments(new QueryBuilder().from(Social.collectionKey).build(), undefined, `/${VocabSet.collectionKey}/${setId}`));
         comments.forEach(comment => createCommentCard({ inputComment, container }, comment, userId === comment.uid));
     }, { once: true });
 }
@@ -423,30 +389,31 @@ export function addShowCommentsClickListener({ inputComment, container, btnShowC
  * @param onResults Callback to execute when results are available
  * @param startAfterN Document to start after
  */
-export async function paginateQueries<T extends BaseFirestoreDocument>(
+export async function paginateQueries(
     queries: StructuredQuery[],
     btnMore: HTMLButtonElement,
-    onResults: ((docs: T[]) => void),
-    startAfterN: T[] | number[] = [0],
-    orderByFields=["__name__"]
+    onResults: ((docs: ParsedRestDocument[]) => void),
+    idToken?: string,
+    startAfterDocs?: string[]
 ) {
-    const querySnapshots = await Promise.all(queries.map((el, i) => {
-        const query = new QueryBuilder(el).orderBy(orderByFields, "DESCENDING").limit(10);
-        if (startAfterN[i]) query.startAt([startAfterN[i]]);
-        return Firestore.getDocuments(query.build());
+    const querySnapshots = await Promise.all(queries.map(async (el, i) => {
+        const query = new QueryBuilder(el).limit(10);
+        if (!query.query.orderBy) throw new Error("Cannot paginate a query without an order by");
+        if (startAfterDocs && startAfterDocs[i]) query.startAt(query.query.orderBy.map(el => el.field.fieldPath === "__name__" ? startAfterDocs[i] : 0));
+        return Firestore.getDocuments(query.build(), idToken);
     }));
-    onResults(querySnapshots.flat() as T[]);
+    onResults(querySnapshots.flat());
     btnMore.hidden = true;
     btnMore.onclick = () => {}; // Use a no-op function to prevent multiple clicks
-    const nextQueries = querySnapshots.map((el, i) => ({ docs: el, originalQuery: queries[i]} )).filter(el => el.docs.length >= 10);
+    const nextQueries = querySnapshots.filter(el => el.length >= 10).map((el, i) => ({ lastPath: el[el.length - 1].pathParts.join("/"), originalQuery: queries[i]} ));
     if (nextQueries.length) {
         btnMore.hidden = false;
         btnMore.onclick = () => paginateQueries(
             nextQueries.map(el => el.originalQuery), // Pass in the original queries
             btnMore,
             onResults,
-            nextQueries.map(el => el.docs[el.docs.length - 1]), // But make sure to start them after their respective last documents
-            orderByFields
+            idToken,
+            nextQueries.map(el => el.lastPath) // But make sure to start them after their respective last documents
         );
     }
 }
@@ -494,4 +461,29 @@ export async function getLocalDb() {
             db.createObjectStore("general");
         }
     });
+}
+
+export function shuffle<T>(arr: T[]) {
+    let currentIndex = arr.length, randomIndex: number;
+    while (currentIndex > 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+    }
+}
+
+export function generateDocumentId() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const targetLength = 20;
+    const maxMultiple = 248; // Math.floor(256 / chars.length) * chars.length; - largest multiple of chars.length that is smaller than 256 (largest possible byte value)
+    let id = "";
+    while (id.length < targetLength) {
+        const bytes = new Uint8Array(40);
+        window.crypto.getRandomValues(bytes);
+        for (let i = 0; i < bytes.length; i++) {
+            if (id.length >= targetLength) break;
+            if (bytes[i] < maxMultiple) id += chars.charAt(bytes[i] % chars.length);
+        }
+    }
+    return id;
 }
