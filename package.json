@@ -32,7 +32,7 @@
       "distDir": "./dist"
     }
   },
-  "browserslist": "> 1%, last 2 versions, not dead",
+  "browserslist": "last 10 Chrome versions, last 10 Firefox versions, last 10 Edge versions, last 5 Safari versions",
   "scripts": {
     "start": "parcel",
     "build": "rm -rf dist && parcel build --no-source-maps",
