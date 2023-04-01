@@ -66,9 +66,9 @@ export const Firestore = {
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({ structuredQuery })
         });
-        const json: {document: FirestoreRestDocument, done: boolean, }[] & FirestoreRestError = await res.json();
-        if ("error" in json && json.error) throwResponseError(json.error);
-        if (json.length === 1 && json[0].done && !json[0].document) return [];
+        const json: ({document: FirestoreRestDocument, done: boolean } & FirestoreRestError)[] = await res.json();
+        if ("error" in json[0] && json[0].error) throwResponseError(json[0].error);
+        if (json.length === 1 && !json[0].document) return [];
         return json.map((info) => {
             const docObj: ParsedRestDocument = {
                 pathParts: info.document.name.split("/"),

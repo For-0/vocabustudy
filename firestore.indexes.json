@@ -41,6 +41,20 @@
             "queryScope": "COLLECTION",
             "fields": [
                 {
+                    "fieldPath": "uid",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "likes",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "sets",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
                     "fieldPath": "visibility",
                     "order": "ASCENDING"
                 },
@@ -78,20 +92,6 @@
                 },
                 {
                     "fieldPath": "likes",
-                    "order": "DESCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "sets",
-            "queryScope": "COLLECTION",
-            "fields": [
-                {
-                    "fieldPath": "uid",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "creationTime",
                     "order": "DESCENDING"
                 }
             ]
@@ -126,12 +126,6 @@
         {
             "collectionGroup": "sets",
             "fieldPath": "creator",
-            "ttl": false,
-            "indexes": []
-        },
-        {
-            "collectionGroup": "sets",
-            "fieldPath": "name",
             "ttl": false,
             "indexes": []
         },
