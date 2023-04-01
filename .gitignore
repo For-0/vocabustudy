@@ -74,3 +74,4 @@ rd/
 parcel-bundle-reports/
 .replit
 replit.nix
+.postcssrc.json

@@ -52,6 +52,7 @@
             content: "Log In";
         }
         :is(form button[type="submit"], .form-title)::after {
+            /*! purgecss ignore current */
             content: "Sign Up";
         }
         .prompt-switch-mode span:last-child {
@@ -75,6 +76,7 @@
             }
         }
         :is(form button[type="submit"], .form-title)::after {
+            /*! purgecss ignore current */
             content: "Reset Password";
         }
         #google-onetap-container,
@@ -97,6 +99,7 @@
             content: "Sign Up";
         }
         :is(form button[type="submit"], .form-title)::after {
+            /*! purgecss ignore current */
             content: "Log In";
         }
         #login-display-name,

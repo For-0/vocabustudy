@@ -15,6 +15,9 @@ import { getRemoteConfig } from "./firebase-rest-api/remote-config";
 import type { CollectionJsonList, RemoteConfigAnnouncement, StructuredQuery } from "./types";
 import { bulmaModalPromise, cardSlideInAnimation, createElement, createSetCard, createSetCardOwner, createTextFieldWithHelper, getLocalDb, getWords, initBulmaModals, navigateLoginSaveState, optionalAnimate, paginateQueries, parseCollections, showCollections, styleAndSanitize, zoomOutRemove } from "./utils";
 
+Tabs;
+Dropdown;
+
 declare global {
     interface Window {
         setHue: (hue: number) => void;

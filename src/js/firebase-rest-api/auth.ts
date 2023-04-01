@@ -49,7 +49,7 @@ const AuthPopup = {
         window: null,
         promise: {
             resolve: () => {},
-            reject: () => {}
+            reject: (_reason?: string) => {}
         }
     },
     cachedGapiPromise: null,

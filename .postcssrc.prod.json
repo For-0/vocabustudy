@@ -1,0 +1,7 @@
+{
+    "plugins": {
+        "@fullhuman/postcss-purgecss": {
+            "content": ["./src/*.pug", "./src/js/*.ts", "./src/includes/*.pug", "./node_modules/@creativebulma/**/*.js"]
+        }
+    }
+}

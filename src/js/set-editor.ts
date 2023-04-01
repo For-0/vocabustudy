@@ -124,7 +124,7 @@ const auth = initializeAuth(async user => {
         creator = user.displayName;
         await showAutosaveToast();
     } else {
-        const currentSet = VocabSet.fromSingle(await Firestore.getDocument("sets", setId));
+        const currentSet = VocabSet.fromSingle(await Firestore.getDocument("sets", setId, null, user.token.access));
         if (!currentSet) return location.replace("/404/");
         if (!user.customAttributes.admin && currentSet.uid !== user.uid) {
             await setCurrentUser(auth, null);

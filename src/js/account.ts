@@ -2,7 +2,7 @@ import { toast } from "bulma-toast";
 import Modal from "@vizuaalog/bulmajs/src/plugins/modal";
 import Alert from "@vizuaalog/bulmajs/src/plugins/alert";
 import { navigateLoginSaveState, bulmaModalPromise, initBulmaModals, createElement } from "./utils";
-import { getCurrentUser, sendEmailVerification, deleteCurrentUser, updateProfile, signInWithEmailAndPassword, updatePassword, renderGoogleButton, signInWithGoogleCredential, showGooglePopup, initializeAuth } from "./firebase-rest-api/auth";
+import { getCurrentUser, sendEmailVerification, deleteCurrentUser, updateProfile, signInWithEmailAndPassword, updatePassword, renderGoogleButton, signInWithGoogleCredential, showGooglePopup, initializeAuth, refreshCurrentUser } from "./firebase-rest-api/auth";
 import type { User } from "./types";
 
 const fields = {
@@ -159,7 +159,7 @@ fields.btnChangePassword.addEventListener("click", async () => {
 });
 fields.btnChangeName.addEventListener("click", async () => {
     await changeName();
-    const currentUser = await getCurrentUser();
+    const currentUser = await refreshCurrentUser(auth, true);
     showAccountInfo(currentUser);
 });
 fields.btnDeleteAccount.addEventListener("click", async () => {

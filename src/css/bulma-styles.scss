@@ -34,6 +34,7 @@
     --font-variation-fill: 1;
 }
 :is(.button:not(.is-floating, .is-ghost, .is-inverted), .tabs) .material-symbols-rounded {
+    /*! purgecss ignore current */
     font-size: inherit;
 }
 .button {

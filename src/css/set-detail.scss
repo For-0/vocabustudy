@@ -16,6 +16,7 @@ main,
 }
 #match .column,
 #modal-export-terms :is(.list-item, .list-item-content, .list-item-description, pre) {
+    /*! purgecss ignore current */
     min-width: 0;
 }
 .field-name {
@@ -464,6 +465,7 @@ main,
 }
 :is(fieldset:not(:disabled) .test-matching-box):hover,
 .test-matching-box.selected {
+    /*! purgecss ignore current */
     opacity: 1;
     text-shadow: 0 0 1px black;
     cursor: pointer;
