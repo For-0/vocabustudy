@@ -9,8 +9,7 @@ block content
         h1
             span.field-name
             button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") thumb_up
+                +material-symbol("favorite", false, true)
                 span.ml-1 Like
             p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
                 span.field-num-terms

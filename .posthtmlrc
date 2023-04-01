@@ -1,0 +1,7 @@
+{
+    "plugins": {
+        "posthtml-inline-svg": {
+            "cwd": "./node_modules/@material-symbols/svg-400"
+        }
+    }
+}

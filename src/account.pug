@@ -14,8 +14,8 @@ block content
             hr
             .title.is-size-3.fw-bold.mb-2(style="word-break:break-word;")
                 span.field-name
-                span.icon.is-small.is-clickable.btn-change-name.has-text-link.ml-3(role="button")
-                    i.material-symbols-rounded.account-edit-icon.is-size-5 edit
+                span.icon.is-clickable.btn-change-name.has-text-link.ml-3(role="button")
+                    +material-symbol("edit", false, false, 20).account-edit-icon
             .title.is-size-5.fw-bold.mb-2(style="word-break:break-word;")
                 span.field-email
                 span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-2.is-danger(hidden data-tooltip="You have not verified your email, so features are limited. Verify your email to gain full access.") Email Not Verified
@@ -26,24 +26,20 @@ block content
             article.message.mt-4
                 .message-body Only your display name is visible to other users.
             button.btn-logout.button.is-outlined.is-primary.is-medium
-                span.icon
-                    i.material-symbols-rounded logout
+                +material-symbol("logout", false, true, 20)
                 span Sign Out
             hr
             .control
                 button.button.is-success.mb-3.btn-verify-email(hidden)
-                    span.icon
-                        i.material-symbols-rounded email
+                    +material-symbol("mail", false, true, 16)
                     span Verify Email
             .control
                 button.button.btn-change-password.is-info.is-outlined.mb-3
-                    span.icon
-                        i.material-symbols-rounded lock
+                    +material-symbol("lock", false, true, 16)
                     span Change Password
             .control
                 button.button.btn-delete-account.ignore-user-hue.is-danger.is-outlined
-                    span.icon
-                        i.material-symbols-rounded delete
+                    +material-symbol("delete", false, true, 16)
                     span Delete Account
 append scripts-footer
     #modal-reauthenticate.modal

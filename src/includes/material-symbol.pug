@@ -1,0 +1,8 @@
+mixin material-symbol(name, filled=false, wrapIcon=false, size=24)
+    - var iconSrc = `rounded/${name}${filled ? "-fill" : ""}.svg`;
+    - var allAttributes = { fill: "currentColor", width: size, height: size, "data-icon-name": name, src: iconSrc };
+    if wrapIcon
+        span.icon&attributes(attributes)
+            icon&attributes(allAttributes)
+    else
+        icon&attributes(allAttributes)&attributes(attributes)

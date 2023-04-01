@@ -1,5 +1,6 @@
 block variables
 doctype html
+include material-symbol.pug
 html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; overflow-y: auto;")
     head
         meta(charset="UTF-8")
@@ -17,10 +18,11 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
         block main-stylesheet
             link(rel="stylesheet" href="css/styles.scss")
         link(rel="stylesheet" href="css/bulma-styles.scss")
-        link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200")
         link(rel="preconnect" href="https://fonts.googleapis.com")
         link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
-        link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap")
+        - var fontUrl = "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap";
+        link(rel="preload" as="style" href=fontUrl)
+        link(rel="stylesheet" media="print" href=fontUrl onload="this.onload=null;this.removeAttribute('media');")
         link(rel="manifest" href="./app.webmanifest")
         script(type="application/ld+json").
             {
@@ -62,10 +64,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                         a.navbar-item.only-logged-in(href="/forms/") Contact Us
                     .navbar-end
                         .navbar-item.has-dropdown.is-hoverable
-                            a.navbar-link.is-arrowless 
-                                i.material-symbols-rounded.is-filled.is-hidden-touch account_circle
-                                span.is-hidden-desktop Account
-                                i.material-symbols-rounded.is-hidden-touch arrow_drop_down
+                            a.navbar-link Account
                             .navbar-dropdown.is-right.is-centered.is-boxed
                                 a.navbar-item(href="/#saved-sets") Saved Sets
                                 a.navbar-item.only-logged-in(hidden href="/#mysets") My Sets
@@ -77,16 +76,19 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
             block content
         .fab-theme-container
             button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme")
-                i.material-symbols-rounded.has-text-white.is-filled(style="font-size: 1.5rem; ") light_mode
+                span.icon
+                    +material-symbol("light_mode", true)
+                    +material-symbol("dark_mode", true)(hidden)
+                    +material-symbol("brightness_4", true)(hidden)
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
-                    i.material-symbols-rounded.is-filled(aria-hidden="true") brightness_4
+                    +material-symbol("brightness_4", true, true)
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="Dark")
-                    i.material-symbols-rounded.is-filled(aria-hidden="true") dark_mode
+                    +material-symbol("dark_mode", true, true)
                 button.button.is-primary.fab-theme.is-floating(aria-label="Light" title="Light")
-                    i.material-symbols-rounded.is-filled(aria-hidden="true") light_mode
+                    +material-symbol("light_mode", true, true)
                 button.button.is-primary.fab-theme.is-floating.btn-change-hue(hidden aria-label="Hue" title="Set Hue")
-                    i.material-symbols-rounded.is-filled(aria-hidden="true") palette
+                    +material-symbol("palette", true, true)
         footer.footer.level.is-mobile(style="position: relative;")
             p.level-item
                 a(href="https://github.com/For-0/vocabustudy/releases") #[span.mr-1 #[span.tag.is-secondary v#{process.env.npm_package_version}]]
@@ -118,19 +120,24 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                 showTheme(localStorage.getItem("theme"));
                 setHue(localStorage.getItem("theme_hue"));
                 const themes = ["system", "dark", "light"];
+                function showThemeIcon(iconName) {
+                    fabs.theme.querySelector(`[data-icon-name=${iconName}]`).removeAttribute("hidden");
+                }
                 function showTheme(theme) {
                     document.documentElement.classList.remove("theme-dark", "theme-system");
+                    [...fabs.theme.firstElementChild.children].forEach(el => el.setAttribute("hidden", true));
                     switch(theme) {
                         case "dark":
-                            fabs.theme.querySelector("i").innerText = "dark_mode";
+                            showThemeIcon("dark_mode");
                             document.documentElement.classList.add("theme-dark");
                             break;
                         case "system":
-                            fabs.theme.querySelector("i").innerText = "brightness_4";
+                            showThemeIcon("brightness_4");
                             document.documentElement.classList.add("theme-system");
                             break;
                         case "light":
-                            fabs.theme.querySelector("i").innerText = "light_mode";
+                        default:
+                            showThemeIcon("light_mode");
                             break;
                     }
                 }

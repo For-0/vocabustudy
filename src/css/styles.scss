@@ -132,8 +132,9 @@ body > footer {
             width: 45px;
             height: 45px;
             border-radius: 50px;
-            i {
-                font-size: 1.2rem !important;
+            svg {
+                width: 1.2rem;
+                height: 1.2rem;
             }
         }
     }

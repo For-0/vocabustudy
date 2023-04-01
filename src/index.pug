@@ -12,23 +12,24 @@ block content
         h1 My Sets:
             .dropdown.is-pulled-right
                 .dropdown-trigger
-                    button.button.btn-create.has-text-white.is-ghost(aria-haspopup="true" aria-controls="dropdown-menu")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                    button.button.btn-create.is-secondary-light(aria-haspopup="true" aria-controls="dropdown-menu")
+                        +material-symbol("add_circle", false, true, 20)
                         span Create
-                        span.icon.is-small
-                            i.material-symbols-rounded(aria-hidden="true") arrow_drop_down
+                        +material-symbol("arrow_drop_down", false, true, 20).is-small
                 .dropdown-menu.menu-create(role="menu")
                     .dropdown-content
                         a.dropdown-item(href="/set/new/edit/")
-                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
-                            span Set
+                            span.icon-text
+                                +material-symbol("add_circle", false, true, 20)
+                                span Set
                         a.dropdown-item(href="/set/new-timeline/edit/")
-                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
-                            span Timeline
+                            span.icon-text
+                                +material-symbol("add_circle", false, true, 20)
+                                span Timeline
                         a.dropdown-item(href="/set/new-guide/edit/")
-                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
-                            span Guide
+                            span.icon-text
+                                +material-symbol("add_circle", false, true, 20)
+                                span Guide
         .set-container(data-empty="You don't have any sets. Create one!")
         button.button.is-primary.is-outlined.mt-2(style="display: block;" hidden) Load More
         .box.level.mt-3
@@ -38,8 +39,7 @@ block content
             .level-right
                 .level-item
                     button.button.is-primary.is-outlined.btn-create-collection
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") add_circle_outline
+                        +material-symbol("add_circle", false, true, 20)
                         span Create Custom Collection
         .collection-container.set-container(data-empty="You don't have any custom collections. Create one!")
     #saved-sets.page(data-nosnippet)
@@ -62,16 +62,13 @@ block content
                 .level-right
                     .level-item.buttons
                         button.button.is-outlined.is-info.btn-collections-menu(type="button")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") filter_list
+                            +material-symbol("filter_list", false, true, 20)
                             span Collections
                         button.button.is-outlined.is-danger.btn-clear-filters(type="button")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") filter_list_off
+                            +material-symbol("filter_list_off", false, true, 20)
                             span Clear
                         button.button.is-primary.btn-search-go(type="button")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") search
+                            +material-symbol("search", false, true, 20)
                             span Search
             p.m-1 Maximum 10 Words/Collections:
                 span.ml-1.is-inline-block.field-search-collections-list(style="vertical-align: bottom;")
@@ -237,15 +234,14 @@ block content
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
-                                i.material-symbols-rounded(aria-hidden="true") keyboard_double_arrow_down
+                                +material-symbol("keyboard_double_arrow_down")
             .home-features
                 div
                     h2.is-size-4 Features:
                     ul.list.has-text-white.is-filled
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") tune
+                                +material-symbol("tune", true, true)
                             .list-item-content
                                 .list-item-title Multiple Study Modes
                                 .list-item-description
@@ -253,8 +249,7 @@ block content
                                     span.is-hidden-tablet Flashcards, learn, test, and match
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") category
+                                +material-symbol("category", true, true)
                             .list-item-content
                                 .list-item-title Collections
                                 .list-item-description
@@ -262,8 +257,7 @@ block content
                                     span.is-hidden-tablet Find sets about a specific topic
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") rule
+                                +material-symbol("rule", true, true)
                             .list-item-content
                                 .list-item-title Effective Test Prep
                                 .list-item-description
@@ -271,8 +265,7 @@ block content
                                     span.is-hidden-tablet Find sets about relevant topics
                         li.list-item.is-flex-wrap-nowrap.pb-0.is-clickable(onclick="window.open('https://github.com/For-0')")
                             .list-item-image
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") money_off
+                                +material-symbol("money_off", true, true)
                             .list-item-content
                                 .list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
                                 .list-item-description
@@ -280,8 +273,7 @@ block content
                                     span.is-hidden-tablet Forever free
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") school
+                                +material-symbol("school", true, true)
                             .list-item-content
                                 .list-item-title Study Guides
                                 .list-item-description
@@ -289,12 +281,10 @@ block content
                                     span.is-hidden-tablet Learning and quizzing combined
                     .buttons.has-addons.is-centered.mt-4
                         a.button.is-primary.is-rounded.m-1(href="/#search")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden="true") search
+                            +material-symbol("search", false, true)
                             span Browse Sets
                         a.button.is-white.is-rounded.m-1(href="/login/")
-                            span.icon
-                                i.material-symbols-rounded.is-filled(aria-hidden="true") account_circle
+                            +material-symbol("account_circle", true, true)
                             span Sign Up
 append scripts-footer
     .announcements-container

@@ -52,14 +52,12 @@ block content
             .list-item
                 .list-item-title Select
                     span.button.is-primary.mx-3(style="vertical-align: middle; cursor: auto;")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden='true') add_circle_outline
+                        +material-symbol("add_circle", false, true, 20)
                         span Create
-                        span.icon.is-small
-                            i.material-symbols-rounded(aria-hidden='true') arrow_drop_down
+                        +material-symbol("arrow_drop_down", false, true, 16).is-small
                     | and choose
                     span.dropdown-item.is-inline
-                        i.material-symbols-rounded(aria-hidden='true' style="vertical-align: middle;") add_circle_outline
+                        +material-symbol("add_circle", false, false, 16)(style="vertical-align: text-top;").mr-2
                         span Set
             .list-item
                 .list-item-content
@@ -69,21 +67,19 @@ block content
                 .list-item-content
                     .list-item-title Add terms using the
                         span.button.is-primary.mx-3(style="vertical-align: middle; cursor: auto;")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden='true') add_circle_outline
+                            +material-symbol("add_circle", false, true, 20)
                             span Add
                         | button
                     .list-item-description
                         .tags.has-addons.mt-3
                             span.tag.is-warning
-                                span.material-symbols-rounded(style="font-size: 1rem;") warning
+                                +material-symbol("warning", false, false, 20)
                             span.tag.is-warning.is-light(style="white-space: break-spaces;") Make sure your set has at least #[strong(style="color: inherit;") four] terms
             .list-item
                 .list-item-content
                     .list-item-title You can also
                         span.button.is-primary.is-outlined.mx-3(style="vertical-align: middle; cursor: auto;")
-                            span.icon
-                                i.material-symbols-rounded(aria-hidden='true') upload_file
+                            +material-symbol("upload_file", false, true, 20)
                             span Import Items
                         | from Quizlet.
                     .list-item-description Alternatively, you can copy-paste terms from a vocabulary list, Kahoot, etc.
@@ -94,8 +90,7 @@ block content
             .list-item
                 .list-item-title When you're done, click
                     span.button.is-primary.ml-3(style="vertical-align: middle; cursor: auto;")
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden='true') save
+                        +material-symbol("save", false, true, 20)
                         span Save
                     | !
         h4.title.is-size-5.mt-3 Congratulations, you have created a set!
@@ -104,7 +99,7 @@ block content
             .message-body Your sets cannot have offensive, harmful, or explicit content.
                 .tags.has-addons.mt-3
                     span.tag.is-warning
-                        span.material-symbols-rounded(style="font-size: 1rem;") dangerous
+                       +material-symbol("dangerous", false, false, 20)
                     span.tag.is-warning.is-light Sets meeting this criteria will be made private or deleted. The associated account may also be restricted.
         article.message.is-info
             .message-body Try to keep sets relevant. If you wish to make a joke set, say that it is a joke in the description.
@@ -174,12 +169,10 @@ block content
                             .field.has-addons.has-addons-centered
                                 .control
                                     button.button.is-small(disabled)
-                                        span.icon
-                                            i.material-symbols-rounded(aria-hidden="true") chevron_left
+                                        +material-symbol("chevron_left", false, true, 20)
                                 .control
                                     button.button.is-small(disabled)
-                                        span.icon
-                                            i.material-symbols-rounded(aria-hidden="true") chevron_right
+                                        +material-symbol("chevron_right", false, true, 20)
                 .columns
                     each category in articleCategories
                         each article in category.articles.filter(article => article.featured)
@@ -202,7 +195,6 @@ block content
                                     each article in category.articles
                                         li.pt-4
                                             a.is-block.has-text-dark(href=`#${article.hash}`)= article.title
-                                                span.icon.is-pulled-right
-                                                    i.material-symbols-rounded(aria-hidden="true") arrow_forward
+                                                +material-symbol("arrow_forward", false, true, 20).is-pulled-right
 append scripts-footer
     script(src="js/help-center.ts" type="module")
