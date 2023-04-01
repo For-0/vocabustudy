@@ -1,0 +1,91 @@
+extends includes/layout.pug
+block variables
+    - var title = "Vocabustudy Pro";
+    - var description = "Level up your studying with Vocabustudy Pro";
+block content
+    #home.page.content
+        h1 Vocabustudy Pro
+        .hero.is-secondary.is-fullheight.is-bold(style="margin-left: -1rem; width: calc(100% + 2rem); margin-top: -2rem;")
+            .hero-body  
+                .container
+                    h1.title.is-1
+                        | Studying, #[span.has-text-weight-bold supercharged]. 🚀
+                    h2.subtitle.is-4
+                        | Level up your studying with Vocabustudy Pro and get access to all of our premium features.
+                    .buttons
+                        a#view-plans-btn.button.is-primary.is-large(href="#plans") View Plans
+                        
+        #plans.hero.is-large.is-bold(style="margin-left: -1rem; width: calc(100% + 2rem); padding: 2rem;")                 
+            .pricing-table
+                .pricing-plan
+                    .plan-header Free
+                    .plan-price #[span.plan-price-amount #[span.plan-price-currency $]0]/month
+                    .plan-items
+                        .plan-item Flashcards
+                        .plan-item -
+                        .plan-item -
+                        .plan-item -
+                        .plan-item -
+                        .plan-item Buggy half-baked features that may or may not work properly
+                        .plan-item Countless sets created by others
+                        .plan-item -
+                        .plan-item Advanced AI to disable the app when you need it most
+                    .plan-footer
+                        button.button.is-fullwidth(disabled) Current Plan
+                .pricing-plan.is-success.is-active
+                    .plan-header PRO
+                    .plan-price #[span.plan-price-amount #[span.plan-price-currency $]49.99]/month
+                    .plan-items
+                        .plan-item Flashcards
+                        .plan-item Learn
+                        .plan-item Test
+                        .plan-item Match
+                        .plan-item -
+                        .plan-item Enterprise grade support
+                        .plan-item Countless sets created by others
+                        .plan-item Create your own sets
+                        .plan-item 90.25% Uptime
+                    .plan-footer
+                        a.button.is-fullwidth(href="https://go.vocabustudy.org/upgrade") Choose
+                .pricing-plan.is-danger
+                    .plan-header PRO Plus
+                    .plan-price #[span.plan-price-amount #[span.plan-price-currency $]99.99]/month
+                    .plan-items
+                        .plan-item Flashcards
+                        .plan-item Learn
+                        .plan-item Test
+                        .plan-item Match
+                        .plan-item Customized Learn Results
+                        .plan-item Enterprise grade support
+                        .plan-item Countless sets created by others
+                        .plan-item Create your own sets
+                        .plan-item 99.152% Uptime
+                    .plan-footer
+                        a.button.is-fullwidth(href="https://go.vocabustudy.org/upgrade") Choose
+        article.message.is-info
+            .message-header
+                p Wondering which plan to get?
+            .message-body After surveying countless students, our experts have deduced that the monthly price is roughly equivalent to the grades you will get in school!
+        .hero.is-large.is-bold.is-warning(style="margin-left: -1rem; width: calc(100% + 2rem); padding: 1rem;")
+            .hero-body
+                .container
+                    h1.title
+                        | #[b Vocabustudy Pro] is the best way to study.
+                    h2.subtitle.is-4
+                        | With 4+ #[span.ml-1.icon #[i.material-symbols-rounded.is-filled star]] #[span.icon #[i.material-symbols-rounded.is-filled star]] #[span.icon #[i.material-symbols-rounded.is-filled star]] #[span.icon #[i.material-symbols-rounded.is-filled star]] #[span.icon #[i.material-symbols-rounded.is-filled star]] reviews, you can be assured that Vocabustudy Pro will enrich your education.
+                    .level
+                        .level-left(style="max-width: 100%; min-width: 0;")
+                            .level-item(style="max-width: 100%; min-width: 0;")
+                                div(style="max-width: 20vw")
+                                    h1.title.is-4 "#[b Truly amazing resource]. The price is incredibly reasonable for the amount of content and features that are included. I would recommend this to anyone who is looking to improve their studying habits."
+                            .level-item(style="max-width: 100%; min-width: 0;")
+                                div(style="max-width: 20vw")
+                                    h1.title.is-4 "#[b I love this app]. It's so easy to use and it's helped me so much with my studying. I would recommend this to anyone who is looking to improve their studying habits."
+                    .level
+                        .level-left(style="max-width: 100%; min-width: 0;")
+                            .level-item(style="max-width: 100%; min-width: 0;")
+                                div(style="max-width: 20vw")
+                                    h1.title.is-4 "#[b Changed my life]. I used to be a C student, but now I'm a A student. I would recommend this to anyone who is looking to improve their studying habits."
+                            .level-item(style="max-width: 100%; min-width: 0;")
+                                div(style="max-width: 20vw")
+                                    h1.title.is-4 "#[b Profe. Cuevas's class has never been better]. Spanish is my favorite subject now. This is the best app ever."

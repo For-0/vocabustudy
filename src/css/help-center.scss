@@ -26,7 +26,7 @@
     width: calc(100% + 2rem);
 }
 #home .hero {
-    background-image: linear-gradient(to top, transparent, transparent, #795548), url("../images/nasa-space-background.jpg?as=webp&width=2000");
+    background-image: linear-gradient(to top, transparent, transparent, var(--primary)), url("../images/nasa-space-background.jpg?as=webp&width=2000");
     background-position: center center;
     background-size: cover;
     position: fixed;

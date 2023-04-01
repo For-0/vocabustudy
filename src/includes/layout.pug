@@ -75,8 +75,9 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                                 a.navbar-item.only-logged-out(hidden href="/login/") Log In
         main
             block content
-        .fab-theme-container
-            button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme")
+        .fab-theme-container.requires-pro
+            button.button.is-primary-alt.fab-theme.is-floating(aria-label="Theme" title="Change Theme" style="position: relative")
+                span.badge.is-warning(style="box-shadow: unset;") #[span #[i.material-symbols-rounded workspace_premium]]
                 i.material-symbols-rounded.has-text-white.is-filled(style="font-size: 1.5rem; ") light_mode
             div
                 button.button.is-primary.fab-theme.is-floating(aria-label="Theme" title="System")
@@ -104,6 +105,42 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.has-text-white.mr-3.is-filled.icon(href="/#social" title="Social")
                         i.material-symbols-rounded.is-filled(aria-hidden="true") group
         block scripts-footer
+            #modal-pro-feature.modal
+                .modal-background
+                .modal-card
+                    header.modal-card-head
+                        p.modal-card-title
+                            span.icon-text Introducing Vocabustudy Pro! #[span.ml-1(style="position: relative; bottom: 2px;").icon #[i.material-symbols-rounded workspace_premium]]
+                    section.modal-card-body.is-thumb-only
+                        p.has-text-weight-bold Vocabustudy Pro contains #[span.has-text-weight.bold exclusive access] to the latest and #[span.has-text-weight.bold most premium] Vocabustudy features, like more study modes and the set creator
+                        p.my-4 It's an essential tool for every student, regardless of their age or grades.
+                        .content
+                            blockquote "An investment in knowledge pays the best interest." - Benjamin Franklin
+                        p.is-italic You see? Even the greats knew the importance of studying. 
+                        
+                        h1.title.is-5.mt-3 So why not invest in your future? Get Pro Now!
+
+                    footer.modal-card-foot
+                        button.button.is-success(type="button") Learn More!
+                        button.button.is-danger(type="button") Close
+            #modal-pro-paywall.modal
+                .modal-background
+                .modal-card
+                    header.modal-card-head
+                        p.modal-card-title
+                            span.icon-text Uh-oh! You'll need to upgrade to use that feature.
+                    section.modal-card-body.is-thumb-only
+                        p.has-text-weight-bold Vocabustudy Pro contains #[span.has-text-weight.bold exclusive access] to the latest and #[span.has-text-weight.bold most premium] Vocabustudy features, like more study modes and the set creator
+                        p.my-4 It's an essential tool for every student, regardless of their age or grades.
+                        .content
+                            blockquote "An investment in knowledge pays the best interest." - Benjamin Franklin
+                        p.is-italic You see? Even the greats knew the importance of studying. 
+                        
+                        h1.title.is-5.mt-3 So why not invest in your future? Get Pro Now!
+
+                    footer.modal-card-foot
+                        button.button.is-success(type="button") Learn More!
+                        button.button.is-danger(type="button") Close
             script.
                 if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) location.host = "vocabustudy.org";
                 const navbar = {
@@ -115,22 +152,42 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     themeContainer: document.querySelector(".fab-theme-container"),
                     themeOptions: document.querySelectorAll(".fab-theme-container > div button:not(:last-child)")
                 };
-                showTheme(localStorage.getItem("theme"));
-                setHue(localStorage.getItem("theme_hue"));
                 const themes = ["system", "dark", "light"];
+                if (!localStorage.getItem("pro-mode-shown")) {
+                    document.getElementById("modal-pro-feature").classList.add("is-active");
+                    document.querySelector("#modal-pro-feature .button.is-success").addEventListener("click", () => {
+                        localStorage.setItem("pro-mode-shown", "true");
+                        location.href = "/pro/";
+                    }, true);
+                    document.querySelector("#modal-pro-paywall .button.is-success").addEventListener("click", () => {
+                        localStorage.setItem("pro-mode-shown", "true");
+                        location.href = "/pro/";
+                    }, true);
+                    document.querySelector("#modal-pro-feature .button.is-danger").addEventListener("click", () => document.querySelector("#modal-pro-feature").classList.remove("is-active"));
+                    document.querySelector("#modal-pro-paywall .button.is-danger").addEventListener("click", () => document.querySelector("#modal-pro-paywall").classList.remove("is-active"));
+                    document.querySelectorAll(".requires-pro").forEach(el => el.addEventListener("mousedown", e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        document.getElementById("modal-pro-paywall").classList.add("is-active");
+                    }));
+                } else {
+                    showTheme(localStorage.getItem("theme"));
+                    setHue(localStorage.getItem("theme_hue"));
+                }
                 function showTheme(theme) {
                     document.documentElement.classList.remove("theme-dark", "theme-system");
                     switch(theme) {
                         case "dark":
-                            fabs.theme.querySelector("i").innerText = "dark_mode";
+                            fabs.theme.querySelector("i.is-filled").innerText = "dark_mode";
                             document.documentElement.classList.add("theme-dark");
                             break;
                         case "system":
-                            fabs.theme.querySelector("i").innerText = "brightness_4";
+                            fabs.theme.querySelector("i.is-filled").innerText = "brightness_4";
                             document.documentElement.classList.add("theme-system");
                             break;
                         case "light":
-                            fabs.theme.querySelector("i").innerText = "light_mode";
+                            fabs.theme.querySelector("i.is-filled").innerText = "light_mode";
                             break;
                     }
                 }

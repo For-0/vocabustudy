@@ -2,12 +2,12 @@
 /* stylelint-disable at-rule-empty-line-before */
 
 /*! bulma.io v0.9.4 | MIT License | github.com/jgthms/bulma */
-$primary-alt: #8a6051;
-$secondary-alt: #a67360;
+$primary-alt: #1a4273;
+$secondary-alt: #c936ff;
 $main-font: "Raleway", blinkmacsystemfont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 @forward "@bulvar/bulma/sass/utilities" with (
-    $primary: #795548 !default,
-    $secondary: #4f2b26 !default,
+    $primary: #2b5b96 !default,
+    $secondary: #c936ff !default,
     $custom-colors: ("primary-alt": $primary-alt, "secondary-light": $secondary-alt, "gold": goldenrod) !default,
     $family-primary: $main-font
 );

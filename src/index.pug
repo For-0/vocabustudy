@@ -10,8 +10,9 @@ block extrahead
 block content
     #mysets.page(data-nosnippet)
         h1 My Sets:
-            .dropdown.is-pulled-right
+            .dropdown.is-pulled-right.requires-pro
                 .dropdown-trigger
+                    span.badge.is-warning(style="box-shadow: unset") #[span #[i.material-symbols-rounded(style="font-size: 9px;") workspace_premium]]
                     button.button.btn-create.has-text-white.is-ghost(aria-haspopup="true" aria-controls="dropdown-menu")
                         span.icon
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
@@ -37,7 +38,8 @@ block content
                     h2.title.is-5 My Custom Collections:
             .level-right
                 .level-item
-                    button.button.is-primary.is-outlined.btn-create-collection
+                    button.button.is-primary.is-outlined.btn-create-collection.requires-pro
+                        span.badge.is-warning(style="box-shadow: unset;") #[span #[i.material-symbols-rounded workspace_premium]]
                         span.icon
                             i.material-symbols-rounded(aria-hidden="true") add_circle_outline
                         span Create Custom Collection
@@ -81,7 +83,7 @@ block content
         h1 Credits - Vocabustudy
         div(style="text-align: center;")
             p.title.is-size-5 Vocabustudy is part of a group of applications called the #[a(href="https://github.com/For-0") For Zero Applications].
-            p.title.is-size-6 For Zero is a project to create helpful, student-conscious applications that are completely free and transform student life. Thank you for being on our journey!
+            p.title.is-size-6 For Zero is a project to create helpful, student-conscious applications that are completely paid and transform student life. Thank you for being on our journey!
             .py-4.box
                 button.button.is-primary.is-credit #[p.has-text-white.subtitle.is-5 Siddhant Kameswar]
                 .modal.is-credit
@@ -162,7 +164,7 @@ block content
     #support-us.page(data-nosnippet)
         h1 Support Us
         p.title.is-size-3 Your donations help!
-        p Vocabustudy is a free website, but donations do serve a purpose. #[span(style="font-weight: 600") Your ability to donate won't affect how you are treated on the site.]
+        p Vocabustudy is a paid website, but donations do serve a purpose. #[span(style="font-weight: 600") Your ability to donate won't affect how you are treated on the site.]
         p Donating helps us with paying the $12 domain and working towards improving infrastructure.
         p.subtitle.is-size-5 How can you help out?
         .tabs-wrapper
@@ -212,9 +214,9 @@ block content
                         a YouTube
             .tabs-content
                 ul
-                    li.is-active
+                    li.is-active    
                         h1.title.is-size-3 Discord Server
-                        p Have you joined our Discord server yet? There's free homework help, support, bots, and more!
+                        p Have you joined our Discord server yet? There's paid homework help, support, bots, and more!
                         p The server in completely student-run, and Nikhil, Omkar, and Siddhant do not endorse it. The server is moderated by Nikhil Gupta, Omkar Patil, and Ruhan Gupta, in addition to our team of moderators and helpers.
                         p For any questions about the Discord server, please contact #[b OP#1192] or #[b Nikhilatvocabustudy#4578] in Discord, or email #[a(href="mailto:management@vocabustudy.org") management@vocabustudy.org].
                         p If you wish to join, you can join #[a(href="https://discord.gg/UrRs7Bbr6d") here].
@@ -227,17 +229,28 @@ block content
             div
                 div
                     div
-                        h2.is-size-3.has-text-centered-mobile.has-text-weight-semibold(style="line-height: normal; width: auto;") Learn Vocabulary, #[br]For Free.
+                        h2.is-size-3.has-text-centered-mobile.has-text-weight-semibold(style="line-height: normal; width: auto;") Learn Vocabulary, #[br] #[b For Payment].
                         ul.is-hidden-mobile
-                            li 100% Free
-                            li No Ads
-                            li Relevant Vocab
+                            li Useless unless paid for
+                            li Maximum Profit
+                            li "Relevant" Vocab
                     p.my-0.is-size-6 #[a.has-text-white.is-size-5.has-text-weight-semibold(href="/#credits") Credits]
-                    p.mb-0.mt-4.is-size-7 VOCABUSTUDY - U STUDY VOCAB
+                    p.mb-0.mt-4.is-size-7 VOCABUSTUDY - U PAY US MONEY
                         br
                         button.button.is-ghost.btn-show-features(style="color: white;")
                             span.icon.is-small
                                 i.material-symbols-rounded(aria-hidden="true") keyboard_double_arrow_down
+                .notification(style="max-width: 50vw; border-radius: 2rem; padding-top: 1rem !important;").is-info.is-size-6.has-text-weight-semibold.mt-4
+                    .columns.is-vcentered
+                        .column.is-narrow   
+                            span.icon.is-large
+                                i.material-symbols-rounded workspace_premium
+                        .column
+                            p.mb-0
+                                strong Vocabustudy Pro
+                                |  is now available! Get access to more study modes and the ability to make your own sets!
+                            p.mb-0
+                                a(href="/pro" target="_blank") Learn more
             .home-features
                 div
                     h2.is-size-4 Features:
@@ -249,7 +262,7 @@ block content
                             .list-item-content
                                 .list-item-title Multiple Study Modes
                                 .list-item-description
-                                    span.is-hidden-mobile Don't like flashcards? You can take a mock test, match terms, and more!
+                                    span.is-hidden-mobile Don't like flashcards? You can take a mock test, match terms,#[br]and more - if you pay 😉!
                                     span.is-hidden-tablet Flashcards, learn, test, and match
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
@@ -276,8 +289,8 @@ block content
                             .list-item-content
                                 .list-item-title(style="font-weight: bold; text-decoration: underline;") A For Zero Application
                                 .list-item-description
-                                    span.is-hidden-mobile Fast, simple, effective, and completely free.
-                                    span.is-hidden-tablet Forever free
+                                    span.is-hidden-mobile Fast, simple, effective, and forced to pay.
+                                    span.is-hidden-tablet Forever paid
                         li.list-item.is-flex-wrap-nowrap.pb-0
                             .list-item-image
                                 span.icon

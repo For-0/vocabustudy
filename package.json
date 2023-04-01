@@ -20,7 +20,8 @@
         "src/auth-action.pug",
         "src/forms.pug",
         "src/login.pug",
-        "src/account.pug"
+        "src/account.pug",
+        "src/pro.pug"
       ],
       "context": "browser",
       "distDir": "./dist"
@@ -51,11 +52,13 @@
     "@bulvar/bulma": "^0.11.13",
     "@creativebulma/bulma-tagsinput": "^1.0.3",
     "@creativebulma/bulma-tooltip": "^1.2.0",
+    "@creativebulma/bulma-badge": "^1.0.1",
     "@vizuaalog/bulmajs": "^0.12.2",
     "broadcast-channel": "^4.20.1",
     "bulma-list": "^1.2.0",
     "bulma-quickview": "^2.0.0",
     "bulma-toast": "^2.4.1",
+    "bulma-pricingtable": "^0.2.0",
     "dompurify": "^2.4.1",
     "fitty": "^2.3.6",
     "fscreen": "^1.2.0",

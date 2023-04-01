@@ -1,5 +1,5 @@
 .custom-scrollbar {
-    scrollbar-color: var(--thumb, #331011) var(--track, #6b473c);
+    scrollbar-color: var(--thumb, #1a4273) var(--track, #c936ff);
     scrollbar-width: thin;
     scroll-behavior: smooth;
     &::-webkit-scrollbar {
@@ -10,13 +10,13 @@
         background-color: var(--track, #6b473c);
     }
     &::-webkit-scrollbar-thumb {
-        background-color: var(--thumb, #331011);
+        background-color: var(--thumb, #c936ff);
         border-radius: 2px;
         border: transparent;
     }
     &.is-thumb-only {
         --track: transparent;
-        --thumb: #6b473c;
+        --thumb: #c936ff;
     }
 }
 textarea {

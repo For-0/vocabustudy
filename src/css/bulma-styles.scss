@@ -6,8 +6,10 @@
 
 // extensions
 @import "@creativebulma/bulma-tooltip/src/sass";
+@import "@creativebulma/bulma-badge/src/sass";
 @import "bulma-list/sass/bulma-list";
 @import "bulma-quickview/src/sass";
+@import "bulma-pricingtable/src/sass";
 
 // NOTE: Only alterations to bulma components or fixes should go here! Everything else goes in styles.scss
 // The only exception (for things like kbd) is for when something depends on a bulma variable;=
