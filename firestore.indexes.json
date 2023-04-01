@@ -1,7 +1,7 @@
 {
     "indexes": [
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "queryScope": "COLLECTION",
             "fields": [
                 {
@@ -19,7 +19,7 @@
             ]
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "queryScope": "COLLECTION",
             "fields": [
                 {
@@ -37,7 +37,7 @@
             ]
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "queryScope": "COLLECTION",
             "fields": [
                 {
@@ -51,7 +51,7 @@
             ]
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "queryScope": "COLLECTION",
             "fields": [
                 {
@@ -65,7 +65,7 @@
             ]
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "queryScope": "COLLECTION",
             "fields": [
                 {
@@ -83,7 +83,7 @@
             ]
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "queryScope": "COLLECTION",
             "fields": [
                 {
@@ -91,7 +91,7 @@
                     "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "likes",
+                    "fieldPath": "creationTime",
                     "order": "DESCENDING"
                 }
             ]
@@ -113,7 +113,7 @@
     ],
     "fieldOverrides": [
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "fieldPath": "collections",
             "ttl": false,
             "indexes": [
@@ -124,13 +124,13 @@
             ]
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "fieldPath": "creator",
             "ttl": false,
             "indexes": []
         },
         {
-            "collectionGroup": "meta_sets",
+            "collectionGroup": "sets",
             "fieldPath": "name",
             "ttl": false,
             "indexes": []

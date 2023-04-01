@@ -30,12 +30,14 @@ body {
 body,
 main,
 :is(#flashcards, #learn, #test, #match):target {
+    /*! purgecss ignore current */
     display: flex;
     flex-direction: column;
 }
 main,
 main > div,
 :is(#flashcards, #learn, #test, #match) > div:nth-child(2) {
+    /*! purgecss ignore current */
     flex-grow: 1;
 }
 .set-container {
@@ -187,6 +189,7 @@ body > footer {
 :is(#flashcards, #learn, #test, #match) > h1 > span,
 .field-user-name,
 .field-collection-name {
+    /*! purgecss ignore current */
     text-overflow: ellipsis;
     white-space: nowrap;
     display: inline-block;

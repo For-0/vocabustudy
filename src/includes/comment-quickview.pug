@@ -13,11 +13,11 @@ div(style="position: absolute; right: 0; bottom: 0; background-color: var(--body
     .quickview-body
         .list.has-hoverable-list-items
     footer.quickview-footer.py-3
-        .is-flex-grow-1.loggedin(hidden)
+        .is-flex-grow-1.only-logged-in(hidden)
             label.label(for="input-user-comment") Your Comment
             .field.has-addons
                 p.control.is-expanded
                     input.input(type="text" required maxlength="500" id="input-user-comment")
                 p.control
                     button.button.is-success.is-outlined(type="button" disabled) Save
-        p.loggedout(hidden) Log in to comment on this set!
+        p.only-logged-out(hidden) Log in to comment on this set!

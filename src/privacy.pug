@@ -19,14 +19,6 @@ block content
         p We use the information we collect in various ways, including to:
         ul
             li Provide, operate, and maintain our website
-                br
-                | We use 
-                a(href="https://sentry.io/privacy/" rel="noreferrer noopener") Sentry
-                |  for error tracking
-                br
-                .field
-                    input#checkbox-sentry-optout.is-checkradio.is-danger(type="checkbox")
-                    label(for="checkbox-sentry-optout") Opt out of Sentry
             li Improve, personalize, and expand our website
             li Understand and analyze how you use our website
             li Develop new products, services, features, and functionality
@@ -78,10 +70,3 @@ block content
             | Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity.
         p
             | Vocabustudy does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
-append scripts-footer
-    script.
-        document.getElementById("checkbox-sentry-optout").checked = Boolean(localStorage.getItem("sentry_optout"));
-        document.getElementById("checkbox-sentry-optout").addEventListener("change", e => {
-            if (e.target.checked) localStorage.setItem("sentry_optout", true);
-            else localStorage.removeItem("sentry_optout");
-        })

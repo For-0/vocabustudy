@@ -1,0 +1,19 @@
+@import "styles.scss";
+#home::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: inline-block;
+    background: url("../images/login-background.svg") no-repeat center center;
+    background-size: 100% 100%;
+}
+.container {
+    top: 50%;
+    position: relative;
+    transform: translateY(-50%);
+    z-index: 2;
+    border-radius: 6px;
+}

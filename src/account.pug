@@ -1,0 +1,94 @@
+extends includes/layout.pug
+block variables
+    - var title = "Account";
+block main-stylesheet
+    link(rel="stylesheet" href="css/account.scss")
+block extrahead
+    unless process.env.NODE_ENV === "development"
+        script(src="https://accounts.google.com/gsi/client" async defer)
+block content
+    #home.page(data-nosnippet)
+        h1 My Account
+        .column.is-offset-2-desktop
+            h1.fw-bold.title.is-4 Profile
+            hr
+            .title.is-size-3.fw-bold.mb-2(style="word-break:break-word;")
+                span.field-name
+                span.icon.is-small.is-clickable.btn-change-name.has-text-link.ml-3(role="button")
+                    i.material-symbols-rounded.account-edit-icon.is-size-5 edit
+            .title.is-size-5.fw-bold.mb-2(style="word-break:break-word;")
+                span.field-email
+                span.field-email-not-verified.fw-bold.ignore-user-hue.tag.ml-2.is-danger(hidden data-tooltip="You have not verified your email, so features are limited. Verify your email to gain full access.") Email Not Verified
+                span.field-email-verified.fw-bold.ignore-user-hue.tag.ml-2.is-success(hidden data-tooltip="You verified your email, so you have full access to Vocabustudy.") Email Verified
+            .title.is-size-6.has-text-grey(style="word-break:break-word;")
+                strong.mr-1 Account Created:
+                span.field-created
+            article.message.mt-4
+                .message-body Only your display name is visible to other users.
+            button.btn-logout.button.is-outlined.is-primary.is-medium
+                span.icon
+                    i.material-symbols-rounded logout
+                span Sign Out
+            hr
+            .control
+                button.button.is-success.mb-3.btn-verify-email(hidden)
+                    span.icon
+                        i.material-symbols-rounded email
+                    span Verify Email
+            .control
+                button.button.btn-change-password.is-info.is-outlined.mb-3
+                    span.icon
+                        i.material-symbols-rounded lock
+                    span Change Password
+            .control
+                button.button.btn-delete-account.ignore-user-hue.is-danger.is-outlined
+                    span.icon
+                        i.material-symbols-rounded delete
+                    span Delete Account
+append scripts-footer
+    #modal-reauthenticate.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Reauthenticate
+                button.delete.action-close(aria-label="close")
+            section.modal-card-body
+                p.mb-2 For your security, please reauthenticate.
+                .field
+                    label.label Current Password
+                    .control
+                        input.input(type="password" required placeholder="Password")
+                div
+                    .divider.my-4 Or
+                .reauthenticate-google
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+                button.button.is-danger.action-close Cancel
+    #modal-change-password.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Change Password
+                button.delete(aria-label="close")
+            section.modal-card-body
+                .field
+                    label.label New Password
+                    .control
+                        input.input(type="password" required minlength="6")
+                .field
+                    label.label Confirm Password
+                    .control
+                        input.input(type="password" required minlength="6")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    #modal-change-name.modal
+        .modal-background
+        .modal-card
+            header.modal-card-head
+                p.modal-card-title Change Name
+                button.delete(aria-label="close")
+            section.modal-card-body
+                input.input(type="text" required placeholder="Name")
+            footer.modal-card-foot
+                button.button.is-success(type="button") OK
+    script(src="js/account.ts" type="module")

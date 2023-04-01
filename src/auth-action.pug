@@ -2,27 +2,10 @@ extends includes/layout.pug
 block variables
     - var title = "Reset Password";
     - var description = "This page should not show up in search results";
+block main-stylesheet
+    link(rel="stylesheet" href="css/auth-action.scss")
 block extrahead
     meta(name="robots" content="noindex")
-    style.
-        #home::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            display: inline-block;
-            background: url("./images/login-background.svg") no-repeat center center;
-            background-size: 100% 100%;
-        }
-        .container {
-            top: 50%;
-            position: relative;
-            transform: translateY(-50%);
-            z-index: 2;
-            border-radius: 6px;
-        }
 block content
     #home.page.has-background-primary
         .container.has-background-white.has-text-centered.p-6
@@ -40,4 +23,4 @@ block content
                         input#reset-confirm-password.input.is-medium(type="password" placeholder="Confirm Password" required)
                 button.button.is-primary.is-medium.is-fullwidth(type="submit") Change Password
 append scripts-footer
-    script(src="js/auth-action.js" type="module")
+    script(src="js/auth-action.ts" type="module")

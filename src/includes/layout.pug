@@ -22,7 +22,6 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
         link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
         link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap")
         link(rel="manifest" href="./app.webmanifest")
-        script(src="js/sentry.js" type="module" async)
         script(type="application/ld+json").
             {
                 "@context": "https://schema.org",
@@ -60,9 +59,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                         a.navbar-item(href="/#support-us") Support Us
                         a.navbar-item(href="/help-center/") Help
                         a.navbar-item(href="https://blog.vocabustudy.org/") Blog
-                        a.navbar-item(href="/forms/") Forms
-                        //- a.navbar-item(href="/forms/" style="font-weight: 600;") Forms #[small(style="font-size: 0.6rem; margin-left: 0.1rem;") NEW!]
-                        //- ^^^ temporary typographical emphasis to attract attention
+                        a.navbar-item.only-logged-in(href="/forms/") Contact Us
                     .navbar-end
                         .navbar-item.has-dropdown.is-hoverable
                             a.navbar-link.is-arrowless 
@@ -71,12 +68,11 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                                 i.material-symbols-rounded.is-hidden-touch arrow_drop_down
                             .navbar-dropdown.is-right.is-centered.is-boxed
                                 a.navbar-item(href="/#saved-sets") Saved Sets
-                                a.navbar-item.loggedin(hidden href="/#mysets") My Sets
-                                a.navbar-item.loggedin.adminonly(hidden href="/#admin") Admin Portal
+                                a.navbar-item.only-logged-in(hidden href="/#mysets") My Sets
                                 hr.navbar-divider
-                                a.navbar-item.loggedin(hidden href="/#account") My Account
-                                span#btn-logout.navbar-item.is-clickable.loggedin(hidden) Log Out
-                                a.navbar-item.loggedout(hidden href="/#login") Log In
+                                a.navbar-item.only-logged-in(hidden href="/account/") My Account
+                                span.btn-logout.navbar-item.is-clickable.only-logged-in(hidden) Log Out
+                                a.navbar-item.only-logged-out(hidden href="/login/") Log In
         main
             block content
         .fab-theme-container
@@ -111,7 +107,6 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
             script.
                 if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) location.host = "vocabustudy.org";
                 const navbar = {
-                    btnLogout: document.getElementById("btn-logout"),
                     burger: document.querySelector(".navbar-burger"),
                     menu: document.getElementById("main-navbar")
                 };
@@ -175,7 +170,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                             localStorage.setItem("theme", themes[i]);
                         });
                     });
-                    navbar.btnLogout.addEventListener("click", () => window.signOut());
+                    document.querySelectorAll(".btn-logout").forEach(el => el.addEventListener("click", () => window.signOut()));
                     let possibleRuntimeEnvironment = getRuntimeEnvironment();
                     if (possibleRuntimeEnvironment) {
                         let versionSpan = document.querySelector("body > footer.footer span");
@@ -195,7 +190,7 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     fabs.themeContainer.classList.toggle("show")
                 }, true);
                 document.addEventListener("click", () => fabs.themeContainer.classList.remove("show"));
-                document.querySelector("#btn-logout + a.loggedout").addEventListener("click", () => localStorage.removeItem("redirect_after_login"));
+                document.querySelector(".btn-logout + a.only-logged-out").addEventListener("click", () => localStorage.removeItem("redirect_after_login"));
                 if (!("randomUUID" in crypto))
                     crypto.randomUUID = () => ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
                 if ("serviceWorker" in navigator)

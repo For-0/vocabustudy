@@ -8,6 +8,7 @@
         }
     }
     :is(.editor-timeline-piece, .editor-study-piece) {
+        /*! purgecss ignore current */
         position: relative;
         height: 100%;
         display: flex;

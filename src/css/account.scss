@@ -1,0 +1,15 @@
+@import "styles.scss";
+#home {
+    div {
+        margin: auto;
+    }
+    .account-edit-icon {
+        &:hover {
+            color: lightgrey !important;
+        }
+    }
+}
+hr,
+article.message {
+    max-width: 500px;
+}

@@ -134,7 +134,7 @@ html.theme-system.prefers-dark {
         }
     }
     .page > h1:first-child::after,
-    #login::after {
+    .login-background::after {
         filter: brightness(65%) saturate(110%);
     }
     .navbar-dropdown {
