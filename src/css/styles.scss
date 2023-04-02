@@ -228,3 +228,15 @@ body > footer {
         }
     }
 }
+.text-bg-blue {
+    background-color: var(--text-bg-background, var(--info-light)) !important;
+    color: var(--text-bg-color, var(--info-dark)) !important;
+}
+.text-bg-yellow {
+    background-color: var(--text-bg-background, var(--warning-light)) !important;
+    color: var(--text-bg-color, var(--warning-dark)) !important;
+}
+.text-bg-red {
+    background-color: var(--text-bg-background, var(--danger-light)) !important;
+    color: var(--text-bg-color, var(--danger-dark)) !important;
+}

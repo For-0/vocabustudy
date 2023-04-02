@@ -18,6 +18,10 @@
           "destination": "/set-detail.html"
         },
         {
+          "source": "/quizlet/*/view{,/}",
+          "destination": "/set-detail.html"
+        },
+        {
           "source": "/timeline/*/view{,/}",
           "destination": "/set-detail.html"
         },

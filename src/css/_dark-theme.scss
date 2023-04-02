@@ -144,4 +144,16 @@ html.theme-system.prefers-dark {
         background-color: transparent;
         color: var(--danger-dark);
     }
+    .text-bg-blue {
+        --text-bg-background: var(--info-dark);
+        --text-bg-color: var(--info-light);
+    }
+    .text-bg-yellow {
+        --text-bg-background: var(--warning-dark);
+        --text-bg-color: var(--warning-light);
+    }
+    .text-bg-red {
+        --text-bg-background: var(--danger-dark);
+        --text-bg-color: var(--danger-light);
+    }
 }
