@@ -546,12 +546,3 @@ accent-keyboard {
 star-button button {
     background-color: transparent !important;
 }
-.warning-quizlet-not-supported {
-    position: absolute;
-    top: 0;
-    left: -1rem;
-    width: calc(100% + 2rem);
-    height: 100%;
-    z-index: 5;
-    background-color: var(--body-background-color);
-}

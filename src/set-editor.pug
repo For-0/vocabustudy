@@ -5,7 +5,7 @@ block variables
 block main-stylesheet
     link(rel="stylesheet" href="css/set-editor.scss")
 block content
-    #home.page
+    #home.page.is-relative
         h1 Edit Set
         .level
             .level-left
@@ -95,6 +95,7 @@ block content
                         span.icon
                             span.material-symbols-rounded(aria-hidden="true") cancel
                         span Cancel
+        include includes/quizlet-not-supported
 append scripts-footer
     #dialog-import-terms.modal
         .modal-background

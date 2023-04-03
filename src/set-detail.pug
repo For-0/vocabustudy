@@ -226,12 +226,7 @@ block content
         .page-loader
             .loader-container
                 span.loader.is-size-1
-        .warning-quizlet-not-supported(hidden)
-            section.hero.is-medium
-                .hero-body
-                    .title Oh no!
-                    .subtitle You'll need to install the extension to convert Quizlet sets to Vocabustudy sets
-                    .subtitle #[a.is-inline-block(href="#") #[img.ignore-user-hue(style="height: 72px;" src="images/chrome-web-store.png?as=webp&quality=75" height="72")]]
+        include includes/quizlet-not-supported
         include includes/comment-quickview
 append scripts-footer
     #modal-match-done.modal

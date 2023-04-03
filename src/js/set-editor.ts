@@ -5,6 +5,7 @@ import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
 import { getCurrentUser, initializeAuth, refreshCurrentUser, setCurrentUser } from "./firebase-rest-api/auth";
 import { SetTerms, StudyGuideQuiz, StudyGuideQuizQuestion, StudyGuideReading, TermDefinition, User } from "./types";
 import { BatchWriter, Firestore, VocabSet } from "./firebase-rest-api/firestore";
+import { detectAvailability, getQuizletSet } from "./converters/quizlet";
 
 declare global {
     interface Window {
@@ -83,13 +84,13 @@ class QuizQuestion extends HTMLElement {
 }
 customElements.define("quiz-editor-question", QuizQuestion);
 
-const setId = decodeURIComponent(location.pathname).match(/\/set\/([\w- ]+)\/edit\/?/)[1] || (location.pathname = "/");
+const [, isQuizlet, setId] = decodeURIComponent(location.pathname).match(/\/(set|quizlet)\/([\w- ]+)\/edit\/?/) || (location.pathname = "/");
 let setType: 0 | 1 | 2 = 0;
 let creator: string = null;
 const auth = initializeAuth(async user => {
     if (!user) navigateLoginSaveState();
-    else if (setId.match(/^new(-\w+)?$/)) {
-        switch(setId) {
+    else if (setId.match(/^new(-\w+)?$/) || isQuizlet === "quizlet") {
+        switch(isQuizlet === "quizlet" ? "new" : setId) {
             case "new":
                 document.title = "New Set - Vocabustudy";
                 document.querySelector("h1").innerText = "New Set";
@@ -97,6 +98,17 @@ const auth = initializeAuth(async user => {
                 fields.terms.classList.remove("columns");
                 setType = 0;
                 fields.btnAddQuiz.hidden = true;
+                if (isQuizlet === "quizlet") {
+                    if (await detectAvailability()) {
+                        const quizletSet = await getQuizletSet(setId);
+                        if (!quizletSet) return location.replace("/404/");
+                        else {
+                            // Override the uid (which was the ID of the quizlet user) so that the set appears as created by the logged in VUS user
+                            quizletSet.uid = user.uid;
+                            displayExistingSet(user, quizletSet);
+                        }
+                    } else fields.warningQuizletNotSupported.hidden = false;
+                }
                 break;
             case "new-timeline":
                 document.title = "New Timeline - Vocabustudy";
@@ -117,8 +129,10 @@ const auth = initializeAuth(async user => {
             default:
                 await goBack();
         }
-        fields.terms.textContent = "";
-        selectDropdownItem(fields.visibilityOptions[0]);
+        if (isQuizlet !== "quizlet") {
+            fields.terms.textContent = "";
+            selectDropdownItem(fields.visibilityOptions[0]); // sets imported from quizlet are public by default
+        }
         fields.shareDialogInput.removeAll();
         fields.collections.querySelectorAll<HTMLInputElement>("input:checked").forEach(el => el.checked = false);
         creator = user.displayName;
@@ -179,6 +193,7 @@ const fields = {
     shareDialogInput: new BulmaTagsInput("#dialog-configure-shared input[type=text]", {delimiter: " ", minChars: 3, tagClass: "is-link is-light is-family-code", selectable: false}),
     collections: document.querySelector<HTMLUListElement>(".field-collections"),
     warningDuplicateTerms: document.querySelector<HTMLDivElement>(".warning-duplicate"),
+    warningQuizletNotSupported: document.querySelector<HTMLDivElement>(".warning-quizlet-not-supported")
 };
 const ratelimit = {
     remaining: 5,
@@ -263,7 +278,7 @@ function displayExistingSet(user: User, currentSet: VocabSet) {
         document.querySelector("h2").innerText = "Guide Items"
         fields.terms.classList.add("columns");
         fields.btnAddQuiz.hidden = false;
-    } else {
+    } else if (isQuizlet !== "quizlet") {
         setType = 0;
         document.querySelector("h1").innerText = "Edit Set";
         document.querySelector("h2").innerText = "Vocabulary Words";
@@ -274,6 +289,7 @@ function displayExistingSet(user: User, currentSet: VocabSet) {
     for (const term of currentSet.terms) createTermInput(term);
     creator = (currentSet.uid === user.uid) ? user.displayName : currentSet.creator;
 }
+/** Show a dialog asking the user whether they want to restore or delete a previous autosave of the set, from IDB */
 async function showAutosaveToast() {
     const localDb = await getLocalDb();
     const existingAutosave = await localDb.get("autosave-backups", setId)

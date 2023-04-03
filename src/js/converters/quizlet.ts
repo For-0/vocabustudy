@@ -12,7 +12,7 @@ declare global {
     }
 }
 
-const converterExtensionId = ""; // TODO: do this
+const converterExtensionId = "eghgpfmnjfjhpfiipnpgmpfiggiejgop";
 
 function sendMessagePromise(extensionId: string, message: unknown) {
     return new Promise((resolve, reject) =>
