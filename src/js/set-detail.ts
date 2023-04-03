@@ -6,7 +6,7 @@ import { getCurrentUser, initializeAuth, refreshCurrentUser, setCurrentUser } fr
 import { Firestore, QueryBuilder, Social, VocabSet } from "./firebase-rest-api/firestore";
 import { TermDefinition, User } from "./types";
 import "typed-query-selector";
-import { detectAvailability, getQuizletSet } from "./converters/quizlet";
+import { detectAvailability, FirefoxAddonMessager, getQuizletSet } from "./converters/quizlet";
 
 declare global {
     interface Window {
@@ -1191,8 +1191,9 @@ async function initialize(user: User) {
     }
     try {
         if (setType === "quizlet") {
-            if (await detectAvailability()) {
-                currentSet = await getQuizletSet(setId);
+            const firefoxAddonMessager = new FirefoxAddonMessager();
+            if (await detectAvailability(firefoxAddonMessager)) {
+                currentSet = await getQuizletSet(setId, firefoxAddonMessager);
                 pages.setOverview.btnLike.hidden = true;
                 pages.comment.btnShowComments.hidden = true;
             } else {

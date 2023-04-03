@@ -5,7 +5,7 @@ import BulmaTagsInput from "@creativebulma/bulma-tagsinput";
 import { getCurrentUser, initializeAuth, refreshCurrentUser, setCurrentUser } from "./firebase-rest-api/auth";
 import { SetTerms, StudyGuideQuiz, StudyGuideQuizQuestion, StudyGuideReading, TermDefinition, User } from "./types";
 import { BatchWriter, Firestore, VocabSet } from "./firebase-rest-api/firestore";
-import { detectAvailability, getQuizletSet } from "./converters/quizlet";
+import { detectAvailability, FirefoxAddonMessager, getQuizletSet } from "./converters/quizlet";
 
 declare global {
     interface Window {
@@ -99,8 +99,9 @@ const auth = initializeAuth(async user => {
                 setType = 0;
                 fields.btnAddQuiz.hidden = true;
                 if (isQuizlet === "quizlet") {
-                    if (await detectAvailability()) {
-                        const quizletSet = await getQuizletSet(setId);
+                    const firefoxAddonMessager = new FirefoxAddonMessager();
+                    if (await detectAvailability(firefoxAddonMessager)) {
+                        const quizletSet = await getQuizletSet(setId, firefoxAddonMessager);
                         if (!quizletSet) return location.replace("/404/");
                         else {
                             // Override the uid (which was the ID of the quizlet user) so that the set appears as created by the logged in VUS user

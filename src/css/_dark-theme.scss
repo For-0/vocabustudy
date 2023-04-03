@@ -116,7 +116,8 @@ html.theme-system.prefers-dark {
     body > footer,
     .homepage-lead,
     .navbar,
-    #home > .hero:first-child {
+    #home > .hero:first-child,
+    .help-center-hero {
         &::after {
             backdrop-filter: brightness(65%) saturate(110%);
             content: "";
