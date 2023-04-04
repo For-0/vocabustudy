@@ -157,4 +157,14 @@ html.theme-system.prefers-dark {
         --text-bg-background: var(--danger-dark);
         --text-bg-color: var(--danger-light);
     }
+    :is(.editor-timeline-piece, .editor-study-piece) > .panel-block {
+        /*! purgecss ignore current */
+        border-left: 1px solid;
+        border-right: 1px solid;
+        border-color: var(--grey-dark);
+        &:last-of-type {
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+    }
 }

@@ -374,7 +374,7 @@ function createTermInput(term: SetTerms[number]) {
         const deleteButton = createElement("button", ["delete"], {type: "button"});
         deleteButton.addEventListener("click", () => zoomOutRemove(termInput));
         termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column", "is-relative"], {}, [
-            createElement("div", ["panel", "editor-timeline-piece", "has-background-white"], {}, [
+            createElement("div", ["panel", "editor-timeline-piece"], { style: { backgroundColor: "var(--body-background-color)" } }, [
                 createElement("p", ["panel-heading"], {}, [
                     createElement("div", ["columns"], {}, [
                         createElement("div", ["column", "is-two-thirds"], {}, [inputName.textField]),
@@ -458,7 +458,7 @@ function createTermInput(term: SetTerms[number]) {
         } else return;
         bodyInput.style.width = "100%";
         termInput = createElement("div", ["is-one-quarter-desktop", "is-half-tablet", "column", "is-relative"], {}, [
-            createElement("div", ["panel", "editor-study-piece", "has-background-white"], {}, [
+            createElement("div", ["panel", "editor-study-piece"], { style: { backgroundColor: "var(--body-background-color)" } }, [
                 createElement("p", ["panel-heading"], {}, [inputName.textField]),
                 createElement("div", ["panel-block", "details-container", "is-flex-grow-1"], {}, [bodyInput]),
                 createElement("div", ["panel-block", "is-flex", "is-justify-content-space-between"], {}, actionButtons),
