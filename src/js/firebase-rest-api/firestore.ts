@@ -27,6 +27,7 @@ export const Firestore = {
         else if (field.mapValue) return Firestore.parseMap(field.mapValue);
         else if (field.arrayValue?.values) return field.arrayValue.values.map(Firestore.parseField);
         else if (field.arrayValue) return [];
+        else if (field.nullValue) return null;
         else return null;
     },
     createField: (value: FirestoreField): RawFirestoreField => {
@@ -37,6 +38,7 @@ export const Firestore = {
         if (value instanceof FSDocument) return { referenceValue: value.pathParts.join("/") };
         if (value instanceof Array) return { arrayValue: { values: value.map(Firestore.createField) } };
         if (value instanceof Object) return { mapValue: { fields: Firestore.specifyFields(value) } };
+        if (value === null) return { nullValue: null };
         return null;
     },
     specifyFields: (obj: FirestoreFieldObject): RawFirestoreFieldObject => Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, Firestore.createField(value)])),
