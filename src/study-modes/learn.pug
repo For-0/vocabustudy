@@ -24,8 +24,7 @@
                 p.has-text-centered
                     button.button.is-primary.is-outlined(type='button')
                         span Most Missed Questions
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") open_in_new
+                        +material-symbol("open_in_new", false, true, 20)
                 .notification.m-0.has-text-centered.is-relative.is-clickable.is-success Correct #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop Tap here to move on.]
                 .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-mobile Press #[kbd Enter] or click here to move on.]#[span.is-hidden-tablet.has-text-right(style="margin-right: 150px;") Tap here to move on.]
                     button.button.is-danger(type='button') Override - Correct
@@ -39,21 +38,17 @@
             fieldset.m-0.columns.is-multiline.is-mobile
                 .column.is-half.p-1.pt-0.pl-0
                     button.button.is-large(data-answerindex='0')
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_1
+                        +material-symbol("filter_1", false, true)
                         span #[span.fit Option 1]
                 .column.is-half.p-1.pr-0.pt-0
                     button.button.is-large(data-answerindex='1')
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_2
+                        +material-symbol("filter_2", false, true)
                         span #[span.fit Option 2]
                 .column.is-half.p-1.pl-0.pb-0
                     button.button.is-large(data-answerindex='3')
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_3
+                        +material-symbol("filter_3", false, true)
                         span #[span.fit Option 3]
                 .column.is-half.p-1.pr-0.pb-0
                     button.button.is-large(data-answerindex='4')
-                        span.icon
-                            i.material-symbols-rounded(aria-hidden="true") filter_4
+                        +material-symbol("filter_4", false, true, 20)
                         span #[span.fit Option 4]

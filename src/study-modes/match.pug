@@ -14,12 +14,10 @@
                 label(for="check-match-starred") Only Starred
             p Time: #[span.field-time 0.0]s
             button.button.mb-3
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") loop
+                +material-symbol("loop", false, true, 20)
                 span Restart
             button.button.mb-3
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") help
+                +material-symbol("help", false, true, 20)
         .columns.column.is-mobile
             .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
             .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start

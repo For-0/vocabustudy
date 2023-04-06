@@ -6,7 +6,6 @@
     "disallowClassLiteralsBeforeIdLiterals": true,
     "disallowHtmlText": true,
     "disallowLegacyMixinCall": true,
-    "requireClassLiteralsBeforeAttributes": true,
     "requireIdLiteralsBeforeAttributes": true,
     "requireLineFeedAtFileEnd": true,
     "requireLowerCaseAttributes": true,

@@ -3,8 +3,7 @@
     .columns.is-flex-touch
         .is-flex.column.is-narrow(style="min-height: 0; overflow-y: auto; width: unset; flex: none;")
             button.button.is-hidden-tablet.is-primary-alt
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") settings
+                +material-symbol("settings", false, true, 20)
             .is-flex-mobile.is-flex-direction-row.is-flex-wrap-wrap.is-align-items-center.is-justify-content-space-between.is-hidden-mobile
                 p.mb-2 #[strong Answer With:]
                 .field
@@ -34,12 +33,10 @@
                     .control
                         input.input.field-max-terms(type="number" min="0" placeholder="20")
             button.button.mb-2
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") loop
+                +material-symbol("loop", false, true, 20)
                 span New Test
             button.button.is-primary
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") check_circle
+                +material-symbol("check_circle", false, true, 20)
                 span Check Answers
         fieldset.custom-scrollbar.is-thumb-only.column
             h2.title.is-4(data-count='0')  Short Answer Question

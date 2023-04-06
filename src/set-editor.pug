@@ -18,7 +18,7 @@ block content
                 .level-item
                     span.tags.has-addons
                         span.tag.is-info
-                            span.material-symbols-rounded(style="font-size: 1rem;") info
+                            +material-symbol("info", false, false, 16)
                         span.tag.is-info.is-light Please keep sets relevant!
         form(novalidate)
             .level.is-mobile
@@ -34,8 +34,7 @@ block content
                             .dropdown-trigger
                                 button.button(type="button")
                                     span Private
-                                    span.icon
-                                        i.material-symbols-rounded(aria-hidden="true") expand_more
+                                    +material-symbol("expand_more", false, true, 20);
                             .dropdown-menu
                                 .dropdown-content
                                     .dropdown-item Set Visibility
@@ -56,20 +55,17 @@ block content
                     .level-item
                         .buttons
                             button.button.is-primary.btn-add-term.ml-4(type="button")
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") add_circle
+                                +material-symbol("add_circle", false, true, 20);
                                 span Add
                             button.button.is-light.is-primary.btn-add-quiz.ml-4(type="button" hidden)
-                                span.icon
-                                    i.material-symbols-rounded(aria-hidden="true") add_circle
+                                +material-symbol("add_circle", false, true, 20);
                                 span Add Quiz
                             button.button.is-outlined.is-primary.ml-4.btn-import-terms(type="button")
-                                span.icon
-                                    i.material-symbols-rounded.is-filled(aria-hidden="true") upload_file
+                                +material-symbol("upload_file", true, true, 20);
                                 span Import Items
             .notification.is-warning.is-light.warning-duplicate(hidden)
                 span.icon.mr-3
-                    i.material-symbols-rounded.is-filled(style="font-size: 1rem; vertical-align: middle;") warning
+                    +material-symbol("warning", true, false, 16)(style="vertical-align: middle;");
                 span It looks like this set has duplicate terms/definitions. This makes it hard for studiers.
             .field-terms-edit.is-multiline(data-empty="There are no items. Add some!")
             .box.level 
@@ -80,20 +76,18 @@ block content
                     .level-item
                         .tags.has-addons
                             span.tag.is-warning
-                                span.material-symbols-rounded.has-text-white(style="font-size: 1rem;") warning
+                                +material-symbol("warning", false, false, 16);
                             span.tag.is-warning.is-light Please don't spam collections.
             aside.menu
                 ul.menu-list.field-collections
             .field.is-grouped
                 .control
                     button.button.is-primary(type="submit")
-                        span.icon
-                            span.material-symbols-rounded(aria-hidden="true") save
+                        +material-symbol("save", false, true, 20);
                         span Save
                 .control
                     button.button.is-primary.is-outlined.btn-cancel(type="button")
-                        span.icon
-                            span.material-symbols-rounded(aria-hidden="true") cancel
+                        +material-symbol("cancel", false, true, 20);
                         span Cancel
         include includes/quizlet-not-supported
 append scripts-footer

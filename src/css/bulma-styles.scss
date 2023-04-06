@@ -23,20 +23,6 @@
         color: $grey-light;
     }
 }
-.material-symbols-rounded {
-    font-variation-settings:
-        "FILL" var(--font-variation-fill, 0),
-        "wght" var(--font-variation-weight, 400),
-        "GRAD" var(--font-variation-grade, 0),
-        "opsz" var(--font-variation-optical-size, 48);
-}
-.is-filled {
-    --font-variation-fill: 1;
-}
-:is(.button:not(.is-floating, .is-ghost, .is-inverted), .tabs) .material-symbols-rounded {
-    /*! purgecss ignore current */
-    font-size: inherit;
-}
 .button {
     transition: 0.1s all;
 }

@@ -17,8 +17,8 @@ block content
         h1
             span.field-name
             button.button.btn-like.ml-4.has-text-white.is-pulled-right.is-ghost(type="button" style="text-decoration: none;")
-                span.icon
-                    i.material-symbols-rounded(aria-hidden="true") thumb_up
+                +material-symbol("favorite", false, true)
+                +material-symbol("favorite", true, true)
                 span.ml-1 Like
             p.subtitle.is-6.is-pulled-right.has-text-white(style="margin-top: 10px;")
                 span.field-num-terms
@@ -29,24 +29,19 @@ block content
             .column.is-narrow
                 .study-modes.box.buttons.are-medium.custom-scrollbar.is-thumb-only(style="width: min-content; height: 100%; overflow: auto;")
                     a.button.is-primary.is-fullwidth(href="#flashcards")
-                        span.icon
-                            i.material-symbols-rounded.is-filled(aria-hidden="true") collections
+                        +material-symbol("collections", true, true)
                         span Flashcards
                     a.button.is-primary.is-outlined.is-fullwidth(href="#learn")
-                        span.icon
-                            i.material-symbols-rounded.is-filled(aria-hidden="true") quiz
+                        +material-symbol("quiz", true, true)
                         span Learn
                     a.button.is-primary.is-outlined.is-fullwidth(href="#test")
-                        span.icon
-                            i.material-symbols-rounded.is-filled(aria-hidden="true") assignment
+                        +material-symbol("assignments", true, true)
                         span Test
                     a.button.is-primary.is-outlined.is-fullwidth(href="#match")
-                        span.icon
-                            i.material-symbols-rounded.is-filled(aria-hidden="true") attach_file
+                        +material-symbol("attach_file", true, true)
                         span Match
                     button.button.is-normal.btn-export-terms.is-fullwidth
-                        span.icon
-                            i.material-symbols-rounded.is-filled(aria-hidden="true") file_download
+                        +material-symbol("file_download", true, true, 20)
                         span Export
             .column.custom-scrollbar.is-thumb-only(style="overflow: auto;")
                 .field-terms.columns.is-multiline
@@ -110,14 +105,11 @@ append scripts-footer
                         .list-item-controls
                             .buttons
                                 button.button.btn-copy-link(type="button" title="Copy")
-                                    span.icon
-                                        i.material-symbols-rounded(aria-hidden="true") content_paste
+                                    +material-symbol("content_paste", false, true, 20)
                                 button.button.btn-shorten-link(type="button" title="Shorten")
-                                    span.icon
-                                        i.material-symbols-rounded(aria-hidden="true") app_shortcut
+                                    +material-symbol("app_shortcut", false, true, 20)
                                 button.button.btn-share(type="button" title="Share")
-                                    span.icon
-                                        i.material-symbols-rounded(aria-hidden="true") share
+                                    +material-symbol("share", false, true, 20)
                     .list-item
                         .list-item-content
                             .list-item-title Export
@@ -127,8 +119,7 @@ append scripts-footer
                         .list-item-controls
                             .buttons
                                 button.button.btn-copy(type="button" title="Copy Terms")
-                                    span.icon
-                                        i.material-symbols-rounded(aria-hidden="true") content_paste
+                                    +material-symbol("content_paste", false, true, 20)
                     .list-item
                         .list-item-content
                             .list-item-title QR Code
@@ -137,8 +128,7 @@ append scripts-footer
                         .list-item-controls
                             .buttons
                                 button.button.btn-copy-qrcode(type="button" title="Copy Terms")
-                                    span.icon
-                                        i.material-symbols-rounded(aria-hidden="true") content_paste
+                                    +material-symbol("content_paste", false, true, 20)
             footer.modal-card-foot
                 button.button.is-success.action-close(type="button") OK
     script(src="js/set-detail.ts" type="module")
