@@ -34,9 +34,7 @@
         }
     }
     .container {
-        top: 50%;
-        position: relative;
-        transform: translateY(-50%);
+        height: 100%;
         z-index: 2;
     }
     > img {
@@ -125,4 +123,17 @@
             transform: translateX(-50%);
         }
     }
+}
+main,
+#home,
+.columns.is-multiline {
+    min-height: 0;
+}
+.columns.is-multiline {
+    max-height: 100%;
+    margin: 0;
+    overflow: auto;
+    top: 50%;
+    position: relative;
+    transform: translateY(-50%);
 }

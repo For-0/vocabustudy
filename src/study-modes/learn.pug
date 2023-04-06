@@ -1,0 +1,59 @@
+#learn.page
+    h1 Learn - #[span] #[+close_button]
+    .columns.is-flex-touch
+        .is-flex.column.is-narrow
+            p.mb-2 #[strong Answer With:]
+            .field
+                input#radio-learn-answer-term.is-checkradio(type="radio" name="radio-learn-answer-with" checked)
+                label(for="radio-learn-answer-term") Term
+            .field.mb-4
+                input#radio-learn-answer-definition.is-checkradio(type="radio" name="radio-learn-answer-with")
+                label(for="radio-learn-answer-definition") Definition
+            .field.mb-4
+                input#check-learn-starred.is-checkradio.is-gold(type="checkbox")
+                label(for="check-learn-starred") Only Starred
+            p.field-current-type #[strong Multiple Choice] #[strong Short Answer] #[em.mb-3.is-hidden-mobile.is-block #[span.field-num-terms] terms]
+            p.is-hidden-mobile #[strong Progress:]
+            .progress-circle.is-primary(data-progress="0%" style="--progress: 0;")
+                svg(viewbox="0 0 48 48")
+                    circle
+                    circle
+        .is-flex-grow-1.is-flex.is-flex-direction-column.mb-0(style="overflow-wrap: break-word; min-width: 0;")
+            .is-flex-grow-1(style="font-size: 3rem;") #[p.has-text-centered]
+            .custom-scrollbar.is-thumb-only(style="overflow-y: auto;")
+                p.has-text-centered
+                    button.button.is-primary.is-outlined(type='button')
+                        span Most Missed Questions
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") open_in_new
+                .notification.m-0.has-text-centered.is-relative.is-clickable.is-success Correct #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop Tap here to move on.]
+                .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-mobile Press #[kbd Enter] or click here to move on.]#[span.is-hidden-tablet.has-text-right(style="margin-right: 150px;") Tap here to move on.]
+                    button.button.is-danger(type='button') Override - Correct
+            .p-1
+                accent-keyboard.custom-scrollbar
+                .field.has-addons
+                    p.control.is-expanded
+                        input.input(type="text" placeholder="Your Answer" required)
+                    p.control
+                        button.button.is-primary(type='button') Check                    
+            fieldset.m-0.columns.is-multiline.is-mobile
+                .column.is-half.p-1.pt-0.pl-0
+                    button.button.is-large(data-answerindex='0')
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_1
+                        span #[span.fit Option 1]
+                .column.is-half.p-1.pr-0.pt-0
+                    button.button.is-large(data-answerindex='1')
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_2
+                        span #[span.fit Option 2]
+                .column.is-half.p-1.pl-0.pb-0
+                    button.button.is-large(data-answerindex='3')
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_3
+                        span #[span.fit Option 3]
+                .column.is-half.p-1.pr-0.pb-0
+                    button.button.is-large(data-answerindex='4')
+                        span.icon
+                            i.material-symbols-rounded(aria-hidden="true") filter_4
+                        span #[span.fit Option 4]

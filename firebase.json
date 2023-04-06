@@ -18,6 +18,10 @@
           "destination": "/set-detail.html"
         },
         {
+          "source": "/quizlet/*/view{,/}",
+          "destination": "/set-detail.html"
+        },
+        {
           "source": "/timeline/*/view{,/}",
           "destination": "/set-detail.html"
         },
@@ -27,6 +31,10 @@
         },
         {
           "source": "/set/*/edit{,/}",
+          "destination": "/set-editor.html"
+        },
+        {
+          "source": "/quizlet/*/edit{,/}",
           "destination": "/set-editor.html"
         },
         {
@@ -55,6 +63,10 @@
             "destination": "/set-detail.html"
           },
           {
+            "source": "/quizlet/*/view{,/}",
+            "destination": "/set-detail.html"
+          },
+          {
             "source": "/timeline/*/view{,/}",
             "destination": "/set-detail.html"
           },
@@ -64,6 +76,10 @@
           },
           {
             "source": "/set/*/edit{,/}",
+            "destination": "/set-editor.html"
+          },
+          {
+            "source": "/quizlet/*/edit{,/}",
             "destination": "/set-editor.html"
           },
           {

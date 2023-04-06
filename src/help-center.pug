@@ -2,7 +2,7 @@ extends includes/layout.pug
 
 mixin article_content(categoryIndex, articleIndex)
     .page(id=articleCategories[categoryIndex].articles[articleIndex].hash)
-        section.py-1.hero.is-primary.is-small
+        section.py-1.hero.is-primary.is-small.help-center-hero
             .hero-body.has-text-centered.p-0.pb-3
                 h1.title.is-2= articleCategories[categoryIndex].articles[articleIndex].title
         .container.mt-3
@@ -18,6 +18,11 @@ block variables
                     {
                         title: "Creating a Set",
                         hash: "creating-a-set",
+                        featured: true
+                    },
+                    {
+                        title: "Importing a Quizlet Set",
+                        hash: "editor-from-quizlet",
                         featured: true
                     }
                 ]
@@ -107,6 +112,24 @@ block content
             .message-body Vocabustudy Admins have the right to view your private sets, as well as make edits to (or even delete) your existing sets.
         p.has-text-weight-bold Have fun making useful sets!
         // TODO Add timelines and study guides
+    +article_content(0, 1)
+        p Importing a Quizlet set into the Vocabustudy Set Editor is an easy task. There are two main ways to accomplish this:
+        h2.title.is-size-4.mb-1.mt-3 The Extension
+        a.is-inline-block.mr-2(href="https://chrome.google.com/webstore/detail/eghgpfmnjfjhpfiipnpgmpfiggiejgop/") #[img.ignore-user-hue(style="height: 72px;" src="images/chrome-web-store.png?as=webp&quality=75" height="72")]
+        a.is-inline-block(href="https://addons.mozilla.org") #[img.ignore-user-hue(style="height: 72px;" src="images/firefox-get-the-addon.svg" height="72")]
+        p.mb-4 The Quizlet Converter extension is available for both Chrome and Firefox.
+        p First, obtain the Quizlet set ID. Quizlet set URLs look something like this: #[kbd https://quizlet.com/SET-ID/SET-SLUG/]
+        p.mb-4 With the extension installed, navigate to #[kbd https://vocabustudy.org/quizlet/QUIZLET-SET-ID/edit/]
+        p This should bring up the set editor with the Quizlet set prefilled!
+        hr
+        h2.title.is-size-4.mb-2.mt-3 The Bookmarklet
+        p.mb-4 A bookmarklet is a piece of JavaScript in a bookmark that runs when you click it.
+        - var bookmarkletUrl = 'javascript: (function () {if (location.pathname.match(/^\\/\\d+\\/[\\w-]+\\/?$/)) navigator.clipboard.writeText(Object.values(JSON.parse(JSON.parse(document.getElementById("__NEXT_DATA__").innerText).props.pageProps.dehydratedReduxStateKey).setPage.termIdToTermsMap).map(el => {let a = {term: el.word, definition: el.definition}; if (el._imageUrl) a.term += ` ![image](${el._imageUrl})`;return a}).map(e => `${e.term}  ${e.definition}`).join("\\n")).then(() => alert("Copied terms to clipboard! Paste this into \\"Import Terms\\" in Vocabustudy.")).catch(err => alert(`An error occurred: ${err.toString}`)); else alert("You must do this on a Quizlet set page");}())';
+        p You'll need to bookmark #[a.is-underlined(href=bookmarkletUrl) this URL]:
+        pre.mb-2(style="white-space: pre-wrap;") #{bookmarkletUrl}
+        p.mb-4 You can either drag it to your browser's bookmarks bar or right click it and select the option which will bookmark it.
+        p.mb-4 To use it, click it when on a Quizlet set page. It will copy a Vocabustudy compatible serialization of the set to your clipboard.
+        p You can paste this in the Import Terms dialog
     +article_content(1, 0)
         .content
             h2 Creating an account gives you the ability to:

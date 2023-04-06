@@ -3,7 +3,7 @@ import { getUpToDateIdToken, initializeAuth } from "./firebase-rest-api/auth";
 import { Firestore } from "./firebase-rest-api/firestore";
 import { navigateLoginSaveState } from "./utils";
 
-const auth = initializeAuth();
+let initialized = false;
 
 const forms = {
     feedback: {
@@ -47,14 +47,21 @@ const forms = {
     }
 };
 
-initializeAuth(async user => {
-    if (user) {
+const auth = initializeAuth(async user => {
+    if (user && !initialized) {
+        initialized = true;
         Object.values(forms).forEach(form => {
             form.form.addEventListener("submit", async e => {
                 e.preventDefault();
                 form.btn.classList.add("is-loading");
                 form.btn.disabled = true;
-                const data = form.function();
+                const data = {
+                    ...form.function(),
+                    name: form.name.value,
+                    email: form.email.value,
+                    text: form.text.value,
+                    response: null // null so we can query for it
+                };
                 const idToken = await getUpToDateIdToken(auth);
                 await Firestore.createDocument(`form_data/types/${form.collection}`, { uid: user.uid, ...data }, idToken);
                 form.btn.classList.remove("is-loading");
@@ -67,36 +74,17 @@ initializeAuth(async user => {
 });
 
 function sendFeedback() {
-    return {
-        name: forms.feedback.name.value,
-        email: forms.feedback.email.value,
-        rating: forms.feedback.rating.value,
-        text: forms.feedback.text.value
-    };
+    return { rating: forms.feedback.rating.value };
 }
 
 function sendBug() {
-   return {
-        name: forms.bug.name.value,
-        email: forms.bug.email.value,
-        url: forms.bug.url.value,
-        text: forms.bug.text.value
-    };
+   return { url: forms.bug.url.value };
 }
 
 function sendTakedown() {
-    return {
-        name: forms.takedown.name.value,
-        email: forms.takedown.email.value,
-        url: forms.takedown.url.value,
-        text: forms.takedown.text.value
-    };
+    return { url: forms.takedown.url.value };
 }
 
 function sendOther() {
-    return {
-        name: forms.other.name.value,
-        email: forms.other.email.value,
-        text: forms.other.text.value
-    };
+    return { }; // other has no extra fields
 }

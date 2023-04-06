@@ -6,6 +6,7 @@ import { getCurrentUser, initializeAuth, refreshCurrentUser, setCurrentUser } fr
 import { Firestore, QueryBuilder, Social, VocabSet } from "./firebase-rest-api/firestore";
 import { TermDefinition, User } from "./types";
 import "typed-query-selector";
+import { detectAvailability, FirefoxAddonMessager, getQuizletSet } from "./converters/quizlet";
 
 declare global {
     interface Window {
@@ -117,16 +118,18 @@ class StarButton extends HTMLElement {
 customElements.define("accent-keyboard", AccentKeyboard);
 customElements.define("star-button", StarButton);
 
+const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|timeline|quizlet)\/([\w ]+)\/view\/?/) || (location.pathname = "/");
+const accentsRE = /[^a-zA-Z0-9\s_()[\]!'"./\\,-]/ig;
+
 const auth = initializeAuth(async user => {
     if (!initialized) initialize(user);
-    if (user) {
-        const socialDoc = Social.fromSingle(await Firestore.getDocument(`${VocabSet.collectionKey}/${setId}/${Social.collectionKey}`, user.uid));
-        showLikeStatus(socialDoc?.like);
-    } else showLikeStatus(false);
+    if (setType !== "quizlet") {
+        if (user) {
+            const socialDoc = Social.fromSingle(await Firestore.getDocument(`${VocabSet.collectionKey}/${setId}/${Social.collectionKey}`, user.uid));
+            showLikeStatus(socialDoc?.like);
+        } else showLikeStatus(false);
+    }
 });
-
-const [, setType, setId] = decodeURIComponent(location.pathname).match(/\/(set|timeline)\/([\w ]+)\/view\/?/) || (location.pathname = "/");
-const accentsRE = /[^a-zA-Z0-9\s_()[\]!'"./\\,-]/ig;
 
 let currentMatchLeaderboard: { name: string; time: number; uid?: string; }[] | null = null;
 let currentSet: (VocabSet<TermDefinition[]> & { specials?: string[] }) | null = null;
@@ -196,7 +199,8 @@ const pages = {
         btnCopyQrcode: document.querySelector("#modal-export-terms .btn-copy-qrcode"),
         btnShare: document.querySelector("#modal-export-terms .btn-share"),
         shareLink: document.querySelector("#modal-export-terms a.share-link"),
-        btnShorten: document.querySelector("#modal-export-terms button.btn-shorten-link")
+        btnShorten: document.querySelector("#modal-export-terms button.btn-shorten-link"),
+        quizletNotSupported: document.querySelector<HTMLDivElement>("#home .warning-quizlet-not-supported")
     },
     comment: {
         quickview: document.querySelector<HTMLDivElement>("#home .quickview"),
@@ -226,7 +230,7 @@ const pages = {
             const nextFlashcard = this.terms.children[this.index + 1] as HTMLDivElement;
             currentFlashcard.style.position = "absolute";
             nextFlashcard.style.display = "block";
-            if (this.index < this.numTerms) nextFlashcard.querySelectorAll("p").forEach(el => fitty(el, { maxSize: 100, observeMutations: undefined }));
+            if (this.index < this.numTerms) this.fitFlashcardText(nextFlashcard);
             await Promise.all([
                 optionalAnimate(currentFlashcard, [
                     {},
@@ -261,6 +265,14 @@ const pages = {
             prevFlashcard.style.removeProperty("display");
             this.index--;
         },
+        fitFlashcardText(flashcard: HTMLDivElement) {
+            if (!flashcard.dataset.fittied) {
+                flashcard
+                    .querySelectorAll("p")
+                    .forEach(el => fitty(el, { maxSize: 100, observeMutations: undefined }));
+                flashcard.dataset.fittied = "true";
+            }
+        },
         getTermText(tIndex: number, side: number) {
             return this.terms.children[tIndex].querySelector(`:scope > div > div:nth-child(${side}) > p`);
         },
@@ -276,6 +288,8 @@ const pages = {
         navigateBtns: document.querySelectorAll("#flashcards > div:nth-child(2) > div:last-child > div:last-child > button"),
         radioBtns: document.querySelectorAll<HTMLInputElement>("#flashcards [name='radio-flashcards-answer-with']"),
         checkOnlyStarred: <HTMLInputElement>document.getElementById("check-flashcard-starred"),
+        jumpToInput: document.querySelector(".field-jump-to input"),
+        jumpToBtn: document.querySelector(".field-jump-to button"),
         onKeyUp(e: KeyboardEvent) {
             if (e.key === "ArrowRight") this.navigateBtns[2].click();
             else if (e.key === "ArrowLeft") this.navigateBtns[0].click();
@@ -323,21 +337,34 @@ const pages = {
             for (const term of terms) this.createFlashcard(term, onlyStarred || starredList.includes(term.i));
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
-            this.terms.children[0].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100, observeMutations: undefined}));
+            this.fitFlashcardText(this.terms.children[0] as HTMLDivElement);
+            // only let users jump up to the last flashcard
+            this.jumpToInput.max = terms.length.toString();
         },
+        /** Reset the flip state of the flashcard to the user's default */
+        resetFlipState() {
+            this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
+        },
+        /** Register all event listeners */
         init() {
             this.checkOnlyStarred.addEventListener("change", () => this.show());
             this.btnShuffle.addEventListener("click", () => this.show(true));
             this.navigateBtns[0].addEventListener("click", async () => {
-                this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
+                this.resetFlipState();
                 await this.prevCard();
             });
             this.navigateBtns[2].addEventListener("click", async () => {
-                this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
+                this.resetFlipState();
                 await this.nextCard();
             });
             this.navigateBtns[1].addEventListener("click", () => this.terms.classList.toggle("flipped"));
             this.terms.addEventListener("click", () => this.navigateBtns[1].click());
+            this.jumpToBtn.addEventListener("click", () => {
+                if (this.jumpToInput.reportValidity()) {
+                    this.index = this.jumpToInput.valueAsNumber - 1;
+                    setTimeout(() => this.fitFlashcardText(this.terms.children[this.index] as HTMLDivElement), 10);
+                }
+            });
         }
     },
     learn: {
@@ -986,7 +1013,7 @@ const pages = {
             }
             this.clearTimer();
             const totalTime = (Date.now() - this.startTime) / 1000;
-            await this.showLeaderboard(totalTime);
+            if (setType !== "quizlet") await this.showLeaderboard(totalTime);
             this.completedDialog.root.querySelector(".field-time-taken").innerText = totalTime.toFixed(2);
             this.completedDialog.open();
         },
@@ -1186,7 +1213,18 @@ async function initialize(user: User) {
         document.querySelectorAll(".study-modes > :not([href='#flashcards'])").forEach(el => el.hidden = true);
     }
     try {
-        currentSet = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, setId, undefined, user?.token.access)) as VocabSet<TermDefinition[]>;
+        if (setType === "quizlet") {
+            const firefoxAddonMessager = new FirefoxAddonMessager();
+            if (await detectAvailability(firefoxAddonMessager)) {
+                currentSet = await getQuizletSet(setId, firefoxAddonMessager);
+                pages.setOverview.btnLike.hidden = true;
+                pages.comment.btnShowComments.hidden = true;
+            } else {
+                pages.setOverview.quizletNotSupported.hidden = false;
+                document.querySelector(".page-loader").hidden = true;
+                return;
+            }
+        } else currentSet = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, setId, undefined, user?.token.access)) as VocabSet<TermDefinition[]>;
         if (!currentSet) return location.replace("/404/");
         currentSet.terms.forEach(term => {
             term.term = term.term.replace(/[\u2018\u2019]/g, "'");
@@ -1227,7 +1265,7 @@ async function initialize(user: User) {
         const starredList = window.StarredTerms.getCurrentSet();
         for (const [i, term] of currentSet.terms.entries()) createTermCard(term, i, starredList.includes(i));
         navigate();
-        initQuickview(pages.comment.quickview, pages.comment.btnShowComments);
+        if (setType !== "quizlet") initQuickview(pages.comment.quickview, pages.comment.btnShowComments);
 
         // Events
         document.addEventListener("keyup", e => {
@@ -1248,26 +1286,28 @@ async function initialize(user: User) {
             resizeTimeout = window.setTimeout(() => {
                 if (location.hash === "#test") pages.test.onResize();
             }, 100);
-        })
-        pages.setOverview.btnLike.addEventListener("click", async () => {
-            // If the user is logged in, toggle the like status. Otherwise, navigate to the login page.
-            const currentUser = await refreshCurrentUser(auth);
-            if (currentUser) {
-                const currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
-                await Firestore.updateDocument(`${VocabSet.collectionKey}/${setId}/${Social.collectionKey}`, currentUser.uid, { like: !currentLikeStatus, name: currentUser.displayName, uid: currentUser.uid }, user?.token.access, true);
-                showLikeStatus(!currentLikeStatus);
-            } else navigateLoginSaveState();
         });
-        addShowCommentsClickListener(pages.comment, setId, user?.uid);
-        pages.comment.inputComment.addEventListener("input", () => pages.comment.btnSaveComment.disabled = false);
-        pages.comment.btnSaveComment.addEventListener("click", async () => {
-            const currentUser = await refreshCurrentUser(auth);
-            if (currentUser && pages.comment.inputComment.reportValidity()) {
-                await Firestore.updateDocument(`${VocabSet.collectionKey}/${setId}/${Social.collectionKey}`, currentUser.uid, { comment: pages.comment.inputComment.value, name: currentUser.displayName, uid: currentUser.uid }, user.token.access, true);
-                toast({message: "Comment saved!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000})
-                pages.comment.btnSaveComment.disabled = true;
-            }
-        });
+        if (setType !== "quizlet") {
+            pages.setOverview.btnLike.addEventListener("click", async () => {
+                // If the user is logged in, toggle the like status. Otherwise, navigate to the login page.
+                const currentUser = await refreshCurrentUser(auth);
+                if (currentUser) {
+                    const currentLikeStatus = pages.setOverview.btnLike.querySelector("i").classList.contains("is-filled");
+                    await Firestore.updateDocument(`${VocabSet.collectionKey}/${setId}/${Social.collectionKey}`, currentUser.uid, { like: !currentLikeStatus, name: currentUser.displayName, uid: currentUser.uid }, user?.token.access, true);
+                    showLikeStatus(!currentLikeStatus);
+                } else navigateLoginSaveState();
+            });
+            addShowCommentsClickListener(pages.comment, setId, user?.uid);
+            pages.comment.inputComment.addEventListener("input", () => pages.comment.btnSaveComment.disabled = false);
+            pages.comment.btnSaveComment.addEventListener("click", async () => {
+                const currentUser = await refreshCurrentUser(auth);
+                if (currentUser && pages.comment.inputComment.reportValidity()) {
+                    await Firestore.updateDocument(`${VocabSet.collectionKey}/${setId}/${Social.collectionKey}`, currentUser.uid, { comment: pages.comment.inputComment.value, name: currentUser.displayName, uid: currentUser.uid }, user.token.access, true);
+                    toast({message: "Comment saved!", type: "is-success", dismissible: true, position: "bottom-center", duration: 5000})
+                    pages.comment.btnSaveComment.disabled = true;
+                }
+            });
+        }
         pages.setOverview.btnExportTerms.addEventListener("click", () => pages.setOverview.modalExportTerms.open());
         pages.setOverview.btnCopyTerms.addEventListener("click", async () => {
             await navigator.clipboard.writeText(pages.setOverview.modalExportTerms.root.querySelector("pre").innerText);

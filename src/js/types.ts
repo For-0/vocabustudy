@@ -34,11 +34,12 @@ export type RawFirestoreField = AtLeastOne<{
     referenceValue: string;
     mapValue: { fields: RawFirestoreFieldObject; };
     arrayValue: { values: RawFirestoreField[]; };
+    nullValue: null;
 }>;
 
 export type RawFirestoreFieldObject = { [key: string]: RawFirestoreField };
 
-export type FirestoreField = number | boolean | string | FSDocument | FirestoreField[] | FirestoreFieldObject;
+export type FirestoreField = null | number | boolean | string | FSDocument | FirestoreField[] | FirestoreFieldObject;
 
 export type FirestoreFieldObject = { [key: string]: FirestoreField };
 

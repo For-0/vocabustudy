@@ -32,8 +32,8 @@ service cloud.firestore {
         isCreator();
     }
     function validateFormResponse(additionalKeys) {
-      let requiredFields = ["name", "email", "text", "uid"];
-      return limitResourceKeys(requiredFields.concat(additionalKeys), []);
+      let requiredFields = ["name", "email", "text", "uid", "response"];
+      return limitResourceKeys(requiredFields.concat(additionalKeys), []) && request.resource.data.response == null;
     }
     function validateSet() {
       return isNotImpersonating(false) && request.resource.data.terms.size() >= 1 && nameWordsMatchesName() && request.resource.data.numTerms == request.resource.data.terms.size();

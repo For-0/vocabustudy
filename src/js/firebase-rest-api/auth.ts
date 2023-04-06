@@ -179,7 +179,7 @@ export function initializeAuth(authStateChangedCallback?: (user: User) => void) 
     });
     if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") auth.emulatorUrl = "http://localhost:9099";
     else if (process.env.CODESPACES) auth.emulatorUrl = `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`;
-    else if (process.env.GITPOD_WORKSPACE_URL) auth.emulatorUrl = `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
+    // else if (process.env.GITPOD_WORKSPACE_URL) auth.emulatorUrl = `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
     else auth.emulatorUrl = null;
     window.signOut = () => setCurrentUser(auth, null);
     refreshCurrentUser(auth, true);

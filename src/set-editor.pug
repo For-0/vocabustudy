@@ -5,7 +5,7 @@ block variables
 block main-stylesheet
     link(rel="stylesheet" href="css/set-editor.scss")
 block content
-    #home.page
+    #home.page.is-relative
         h1 Edit Set
         .level
             .level-left
@@ -16,7 +16,7 @@ block content
                         span.tag.is-primary.is-light Markdown is supported!
             .level-right
                 .level-item
-                    span.tags.has-addons(href="https://www.markdownguide.org/cheat-sheet/" target="_blank" rel="noopener noreferrer")
+                    span.tags.has-addons
                         span.tag.is-info
                             span.material-symbols-rounded(style="font-size: 1rem;") info
                         span.tag.is-info.is-light Please keep sets relevant!
@@ -95,6 +95,7 @@ block content
                         span.icon
                             span.material-symbols-rounded(aria-hidden="true") cancel
                         span Cancel
+        include includes/quizlet-not-supported
 append scripts-footer
     #dialog-import-terms.modal
         .modal-background
@@ -105,7 +106,7 @@ append scripts-footer
             section.modal-card-body
                 details
                     summary Import from Quizlet 
-                    a(href="javascript: (function () {if (location.pathname.match(/^\\/\\d+\\/[\\w-]+\\/?$/)) navigator.clipboard.writeText(Object.values(Quizlet.setPageData.termIdToTermsMap).map(el => {let a = {term: el.word, definition: el.definition}; if (el._imageUrl) a.term += ` ![image](${el._imageUrl})`;return a}).map(e => `${e.term}  ${e.definition}`).join('\\n')).then(() => alert('Copied terms to clipboard! Paste this into \"Import Terms\" in Vocabustudy.')).catch(err => alert(`An error occurred: ${err.toString}`)); else alert('You must do this on a Quizlet set page');}())") Drag this url to the bookmarks bar
+                    a() Drag this url to the bookmarks bar
                     | . Then, click the bookmark while on a Quizlet set page.
                 .field
                     label.label Import Manually

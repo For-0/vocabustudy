@@ -377,7 +377,7 @@ function createCommentCard({ inputComment, container }: { inputComment: HTMLInpu
  */
 export function addShowCommentsClickListener({ inputComment, container, btnShowComments }: { inputComment: HTMLInputElement, container: HTMLDivElement, btnShowComments: HTMLButtonElement }, setId: string, userId: string) {
     btnShowComments.addEventListener("click", async () => {
-        const comments = Social.fromMultiple(await Firestore.getDocuments(new QueryBuilder().from(Social.collectionKey).build(), undefined, `/${VocabSet.collectionKey}/${setId}`));
+        const comments = Social.fromMultiple(await Firestore.getDocuments(new QueryBuilder().from(Social.collectionKey).orderBy(["comment"], "ASCENDING").build(), undefined, `/${VocabSet.collectionKey}/${setId}`));
         comments.forEach(comment => createCommentCard({ inputComment, container }, comment, userId === comment.uid));
     }, { once: true });
 }

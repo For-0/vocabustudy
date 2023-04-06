@@ -1,6 +1,6 @@
 {
   "name": "vocabustudy",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A free tool for studying vocab",
   "targets": {
     "pages": {
@@ -41,6 +41,7 @@
     "cleanup": "rm -rf .parcel-cache dist",
     "watch": "npm run cleanup && parcel watch --no-hmr",
     "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import ../vocabustudy-internals/emulator-data --export-on-exit",
+    "emulator:lightweight": "firebase emulators:start --only hosting:vocabustudy",
     "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\"",
     "lint": "eslint src/js && stylelint src/css && pug-lint src"
   },

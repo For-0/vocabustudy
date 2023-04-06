@@ -9,175 +9,10 @@ block main-stylesheet
 block extrahead
     script(src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@04f46c6/qrcode.min.js")
 block content
-    #flashcards.page
-        h1 Flashcards - #[span] #[+close_button]
-            p.is-size-6.has-text-weight-bold(style="line-height: normal;")
-                span 0
-                |  / 
-                span 0
-                |  terms
-        .columns.is-flex-touch
-            .is-flex.column.is-narrow
-                p.mb-2 #[strong Answer With:]
-                .field
-                    input#radio-flashcards-answer-term.is-checkradio(type="radio" name="radio-flashcards-answer-with")
-                    label(for="radio-flashcards-answer-term") Term
-                .field.mb-4
-                    input#radio-flashcards-answer-definition.is-checkradio(type="radio" name="radio-flashcards-answer-with" checked)
-                    label(for="radio-flashcards-answer-definition") Definition
-                .field
-                    input#check-flashcard-starred.is-checkradio.is-gold(type="checkbox")
-                    label(for="check-flashcard-starred") Only Starred
-                .mt-auto
-                    button.button
-                        +material-symbol("loop", false, true, 20)
-                        span Shuffle
-            .column.is-flex.is-flex-direction-column
-                .is-flex-grow-1.is-clickable.is-relative
-                .is-flex.mt-5.is-justify-content-space-evenly
-                    button.button
-                        kbd.is-hidden-touch.mr-1 ←
-                        span Previous
-                    button.button.is-primary
-                        +material-symbol("change_circle", true, true, 20)
-                        span Flip #[kbd.is-hidden-touch Space]
-                    button.button
-                        span Next
-                        kbd.is-hidden-touch.ml-1 →
-    #learn.page
-        h1 Learn - #[span] #[+close_button]
-        .columns.is-flex-touch
-            .is-flex.column.is-narrow
-                p.mb-2 #[strong Answer With:]
-                .field
-                    input#radio-learn-answer-term.is-checkradio(type="radio" name="radio-learn-answer-with" checked)
-                    label(for="radio-learn-answer-term") Term
-                .field.mb-4
-                    input#radio-learn-answer-definition.is-checkradio(type="radio" name="radio-learn-answer-with")
-                    label(for="radio-learn-answer-definition") Definition
-                .field.mb-4
-                    input#check-learn-starred.is-checkradio.is-gold(type="checkbox")
-                    label(for="check-learn-starred") Only Starred
-                p.field-current-type #[strong Multiple Choice] #[strong Short Answer] #[em.mb-3.is-hidden-mobile.is-block #[span.field-num-terms] terms]
-                p.is-hidden-mobile #[strong Progress:]
-                .progress-circle.is-primary(data-progress="0%" style="--progress: 0;")
-                    svg(viewbox="0 0 48 48")
-                        circle
-                        circle
-            .is-flex-grow-1.is-flex.is-flex-direction-column.mb-0(style="overflow-wrap: break-word; min-width: 0;")
-                .is-flex-grow-1(style="font-size: 3rem;") #[p.has-text-centered]
-                .custom-scrollbar.is-thumb-only(style="overflow-y: auto;")
-                    p.has-text-centered
-                        button.button.is-primary.is-outlined(type='button')
-                            span Most Missed Questions
-                            +material-symbol("open_in_new", false, true, 20)
-                    .notification.m-0.has-text-centered.is-relative.is-clickable.is-success Correct #[strong.is-block correct answer] #[span.is-hidden-touch Press #[kbd Enter] or click here to move on.]#[span.is-hidden-desktop Tap here to move on.]
-                    .notification.m-0.has-text-centered.is-relative.is-clickable.is-danger Incorrect - the correct answer is: #[strong.is-block correct answer] #[span.is-hidden-mobile Press #[kbd Enter] or click here to move on.]#[span.is-hidden-tablet.has-text-right(style="margin-right: 150px;") Tap here to move on.]
-                        button.button.is-danger(type='button') Override - Correct
-                .p-1
-                    accent-keyboard.custom-scrollbar
-                    .field.has-addons
-                        p.control.is-expanded
-                            input.input(type="text" placeholder="Your Answer" required)
-                        p.control
-                            button.button.is-primary(type='button') Check                    
-                fieldset.m-0.columns.is-multiline.is-mobile
-                    .column.is-half.p-1.pt-0.pl-0
-                        button.button.is-large(data-answerindex='0')
-                            +material-symbol("filter_1", false, true, 20)
-                            span #[span.fit Option 1]
-                    .column.is-half.p-1.pr-0.pt-0
-                        button.button.is-large(data-answerindex='1')
-                            +material-symbol("filter_2", false, true, 20)
-                            span #[span.fit Option 2]
-                    .column.is-half.p-1.pl-0.pb-0
-                        button.button.is-large(data-answerindex='3')
-                            +material-symbol("filter_3", false, true, 20)
-                            span #[span.fit Option 3]
-                    .column.is-half.p-1.pr-0.pb-0
-                        button.button.is-large(data-answerindex='4')
-                            +material-symbol("filter_4", false, true, 20)
-                            span #[span.fit Option 4]
-    #test.page
-        h1 Test - #[span] #[+close_button]
-        .columns.is-flex-touch
-            .is-flex.column.is-narrow(style="min-height: 0; overflow-y: auto; width: unset; flex: none;")
-                button.button.is-hidden-tablet.is-primary-alt
-                    +material-symbol("settings", false, true, 20)
-                .is-flex-mobile.is-flex-direction-row.is-flex-wrap-wrap.is-align-items-center.is-justify-content-space-between.is-hidden-mobile
-                    p.mb-2 #[strong Answer With:]
-                    .field
-                        input#radio-test-answer-term.is-checkradio(type="radio" name="radio-test-answer-with")
-                        label(for="radio-test-answer-term") Term
-                    .field.mb-4
-                        input#radio-test-answer-definition.is-checkradio(type="radio" name="radio-test-answer-with" checked)
-                        label(for="radio-test-answer-definition") Definition
-                    p #[strong Question Types:]
-                    .field
-                        input#check-test-question-sa.is-checkradio(type="checkbox")
-                        label(for="check-test-question-sa") Short Answer
-                    .field
-                        input#check-test-question-mc.is-checkradio(type="checkbox")
-                        label(for="check-test-question-mc") Multiple Choice
-                    .field
-                        input#check-test-question-mt.is-checkradio(type="checkbox")
-                        label(for="check-test-question-mt") Matching
-                    .field.mb-3
-                        input#check-test-question-tf.is-checkradio(type="checkbox")
-                        label(for="check-test-question-tf") True/False
-                    .field.mb-4
-                        input#check-test-starred.is-checkradio.is-gold(type="checkbox")
-                        label(for="check-test-starred") Only Starred
-                    .field.mb-3
-                        label.label Max Terms
-                        .control
-                            input.input.field-max-terms(type="number" min="0" placeholder="20")
-                button.button.mb-2
-                    span.icon
-                        i.material-symbols-rounded(aria-hidden="true") loop
-                    span New Test
-                button.button.is-primary
-                    span.icon
-                        i.material-symbols-rounded(aria-hidden="true") check_circle
-                    span Check Answers
-            fieldset.custom-scrollbar.is-thumb-only.column
-                h2.title.is-4(data-count='0')  Short Answer Question
-                div
-                h2.title.is-4(data-count='0')  Multiple Choice Question
-                div
-                h2.title.is-4.mb-1(data-count='0')  Matching Question
-                p.mb-3 Select an item on the left, then choose the matching item on the right
-                .columns.is-relative.is-variable.is-mobile(style="--columnGap: 5%;")
-                    .column.is-half(style="z-index: 2;")
-                    .column.is-half(style="z-index: 2;")
-                    .matches-container
-                h2.title.is-4(data-count='0')  True/False Question
-                div
-    #match.page
-        h1 Match - #[span] #[+close_button]
-        .columns.is-flex-touch
-            .is-flex.column.is-narrow
-                p.mb-2 #[strong Answer With:]
-                .field
-                    input#radio-match-answer-term.is-checkradio(type="radio" name="radio-match-answer-with" checked)
-                    label(for="radio-match-answer-term") Term
-                .field.mb-4
-                    input#radio-match-answer-definition.is-checkradio(type="radio" name="radio-match-answer-with")
-                    label(for="radio-match-answer-definition") Definition
-                .field.mb-4
-                    input#check-match-starred.is-checkradio.is-gold(type="checkbox")
-                    label(for="check-match-starred") Only Starred
-                p Time: #[span.field-time 0.0]s
-                button.button.mb-3
-                    span.icon
-                        i.material-symbols-rounded(aria-hidden="true") loop
-                    span Restart
-                button.button.mb-3
-                    span.icon
-                        i.material-symbols-rounded(aria-hidden="true") help
-            .columns.column.is-mobile
-                .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
-                .column.is-half.is-flex.is-flex-wrap-wrap.custom-scrollbar.is-align-items-start.is-align-content-start
+    include study-modes/flashcards
+    include study-modes/learn
+    include study-modes/test
+    include study-modes/match
     #home.page.is-relative.is-flex-direction-column(style="--page-display: flex;")
         h1
             span.field-name
@@ -218,6 +53,7 @@ block content
         .page-loader
             .loader-container
                 span.loader.is-size-1
+        include includes/quizlet-not-supported
         include includes/comment-quickview
 append scripts-footer
     #modal-match-done.modal
@@ -235,7 +71,7 @@ append scripts-footer
                 .list.has-hoverable-list-items
                     .list-item
                         .list-item-content
-                            .list-item-title Set URL
+                            .list-item-title No Leaderboard
                             .list-item-description
             footer.modal-card-foot
                 button.button.action-close(type="button" data-action="back") Back

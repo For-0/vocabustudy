@@ -103,6 +103,7 @@ html.theme-system.prefers-dark {
 
     --panel-heading-background-color: var(--grey-dark);
     --modal-background-background-color: rgba(10, 10, 10, 86%);
+    --border-light: var(--grey-dark);
     .modal-close::before,
     .delete::before,
     .modal-close::after,
@@ -116,7 +117,8 @@ html.theme-system.prefers-dark {
     body > footer,
     .homepage-lead,
     .navbar,
-    #home > .hero:first-child {
+    #home > .hero:first-child,
+    .help-center-hero {
         &::after {
             backdrop-filter: brightness(65%) saturate(110%);
             content: "";
@@ -143,5 +145,26 @@ html.theme-system.prefers-dark {
     .button.is-danger.is-inverted.btn-delete {
         background-color: transparent;
         color: var(--danger-dark);
+    }
+    .text-bg-blue {
+        --text-bg-background: var(--info-dark);
+        --text-bg-color: var(--info-light);
+    }
+    .text-bg-yellow {
+        --text-bg-background: var(--warning-dark);
+        --text-bg-color: var(--warning-light);
+    }
+    .text-bg-red {
+        --text-bg-background: var(--danger-dark);
+        --text-bg-color: var(--danger-light);
+    }
+    :is(.editor-timeline-piece, .editor-study-piece) > .panel-block {
+        /*! purgecss ignore current */
+        border-left: 1px solid;
+        border-right: 1px solid;
+        &:last-of-type {
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
     }
 }

@@ -195,6 +195,13 @@ main,
                     width: 100%;
                 }
             }
+            .field-jump-to {
+                label {
+                    margin-bottom: 0;
+                    margin-left: 0.5rem;
+                    margin-right: 0.5rem;
+                }
+            }
         }
     }
     img {
@@ -203,6 +210,11 @@ main,
         top: 4px;
         height: calc(100% - 8px);
         max-height: unset;
+    }
+    @media (min-width: 769px) {
+        .field-jump-to {
+            margin-top: 0.75rem;
+        }
     }
 }
 #learn {
@@ -537,14 +549,11 @@ accent-keyboard {
 
     max-width: 25%;
     max-height: 25%;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 50%);
+    border-radius: 2px;
+    box-shadow: var(--box-shadow);
     padding: 2px;
     display: block;
     cursor: pointer;
-    &:hover {
-        border-color: rgba(75, 21, 4, 80%);
-    }
 }
 star-button button {
     background-color: transparent !important;
