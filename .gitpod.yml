@@ -1,6 +1,6 @@
 tasks:
-  - init: npm install && npm run watch
-    command: npm run watch
+  - init: npm ci && npm i -g firebase-tools
+    command: npm run build
 
 additionalRepositories:
   - url: https://github.com/For-0/vocabustudy-internals

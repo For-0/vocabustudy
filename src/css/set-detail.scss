@@ -195,6 +195,13 @@ main,
                     width: 100%;
                 }
             }
+            .field-jump-to {
+                label {
+                    margin-bottom: 0;
+                    margin-left: 0.5rem;
+                    margin-right: 0.5rem;
+                }
+            }
         }
     }
     img {
@@ -203,6 +210,11 @@ main,
         top: 4px;
         height: calc(100% - 8px);
         max-height: unset;
+    }
+    @media (min-width: 769px) {
+        .field-jump-to {
+            margin-top: 0.75rem;
+        }
     }
 }
 #learn {

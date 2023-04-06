@@ -1,7 +1,7 @@
 {
     "plugins": {
         "@fullhuman/postcss-purgecss": {
-            "content": ["./src/*.pug", "./src/js/*.ts", "./src/includes/*.pug", "./node_modules/@creativebulma/**/*.js"],
+            "content": ["./src/*.pug", "./src/js/*.ts", "./src/includes/*.pug", "./src/study-modes/*.pug", "./node_modules/@creativebulma/**/*.js"],
             "safelist": [".text-bg-yellow", ".text-bg-red", ".text-bg-blue"]
         }
     }

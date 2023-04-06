@@ -230,7 +230,7 @@ const pages = {
             const nextFlashcard = this.terms.children[this.index + 1] as HTMLDivElement;
             currentFlashcard.style.position = "absolute";
             nextFlashcard.style.display = "block";
-            if (this.index < this.numTerms) nextFlashcard.querySelectorAll("p").forEach(el => fitty(el, { maxSize: 100, observeMutations: undefined }));
+            if (this.index < this.numTerms) this.fitFlashcardText(nextFlashcard);
             await Promise.all([
                 optionalAnimate(currentFlashcard, [
                     {},
@@ -265,6 +265,14 @@ const pages = {
             prevFlashcard.style.removeProperty("display");
             this.index--;
         },
+        fitFlashcardText(flashcard: HTMLDivElement) {
+            if (!flashcard.dataset.fittied) {
+                flashcard
+                    .querySelectorAll("p")
+                    .forEach(el => fitty(el, { maxSize: 100, observeMutations: undefined }));
+                flashcard.dataset.fittied = "true";
+            }
+        },
         getTermText(tIndex: number, side: number) {
             return this.terms.children[tIndex].querySelector(`:scope > div > div:nth-child(${side}) > p`);
         },
@@ -280,6 +288,8 @@ const pages = {
         navigateBtns: document.querySelectorAll("#flashcards > div:nth-child(2) > div:last-child > div:last-child > button"),
         radioBtns: document.querySelectorAll<HTMLInputElement>("#flashcards [name='radio-flashcards-answer-with']"),
         checkOnlyStarred: <HTMLInputElement>document.getElementById("check-flashcard-starred"),
+        jumpToInput: document.querySelector(".field-jump-to input"),
+        jumpToBtn: document.querySelector(".field-jump-to button"),
         onKeyUp(e: KeyboardEvent) {
             if (e.key === "ArrowRight") this.navigateBtns[2].click();
             else if (e.key === "ArrowLeft") this.navigateBtns[0].click();
@@ -327,21 +337,34 @@ const pages = {
             for (const term of terms) this.createFlashcard(term, onlyStarred || starredList.includes(term.i));
             this.createFlashcard({ term: "All done!\nYou've studied all of the flashcards.", definition: "All done!\nYou've studied all of the flashcards.", i: -1 }, false);
             this.index = 0;
-            this.terms.children[0].querySelectorAll("p").forEach(el => fitty(el, {maxSize: 100, observeMutations: undefined}));
+            this.fitFlashcardText(this.terms.children[0] as HTMLDivElement);
+            // only let users jump up to the last flashcard
+            this.jumpToInput.max = terms.length.toString();
         },
+        /** Reset the flip state of the flashcard to the user's default */
+        resetFlipState() {
+            this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
+        },
+        /** Register all event listeners */
         init() {
             this.checkOnlyStarred.addEventListener("change", () => this.show());
             this.btnShuffle.addEventListener("click", () => this.show(true));
             this.navigateBtns[0].addEventListener("click", async () => {
-                this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
+                this.resetFlipState();
                 await this.prevCard();
             });
             this.navigateBtns[2].addEventListener("click", async () => {
-                this.terms.classList.toggle("flipped", this.radioBtns[0].checked);
+                this.resetFlipState();
                 await this.nextCard();
             });
             this.navigateBtns[1].addEventListener("click", () => this.terms.classList.toggle("flipped"));
             this.terms.addEventListener("click", () => this.navigateBtns[1].click());
+            this.jumpToBtn.addEventListener("click", () => {
+                if (this.jumpToInput.reportValidity()) {
+                    this.index = this.jumpToInput.valueAsNumber - 1;
+                    setTimeout(() => this.fitFlashcardText(this.terms.children[this.index] as HTMLDivElement), 10);
+                }
+            });
         }
     },
     learn: {
