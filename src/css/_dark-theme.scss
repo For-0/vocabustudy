@@ -103,6 +103,7 @@ html.theme-system.prefers-dark {
 
     --panel-heading-background-color: var(--grey-dark);
     --modal-background-background-color: rgba(10, 10, 10, 86%);
+    --border-light: var(--grey-dark);
     .modal-close::before,
     .delete::before,
     .modal-close::after,
@@ -161,7 +162,6 @@ html.theme-system.prefers-dark {
         /*! purgecss ignore current */
         border-left: 1px solid;
         border-right: 1px solid;
-        border-color: var(--grey-dark);
         &:last-of-type {
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;
