@@ -248,4 +248,5 @@ body > footer {
     height: 100%;
     z-index: 5;
     background-color: var(--body-background-color);
+    overflow-y: auto;
 }
