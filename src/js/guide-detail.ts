@@ -1,9 +1,11 @@
-import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize, navigateLoginSaveState, addShowCommentsClickListener, shuffle } from "./utils";
+import { createElement, createTextFieldWithHelper, normalizeAnswer, checkAnswers, initQuickview, styleAndSanitize, navigateLoginSaveState, addShowCommentsClickListener, shuffle, createIcon } from "./utils";
 import { toast } from "bulma-toast";
 import Tabs from "@vizuaalog/bulmajs/src/plugins/tabs";
 import { getCurrentUser, initializeAuth, refreshCurrentUser, setCurrentUser } from "./firebase-rest-api/auth";
 import type { StudyGuideQuiz, StudyGuideQuizQuestion, StudyGuideReading, User } from "./types";
 import { Firestore, Social, VocabSet } from "./firebase-rest-api/firestore";
+import checklistIcon from "bundle-text:~/node_modules/@material-symbols/svg-400/rounded/checklist.svg";
+import textSnippetIcon from "bundle-text:~/node_modules/@material-symbols/svg-400/rounded/text_snippet.svg";
 
 declare global {
     interface HTMLElementTagNameMap {
@@ -121,6 +123,7 @@ function showLikeStatus(likeStatus?: boolean) {
 function createItem(item: StudyGuideQuiz | StudyGuideReading, index: number) {
     const navBtn = pages.setOverview.termNav.appendChild(createElement("li", [], {}, [
         createElement("a", ["is-relative", "has-text-dark"], { role: "button" }, [
+            createIcon(item.type ? checklistIcon : textSnippetIcon,[]),
             createElement("span", ["icon"], {}, [
                 createElement("i", ["material-symbols-rounded"], { innerText: item.type ? "checklist" : "text_snippet" })
             ]),

@@ -102,9 +102,9 @@ html.has-navbar-fixed-top.custom-scrollbar(lang="en" style="overflow-x: hidden; 
                     a.has-text-white.is-underlined(href="/#social") Social
                 .is-hidden-tablet(style="transform: scale(0.8);")
                     a.has-text-white.mr-3.is-filled.icon(href="/privacy/" title="Privacy")
-                        +material-symbol("verified_user", false, false, 20)
+                        +material-symbol("verified_user", true, false)
                     a.has-text-white.mr-3.is-filled.icon(href="/#social" title="Social")
-                        +material-symbol("group", false, false, 20)
+                        +material-symbol("group", true, false)
         block scripts-footer
             script.
                 if (location.host === "vocabustudyonline.web.app" && !localStorage.getItem("use_vocabustudyonline")) location.host = "vocabustudy.org";

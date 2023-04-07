@@ -3,6 +3,8 @@ import { marked } from "marked";
 import { openDB } from "idb";
 import type { CollectionJsonList, ParsedRestDocument, RecursivePartial, StructuredQuery } from "./types";
 import { Firestore, QueryBuilder, Social, VocabSet } from "./firebase-rest-api/firestore";
+import personIcon from "bundle-text:~/node_modules/@material-symbols/svg-400/rounded/person-fill.svg";
+import expandMoreIcon from "bundle-text:~/node_modules/@material-symbols/svg-400/rounded/expand_more.svg";
 
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
@@ -107,7 +109,13 @@ export function createElement<T extends keyof HTMLElementTagNameMap>(type: T | [
     for (const child of children) el.appendChild(child);
     return el;
 }
-createElement
+
+export function createIcon(iconSvgContent: string, extraIconClasses: string[]) {
+    const iconEl = createElement("span", ["icon", ...extraIconClasses], { innerHTML: iconSvgContent });
+    iconEl.querySelector("svg")?.setAttribute("fill", "currentcolor");
+    return iconEl;
+}
+
 /**
  * Animate an element only if the user does not prefer reduced motion
  * @returns The resulting animation, if it was applied
@@ -218,9 +226,7 @@ function createCollectionListItem(name: string, i: string): HTMLElement {
 function createCollectionParentListItem(name: string) {
     const childList = createElement("ul");
     const listText = createElement("a", [], {innerText: name}, [
-        createElement("span", ["icon", "is-pulled-right"], {}, [
-            createElement("i", ["material-symbols-rounded"], {innerText: "expand_more"})
-        ])
+        createIcon(expandMoreIcon, ["is-pulled-right"])
     ]);
     const listItem = createElement("li", [], {}, [listText, childList]);
     listText.addEventListener("click", () => listText.classList.toggle("is-active"));
@@ -319,9 +325,7 @@ export async function createSetCard({ name, creator, numTerms, collections, like
             createElement("p", ["card-header-title"], { innerText: name, style: { overflowWrap: "anywhere" } }),
             // A gold person icon that links to the user's profile
             createElement("a", ["card-header-icon", "has-tooltip-arrow", "link-user"], {href: `/user/${uid}/`}, [
-                createElement("span", ["icon", "has-text-gold"], {}, [
-                    createElement("i", ["is-filled", "material-symbols-rounded"], {innerText: "person"})
-                ])
+                createIcon(personIcon, ["has-text-gold"])
             ])
         ]),
         createElement("div", ["card-content"], {}, [
