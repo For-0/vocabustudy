@@ -28,6 +28,7 @@ export const Firestore = {
         else if (field.arrayValue?.values) return field.arrayValue.values.map(Firestore.parseField);
         else if (field.arrayValue) return [];
         else if (field.nullValue) return null;
+        else if (field.timestampValue) return new Date(Date.parse(field.timestampValue));
         else return null;
     },
     createField: (value: FirestoreField): RawFirestoreField => {
@@ -37,6 +38,7 @@ export const Firestore = {
         if (typeof value === "string") return { stringValue: value };
         if (value instanceof FSDocument) return { referenceValue: value.pathParts.join("/") };
         if (value instanceof Array) return { arrayValue: { values: value.map(Firestore.createField) } };
+        if (value instanceof Date) return { timestampValue: value.toISOString() };
         if (value instanceof Object) return { mapValue: { fields: Firestore.specifyFields(value) } };
         if (value === null) return { nullValue: null };
         return null;
@@ -135,12 +137,13 @@ export const Firestore = {
             method: "POST",
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({
-                writes: writes.map(({pathParts, update}) => ({
+                writes: writes.map(({pathParts, update, updateTransforms}) => ({
                     update: {
                         name: `${this.projectPrefix}/${pathParts.join("/")}`,
                         fields: Firestore.specifyFields(update)
                     },
-                    updateMask: { fieldPaths: Object.keys(update) }
+                    updateMask: { fieldPaths: Object.keys(update) },
+                    updateTransforms
                 }))
             })
         });
