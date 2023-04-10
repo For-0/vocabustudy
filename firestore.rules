@@ -10,9 +10,6 @@ service cloud.firestore {
     function onlyUpdated(keys) {
     	return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
     }
-    function canAdminDelete() {
-      return !request.auth.token.admin || resource.data.uid == request.auth.uid;
-    }
     function auth() {
       return request.auth != null && request.auth.token.email_verified;
     }
@@ -41,7 +38,7 @@ service cloud.firestore {
     match /sets/{set_id} {
       allow get: if resource == null || canView();
       allow list: if resource.data.visibility == 2 || isCreator();
-      allow delete: if isCreator() && canAdminDelete();
+      allow delete: if isCreator();
       allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility", "creator", "nameWords", "numTerms", "collections"]) && validateSet();
       allow create: if auth() && limitResourceKeys(["name", "uid", "terms", "visibility", "creator", "nameWords", "numTerms", "collections", "likes", "creationTime"], ["description"]) && request.resource.data.likes == 0 && validateSet() && request.resource.data.creationTime == request.time;
       match /social/{uid} {

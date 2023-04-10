@@ -1,4 +1,4 @@
-import { sanitize } from "dompurify";
+import { sanitize, addHook } from "dompurify";
 import { marked } from "marked";
 import { openDB } from "idb";
 import type { CollectionJsonList, ParsedRestDocument, RecursivePartial, StructuredQuery } from "./types";
@@ -7,6 +7,7 @@ import { Firestore, QueryBuilder, Social, VocabSet } from "./firebase-rest-api/f
 const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
 const markdownBulmaTag = /^:([^\n]+):([^:\n]*):(?:\n|$)/;
+const allowedClassesRE = /^(has-text-\w+|has-background-\w+|tag|is-\w+|button|tags|has-addons)$/i;
 marked.use({extensions: [{
     name: "bulma-tag",
     level: "inline",
@@ -26,6 +27,14 @@ marked.use({extensions: [{
     },
     childTokens: ["span"]
 }]});
+// Only allow certain classes
+addHook("uponSanitizeAttribute", (node, data) => {
+    if (data.attrName === "class") {
+        const classList = data.attrValue.split(" ");
+        const sanitzedClassList = classList.filter(className => className.match(allowedClassesRE));
+        data.attrValue = sanitzedClassList.join(" ");
+    }
+});
 export const SET_VISIBILITIES = [
     {title: "Private", color: "warning"},
     {title: "Unlisted", color: "info"},
