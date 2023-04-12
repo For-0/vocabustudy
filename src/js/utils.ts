@@ -8,6 +8,7 @@ const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
 const markdownBulmaTag = /^:([^\n]+):([^:\n]*):(?:\n|$)/;
 const allowedClassesRE = /^(has-text-\w+|has-background-\w+|tag|is-\w+|button|tags|has-addons)$/i;
+const disallowedClasses = ["is-flex", "is-block", "is-inline", "is-inline-block", "is-inline-flex"];
 marked.use({extensions: [{
     name: "bulma-tag",
     level: "inline",
@@ -31,7 +32,9 @@ marked.use({extensions: [{
 addHook("uponSanitizeAttribute", (node, data) => {
     if (data.attrName === "class") {
         const classList = data.attrValue.split(" ");
-        const sanitzedClassList = classList.filter(className => className.match(allowedClassesRE));
+        const sanitzedClassList = classList.filter(
+            className => !disallowedClasses.includes(className) && className.match(allowedClassesRE)
+        );
         data.attrValue = sanitzedClassList.join(" ");
     } else if (data.attrName === "id") {
         // If there are any existing nodes with that ID that are not the current actual node
