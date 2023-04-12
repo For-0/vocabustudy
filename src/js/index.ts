@@ -297,7 +297,8 @@ async function search() {
 
     if (searchTerm) {
         words = getWords(searchTerm).slice(0, 10);
-        queries.push(new QueryBuilder(JSON.parse(JSON.stringify(baseQuery))).where("nameWords", "ARRAY_CONTAINS_ANY", words).build());
+        if (words.length > 0)
+            queries.push(new QueryBuilder(JSON.parse(JSON.stringify(baseQuery))).where("nameWords", "ARRAY_CONTAINS_ANY", words).build());
     }
 
     if (selectedFilters.length > 0)
@@ -307,6 +308,8 @@ async function search() {
         queries.push(baseQuery);
     
     pages.search.sets[1].textContent = "Loading Sets...";
+    pages.search.btnSearchGo.classList.add("is-loading");
+    pages.search.btnSearchGo.disabled = true;
     await paginateQueries(queries, pages.search.sets[1].nextElementSibling as HTMLButtonElement, results => {
         // Remove duplicates from the combined queries
         const data = VocabSet.fromMultiple(results).filter((val, index, self) => index === self.findIndex(t => t.id === val.id)).map(doc => {
@@ -324,6 +327,8 @@ async function search() {
             pages.search.sets[1].appendChild(els.card);
         });
     });
+    pages.search.btnSearchGo.classList.remove("is-loading");
+    pages.search.btnSearchGo.disabled = false;
     pages.search.sets[1].textContent = "";
 }
 async function showLikedSets() {

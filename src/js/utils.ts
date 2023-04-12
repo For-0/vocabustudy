@@ -33,6 +33,10 @@ addHook("uponSanitizeAttribute", (node, data) => {
         const classList = data.attrValue.split(" ");
         const sanitzedClassList = classList.filter(className => className.match(allowedClassesRE));
         data.attrValue = sanitzedClassList.join(" ");
+    } else if (data.attrName === "id") {
+        // If there are any existing nodes with that ID that are not the current actual node
+        if ([...document.querySelectorAll(`#${data.attrValue}`)].some(el => el !== node))
+            node.removeAttribute("id"); // then remove the ID
     }
 });
 export const SET_VISIBILITIES = [
