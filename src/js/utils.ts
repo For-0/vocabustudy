@@ -376,7 +376,7 @@ function createCommentCard({ inputComment, container }: { inputComment: HTMLInpu
                 createElement("div", ["list-item-title"], {}, [
                     createElement("div", ["list-item-title", "is-flex", "is-justify-content-space-between"], {}, [
                         createElement("span", [], {innerText: name}),
-                        ...(like ? [createElement("span", ["tag", "is-success", "has-tooltip-arrow", "has-tooltip-info", "has-tooltip-left"], {dataset: {tooltip: `${name} likes this set`}}, [
+                        ...(like ? [createElement("span", ["tag", "is-success", "has-tooltip-arrow", "has-tooltip-info", "has-tooltip-left"], {dataset: {tooltip: "This user likes this set"}}, [
                             createElement("span", ["icon"], {}, [
                                 createElement("i", ["material-symbols-rounded", "is-filled"], {innerText: "thumb_up", style: {verticalAlign: "middle", fontSize: "1rem", cursor: "auto"}})
                             ])
