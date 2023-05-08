@@ -410,18 +410,22 @@ export async function paginateQueries(
     btnMore: HTMLButtonElement,
     onResults: ((docs: ParsedRestDocument[]) => void),
     idToken?: string,
-    startAfterDocs?: string[]
+    startAfter?: (string | number)[][]
 ) {
     const querySnapshots = await Promise.all(queries.map(async (el, i) => {
         const query = new QueryBuilder(el).limit(10);
         if (!query.query.orderBy) throw new Error("Cannot paginate a query without an order by");
-        if (startAfterDocs && startAfterDocs[i]) query.startAt(query.query.orderBy.map(el => el.field.fieldPath === "__name__" ? startAfterDocs[i] : 0));
+        if (startAfter && startAfter[i])
+            query.startAt(startAfter[i]);
         return Firestore.getDocuments(query.build(), idToken);
     }));
     onResults(querySnapshots.flat());
     btnMore.hidden = true;
     btnMore.onclick = () => {}; // Use a no-op function to prevent multiple clicks
-    const nextQueries = querySnapshots.filter(el => el.length >= 10).map((el, i) => ({ lastPath: el[el.length - 1].pathParts.join("/"), originalQuery: queries[i]} ));
+    const nextQueries = querySnapshots.filter(el => el.length >= 10).map((el, i) => ({
+        lastDoc: el[el.length - 1],
+        originalQuery: queries[i]
+    }));
     if (nextQueries.length) {
         btnMore.hidden = false;
         btnMore.onclick = () => paginateQueries(
@@ -429,7 +433,10 @@ export async function paginateQueries(
             btnMore,
             onResults,
             idToken,
-            nextQueries.map(el => el.lastPath) // But make sure to start them after their respective last documents
+            // But make sure to start them after their respective last documents
+            nextQueries.map(el => el.originalQuery.orderBy.map(q =>
+                q.field.fieldPath === "__name__" ? el.lastDoc.pathParts.join("/") : el.lastDoc[q.field.fieldPath as keyof typeof el] as number | string
+            ))
         );
     }
 }
