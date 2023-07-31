@@ -1,10 +1,6 @@
 {
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
     "compilerOptions": {
-        "isolatedModules": true,
-        "target": "ESNext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "module": "ESNext",
-        "noImplicitThis": true
+        "types": ["vite/client"]
     }
 }
