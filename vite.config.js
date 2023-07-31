@@ -49,6 +49,7 @@ export default defineConfig({
         }
     },
     define: {
-        'import.meta.env.YEAR': new Date().getFullYear()
+        YEAR: new Date().getFullYear(),
+        VERSION: JSON.stringify(process.env.npm_package_version)
     }
 })
