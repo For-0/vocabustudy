@@ -35,7 +35,7 @@
                     </div> 
                     <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
-                            <img src="../assets/images/credits/ruhan.jpeg" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
+                            <img src="../assets/images/credits/ruhan.jpg" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
                         </a>
                         <div class="p-5">
                             <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -61,7 +61,7 @@
                     </div> 
                     <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
-                            <img class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/sofia-mcguire.png" alt="Sofia Avatar">
+                          <img src="../assets/images/credits/omkar.png" alt="Omkar Patil" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
                         </a>
                         <div class="p-5">
                             <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -112,17 +112,5 @@
         </section>
     </main>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
-import ruhanImage from "@/assets/images/credits/ruhan.jpeg";
-import siddhantImage from "@/assets/images/credits/siddhant.png";
-
-export default defineComponent({
-  data() {
-    return {
-        ruhan: ruhanImage,
-        siddhant: siddhantImage
-    };
-  },
-});
+<script setup lang="ts">
 </script>

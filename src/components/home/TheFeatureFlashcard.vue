@@ -25,7 +25,6 @@ import { ArrowPathIcon } from '@heroicons/vue/20/solid';
 import Flashcard from '../Flashcard.vue';
 
 const featureFlashcardValues = [
-    { front: "What was the Civil War?", back: "This was America's bloodiest conflict in which over 600,000 people died from 1861 to 1865." },
     { front: "What is a hurricane?", back: "An intense tropical storm, typically forming in late summer over warm, tropical ocean water." },
     { front: "When does water reach its boiling point?", back: "Water reaches its boiling point at 100° Celsius, or 212° Fahrenheit." },
     { front: "Why are giraffes' tongues black?", back: "Giraffes have extra melanin on their tongues, protecting them from sunburns." },
