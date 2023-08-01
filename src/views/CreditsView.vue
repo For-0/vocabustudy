@@ -9,7 +9,7 @@
                 <div class="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
                     <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
-                            <img :src="siddhant" alt="Siddhant Kameswar" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
+                            <img src="../assets/images/credits/siddhant.png" alt="Siddhant Kameswar" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
                         </a>
                         <div class="p-5">
                             <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -35,7 +35,7 @@
                     </div> 
                     <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
-                            <img :src="ruhan" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
+                            <img src="../assets/images/credits/ruhan.jpeg" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
                         </a>
                         <div class="p-5">
                             <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -85,7 +85,7 @@
                     </div> 
                     <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
-                            <img class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/sofia-mcguire.png" alt="Sofia Avatar">
+                            <img src="../assets/images/credits/nikhil.jpg" alt="Nikhil Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg" />
                         </a>
                         <div class="p-5">
                             <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
