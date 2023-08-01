@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from './views/HomeView.vue'
+import { useAuthStore } from './store';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,20 +11,54 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/credits',
+      name: 'credits',
+      component: () => import('./views/CreditsView.vue'),
+      meta: {
+        title: "Credits"
+      }
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('./views/NotFoundView.vue'),
       meta: {
         title: "404 Not Found"
       }
+    },
+    {
+     path: '/set/:id/view',
+        name: 'set-detail',
+        component: () => import('./views/NotFoundView.vue'),
+        meta: {
+          title: "Set Detail"
+      }
+    },
+    {
+      path: '/collection/:id/',
+        name: 'collection-detail',
+        component: () => import('./views/NotFoundView.vue'),
+        meta: {
+          title: "Collection Detail"
+        }
     }
   ]
 });
 
-router.beforeEach((to, _from, next) => {
+const authStore = useAuthStore();
+
+router.beforeEach(async (to, _from) => {
   document.title = to.meta.title ? `${to.meta.title} - Vocabustudy` : `Vocabustudy`;
   document.querySelector("link[rel='canonical']")?.setAttribute("href", new URL(to.path, "https://vocabustudy.org").toString());
-  next();
+  if (to.meta.requiresAuth) {
+    await authStore.refreshCurrentUser();
+    if (!authStore.currentUser) {
+        return {
+            path: "/login",
+            query: { next: to.fullPath },
+        }
+    }
+  }
 });
 
 export default router

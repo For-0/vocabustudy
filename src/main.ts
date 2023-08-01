@@ -1,16 +1,15 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router';
 import './assets/main.css';
 import { createPinia } from 'pinia';
-//import { indexedDbPlugin } from './pinia-stores';
 
 const app = createApp(App);
 const pinia = createPinia();
-// @ts-ignore
-//pinia.use(indexedDbPlugin);
 
-app.use(router)
 app.use(pinia);
+
+const router = await import("./router"); // we need to import router after pinia is created because it uses pinia
+
+app.use(router.default);
 
 app.mount('#app');

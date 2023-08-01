@@ -4,6 +4,13 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 //import { VitePWA } from "vite-plugin-pwa";
 
+function getAuthEmulatorUrl() {
+    if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`
+    else if (process.env.NODE_ENV !== "production") return "http://localhost:9099";
+    // else if (process.env.GITPOD_WORKSPACE_URL) return `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
+    else return null;
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
@@ -50,6 +57,8 @@ export default defineConfig({
     },
     define: {
         YEAR: new Date().getFullYear(),
-        VERSION: JSON.stringify(process.env.npm_package_version)
+        VERSION: JSON.stringify(process.env.npm_package_version),
+        AUTH_EMULATOR_URL: JSON.stringify(getAuthEmulatorUrl()),
+        DD_URL: JSON.stringify(process.env.USE_LOCAL_DD ? "http://localhost:8091/" : "https://dd.vocabustudy.org/")
     }
 })

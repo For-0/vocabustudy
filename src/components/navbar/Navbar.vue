@@ -15,12 +15,12 @@
                 <div class="z-50 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-800 dark:divide-gray-600 py-0 absolute right-0 top-12" id="account-dropdown" :class="{ 'hidden': !accountMenuOpen }" @click.stop>
                     <ul class="py-2">
                         <NavbarAccountMenuLink to="/saved/">Saved Sets</NavbarAccountMenuLink>
-                        <NavbarAccountMenuLink to="/my-sets/">My Sets</NavbarAccountMenuLink>
+                        <NavbarAccountMenuLink to="/my-sets/" v-if="authStore.currentUser">My Sets</NavbarAccountMenuLink>
                     </ul>
                     <ul class="py-2">
-                        <NavbarAccountMenuLink to="/account/">My Account</NavbarAccountMenuLink>
-                        <NavbarAccountMenuLink to="/logout/">Log Out</NavbarAccountMenuLink> <!-- TODO: make this a button -->
-                        <NavbarAccountMenuLink to="/login/">Log In</NavbarAccountMenuLink>
+                        <NavbarAccountMenuLink to="/account/" v-if="authStore.currentUser">My Account</NavbarAccountMenuLink>
+                        <NavbarAccountMenuLink to="/logout/" v-if="authStore.currentUser">Log Out</NavbarAccountMenuLink> <!-- TODO: make this a button -->
+                        <NavbarAccountMenuLink to="/login/" v-if="!authStore.currentUser">Log In</NavbarAccountMenuLink>
                     </ul>
                 </div>
                 <button @click.stop="{ navbarExpanded = !navbarExpanded; accountMenuOpen = false; }" type="button"
@@ -49,9 +49,11 @@ import NavbarLink from './NavbarLink.vue';
 import { Bars3Icon } from '@heroicons/vue/24/outline';
 import { UserCircleIcon } from '@heroicons/vue/24/outline';
 import NavbarAccountMenuLink from './NavbarAccountMenuLink.vue';
+import { useAuthStore } from '../../store';
 
 const accountMenuOpen = ref(false);
 const navbarExpanded = ref(false);
+const authStore = useAuthStore();
 
 function onDocumentClick() {
     accountMenuOpen.value = false;

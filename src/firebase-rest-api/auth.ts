@@ -1,13 +1,34 @@
 import { apiKey, clientId } from "./project-config.json";
-import { createElement, getLocalDb } from "../utils";
+import { getLocalDb } from "../utils";
 import { BroadcastChannel } from "broadcast-channel";
 import type { User } from "../types";
+import type { CredentialResponse } from "google-one-tap";
 
-
+declare global {
+    interface Window {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        ___jsl: any;
+        gapi: any;
+        /* eslint-enable */
+        signOut: () => void;
+    }
+}
 
 interface AuthEndpointConfig {
     emulatorUrl: string | null;
 }
+
+type RawUserResponse = {
+    localId: string,
+    email: string,
+    emailVerified: boolean,
+    displayName: string,
+    photoUrl: string,
+    createdAt: string,
+    lastLoginAt: string,
+    customAttributes: string | null,
+    providerUserInfo: { providerId: "password" | "google.com" }[]
+};
 
 export class Auth implements AuthEndpointConfig {
     channel: BroadcastChannel;
@@ -25,7 +46,7 @@ export class Auth implements AuthEndpointConfig {
      */
     on(eventName: "statechange", handler: () => void) {
         this.handlers.push({eventName, handler});
-        this.channel.addEventListener("message", async msg => {
+        this.channel.addEventListener("message", async (msg: string) => {
             if (msg === eventName) handler();
         });
     }
@@ -37,13 +58,13 @@ export class Auth implements AuthEndpointConfig {
 
 const AuthPopup = {
     currentPopup: {
-        window: null,
+        window: null as Window | null,
         promise: {
             resolve: () => {},
             reject: (_reason?: string) => {}
         }
     },
-    cachedGapiPromise: null,
+    cachedGapiPromise: null as Promise<unknown> | null,
     clearPopupReference() {
         this.currentPopup = {
             window: null,
@@ -109,12 +130,16 @@ const AuthPopup = {
             else if (window.gapi?.load) loadIframe();
             else {
                 const callbackName = `__iframefcb${Math.floor(Math.random() * 1000000)}`;
-                window[callbackName] = () => {
+                (window[callbackName as keyof Window] as () => void) = () => {
                     if (window.gapi.load) loadIframe();
                     else reject("NETWORK_REQUEST_FAILED");
                 };
                 return new Promise((resolve, reject) => {
-                    const scriptEl = createElement("script", [], {onload: resolve, onerror: () => reject("INTERNAL_ERROR"), type: "text/javascript", charset: "UTF-8"});
+                    const scriptEl = document.createElement("script");
+                    scriptEl.onload = resolve;
+                    scriptEl.onerror = () => reject("INTERNAL_ERROR");
+                    scriptEl.type = "text/javascript";
+                    scriptEl.charset = "UTF-8";
                     scriptEl.setAttribute("src", `https://apis.google.com/js/api.js?onload=${callbackName}`);
                     document.head.appendChild(scriptEl);
                 }).catch(err => reject(err));
@@ -124,12 +149,13 @@ const AuthPopup = {
             throw err;
         }));
     },
-    async loadEmulatorIframe(auth: Auth) {
+    async loadEmulatorIframe() {
         const context = await this.loadGoogleApi();
-        const iframeUrl = new URL(`${auth.emulatorUrl}/emulator/auth/iframe`);
+        const iframeUrl = new URL(`${AUTH_EMULATOR_URL}/emulator/auth/iframe`);
         iframeUrl.searchParams.append("apiKey", apiKey);
         iframeUrl.searchParams.append("appName", "[DEFAULT]");
         iframeUrl.searchParams.append("eid", "p");
+        //@ts-ignore
         const iframe = await context.open({ 
             where: document.body, 
             url: iframeUrl.href, 
@@ -160,7 +186,7 @@ const AuthPopup = {
 
 const requestUri = `${location.protocol}//${location.hostname}`;
 
-export function initializeAuth(authStateChangedCallback?: (user: User) => void) {
+export function initializeAuth(authStateChangedCallback?: (user: User | null) => void) {
     const auth = new Auth();
     auth.on("statechange", async () => {
         const user = await getCurrentUser();
@@ -168,12 +194,12 @@ export function initializeAuth(authStateChangedCallback?: (user: User) => void) 
         document.querySelectorAll<HTMLElement>(".only-logged-out").forEach(el => el.hidden = !!user);
         if (authStateChangedCallback) authStateChangedCallback(user);
     });
-    if (process.env.NODE_ENV !== "production" && location.hostname === "localhost") auth.emulatorUrl = "http://localhost:9099";
-    else if (process.env.CODESPACES) auth.emulatorUrl = `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`;
+    if (import.meta.env.NODE_ENV !== "production" && location.hostname === "localhost") auth.emulatorUrl = "http://localhost:9099";
+    else if (import.meta.env.CODESPACES) auth.emulatorUrl = `https://${import.meta.env.CODESPACE_NAME}-9099.${import.meta.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`;
     // else if (process.env.GITPOD_WORKSPACE_URL) auth.emulatorUrl = `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
     else auth.emulatorUrl = null;
-    window.signOut = () => setCurrentUser(auth, null);
-    refreshCurrentUser(auth, true);
+    window.signOut = () => setCurrentUser(null);
+    refreshCurrentUser(true);
     return auth;
 }
 
@@ -187,13 +213,13 @@ function generateEventId() {
  * @throws {Error}
  * @returns response for chaining
  */
-function throwResponseError(response: {error?: {errors: {domain: string, reason: string, message: string}[], code: number, message: string}}) {
+function throwResponseError(response: unknown & {error?: {errors: {domain: string, reason: string, message: string}[], code: number, message: string}}) {
     if (response.error) throw new Error(response.error.message);
-    else return response;
+    else return response as unknown;
 }
 
-async function authEndpointRequest([segment]: TemplateStringsArray | [string], body: object, auth: Auth, isRetry=false) {
-    const res = await fetch(`${auth.emulatorUrl ?? "https:/"}/identitytoolkit.googleapis.com/v1/accounts${segment}?key=${apiKey}`, {
+async function authEndpointRequest([segment]: TemplateStringsArray | [string], body: object, isRetry=false) {
+    const res = await fetch(`${AUTH_EMULATOR_URL ?? "https:/"}/identitytoolkit.googleapis.com/v1/accounts${segment}?key=${apiKey}`, {
         headers: {
             "Content-Type": "application/json"
         },
@@ -202,26 +228,16 @@ async function authEndpointRequest([segment]: TemplateStringsArray | [string], b
     });
     const resJson = await res.json();
     try {
-        return throwResponseError(resJson);
+        return throwResponseError(resJson) as { idToken: string; refreshToken: string; expiresIn: string; }; // this is the response type for everything except accounts:lookup
     } catch (err) {
-        if (err.message === "INVALID_ID_TOKEN" && !isRetry) {
-            await refreshCurrentUser(auth);
-            return authEndpointRequest([segment], body, auth, true);
+        if ((err as Error).message === "INVALID_ID_TOKEN" && !isRetry) {
+            await refreshCurrentUser();
+            return authEndpointRequest([segment], body, true);
         } else throw err;
     }
 }
 
-function parseAccountResponse(user: {
-    localId: string,
-    email: string,
-    emailVerified: boolean,
-    displayName: string,
-    photoUrl: string,
-    createdAt: string,
-    lastLoginAt: string,
-    customAttributes: string | null,
-    providerUserInfo: { providerId: "password" | "google.com" }[]
-}, { idToken, refreshToken, expiresIn } : { idToken: string, refreshToken: string, expiresIn: string | undefined }, expirationTime: number | null = null): User {
+function parseAccountResponse(user: RawUserResponse, { idToken, refreshToken, expiresIn } : { idToken: string, refreshToken: string, expiresIn: string | undefined }, expirationTime: number | null = null): User {
     return {
         uid: user.localId,
         email: user.email,
@@ -243,8 +259,8 @@ function parseAccountResponse(user: {
 /**
  * Convert an ID token to a User object by calling `accounts:lookup`
  */
-export async function idTokenToUser(auth: Auth, {idToken, refreshToken, expiresIn}: {idToken: string, refreshToken: string, expiresIn?: string}, expirationTime: number | null =null) {
-    const res = await authEndpointRequest`:lookup${{idToken}}${auth}`;
+export async function idTokenToUser({idToken, refreshToken, expiresIn}: {idToken: string, refreshToken: string, expiresIn?: string}, expirationTime: number | null =null) {
+    const res = await authEndpointRequest`:lookup${{idToken}}` as unknown as { users: [RawUserResponse] };
     const user = res.users[0];
     if (user) return parseAccountResponse(user, {idToken, refreshToken, expiresIn}, expirationTime);
     else return null;
@@ -259,25 +275,26 @@ export async function getCurrentUser(): Promise<User | null> {
         const user = await db.get("general", "current-user");
         return user;
     } catch (err) {
-        if (err.name === "InvalidStateError") return JSON.parse(localStorage.getItem("current-user") || "null");
+        if ((err as Error).name === "InvalidStateError") return JSON.parse(localStorage.getItem("current-user") || "null");
         else throw err;
     }
 }
 
-export async function getUpToDateIdToken(auth: Auth) {
-    const user = await refreshCurrentUser(auth);
+export async function getUpToDateIdToken() {
+    const user = await refreshCurrentUser();
     if (user) return user.token.access;
     else return null;
 }
 
 /** Refresh the auth token of the current user if needed. Sign them out if it's not possible */
-export async function refreshCurrentUser(auth: Auth, force = false): Promise<User | null> {
+export async function refreshCurrentUser(force = false): Promise<User | null> {
     const currentUser = await getCurrentUser();
     let user: User | null = null;
     if (currentUser) {
         try {
+            // refresh the user if the token expired
             if (Date.now() >= currentUser.token.expirationTime) {
-                const res = await fetch(`${auth.emulatorUrl ?? "https:/"}/securetoken.googleapis.com/v1/token?key=${apiKey}`, {
+                const res = await fetch(`${AUTH_EMULATOR_URL ?? "https:/"}/securetoken.googleapis.com/v1/token?key=${apiKey}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -288,12 +305,12 @@ export async function refreshCurrentUser(auth: Auth, force = false): Promise<Use
                     })
                 });
                 const { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json();
-                user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
-            } else if (force)
-                user = await idTokenToUser(auth, { idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
+                user = await idTokenToUser({ idToken, refreshToken, expiresIn });
+            } else if (force) // if force is true, call accounts:lookup to check if something happened (they were deleted, disabled, etc.)
+                user = await idTokenToUser({ idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
             else return currentUser;
         } catch (err) {
-            switch(err.message) {
+            switch((err as Error).message) {
                 case "TOKEN_EXPIRED":
                 case "USER_DISABLED":
                 case "USER_NOT_FOUND":
@@ -304,16 +321,16 @@ export async function refreshCurrentUser(auth: Auth, force = false): Promise<Use
             }
         }
     }
-    await setCurrentUser(auth, user, force);
+    await setCurrentUser(user);
     return user;
 }
 
 /**
  * Fetch a user using the accounts:lookup method
  */
-async function fetchUser(auth: Auth, { idToken, refreshToken, expiresIn }: { idToken: string, refreshToken: string, expiresIn: string }) {
-    const user = await idTokenToUser(auth, { idToken, refreshToken, expiresIn });
-    await setCurrentUser(auth, user);
+async function fetchUser({ idToken, refreshToken, expiresIn }: { idToken: string, refreshToken: string, expiresIn: string }) {
+    const user = await idTokenToUser({ idToken, refreshToken, expiresIn });
+    await setCurrentUser(user);
     if (!user) throw new Error("USER_NOT_FOUND");
     return user;
 }
@@ -322,83 +339,82 @@ async function fetchUser(auth: Auth, { idToken, refreshToken, expiresIn }: { idT
  * Store the currently signed in user. Broadcasts a statechange event
  * @param user The currently signed in user or null if there is no signed in user
  */
-export async function setCurrentUser(auth: Auth, user: User | null, forceUpdate = false) {
-    const currentUser = await getCurrentUser();
+export async function setCurrentUser(user: User | null) {
     try {
         const db = await getLocalDb();
         await db.put("general", user, "current-user");
     } catch (err) {
         // catch mutation not allowed in firefox private:
-        if (err.name === "InvalidStateError") localStorage.setItem("current-user", JSON.stringify(user)); // fallback to localStorage
+        if ((err as Error).name === "InvalidStateError") localStorage.setItem("current-user", JSON.stringify(user)); // fallback to localStorage
         else throw err;
     }
-    if (((currentUser === null) !== (user === null)) || forceUpdate) // if there was a change in the user state
-        await auth.broadcastEvent("statechange");
+    /*if (((currentUser === null) !== (user === null)) || forceUpdate) // if there was a change in the user state
+        await auth.broadcastEvent("statechange");*/
 }
 
-export async function signInWithEmailAndPassword(auth: Auth, email: string, password: string): Promise<User> {
-    const res = await authEndpointRequest`:signInWithPassword${{email, password, returnSecureToken: true}}${auth}`;
-    return await fetchUser(auth, res);
+export async function signInWithEmailAndPassword(email: string, password: string): Promise<User> {
+    const res = await authEndpointRequest`:signInWithPassword${{email, password, returnSecureToken: true}}`;
+    return await fetchUser(res);
 }
 
-export async function createUserWithEmailAndPassword(auth: Auth, email: string, password: string, displayName: string): Promise<User> {
-    const res = await authEndpointRequest`:signUp${{email, password, returnSecureToken: true}}${auth}`;
-    await authEndpointRequest`:update${{idToken: res.idToken, displayName}}${auth}`;
-    return await fetchUser(auth, res);
+export async function createUserWithEmailAndPassword(email: string, password: string, displayName: string): Promise<User> {
+    const res = await authEndpointRequest`:signUp${{email, password, returnSecureToken: true}}`;
+    await authEndpointRequest`:update${{idToken: res.idToken, displayName}}`;
+    return await fetchUser(res);
 }
 
 /**
  * Sign in with a Google credential
  */
-export async function signInWithGoogleCredential(auth: Auth, googleIdToken: string): Promise<User> {
-    const res = await authEndpointRequest`:signInWithIdp${{postBody: `id_token=${googleIdToken}&providerId=google.com`, requestUri, returnSecureToken: true}}${auth}`;
-    return await fetchUser(auth, res);
+export async function signInWithGoogleCredential(googleIdToken: string): Promise<User> {
+    const res = await authEndpointRequest`:signInWithIdp${{postBody: `id_token=${googleIdToken}&providerId=google.com`, requestUri, returnSecureToken: true}}`;
+    return await fetchUser(res);
 }
 
 /**
  * Deletes the current user and signs them out
  */
-export async function deleteCurrentUser(auth: Auth) {
+export async function deleteCurrentUser() {
     const currentUser = await getCurrentUser();
     if (currentUser) {
-        await authEndpointRequest`:delete${{idToken: currentUser.token.access}}${auth}`;
-        await setCurrentUser(auth, null);
+        await authEndpointRequest`:delete${{idToken: currentUser.token.access}}`;
+        await setCurrentUser(null);
     }
 }
 
 /**
  * Sends an email verification for the current user
  */
-export async function sendEmailVerification(auth: Auth, currentUser: User) {
-    return await authEndpointRequest`:sendOobCode${{idToken: currentUser.token.access, requestType: "VERIFY_EMAIL"}}${auth}`
+export async function sendEmailVerification(currentUser: User) {
+    return await authEndpointRequest`:sendOobCode${{idToken: currentUser.token.access, requestType: "VERIFY_EMAIL"}}`
 }
 
 /**
  * Send a password reset email to the given address 
  */
-export async function sendPasswordResetEmail(auth: Auth, email: string) {
-    return await authEndpointRequest`:sendOobCode${{requestType: "PASSWORD_RESET", email}}${auth}`;
+export async function sendPasswordResetEmail(email: string) {
+    return await authEndpointRequest`:sendOobCode${{requestType: "PASSWORD_RESET", email}}`;
 }
 
 /**
  * Update the current user's password
  */
-export async function updatePassword(auth: Auth, password: string) {
+export async function updatePassword(password: string) {
     const currentUser = await getCurrentUser();
     if (currentUser) {
-        const res = await authEndpointRequest`:update${{idToken: currentUser.token.access, password, returnSecureToken: true}}${auth}`;
-        await fetchUser(auth, res);
+        const res = await authEndpointRequest`:update${{idToken: currentUser.token.access, password, returnSecureToken: true}}`;
+        await fetchUser(res);
     }
 }
 
 /**
  * Update a user's display name or profile picture
  */
-export async function updateProfile(auth: Auth, updatedProfile: {displayName?: string, photoUrl?: string}) {
+export async function updateProfile(updatedProfile: {displayName?: string, photoUrl?: string}) {
     const currentUser = await getCurrentUser();
     if (currentUser) {
-        await authEndpointRequest`:update${{idToken: currentUser.token.access, returnSecureToken: true, ...updatedProfile}}${auth}`;
-        await refreshCurrentUser(auth);
+        await authEndpointRequest`:update${{idToken: currentUser.token.access, returnSecureToken: true, ...updatedProfile}}`;
+        await refreshCurrentUser();
     }
 }
 
@@ -409,9 +425,9 @@ function authEventUid(authEvent: {type: string, eventId: string, sessionId: stri
  * Show a Sign In With Google popup (EMULATOR ONLY)
  * @param isReauth If the user is reauthenticating
  */
-export async function showGooglePopup(auth: Auth, isReauth = false) {
+export async function showGooglePopup(isReauth = false) {
     AuthPopup.rejectExistingPopup();
-    const actionUrl = new URL(`${auth.emulatorUrl}/emulator/auth/handler`);
+    const actionUrl = new URL(`${AUTH_EMULATOR_URL}/emulator/auth/handler`);
     actionUrl.searchParams.append("apiKey", apiKey);
     actionUrl.searchParams.append("appName", "[DEFAULT]");
     actionUrl.searchParams.append("authType", "signInViaPopup");
@@ -444,16 +460,16 @@ export async function showGooglePopup(auth: Auth, isReauth = false) {
             lastProcessed: Date.now(),
             cachedUids: new Set()
         }
-        AuthPopup.loadEmulatorIframe(auth).then(iframe => {
-            iframe.register("authEvent", iframeEvent => {
+        AuthPopup.loadEmulatorIframe().then(iframe => {
+            iframe.register("authEvent", (iframeEvent: { authEvent: { type: string, eventId: string, urlResponse: string, sessionId: string, tenantId: string } }) => {
                 if (Date.now() - eventManager.lastProcessed >= 10 * 60 * 1000) eventManager.cachedUids.clear();
                 if (eventManager.cachedUids.has(authEventUid(iframeEvent.authEvent))) return { status: "ERROR" };
                 else if (iframeEvent.authEvent.type === "unknown") return { status: "ACK" };
                 else if (["signInViaPopup", "reauthViaPopup"].includes(iframeEvent.authEvent.type) && iframeEvent.authEvent.eventId === actionUrl.searchParams.get("eventId")) {
                     if (pollId) clearTimeout(pollId);
                     popupWindow?.close();
-                    authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}${auth}`
-                    .then((res: { idToken: string, refreshToken: string, expiresIn: string }) => fetchUser(auth, res))
+                    authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}`
+                    .then(res => fetchUser(res))
                     .then((user: User) => resolve(user))
                     .catch((err: any) => reject(err)); // eslint-disable-line @typescript-eslint/no-explicit-any
                     return { status: "ACK" };
@@ -464,7 +480,7 @@ export async function showGooglePopup(auth: Auth, isReauth = false) {
     });
 }
 
-export function renderGoogleButton(oneTapContainer, callback) {
+export function renderGoogleButton(oneTapContainer: HTMLElement, callback: (credentialResponse: CredentialResponse) => void) {
     window.google.accounts.id.initialize({
         client_id: clientId,
         context: "signin",
