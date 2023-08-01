@@ -1,6 +1,5 @@
 import { apiKey, clientId } from "./project-config.json";
 import { getLocalDb } from "../utils";
-import { BroadcastChannel } from "broadcast-channel";
 import type { User } from "../types";
 import type { CredentialResponse } from "google-one-tap";
 
@@ -14,11 +13,7 @@ declare global {
     }
 }
 
-interface AuthEndpointConfig {
-    emulatorUrl: string | null;
-}
-
-type RawUserResponse = {
+interface RawUserResponse {
     localId: string,
     email: string,
     emailVerified: boolean,
@@ -28,33 +23,9 @@ type RawUserResponse = {
     lastLoginAt: string,
     customAttributes: string | null,
     providerUserInfo: { providerId: "password" | "google.com" }[]
-};
-
-export class Auth implements AuthEndpointConfig {
-    channel: BroadcastChannel;
-    emulatorUrl: string | null = null;
-    handlers: {eventName: "statechange", handler: () => void}[];
-    constructor() {
-        this.channel = new BroadcastChannel("auth-updates", {
-            webWorkerSupport: false
-        });
-        this.handlers = [];
-    }
-    /**
-     * Add an event listener on the Auth object
-     * @param {"statechange"} eventName The name of the event to listen to
-     */
-    on(eventName: "statechange", handler: () => void) {
-        this.handlers.push({eventName, handler});
-        this.channel.addEventListener("message", async (msg: string) => {
-            if (msg === eventName) handler();
-        });
-    }
-    async broadcastEvent(eventName: "statechange") {
-        this.handlers.forEach(el => el.eventName === eventName && el.handler());
-        await this.channel.postMessage(eventName);
-    }
 }
+
+type GenericResponse = { idToken: string; refreshToken: string; expiresIn: string; } | { error: { errors: { domain: string, reason: string, message: string }[], code: number, message: string } };
 
 const AuthPopup = {
     currentPopup: {
@@ -98,6 +69,7 @@ const AuthPopup = {
         const optionsString = Object.entries(options).reduce((prev, [key, val]) => `${prev}${key}=${val}`, "");
         return this.currentPopup.window = open(url, generateEventId(), optionsString);
     },
+    /* eslint-disable */ // this is just development emulation code and relies on a bunch of hidden APIs on the window which we don't know the types of
     resetUnloadedGapiModules() {
         const b = window.___jsl;
         if (b?.H) {
@@ -113,7 +85,7 @@ const AuthPopup = {
     },
     async loadGoogleApi() {
         // I know copying google's code is bad practice and unmaintainable but THIS IS ONLY FOR THE EMULATOR! Not for production!
-        return (this.cachedGapiPromise) || (this.cachedGapiPromise = new Promise((resolve, reject) => {
+        return (this.cachedGapiPromise) ?? (this.cachedGapiPromise = new Promise((resolve, reject) => {
             function loadIframe() {
                 // resets unloaded modules
                 AuthPopup.resetUnloadedGapiModules();
@@ -182,26 +154,10 @@ const AuthPopup = {
         }));
         return iframe;
     }
+    /* eslint-enable */
 }
 
 const requestUri = `${location.protocol}//${location.hostname}`;
-
-export function initializeAuth(authStateChangedCallback?: (user: User | null) => void) {
-    const auth = new Auth();
-    auth.on("statechange", async () => {
-        const user = await getCurrentUser();
-        document.querySelectorAll<HTMLElement>(".only-logged-in").forEach(el => el.hidden = !user);
-        document.querySelectorAll<HTMLElement>(".only-logged-out").forEach(el => el.hidden = !!user);
-        if (authStateChangedCallback) authStateChangedCallback(user);
-    });
-    if (import.meta.env.NODE_ENV !== "production" && location.hostname === "localhost") auth.emulatorUrl = "http://localhost:9099";
-    else if (import.meta.env.CODESPACES) auth.emulatorUrl = `https://${import.meta.env.CODESPACE_NAME}-9099.${import.meta.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`;
-    // else if (process.env.GITPOD_WORKSPACE_URL) auth.emulatorUrl = `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
-    else auth.emulatorUrl = null;
-    window.signOut = () => setCurrentUser(null);
-    refreshCurrentUser(true);
-    return auth;
-}
 
 function generateEventId() {
     return Array(10).fill(null).map(() => Math.floor(Math.random() * 10)).join("");
@@ -213,9 +169,9 @@ function generateEventId() {
  * @throws {Error}
  * @returns response for chaining
  */
-function throwResponseError(response: unknown & {error?: {errors: {domain: string, reason: string, message: string}[], code: number, message: string}}) {
-    if (response.error) throw new Error(response.error.message);
-    else return response as unknown;
+function throwResponseError(response: GenericResponse) {
+    if ("error" in response) throw new Error(response.error.message);
+    else return response;
 }
 
 async function authEndpointRequest([segment]: TemplateStringsArray | [string], body: object, isRetry=false) {
@@ -226,9 +182,9 @@ async function authEndpointRequest([segment]: TemplateStringsArray | [string], b
         method: "POST",
         body: JSON.stringify(body)
     });
-    const resJson = await res.json();
+    const resJson = await res.json() as GenericResponse;
     try {
-        return throwResponseError(resJson) as { idToken: string; refreshToken: string; expiresIn: string; }; // this is the response type for everything except accounts:lookup
+        return throwResponseError(resJson); // this is the response type for everything except accounts:lookup
     } catch (err) {
         if ((err as Error).message === "INVALID_ID_TOKEN" && !isRetry) {
             await refreshCurrentUser();
@@ -246,12 +202,13 @@ function parseAccountResponse(user: RawUserResponse, { idToken, refreshToken, ex
         photoUrl: user.photoUrl,
         created: new Date(Number(user.createdAt)),
         lastLogin: new Date(Number(user.lastLoginAt)),
-        customAttributes: JSON.parse(user.customAttributes || "{}"),
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        customAttributes: JSON.parse(user.customAttributes || "{}") as Record<string, unknown>,
         providers: user.providerUserInfo.map(el => el.providerId),
         token: {
             access: idToken,
             refresh: refreshToken,
-            expirationTime: expirationTime || (Date.now() + Number(expiresIn) * 1000) // expiresIn is a string in seconds like "3600" (one hour),
+            expirationTime: expirationTime ?? (Date.now() + Number(expiresIn) * 1000) // expiresIn is a string in seconds like "3600" (one hour),
         }
     };
 }
@@ -260,7 +217,7 @@ function parseAccountResponse(user: RawUserResponse, { idToken, refreshToken, ex
  * Convert an ID token to a User object by calling `accounts:lookup`
  */
 export async function idTokenToUser({idToken, refreshToken, expiresIn}: {idToken: string, refreshToken: string, expiresIn?: string}, expirationTime: number | null =null) {
-    const res = await authEndpointRequest`:lookup${{idToken}}` as unknown as { users: [RawUserResponse] };
+    const res = await authEndpointRequest`:lookup${{idToken}}` as unknown as { users: (RawUserResponse | null)[] };
     const user = res.users[0];
     if (user) return parseAccountResponse(user, {idToken, refreshToken, expiresIn}, expirationTime);
     else return null;
@@ -273,9 +230,9 @@ export async function getCurrentUser(): Promise<User | null> {
     try {
         const db = await getLocalDb();
         const user = await db.get("general", "current-user");
-        return user;
+        return user ?? null;
     } catch (err) {
-        if ((err as Error).name === "InvalidStateError") return JSON.parse(localStorage.getItem("current-user") || "null");
+        if ((err as Error).name === "InvalidStateError") return JSON.parse(localStorage.getItem("current-user") ?? "null") as User | null;
         else throw err;
     }
 }
@@ -304,7 +261,7 @@ export async function refreshCurrentUser(force = false): Promise<User | null> {
                         refresh_token: currentUser.token.refresh
                     })
                 });
-                const { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json();
+                const { id_token: idToken, refresh_token: refreshToken, expires_in: expiresIn } = await res.json() as { id_token: string, refresh_token: string, expires_in: string };
                 user = await idTokenToUser({ idToken, refreshToken, expiresIn });
             } else if (force) // if force is true, call accounts:lookup to check if something happened (they were deleted, disabled, etc.)
                 user = await idTokenToUser({ idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
@@ -460,7 +417,8 @@ export async function showGooglePopup(isReauth = false) {
             lastProcessed: Date.now(),
             cachedUids: new Set()
         }
-        AuthPopup.loadEmulatorIframe().then(iframe => {
+        void AuthPopup.loadEmulatorIframe().then(iframe => {
+            // eslint-disable-next-line
             iframe.register("authEvent", (iframeEvent: { authEvent: { type: string, eventId: string, urlResponse: string, sessionId: string, tenantId: string } }) => {
                 if (Date.now() - eventManager.lastProcessed >= 10 * 60 * 1000) eventManager.cachedUids.clear();
                 if (eventManager.cachedUids.has(authEventUid(iframeEvent.authEvent))) return { status: "ERROR" };
@@ -470,12 +428,12 @@ export async function showGooglePopup(isReauth = false) {
                     popupWindow?.close();
                     authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}`
                     .then(res => fetchUser(res))
-                    .then((user: User) => resolve(user))
-                    .catch((err: any) => reject(err)); // eslint-disable-line @typescript-eslint/no-explicit-any
+                    .then((user: User) => { resolve(user); })
+                    .catch((err: any) => { reject(err); }); // eslint-disable-line @typescript-eslint/no-explicit-any
                     return { status: "ACK" };
                 }
                 else return { status: "ERROR" };
-            }, window.gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER);
+            }, window.gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER); // eslint-disable-line
         });
     });
 }

@@ -21,15 +21,15 @@ export const useAuthStore = defineStore("auth", () => {
     async function refreshUser(force = false) {
         await refreshCurrentUser(force);
         await reloadCurrentUser();
-        broadcastUpdate();
+        await broadcastUpdate();
     }
 
     const channel = new BroadcastChannel("auth-updates", {
         webWorkerSupport: false
     });
 
-    function broadcastUpdate() {
-        channel.postMessage("statechange");
+    async function broadcastUpdate() {
+        await channel.postMessage("statechange");
     }
     
     channel.addEventListener("message", async (msg: string) => {
@@ -38,8 +38,8 @@ export const useAuthStore = defineStore("auth", () => {
         }
     });
 
-    reloadCurrentUser(); // this completes much faster than refreshCurrentUser, so we can use it to get the initial state while we wait for the refresh to complete
-    refreshCurrentUser(true);
+    void reloadCurrentUser(); // this completes much faster than refreshCurrentUser, so we can use it to get the initial state while we wait for the refresh to complete
+    void refreshCurrentUser(true);
 
     return {
         currentUser,
@@ -48,25 +48,26 @@ export const useAuthStore = defineStore("auth", () => {
 });
 
 export const useUserProfileCacheStore = defineStore("user-profile-cache", () => {
-    const cache = ref<{ [key: string]: UserProfile }>({});
+    const cache = ref<Map<string, UserProfile>>(new Map());
 
     async function getAll(uids: string[]) {
         const uniqueUids = [...new Set(uids)];
 
-        const missingUids = uniqueUids.filter(uid => !cache.value[uid]);
+        const missingUids = uniqueUids.filter(uid => !cache.value.get(uid));
 
         await Promise.all(missingUids.map(async uid => {
             const res = await fetch(`${DD_URL}users/${uid}`);
             if (res.ok) {
-                const data = await res.json();
-                cache.value[uid] = data;
+                const data = await res.json() as UserProfile;
+                cache.value.set(uid, data);
             }
         }));
 
-        return uids.map(uid => cache.value[uid] || { displayName: "Unknown User", photoUrl: "", roles: [] });
+        return uids.map(uid => cache.value.get(uid) ?? { displayName: "Unknown User", photoUrl: "", roles: [] });
     }
 
     return {
         getAll,
+        cache
     };
 });

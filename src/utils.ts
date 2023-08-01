@@ -1,8 +1,9 @@
 import { openDB } from "idb";
 import { c as collectionData } from "./collections.json" assert { type: "json" };
+import type { VocabustudyDB } from "./types";
 
 export async function getLocalDb() {
-    return await openDB("vocabustudy-database", 2, {
+    return await openDB<VocabustudyDB>("vocabustudy-database", 2, {
         upgrade(db, oldVersion) {
             if (oldVersion === 0)
                 db.createObjectStore("autosave-backups", { keyPath: "setId" });

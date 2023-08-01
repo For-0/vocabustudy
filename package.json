@@ -6,7 +6,7 @@
   "scripts": {
     "emulator": "firebase emulators:start --only auth,firestore --import ../vocabustudy-internals/emulator-data --export-on-exit",
     "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\"",
-    "lint": "eslint src/js && stylelint src/css && pug-lint src",
+    "lint": "eslint src/",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -29,8 +29,8 @@
     "@types/fscreen": "^1.0.1",
     "@types/google-one-tap": "^1.2.2",
     "@types/marked": "^4.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.54.1",
-    "@typescript-eslint/parser": "^5.54.1",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.14",

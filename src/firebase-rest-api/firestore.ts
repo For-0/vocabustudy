@@ -27,12 +27,12 @@ export const Firestore = {
         else if (field.mapValue) return Firestore.parseMap(field.mapValue);
         else if (field.arrayValue?.values) return field.arrayValue.values.map(Firestore.parseField);
         else if (field.arrayValue) return [];
-        else if (field.nullValue) return null;
+        else if ("nullValue" in field) return null;
         else if (field.timestampValue) return new Date(Date.parse(field.timestampValue));
         else return null;
     },
     createField: (value: FirestoreField): RawFirestoreField => {
-        if (Number.isInteger(value)) return { integerValue: value!.toString() }; // we can safely ignore the ! because we know it's an integer
+        if (Number.isInteger(value)) return { integerValue: (value as number).toString() };
         if (typeof value === "number") return { doubleValue: value.toString() };
         if (typeof value === "boolean") return { booleanValue: value };
         if (typeof value === "string") return { stringValue: value };
@@ -53,7 +53,7 @@ export const Firestore = {
         const res = await fetch(`${this.baseUrl}/${collection}/${documentId}${Firestore.getFieldMask(fieldMask)}`, {
             headers: getRequestHeaders(idToken)
         });
-        const json: FirestoreRestDocument = await res.json();
+        const json = await res.json() as FirestoreRestDocument;
         if (json.error?.code === 404) return null;
         throwResponseError(json.error);
         return {
@@ -69,15 +69,15 @@ export const Firestore = {
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({ structuredQuery })
         });
-        const json: ({document: FirestoreRestDocument, done: boolean } & FirestoreRestError)[] = await res.json();
+        const json = await res.json() as ({ document: FirestoreRestDocument | null, done: boolean } & FirestoreRestError)[];
         if ("error" in json[0] && json[0].error) throwResponseError(json[0].error);
-        if (json.length === 1 && !json[0].document) return [];
+        if (json.some(({ document }) => document === null)) return [];
         return json.map((info) => {
             const docObj: ParsedRestDocument = {
-                pathParts: info.document.name.split("/"),
-                ...Firestore.parseMap(info.document),
-                createTime: new Date(Date.parse(info.document.createTime)),
-                updateTime: new Date(Date.parse(info.document.updateTime)),
+                pathParts: info.document!.name.split("/"),
+                ...Firestore.parseMap(info.document!),
+                createTime: new Date(Date.parse(info.document!.createTime)),
+                updateTime: new Date(Date.parse(info.document!.updateTime)),
             };
             if (info.done) docObj.last = true;
             return docObj
@@ -91,7 +91,7 @@ export const Firestore = {
             headers: getRequestHeaders(idToken),
             body: JSON.stringify(req)
         });
-        const json: {found: FirestoreRestDocument, missing: string}[] & FirestoreRestError = await res.json();
+        const json = await res.json() as {found: FirestoreRestDocument, missing: string}[] & FirestoreRestError;
         if ("error" in json && json.error) throwResponseError(json.error);
         return json.filter(doc => doc.found).map(({found: doc}): ParsedRestDocument => ({
             pathParts: doc.name.split("/"),
@@ -106,7 +106,7 @@ export const Firestore = {
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({ fields: Firestore.specifyFields(fields) })
         });
-        const json: FirestoreRestDocument = await res.json();
+        const json = await res.json() as FirestoreRestDocument;
         throwResponseError(json.error);
         return {
             pathParts: json.name.split("/"),
@@ -124,7 +124,7 @@ export const Firestore = {
     updateDocument: async function (collection: string, documentId: string, fields: FirestoreFieldObject, idToken: string, merge = false, requireExistence: boolean | null = null) {
         const endpointUrl = new URL(`${Firestore.baseUrl}/${collection}/${documentId}`);
         if (requireExistence !== null) endpointUrl.searchParams.append("currentDocument.exists", requireExistence.toString());
-        if (merge) Object.keys(fields).forEach(field => endpointUrl.searchParams.append("updateMask.fieldPaths", field));
+        if (merge) Object.keys(fields).forEach(field => { endpointUrl.searchParams.append("updateMask.fieldPaths", field); });
         await fetch(endpointUrl, {
             method: "PATCH",
             headers: getRequestHeaders(idToken),
@@ -171,7 +171,7 @@ export class FSDocument extends BaseFirestoreDocument {
         this.updateTime = updateTime;
         if (last) this.last = true;
     }
-    static fromSingle<T extends typeof FSDocument>(this: T, doc: ParsedRestDocument) {
+    static fromSingle<T extends typeof FSDocument>(this: T, doc: ParsedRestDocument | null) {
         return doc ? new this(doc) as InstanceType<T> : null;
     }
     static fromMultiple<T extends typeof FSDocument>(this: T, docs: ParsedRestDocument[]) {
@@ -294,7 +294,7 @@ export class BatchWriter {
     update<T extends FSDocument>(pathParts: string[], fields: Partial<{ [P in keyof T]: FirestoreField }>, fieldTransforms: FieldTransform[] = []) {
         this.writes.push({
             pathParts,
-            // @ts-ignore
+            // @ts-expect-error
             update: fields,
             updateTransforms: fieldTransforms
         });

@@ -24,7 +24,3 @@ jobs:
         with:
           eslint: true
           eslint_extensions: js
-          stylelint: true
-          stylelint_extensions: scss,css
-      - name: Lint Pug
-        run: npx pug-lint src/*.pug

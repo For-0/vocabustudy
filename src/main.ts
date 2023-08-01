@@ -1,15 +1,13 @@
-import { createApp } from 'vue';
+import { createApp, type Component } from 'vue';
 import App from './App.vue';
 import './assets/main.css';
 import { createPinia } from 'pinia';
+import createRouter from "./router";
 
-const app = createApp(App);
+const app = createApp(App as Component);
 const pinia = createPinia();
 
 app.use(pinia);
-
-const router = await import("./router"); // we need to import router after pinia is created because it uses pinia
-
-app.use(router.default);
+app.use(createRouter());
 
 app.mount('#app');

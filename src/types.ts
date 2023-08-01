@@ -1,4 +1,4 @@
-import type { IDBPDatabase } from "idb";
+import type { DBSchema } from "idb";
 import type { FSDocument } from "./firebase-rest-api/firestore";
 
 export type RecursivePartial<T> = {
@@ -11,13 +11,13 @@ export type OnlyProperties<T> = Pick<T,
 >;
 
 /** A standard term/definition pair. Timelines also fall into this category */
-export type TermDefinition = { term: string, definition: string }; 
+export interface TermDefinition { term: string, definition: string } 
 
 /** A study guide reading */
-export type StudyGuideReading = { body: string, type: 0, title: string };
+export interface StudyGuideReading { body: string, type: 0, title: string }
 
 /** A study guide quiz */
-export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string };
+export interface StudyGuideQuiz { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string }
 
 /** The document `terms` field */
 export type SetTerms = TermDefinition[]|(StudyGuideQuiz|StudyGuideReading)[];
@@ -39,22 +39,23 @@ export type RawFirestoreField = AtLeastOne<{
     timestampValue: string;
 }>;
 
-export type RawFirestoreFieldObject = { [key: string]: RawFirestoreField };
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */ // if we make this a Record type, typescript detects the circular reference and complains
+export interface RawFirestoreFieldObject { [key: string]: RawFirestoreField }
+export interface FirestoreFieldObject { [key: string]: FirestoreField }
+/* eslint-enable @typescript-eslint/consistent-indexed-object-style */
 
 export type FirestoreField = null | number | boolean | string | Date | FSDocument | FirestoreField[] | FirestoreFieldObject;
 
-export type FirestoreFieldObject = { [key: string]: FirestoreField };
 
-
-export type FieldFilter = {
+export interface FieldFilter {
     fieldFilter: {
         field: { fieldPath: string };
         op: "EQUAL" | "GREATER_THAN" | "GREATER_THAN_OR_EQUAL" | "LESS_THAN" | "LESS_THAN_OR_EQUAL" | "ARRAY_CONTAINS" | "IN" | "ARRAY_CONTAINS_ANY";
         value: RawFirestoreField;
     }
-};
+}
 
-type FieldReference = { fieldPath: string };
+interface FieldReference { fieldPath: string }
 
 export type StructuredQuery = Partial<{
     select: { fields: FieldReference[] };
@@ -77,20 +78,20 @@ export type StructuredQuery = Partial<{
 }>;
 
 
-export type FieldTransform = {
+export interface FieldTransform {
     fieldPath: string;
     setToServerValue: "REQUEST_TIME";
-};
+}
 
-export type BatchWriteWrite = { pathParts: string[], update: { [key: string]: FirestoreField }, updateTransforms: FieldTransform[] };
+export interface BatchWriteWrite { pathParts: string[], update: Record<string, FirestoreField>, updateTransforms: FieldTransform[] }
 
-export type FirestoreRestError = {
+export interface FirestoreRestError {
     error?: { 
         code: number;
         message: string;
         status: string;
     };
-};
+}
 
 export type FirestoreRestDocument = {
     name: string;
@@ -99,12 +100,12 @@ export type FirestoreRestDocument = {
     updateTime: string;
 } & FirestoreRestError;
 
-export type ParsedRestDocument = {
+export interface ParsedRestDocument {
     pathParts: string[],
     createTime: Date,
     updateTime: Date,
     last?: boolean
-};
+}
 
 export interface User {
     created: Date,
@@ -115,13 +116,13 @@ export interface User {
     photoUrl: string,
     token: { refresh: string, access: string, expirationTime: number },
     uid: string,
-    customAttributes: { [key: string]: unknown },
+    customAttributes: Record<string, unknown>,
     providers: ("password" | "google.com")[]
 }
 
 export type UserProfile = Pick<User, "displayName" | "photoUrl"> & { roles: string[] };
 
-export interface VocabustudyDB extends IDBPDatabase {
+export interface VocabustudyDB extends DBSchema {
     "autosave-backups": {
         key: string;
         value: {
@@ -131,6 +132,6 @@ export interface VocabustudyDB extends IDBPDatabase {
     }
     general: {
         key: "current-user";
-        value: User;
+        value: User | null;
     }
 }
