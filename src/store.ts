@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { type User, type UserProfile } from "./types";
-import { getCurrentUser, refreshCurrentUser } from "./firebase-rest-api/auth";
+import { getCurrentUser, refreshCurrentUser, signInWithEmailAndPassword } from "./firebase-rest-api/auth";
 import { BroadcastChannel } from "broadcast-channel";
 
 // TERMINOLOGY:
@@ -17,11 +17,20 @@ export const useAuthStore = defineStore("auth", () => {
         currentUser.value = user;
     }
 
+    async function rb() {
+        await reloadCurrentUser();
+        await broadcastUpdate();
+    }
+
     /** refresh the auth token if needed */
     async function refreshUser(force = false) {
         await refreshCurrentUser(force);
-        await reloadCurrentUser();
-        await broadcastUpdate();
+        await rb();
+    }
+
+    async function signIn(email: string, password: string) {
+        await signInWithEmailAndPassword(email, password);
+        await rb();
     }
 
     const channel = new BroadcastChannel("auth-updates", {
@@ -43,7 +52,8 @@ export const useAuthStore = defineStore("auth", () => {
 
     return {
         currentUser,
-        refreshCurrentUser: refreshUser
+        refreshCurrentUser: refreshUser,
+        signInWithEmailAndPassword: signIn
     };
 });
 

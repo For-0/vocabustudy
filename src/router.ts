@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from './views/HomeView.vue'
+import HomeView from './views/HomeView.vue'; // we import this here to make sure it loads instantly without having to wait for a network request
 import { useAuthStore } from './store';
 import type { Component } from 'vue';
 
@@ -36,11 +36,27 @@ export default function () {
                 }
             },
             {
+                path: '/privacy',
+                name: 'privacy',
+                component: () => import('./views/PrivacyPolicyView.vue'),
+                meta: {
+                    title: "Privacy Policy"
+                }
+            },
+            {
+                path: '/terms',
+                name: 'terms',
+                component: () => import('./views/TOSView.vue'),
+                meta: {
+                    title: "Terms of Service"
+                }
+            },
+            {
                 path: '/login',
                 name: 'login',
                 component: () => import('./views/LoginView.vue'),
                 meta: {
-                    title: "Log In"
+                    title: "Log in"
                 }
             },
             {

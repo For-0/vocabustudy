@@ -12,38 +12,38 @@
         </div>
     </div>
     -->
-    <div class="bg-primary text-white">
+    <div class="bg-primary text-white pt-2">
         <div class="mx-auto max-w-screen-xl text-center">
-            <div class="pt-6 mb-4">
-                <router-link to="/" class="flex justify-center items-center text-2xl font-semibold text-white">
-                    <img src="/icons/icon-192.png" alt="Vocabustudy Logo" class="w-8 h-8 mr-2 shadow shadow-white/25 rounded-lg"> Vocabustudy <span class="text-sm px-2 py-1 ml-2 bg-secondary bg-opacity-75 hover:bg-opacity-100 rounded" href="https://github.com/For-0/vocabustudy/releases" target="_blank">v{{ currentVersion }}</span>
+            <div class="mb-2 md:pt-6 md:mb-4">
+                <router-link to="/" class="flex justify-center items-center md:text-2xl font-semibold text-white">
+                    <img src="/icons/icon-192.png" alt="Vocabustudy Logo" class="w-4 h-4 md:w-8 md:h-8 mr-2 shadow shadow-white/25 rounded-lg"> Vocabustudy <span class="hidden md:inline text-sm px-2 py-1 ml-2 bg-secondary bg-opacity-75 hover:bg-opacity-100 rounded" href="https://github.com/For-0/vocabustudy/releases" target="_blank">v{{ currentVersion }}</span>
                 </router-link>
             </div>
-            <ul class="flex flex-wrap justify-center items-center mb-4 text-white">
+            <ul class="flex flex-wrap justify-center items-center md:mb-4 text-white text-sm md:text-base gap-x-4 md:gap-x-6">
                 <li>
-                    <router-link to="/credits" class="mr-4 hover:underline md:mr-6 ">About Us</router-link>
+                    <router-link to="/credits" class="hover:underline">About Us</router-link>
                 </li>
                 <li>
-                    <router-link to="/privacy" class="mr-4 hover:underline md:mr-6">Privacy</router-link>
+                    <a href="https://blog.vocabustudy.org/" class="hover:underline" target="_blank">Blog</a>
                 </li>
                 <li>
-                    <router-link to="/tos" class="mr-4 hover:underline md:mr-6">Terms of Service</router-link>
+                    <router-link to="/forms" class="hover:underline">Contact</router-link>
                 </li>
                 <li>
-                    <a href="https://blog.vocabustudy.org/" class="mr-4 hover:underline md:mr-6" target="_blank">Blog</a>
+                    <router-link to="/privacy" class="hover:underline">Privacy</router-link>
                 </li>
                 <li>
-                    <router-link to="/social" class="mr-4 hover:underline md:mr-6">Social</router-link>
+                    <router-link to="/social" class="hover:underline">Social</router-link>
                 </li>
                 <li>
-                    <router-link to="#support-us" class="mr-4 hover:underline md:mr-6">Support Us</router-link>
+                    <router-link to="#support-us" class="hover:underline">Support Us</router-link>
                 </li>
                 <li>
-                    <router-link to="/forms" class="mr-4 hover:underline md:mr-6">Contact</router-link>
+                    <router-link to="/terms" class="hover:underline">Terms of Service</router-link>
                 </li>
             </ul>
-            <div class="bg-primary pb-6">
-                <span class="text-sm text-white sm:text-center">© 2022-{{  currentYear }} <a href="https://forzero.vocabustudy.org" class="hover:underline">For Zero</a>. All Rights Reserved.</span>
+            <div class="bg-primary pb-3">
+                <span class="text-xs md:text-sm text-white sm:text-center">© 2022-{{  currentYear }} <a href="https://forzero.vocabustudy.org" class="hover:underline">For Zero</a>. All Rights Reserved.</span>
             </div>
         </div>
     </div>

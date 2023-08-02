@@ -1,6 +1,9 @@
 import { openDB } from "idb";
 import collectionData from "./collections.json" assert { type: "json" };
 import type { VocabustudyDB } from "./types";
+import { type Component, createVNode, render, type AppContext } from "vue";
+import BaseToast from "./components/BaseToast.vue";
+import { XMarkIcon, CheckIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
 
 export async function getLocalDb() {
     return await openDB<VocabustudyDB>("vocabustudy-database", 2, {
@@ -54,4 +57,42 @@ export function humanizeDate(date: Date) {
     if (diffDays < 30) return `${pluralizeWord("week", Math.floor(diffDays / 7))} ago`;
     if (diffDays < 365) return `${pluralizeWord("month", Math.floor(diffDays / 30))} ago`;
     return `${pluralizeWord("year", Math.floor(diffDays / 365))} ago`;
+}
+
+export function showToast(props: { icon: Component, iconColor: string, iconSrText: string, text: string }, appContext: AppContext, duration: number) {
+    const toastContainer = document.getElementById("toast-container");
+    const toastRenderEl = toastContainer?.appendChild(document.createElement("div"));
+    if (toastRenderEl) {
+        const vnode = createVNode(BaseToast, { ...props, isHidden: true, closeEarly() {
+            clearTimeout(t1);
+            clearTimeout(t2);
+            clearTimeout(t3);
+            render(null, toastRenderEl);
+            toastRenderEl.remove();
+        } });
+        vnode.appContext = { ...appContext };
+        render(vnode, toastRenderEl);
+        const t1 = setTimeout(() => {
+            if (vnode.component) vnode.component.props.isHidden = false
+        }, 0);
+        const t2 = setTimeout(() => {
+            if (vnode.component) vnode.component.props.isHidden = true; 
+        }, duration + 150);
+        const t3 = setTimeout(() => {
+            render(null, toastRenderEl);
+            toastRenderEl.remove();
+        }, duration + 300);
+    }
+}
+
+export function showSuccessToast(text: string, appContext: AppContext, duration: number) {
+    showToast({ icon: CheckIcon, iconColor: "green", iconSrText: "Success", text }, appContext, duration);
+}
+
+export function showErrorToast(text: string, appContext: AppContext, duration: number) {
+    showToast({ icon: XMarkIcon, iconColor: "red", iconSrText: "Error", text }, appContext, duration);
+}
+
+export function showWarningToast(text: string, appContext: AppContext, duration: number) {
+    showToast({ icon: ExclamationTriangleIcon, iconColor: "yellow", iconSrText: "Warning", text }, appContext, duration);
 }

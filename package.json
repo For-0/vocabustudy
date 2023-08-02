@@ -12,11 +12,12 @@
     "preview": "vite preview"
   },
   "keywords": [],
-  "author": "Siddhant Kameswar",
+  "author": "Siddhant Kameswar, Ruhan Gupta",
   "license": "GPL-3.0",
   "dependencies": {
     "@heroicons/vue": "^2.0.18",
     "dompurify": "^2.4.1",
+    "firebase-tools": "^12.4.6",
     "fitty": "^2.3.6",
     "fscreen": "^1.2.0",
     "idb": "^7.1.1",

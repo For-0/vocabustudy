@@ -53,6 +53,9 @@
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
     }
+    .min-h-0 {
+        min-height: 0;
+    }
 }
 
 html, body, #app {
