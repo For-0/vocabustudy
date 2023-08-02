@@ -1,5 +1,5 @@
 import { openDB } from "idb";
-import { c as collectionData } from "./collections.json" assert { type: "json" };
+import collectionData from "./collections.json" assert { type: "json" };
 import type { VocabustudyDB } from "./types";
 
 export async function getLocalDb() {
@@ -21,7 +21,7 @@ export function parseCollections(collections: string[]) {
                 if (el[1] == 0) resolvedName = "Study Guide : Timeline";
                 else if (el[1] == 1) resolvedName = "Study Guide : Notes";
             }
-            const collectionName = collectionData[el[0]];
+            const collectionName = collectionData.c[el[0]];
             if (typeof collectionName === "string") resolvedName = collectionName;
             else {
                 if (el.length === 1) resolvedName = collectionName.n;

@@ -27,6 +27,9 @@
                     <router-link to="/privacy" class="mr-4 hover:underline md:mr-6">Privacy</router-link>
                 </li>
                 <li>
+                    <router-link to="/tos" class="mr-4 hover:underline md:mr-6">Terms of Service</router-link>
+                </li>
+                <li>
                     <a href="https://blog.vocabustudy.org/" class="mr-4 hover:underline md:mr-6" target="_blank">Blog</a>
                 </li>
                 <li>

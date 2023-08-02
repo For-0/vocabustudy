@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-sm flex flex-col items-start p-6 bg-white border border-stone-200 rounded-lg shadow dark:bg-stone-800 dark:border-stone-700">
+    <div class="max-w-sm flex flex-col items-start p-6 bg-white border border-stone-200 rounded-lg shadow dark:bg-stone-800 dark:border-stone-700 transition duration-300 hover:scale-105">
         <router-link :to="{ name: 'set-detail', params: { id: set.id } }">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-stone-900 dark:text-white">{{ set.name }}</h5>
         </router-link>
@@ -8,7 +8,7 @@
             <div class="font-medium dark:text-white">
                 <div>
                     {{ creator.displayName }}
-                    <span class="inline-flex items-center justify-center w-6 h-6 ml-2 text-sm font-semibold text-green-800 bg-green-100 dark:bg-green-700/25 dark:text-green-400 rounded-full" v-if="creator.roles.includes('admin')" title="Admin">
+                    <span class="inline-flex items-center justify-center w-6 h-6 ml-1 text-sm font-semibold text-green-800 bg-green-100 dark:bg-green-700/25 dark:text-green-400 rounded-full" v-if="creator.roles.includes('admin')" title="Admin">
                         <ShieldCheckIcon class="w-3 h-3" />
                         <span class="sr-only">Admin</span>
                     </span>
@@ -16,7 +16,7 @@
                 <div class="text-sm text-stone-500 dark:text-stone-400" :title="set.createTime.toLocaleString()">Created {{ humanizeDate(set.createTime) }}</div>
             </div>
         </div>
-        <div class="mb-2 flex flex-row flex-wrap gap-2">
+        <div class="mb-2 flex flex-row flex-wrap gap-1">
             <span class="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-green-800/25 dark:text-green-400 border border-green-400">
                 <HandThumbUpIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                 {{ pluralizeWord("like", set.likes) }}

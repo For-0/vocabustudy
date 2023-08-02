@@ -1,5 +1,5 @@
 <template>
-    <div class="spinner animate-spin border-4 inline-block border-current border-b-transparent"></div>
+    <div class="spinner animate-spin inline-block border-current border-b-transparent" :class="size ? (size === 1 ? 'border': `border-${size}`) : 'border-4'"></div>
 </template>
 <style>
 .spinner {
@@ -7,3 +7,8 @@
     animation-duration: 0.5s;
 }
 </style>
+<script setup lang="ts">
+defineProps<{
+    size?: number
+}>();
+</script>

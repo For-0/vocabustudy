@@ -2,7 +2,7 @@
     <nav class="z-20 fixed top-0 left-0 w-full bg-primary">
         <div class="flex flex-wrap items-stretch">
             <RouterLink to="/" class="flex items-center bg-white bg-opacity-0 hover:bg-opacity-10 px-4 h-12">
-                <img src="/icons/icon-192.png" class="h-6 w-6 mr-3 sm:h-7 sm:w-7 rounded-lg border border-gray-200" alt="Vocabustudy Logo" height="28"
+                <img src="/icons/icon-192.png" class="h-6 w-6 mr-3 sm:h-7 sm:w-7 rounded-lg shadow shadow-white/25" alt="Vocabustudy Logo" height="28"
                     width="28" />
                 <span class="self-center text-lg font-semibold whitespace-nowrap text-white">Vocabustudy</span>
             </RouterLink>

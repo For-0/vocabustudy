@@ -28,11 +28,31 @@ export default function () {
                 }
             },
             {
+                path: '/support-us',
+                name: 'support-us',
+                component: () => import('./views/SupportUsView.vue'),
+                meta: {
+                    title: "Support Us"
+                }
+            },
+            {
+                path: '/login',
+                name: 'login',
+                component: () => import('./views/LoginView.vue'),
+                meta: {
+                    title: "Log In"
+                }
+            },
+            {
+                path: '/signup',
+                redirect: { name: "login" }
+            },
+            {
                 path: '/:pathMatch(.*)*',
                 name: 'not-found',
                 component: () => import('./views/NotFoundView.vue'),
                 meta: {
-                    title: "404 Not Found"
+                    title: "404 - Not Found"
                 }
             },
             {
