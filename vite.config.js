@@ -18,16 +18,16 @@ export default defineConfig({
             output: {
                 manualChunks: {
                     auth: [
-                        "./src/views/AccountView",
-                        "./src/views/LoginView",
+                        "./src/views/AccountView.vue",
+                        "./src/views/LoginView.vue",
                     ],
                     staticPages: [
-                        "./src/views/CreditsView",
-                        "./src/views/NotFoundView",
-                        "./src/views/PrivacyPolicyView",
-                        "./src/views/SocialView",
-                        "./src/views/SupportUsView",
-                        "./src/views/TOSView",
+                        "./src/views/CreditsView.vue",
+                        "./src/views/NotFoundView.vue",
+                        "./src/views/PrivacyPolicyView.vue",
+                        "./src/views/SocialView.vue",
+                        "./src/views/SupportUsView.vue",
+                        "./src/views/TOSView.vue",
                     ]
                 },
             },
