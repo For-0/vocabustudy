@@ -105,3 +105,25 @@ export const useUserProfileCacheStore = defineStore("user-profile-cache", () => 
         cache
     };
 });
+
+export const useThemeStore = defineStore("theme", () => {
+    const validateTheme = (theme: string | null) => theme === "light" || theme === "dark" ? theme : "system";
+
+    const theme = ref<"light" | "dark" | "system">(validateTheme(localStorage.getItem("theme")));
+
+    window.addEventListener("storage", e => {
+        if (e.key === "theme") {
+            theme.value = validateTheme(e.newValue);
+        }
+    });
+
+    function setTheme(newTheme: "light" | "dark" | "system") {
+        localStorage.setItem("theme", newTheme);
+        theme.value = newTheme;
+    }
+
+    return {
+        theme,
+        setTheme
+    }
+});

@@ -62,10 +62,11 @@ const toastMessages: Record<string, [string, number, "error" | "warning"]> = {
   INVALID_OOB_CODE: ["This link has expired or was already used!", 7000, "error"],
   USER_DISABLED: ["Your account has been disabled", 5000, "warning"],
   WEAK_PASSWORD: ["Your password must be at least 6 characters", 5000, "warning"],
+  NetworkError: ["Can't connect to the authentication server", 5000, "error"],
 };
 
 function handleError(errorMessage: string) {
-    const [message, duration, type] = toastMessages[errorMessage] || ["An unknown error occurred", 5000, "error"];
+    const [message, duration, type] = toastMessages[errorMessage.split(" ")[0]] || ["An unknown error occurred", 5000, "error"];
     if (type === "error") {
         showErrorToast(message, currentInstance?.appContext, duration);
     } else {

@@ -22,10 +22,22 @@
                             <NavbarAccountMenuLink to="/my-sets/" v-if="authStore.currentUser">My Sets</NavbarAccountMenuLink>
                         </ul>
                         <ul class="py-2">
-                            <div class="grid grid-cols-3 text-gray-900 dark:text-white">
-                                <button id="theme-toggle-light" class="h-6 w-6 mx-auto hover:bg-primary hover:bg-opacity-25 hover:rounded-lg"><SunIcon class="p-1" /></button>
-                                <button id="theme-toggle-dark" class="h-6 w-6 mx-auto hover:bg-primary hover:bg-opacity-25 hover:rounded-lg"><MoonIcon class="p-1" /></button>
-                                <button id="theme-toggle-system" class="h-6 w-6 mx-auto hover:bg-primary hover:bg-opacity-25 hover:rounded-lg"><ComputerDesktopIcon class="p-1" /></button>
+                            <div class="flex items-center justify-evenly text-gray-900 dark:text-white">
+                                <button :class="{ 'border border-primary': themeStore.theme === 'light' }"
+                                    class="h-6 w-6 flex items-center justify-center hover:bg-primary hover:bg-opacity-25 rounded-lg"
+                                    @click="themeStore.setTheme('light')">
+                                    <SunIcon class="h-4 w-4" />
+                                </button>
+                                <button :class="{ 'border border-primary': themeStore.theme === 'dark' }"
+                                    class="h-6 w-6 flex items-center justify-center hover:bg-primary hover:bg-opacity-25 rounded-lg"
+                                    @click="themeStore.setTheme('dark')">
+                                    <MoonIcon class="h-4 w-4" />
+                                </button>
+                                <button :class="{ 'border border-primary': themeStore.theme === 'system' }"
+                                    class="h-6 w-6 flex items-center justify-center hover:bg-primary hover:bg-opacity-25 rounded-lg"
+                                    @click="themeStore.setTheme('system')">
+                                    <ComputerDesktopIcon class="h-4 w-4" />
+                                </button>
                             </div>
                         </ul>
                         <ul class="py-2">
@@ -73,73 +85,13 @@
     </header>
 </template>
 
-<script lang="ts">
-    window.onload = function() {
-        const light = document.getElementById("theme-toggle-light");
-        const dark = document.getElementById("theme-toggle-dark");
-        const system = document.getElementById("theme-toggle-system");
-        if(!localStorage.getItem("theme")) {
-            localStorage.setItem("theme", "system");
-        }
-        else {
-            if(localStorage.getItem("theme") == "light") {
-                light?.classList.add("border", "rounded-lg", "border-primary");
-                dark?.classList.remove("border", "rounded-lg", "border-primary");
-                system?.classList.remove("border", "rounded-lg", "border-primary");
-                document.querySelector("body")?.classList.remove("dark");
-            }
-            else if(localStorage.getItem("theme") == "dark") {
-                light?.classList.remove("border", "rounded-lg", "border-primary");
-                dark?.classList.add("border", "rounded-lg", "border-primary");
-                system?.classList.remove("border", "rounded-lg", "border-primary");
-                document.querySelector("body")?.classList.add("dark");
-            }
-            else if(localStorage.getItem("theme") == "system") {
-                if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                    document.querySelector("body")?.classList.add("dark");
-                } else {
-                    document.querySelector("body")?.classList.remove("dark");
-                }
-                light?.classList.remove("border", "rounded-lg", "border-primary");
-                dark?.classList.remove("border", "rounded-lg", "border-primary");
-                system?.classList.add("border", "rounded-lg", "border-primary");
-            }
-        }
-        light?.addEventListener("click", function() {
-            light?.classList.add("border", "rounded-lg", "border-primary");
-            dark?.classList.remove("border", "rounded-lg", "border-primary");
-            system?.classList.remove("border", "rounded-lg", "border-primary");
-            document.querySelector("body")?.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-        });
-        dark?.addEventListener("click", function() {
-            light?.classList.remove("border", "rounded-lg", "border-primary");
-            dark?.classList.add("border", "rounded-lg", "border-primary");
-            system?.classList.remove("border", "rounded-lg", "border-primary");
-            document.querySelector("body")?.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-        });
-        system?.addEventListener("click", function() {
-            if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                document.querySelector("body")?.classList.add("dark");
-            } else {
-                document.querySelector("body")?.classList.remove("dark");
-            }
-            light?.classList.remove("border", "rounded-lg", "border-primary");
-            dark?.classList.remove("border", "rounded-lg", "border-primary");
-            system?.classList.add("border", "rounded-lg", "border-primary");
-            localStorage.setItem("theme", "system");
-        });
-    }
-</script>
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, getCurrentInstance } from 'vue';
 import { RouterLink } from 'vue-router'
 import NavbarLink from './NavbarLink.vue';
 import { Bars3Icon, UserCircleIcon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/vue/24/outline';
 import NavbarAccountMenuLink from './NavbarAccountMenuLink.vue';
-import { useAuthStore } from '../../store';
+import { useAuthStore, useThemeStore } from '../../store';
 import { sendEmailVerification } from "../../firebase-rest-api/auth";
 import { showSuccessToast } from '../../utils';
 
@@ -147,6 +99,7 @@ const accountMenuOpen = ref(false);
 const navbarExpanded = ref(false);
 const verifyEmailHidden = ref(false);
 const authStore = useAuthStore();
+const themeStore = useThemeStore();
 const currentInstance = getCurrentInstance();
 
 function onDocumentClick() {

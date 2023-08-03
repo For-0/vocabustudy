@@ -267,10 +267,11 @@ export async function refreshCurrentUser(force = false): Promise<User | null> {
                 user = await idTokenToUser({ idToken: currentUser.token.access, refreshToken: currentUser.token.refresh }, currentUser.token.expirationTime);
             else return currentUser;
         } catch (err) {
-            switch((err as Error).message) {
+            switch((err as Error).message.split(" ")[0]) {
                 case "TOKEN_EXPIRED":
                 case "USER_DISABLED":
                 case "USER_NOT_FOUND":
+                case "NetworkError":
                     user = null;
                     break;
                 default:
