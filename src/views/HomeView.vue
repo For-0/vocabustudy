@@ -3,7 +3,7 @@
         <section class="bg-white dark:bg-stone-900 striped-background">
             <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 h-[calc(100vh-3rem)] lg:grid-cols-12">
                 <div class="mx-auto place-self-center lg:ml-0 lg:col-span-7">
-                    <a href="#" class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-4 text-sm text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200" role="alert">
+                    <a href="#" class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-4 text-sm text-gray-700 dark:text-white bg-gray-100 dark:bg-stone-900 rounded-full hover:bg-gray-200" role="alert">
                       <span class="text-xs bg-primary rounded-full text-white px-4 py-1 mr-2">UI Refresh</span> <span class="text-sm font-medium">New year, new Vocabustudy.</span>
                     </a>
                     <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl text-white">Learn Vocabulary,</h1>
@@ -19,6 +19,28 @@
                     </router-link> 
                 </div>
                 <TheFeatureFlashcard />           
+            </div>
+        </section>
+        <section class="bg-gray-200 dark:bg-stone-900">
+            <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-6">
+                <dl class="grid max-w-screen-md gap-8 mx-auto dark:text-white sm:grid-cols-4 text-zinc-900">
+                    <div class="flex flex-col items-center justify-center">
+                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">420+</dt>
+                        <dd class="font-light text-gray-500 dark:text-gray-400">users</dd>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">40+</dt>
+                        <dd class="font-light text-gray-500 dark:text-gray-400">countries</dd>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">3.0k</dt>
+                        <dd class="font-light text-gray-500 dark:text-gray-400">views</dd>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">220+</dt>
+                        <dd class="font-light text-gray-500 dark:text-gray-400">sets created</dd>
+                    </div>
+                </dl>
             </div>
         </section>
         <TheFeaturesSection />

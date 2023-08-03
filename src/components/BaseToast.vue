@@ -1,5 +1,5 @@
 <template>
-  <div :class="isHidden ? 'opacity-0' : 'opacity-100'" class="transition-opacity flex items-center w-screen max-w-xs p-4 text-zinc-500 bg-white rounded-lg shadow dark:text-zinc-400 dark:bg-zinc-800" role="alert">
+  <div :class="isHidden ? 'opacity-0' : 'opacity-100'" class="mt-3 transition-opacity flex items-center w-screen max-w-xs p-4 text-zinc-500 bg-white rounded-lg shadow dark:text-zinc-400 dark:bg-zinc-800" role="alert">
     <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg" :class="colorVariants[iconColor]">
       <component :is="icon" class="w-4 h-4" aria-hidden="true" />
       <span class="sr-only">{{ iconSrText }}</span>

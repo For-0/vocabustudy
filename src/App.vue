@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import { ref } from 'vue';
 import Navbar from './components/navbar/Navbar.vue'
 import Footer from './components/Footer.vue';
-
-const loadGsi = ref(false);
 </script>
 
 <template>
-    <header>
-        <Navbar />
-    </header>
+    <Navbar />
 
-    <RouterView v-slot="{ Component }" class="pt-12" @loadGsi="loadGsi = true">
+    <RouterView v-slot="{ Component }">
         <component :is="Component" />
     </RouterView>
 
@@ -20,5 +15,5 @@ const loadGsi = ref(false);
         <Footer />
     </footer>
 
-    <div id="toast-container" class="fixed bottom-3 right-3"></div>
+    <div id="toast-container" class="fixed bottom-3 right-3 z-50"></div>
 </template>

@@ -1,6 +1,6 @@
 <template>
-    <main>
-        <h1 class="lg:text-4xl font-extrabold leading-tight text-gray-900 text-3xl dark:text-white mt-10 ml-10 mr-10 lg:ml-20">Privacy Policy <span class="bg-primary text-white rounded text-sm p-1 inline-block sm:inline">Last Updated: Aug 2, 2023</span></h1>
+    <main class="bg-zinc-100 dark:bg-zinc-800">
+        <h1 class="flex items-center lg:text-4xl font-extrabold leading-tight text-zinc-900 text-3xl dark:text-white mt-10 ml-10 mr-10 lg:ml-20">Privacy Policy<span class="bg-zinc-100 text-zinc-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded ml-2 dark:bg-zinc-700 dark:text-zinc-400 border border-zinc-500" title="Last Updated"><ClockIcon class="w-2.5 h-2.5 mr-1.5" /> Aug 2, 2023</span></h1>
         <p class="leading-tight font-extrabold  text-gray-900 dark:text-white ml-10 mr-10 lg:ml-20 mb-1">Have a question? Email <a href="mailto:management@vocabustudy.org" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">management@vocabustudy.org</a>.</p>
         <hr style="max-width: 600px;" class="border border-zinc-400 rounded-md dark:border-white ml-10 mr-10 lg:ml-20 mb-5 mt-5">
         <PrivacyPolicySection title="1. Introduction" description="At Vocabustudy, accessible from vocabustudy.org, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Vocabustudy and how we use it. If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us. This Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in Vocabustudy. This policy is not applicable to any information collected offline or via channels other than this website." />
@@ -53,4 +53,5 @@
 </template>
 <script setup lang="ts">
     import PrivacyPolicySection from '../components/home/PrivacyPolicySection.vue';
+    import { ClockIcon } from '@heroicons/vue/20/solid';
 </script>

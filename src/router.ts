@@ -20,7 +20,7 @@ export default function () {
                 component: HomeView as Component,
             },
             {
-                path: '/credits',
+                path: '/credits/',
                 name: 'credits',
                 component: () => import('./views/CreditsView.vue'),
                 meta: {
@@ -28,7 +28,31 @@ export default function () {
                 }
             },
             {
-                path: '/support-us',
+                path: '/help-center/',
+                name: 'help-center',
+                component: () => import('./views/HelpCenterView.vue'),
+                meta: {
+                    title: "Help Center"
+                }
+            },
+            {
+                path: '/social/',
+                name: 'social',
+                component: () => import('./views/SocialView.vue'),
+                meta: {
+                    title: "Social"
+                }
+            },
+            {
+                path: '/forms/',
+                name: 'forms',
+                component: () => import('./views/FormsView.vue'),
+                meta: {
+                    title: "Contact Us"
+                }
+            },
+            {
+                path: '/support-us/',
                 name: 'support-us',
                 component: () => import('./views/SupportUsView.vue'),
                 meta: {
@@ -36,7 +60,7 @@ export default function () {
                 }
             },
             {
-                path: '/privacy',
+                path: '/privacy/',
                 name: 'privacy',
                 component: () => import('./views/PrivacyPolicyView.vue'),
                 meta: {
@@ -44,7 +68,7 @@ export default function () {
                 }
             },
             {
-                path: '/terms',
+                path: '/terms/',
                 name: 'terms',
                 component: () => import('./views/TOSView.vue'),
                 meta: {
@@ -52,7 +76,7 @@ export default function () {
                 }
             },
             {
-                path: '/login',
+                path: '/login/',
                 name: 'login',
                 component: () => import('./views/LoginView.vue'),
                 meta: {
@@ -60,8 +84,25 @@ export default function () {
                 }
             },
             {
-                path: '/signup',
+                path: '/signup/',
                 redirect: { name: "login" }
+            },
+            {
+                path: '/account/',
+                name: 'account',
+                component: () => import('./views/AccountView.vue'),
+                meta: {
+                    title: "Account",
+                    requiresAuth: true
+                }
+            },
+            {
+                path: '/auth-action/',
+                name: 'auth-action',
+                component: () => import('./views/AuthActionView.vue'),
+                meta: {
+                    title: "Reset Password / Verify Email"
+                }
             },
             {
                 path: '/:pathMatch(.*)*',
@@ -72,7 +113,7 @@ export default function () {
                 }
             },
             {
-                path: '/set/:id/view',
+                path: '/set/:id/view/',
                 name: 'set-detail',
                 component: () => import('./views/NotFoundView.vue'),
                 meta: {

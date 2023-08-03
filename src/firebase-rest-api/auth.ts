@@ -342,8 +342,10 @@ export async function deleteCurrentUser() {
 /**
  * Sends an email verification for the current user
  */
-export async function sendEmailVerification(currentUser: User) {
-    return await authEndpointRequest`:sendOobCode${{idToken: currentUser.token.access, requestType: "VERIFY_EMAIL"}}`
+export async function sendEmailVerification() {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return;
+    await authEndpointRequest`:sendOobCode${{idToken: currentUser.token.access, requestType: "VERIFY_EMAIL"}}`
 }
 
 /**
@@ -365,13 +367,27 @@ export async function updatePassword(password: string) {
 }
 
 /**
+ * Verify a user's email
+ */
+export async function verifyEmail(oobCode: string) {
+    return await authEndpointRequest`:update${{oobCode}}` as unknown as { email: string };
+}
+
+/**
+ * Reset a user's password
+ */
+export async function resetPassword(oobCode: string, newPassword: string | undefined) {
+    return await authEndpointRequest`:resetPassword${{oobCode, newPassword}}` as unknown as { email: string };
+}
+
+/**
  * Update a user's display name or profile picture
  */
 export async function updateProfile(updatedProfile: {displayName?: string, photoUrl?: string}) {
     const currentUser = await getCurrentUser();
     if (currentUser) {
         await authEndpointRequest`:update${{idToken: currentUser.token.access, returnSecureToken: true, ...updatedProfile}}`;
-        await refreshCurrentUser();
+        await refreshCurrentUser(true);
     }
 }
 
@@ -423,19 +439,29 @@ export async function showGooglePopup(isReauth = false) {
                 if (Date.now() - eventManager.lastProcessed >= 10 * 60 * 1000) eventManager.cachedUids.clear();
                 if (eventManager.cachedUids.has(authEventUid(iframeEvent.authEvent))) return { status: "ERROR" };
                 else if (iframeEvent.authEvent.type === "unknown") return { status: "ACK" };
-                else if (["signInViaPopup", "reauthViaPopup"].includes(iframeEvent.authEvent.type) && iframeEvent.authEvent.eventId === actionUrl.searchParams.get("eventId")) {
-                    if (pollId) clearTimeout(pollId);
-                    popupWindow?.close();
-                    authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}`
-                    .then(res => fetchUser(res))
-                    .then((user: User) => { resolve(user); })
-                    .catch((err: any) => { reject(err); }); // eslint-disable-line @typescript-eslint/no-explicit-any
+                else if (["signInViaPopup", "reauthViaPopup"].includes(iframeEvent.authEvent.type)) {
+                    if (iframeEvent.authEvent.eventId === actionUrl.searchParams.get("eventId")) {
+                        if (pollId) clearTimeout(pollId);
+                        popupWindow?.close();
+                        authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}`
+                        .then(res => fetchUser(res))
+                        .then((user: User) => { resolve(user); })
+                        .catch((err: any) => { reject(err); }); // eslint-disable-line @typescript-eslint/no-explicit-any
+                    }
                     return { status: "ACK" };
                 }
                 else return { status: "ERROR" };
             }, window.gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER); // eslint-disable-line
         });
     });
+}
+
+export async function loadGoogleSignIn() {
+    if ("google" in window && "accounts" in window.google) return;
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    document.body.appendChild(script);
+    await new Promise<void>(resolve => { script.addEventListener("load", () => { resolve() }); });
 }
 
 export function renderGoogleButton(oneTapContainer: HTMLElement, callback: (credentialResponse: CredentialResponse) => void) {
@@ -448,7 +474,7 @@ export function renderGoogleButton(oneTapContainer: HTMLElement, callback: (cred
     });
     window.google.accounts.id.renderButton(oneTapContainer, {
         type: "standard",
-        shape: "rectangular",
+        shape: "pill",
         theme: "outline",
         text: "continue_with",
         size: "large",

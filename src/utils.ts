@@ -59,10 +59,12 @@ export function humanizeDate(date: Date) {
     return `${pluralizeWord("year", Math.floor(diffDays / 365))} ago`;
 }
 
-export function showToast(props: { icon: Component, iconColor: string, iconSrText: string, text: string }, appContext: AppContext, duration: number) {
+export function showToast(props: { icon: Component, iconColor: string, iconSrText: string, text: string }, appContext: AppContext | undefined, duration: number) {
+    if (!appContext) return;
     const toastContainer = document.getElementById("toast-container");
     const toastRenderEl = toastContainer?.appendChild(document.createElement("div"));
     if (toastRenderEl) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const vnode = createVNode(BaseToast, { ...props, isHidden: true, closeEarly() {
             clearTimeout(t1);
             clearTimeout(t2);
@@ -85,14 +87,14 @@ export function showToast(props: { icon: Component, iconColor: string, iconSrTex
     }
 }
 
-export function showSuccessToast(text: string, appContext: AppContext, duration: number) {
+export function showSuccessToast(text: string, appContext: AppContext | undefined, duration: number) {
     showToast({ icon: CheckIcon, iconColor: "green", iconSrText: "Success", text }, appContext, duration);
 }
 
-export function showErrorToast(text: string, appContext: AppContext, duration: number) {
+export function showErrorToast(text: string, appContext: AppContext | undefined, duration: number) {
     showToast({ icon: XMarkIcon, iconColor: "red", iconSrText: "Error", text }, appContext, duration);
 }
 
-export function showWarningToast(text: string, appContext: AppContext, duration: number) {
+export function showWarningToast(text: string, appContext: AppContext | undefined, duration: number) {
     showToast({ icon: ExclamationTriangleIcon, iconColor: "yellow", iconSrText: "Warning", text }, appContext, duration);
 }

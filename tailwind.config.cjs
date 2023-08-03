@@ -18,6 +18,9 @@ module.exports = {
             },
             fontFamily: {
                 'sans': ["Raleway", ...defaultTheme.fontFamily.sans],
+            },
+            screens: {
+                'md-both': { 'raw': '(min-height: 850px) and (min-width: 768px)' }
             }
         }
     },

@@ -1,8 +1,13 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { type User, type UserProfile } from "./types";
-import { getCurrentUser, refreshCurrentUser, signInWithEmailAndPassword } from "./firebase-rest-api/auth";
+import { getCurrentUser, refreshCurrentUser, signInWithEmailAndPassword, setCurrentUser, signInWithGoogleCredential, showGooglePopup, createUserWithEmailAndPassword, updateProfile, updatePassword } from "./firebase-rest-api/auth";
 import { BroadcastChannel } from "broadcast-channel";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GenericFunction = (...args: any[]) => Promise<any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FunctionRequiringRefresh<T extends GenericFunction> = (...args: Parameters<T>) => Promise<Awaited<ReturnType<T>>>;
 
 // TERMINOLOGY:
 // reLOAD: load from indexeddb/localstorage
@@ -17,20 +22,39 @@ export const useAuthStore = defineStore("auth", () => {
         currentUser.value = user;
     }
 
-    async function rb() {
+    function withBroadcast<T extends GenericFunction>(fn: T): FunctionRequiringRefresh<T> {
+        return async (...args: Parameters<T>) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const result = await fn(...args);
+            await reloadCurrentUser();
+            await broadcastUpdate();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return result;
+        };
+    }
+
+    const functionsRequiringRefresh = {
+        refreshCurrentUser,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signInWithGoogleCredential,
+        showGooglePopup,
+        updateProfile,
+        updatePassword
+    };
+
+    // @ts-expect-error
+    const functionsWithRefresh: { [K in keyof typeof functionsRequiringRefresh]: FunctionRequiringRefresh<(typeof functionsRequiringRefresh)[K]> } = {};
+
+    for (const key of Object.keys(functionsRequiringRefresh)) {
+        const original = functionsRequiringRefresh[key as keyof typeof functionsRequiringRefresh];
+        functionsWithRefresh[key as keyof typeof functionsRequiringRefresh] = withBroadcast(original);
+    }    
+
+    async function logout() {
+        await setCurrentUser(null);
         await reloadCurrentUser();
         await broadcastUpdate();
-    }
-
-    /** refresh the auth token if needed */
-    async function refreshUser(force = false) {
-        await refreshCurrentUser(force);
-        await rb();
-    }
-
-    async function signIn(email: string, password: string) {
-        await signInWithEmailAndPassword(email, password);
-        await rb();
     }
 
     const channel = new BroadcastChannel("auth-updates", {
@@ -52,8 +76,8 @@ export const useAuthStore = defineStore("auth", () => {
 
     return {
         currentUser,
-        refreshCurrentUser: refreshUser,
-        signInWithEmailAndPassword: signIn
+        ...functionsWithRefresh,
+        logout
     };
 });
 
