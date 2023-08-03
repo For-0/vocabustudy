@@ -7,7 +7,7 @@
                         width="28" />
                     <span class="self-center text-lg font-semibold whitespace-nowrap text-white">Vocabustudy</span>
                 </RouterLink>
-                <div class="flex md:order-2 ml-auto items-center mr-2">
+                <div class="flex md:order-2 ml-auto items-center mr-2 lg:mr-6">
                     <button type="button" class="w-6 h-6 flex text-sm rounded-full focus:ring-2 hover:ring-1 hover:ring-opacity-50 ring-zinc-300 items-center justify-center"
                         id="account-menu-button" :aria-expanded=accountMenuOpen @click.stop="{ accountMenuOpen = !accountMenuOpen; navbarExpanded = false; }">
                         <span class="sr-only">{{ accountMenuOpen ? "Close" : "Open" }} account menu</span>
@@ -16,10 +16,17 @@
                         </div>
                         <UserCircleIcon class="w-6 h-6 text-white" v-else />
                     </button>
-                    <div class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 top-12" id="account-dropdown" :class="{ 'hidden': !accountMenuOpen }" @click.stop>
+                    <div class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 lg:mr-6 top-12" id="account-dropdown" :class="{ 'hidden': !accountMenuOpen }" @click.stop>
                         <ul class="py-2">
                             <NavbarAccountMenuLink to="/saved/">Saved Sets</NavbarAccountMenuLink>
                             <NavbarAccountMenuLink to="/my-sets/" v-if="authStore.currentUser">My Sets</NavbarAccountMenuLink>
+                        </ul>
+                        <ul class="py-2">
+                            <div class="grid grid-cols-3 text-gray-900 dark:text-white">
+                                <button id="theme-toggle-light" class="h-6 w-6 mx-auto hover:bg-primary hover:bg-opacity-25 hover:rounded-lg"><SunIcon class="p-1" /></button>
+                                <button id="theme-toggle-dark" class="h-6 w-6 mx-auto hover:bg-primary hover:bg-opacity-25 hover:rounded-lg"><MoonIcon class="p-1" /></button>
+                                <button id="theme-toggle-system" class="h-6 w-6 mx-auto hover:bg-primary hover:bg-opacity-25 hover:rounded-lg"><ComputerDesktopIcon class="p-1" /></button>
+                            </div>
                         </ul>
                         <ul class="py-2">
                             <NavbarAccountMenuLink :to="{ name: 'account' }" v-if="authStore.currentUser">My Account</NavbarAccountMenuLink>
@@ -45,9 +52,6 @@
                         <NavbarLink to="/browse/">Browse Sets</NavbarLink>
                         <NavbarLink to="/support-us/">Support Us</NavbarLink>
                         <NavbarLink to="/help-center/">Help</NavbarLink>
-                        <div class="">
-                            
-                        </div>
                     </ul>
                 </div>
             </div>
@@ -68,12 +72,72 @@
         </div>
     </header>
 </template>
-  
+
+<script lang="ts">
+    window.onload = function() {
+        const light = document.getElementById("theme-toggle-light");
+        const dark = document.getElementById("theme-toggle-dark");
+        const system = document.getElementById("theme-toggle-system");
+        if(!localStorage.getItem("theme")) {
+            localStorage.setItem("theme", "system");
+        }
+        else {
+            if(localStorage.getItem("theme") == "light") {
+                light?.classList.add("border", "rounded-lg", "border-primary");
+                dark?.classList.remove("border", "rounded-lg", "border-primary");
+                system?.classList.remove("border", "rounded-lg", "border-primary");
+                document.querySelector("body")?.classList.remove("dark");
+            }
+            else if(localStorage.getItem("theme") == "dark") {
+                light?.classList.remove("border", "rounded-lg", "border-primary");
+                dark?.classList.add("border", "rounded-lg", "border-primary");
+                system?.classList.remove("border", "rounded-lg", "border-primary");
+                document.querySelector("body")?.classList.add("dark");
+            }
+            else if(localStorage.getItem("theme") == "system") {
+                if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                    document.querySelector("body")?.classList.add("dark");
+                } else {
+                    document.querySelector("body")?.classList.remove("dark");
+                }
+                light?.classList.remove("border", "rounded-lg", "border-primary");
+                dark?.classList.remove("border", "rounded-lg", "border-primary");
+                system?.classList.add("border", "rounded-lg", "border-primary");
+            }
+        }
+        light?.addEventListener("click", function() {
+            light?.classList.add("border", "rounded-lg", "border-primary");
+            dark?.classList.remove("border", "rounded-lg", "border-primary");
+            system?.classList.remove("border", "rounded-lg", "border-primary");
+            document.querySelector("body")?.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        });
+        dark?.addEventListener("click", function() {
+            light?.classList.remove("border", "rounded-lg", "border-primary");
+            dark?.classList.add("border", "rounded-lg", "border-primary");
+            system?.classList.remove("border", "rounded-lg", "border-primary");
+            document.querySelector("body")?.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+        });
+        system?.addEventListener("click", function() {
+            if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                document.querySelector("body")?.classList.add("dark");
+            } else {
+                document.querySelector("body")?.classList.remove("dark");
+            }
+            light?.classList.remove("border", "rounded-lg", "border-primary");
+            dark?.classList.remove("border", "rounded-lg", "border-primary");
+            system?.classList.add("border", "rounded-lg", "border-primary");
+            localStorage.setItem("theme", "system");
+        });
+    }
+</script>
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, getCurrentInstance } from 'vue';
 import { RouterLink } from 'vue-router'
 import NavbarLink from './NavbarLink.vue';
-import { Bars3Icon, UserCircleIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import { Bars3Icon, UserCircleIcon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/vue/24/outline';
 import NavbarAccountMenuLink from './NavbarAccountMenuLink.vue';
 import { useAuthStore } from '../../store';
 import { sendEmailVerification } from "../../firebase-rest-api/auth";
