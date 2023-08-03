@@ -13,6 +13,8 @@
                             Email {{ authStore.currentUser?.emailVerified ? 'Verified' : 'Not Verified' }}
                         </span>
                     </p>
+                    <p class="mt-1 text-zinc-400 dark:text-zinc-500">Account created: {{ authStore.currentUser?.created.toLocaleString() || "?" }}</p>
+                    <p class="mt-1 text-zinc-400 dark:text-zinc-500">Last login: {{ authStore.currentUser?.lastLogin.toLocaleString() || "?" }}</p>
                     <p class="mt-1 text-zinc-400 dark:text-zinc-500">Login methods: {{ authProviders }}</p>
                 </div>
                 <div class="mt-5 flex lg:ml-4 lg:mt-0">
@@ -54,12 +56,12 @@
             <p class="text-zinc-900 dark:text-white mb-2">Have more questions about your data? See our <router-link :to="{ name: 'privacy' }" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Privacy Policy</router-link>.</p>
         </div>
         
-        <div v-if="reauthModalOpen" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30"></div>
-        <div v-show="reauthModalOpen" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
+        <div v-if="currentModal" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30"></div>
+        <div v-show="currentModal === 'reauth'" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
             <div class="relative w-full max-w-md max-h-full">
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
-                    <button @click="closeReauthModal" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
+                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
                         <XMarkIcon class="w-3 h-3" aria-hidden="true" />
                         <span class="sr-only">Close modal</span>
                     </button>
@@ -76,14 +78,68 @@
                             </div>
                             <div v-show="authStore.currentUser?.providers.includes('password')">
                                 <label for="password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Password</label>
-                                <input v-model="password" type="password" name="password" id="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:placeholder-zinc-400 dark:text-white" required>
+                                <input v-model="reauthPassword" type="password" id="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
                             </div>
-                            <button v-show="authStore.currentUser?.providers.includes('password')" type="submit" class="w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Reauthenticate</button>
+                            <button :disabled="reauthenticateLoading" v-show="authStore.currentUser?.providers.includes('password')" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <Loader v-if="reauthenticateLoading" class="w-4 h-4 mr-1" :size="1" />
+                                Reauthenticate
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
+        <div v-show="currentModal === 'change-password'" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
+            <div class="relative w-full max-w-md max-h-full">
+                <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
+                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
+                        <XMarkIcon class="w-3 h-3" aria-hidden="true" />
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                    <div class="px-6 py-6 lg:px-8">
+                        <h3 class="mb-3 text-xl font-medium text-zinc-900 dark:text-white">Change Password</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 mb-2" v-show="!authStore.currentUser?.providers.includes('password')">
+                            Filling out this form will allow you to sign in with your email and password as well as with Google.
+                        </p>
+                        <form class="space-y-3" @submit.prevent="onChangePasswordSubmit">
+                            <div>
+                                <label for="new-password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">New Password</label>
+                                <input v-model="newPassword" type="password" id="new-password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
+                            </div>
+                            <div>
+                                <label for="confirm-new-password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Confirm Password</label>
+                                <input v-model="confirmNewPassword" type="password" id="confirm-new-password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
+                            </div>
+                            <button :disabled="changePasswordLoading" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <Loader v-if="changePasswordLoading" class="w-4 h-4 mr-1" :size="1" />
+                                Change Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div v-show="currentModal === 'delete-account'" tabindex="-1" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
+            <div class="relative w-full max-w-md max-h-full">
+                <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
+                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" >
+                        <XMarkIcon class="w-3 h-3" aria-hidden="true" />
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                    <div class="p-6 text-center">
+                        <ExclamationCircleIcon class="mx-auto mb-4 text-zinc-400 w-12 h-12 dark:text-zinc-200 stroke-2" />
+                        <h3 class="mb-5 text-lg font-normal text-zinc-500 dark:text-zinc-400">
+                            <span class="font-bold mr-2">Are you sure you want to delete your account?</span>
+                            Your sets will not be deleted.
+                        </h3>
+                        <button @click="deleteAccount" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                            Yes, I'm sure
+                        </button>
+                        <button @click="closeModals" type="button" class="text-zinc-500 bg-white hover:bg-zinc-100 focus:ring-4 focus:outline-none focus:ring-zinc-200 rounded-lg border border-zinc-200 text-sm font-medium px-5 py-2.5 hover:text-zinc-900 focus:z-10 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-500 dark:hover:text-white dark:hover:bg-zinc-600 dark:focus:ring-zinc-600">No, cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </template>
 
@@ -93,9 +149,9 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '../store';
 import { CheckIcon, EnvelopeIcon, UserIcon, PhotoIcon } from '@heroicons/vue/20/solid';
 import Loader from '../components/Loader.vue';
-import { showSuccessToast, showErrorToast } from '../utils';
-import { XMarkIcon } from '@heroicons/vue/24/outline';
-import { loadGoogleSignIn, renderGoogleButton } from '../firebase-rest-api/auth';
+import { showSuccessToast, showWarningToast, showErrorToast } from '../utils';
+import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline';
+import { loadGoogleSignIn, renderGoogleButton, errorMessages } from '../firebase-rest-api/auth';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -106,10 +162,14 @@ const photoUrlInput = ref<HTMLInputElement | null>(null);
 const displayNameLoading = ref(false);
 const photoUrlLoading = ref(false);
 const currentInstance = getCurrentInstance();
-const reauthModalOpen = ref(false);
+const currentModal = ref<"reauth" | "change-password" | "delete-account" | null>(null);
 const currentReauthAction = ref<"delete-account" | "change-password" | null>(null);
 const gsiButtonContainer = ref<HTMLDivElement | null>(null);
-const password = ref('');
+const reauthPassword = ref('');
+const reauthenticateLoading = ref(false);
+const newPassword = ref('');
+const confirmNewPassword = ref('');
+const changePasswordLoading = ref(false);
 
 const authProviders = computed(() => {
     return authStore.currentUser?.providers.map(provider => {
@@ -151,36 +211,106 @@ async function savePhotoUrl() {
     }
 }
 
-async function openReauthModal(reason: "delete-account" | "change-password") {
-    reauthModalOpen.value = true;
-    currentReauthAction.value = reason;
-    await loadGoogleSignIn();
-    if (gsiButtonContainer.value) {
-        renderGoogleButton(gsiButtonContainer.value, response => {
-            if (response.credential && currentReauthAction.value !== null) {
-                console.log(response);
-            }
-        });
+function reportToastResult(errorMessage: string) {
+    if (!currentInstance) return;
+    if (errorMessage.split(" ")[0] in errorMessages) {
+        const [message, duration, type] = errorMessages[errorMessage.split(" ")[0]];
+        switch (type) {
+            case "error":
+                showErrorToast(message, currentInstance.appContext, duration);
+                break;
+            case "warning":
+                showWarningToast(message, currentInstance.appContext, duration);
+                break;
+        }
+    } else {
+        showErrorToast(`An unknown error occurred: ${errorMessage}`, currentInstance.appContext, 5000);
     }
 }
 
-async function onReauthSubmit() {
-    if (currentReauthAction.value !== null && authStore.currentUser) {
-        try {
-            await authStore.signInWithEmailAndPassword(authStore.currentUser.email, password.value);
-            await reauthContinue();
-        } catch {
-            showErrorToast("Incorrect password", currentInstance?.appContext, 3000);
+async function openReauthModal(reason: "delete-account" | "change-password") {
+    currentModal.value = 'reauth';
+    currentReauthAction.value = reason;
+    if (gsiButtonContainer.value && !gsiButtonContainer.value.innerHTML) { // only render the button if we haven't before
+        if (import.meta.env.PROD) {
+            await loadGoogleSignIn();
+            renderGoogleButton(gsiButtonContainer.value, async response => {
+                if (response.credential && currentReauthAction.value !== null) {
+                    console.log(response);
+                    const { email } = JSON.parse(atob(response.credential.split(".")[1])) as { email: string };
+                    if (email !== authStore.currentUser?.email) {
+                        showErrorToast("You didn't choose the correct account", currentInstance?.appContext, 3000);
+                    } else {
+                        try {
+                            await authStore.signInWithGoogleCredential(response.credential);
+                            reauthContinue();
+                        } catch (err) {
+                            reportToastResult((err as Error)?.message);
+                        }
+                    }
+                }
+            });
+        } else {
+            gsiButtonContainer.value.innerHTML = "Continue with google emulator";
+            gsiButtonContainer.value.addEventListener("click", async () => {
+                try {
+                    await authStore.showGooglePopup(true);
+                    reauthContinue();
+                } catch (err) {
+                    reportToastResult((err as Error)?.message);
+                }
+            });
         }
     }
 }
 
-async function reauthContinue() {
-    closeReauthModal();
+async function onReauthSubmit() {
+    reauthenticateLoading.value = true;
+    if (currentReauthAction.value !== null && authStore.currentUser) {
+        try {
+            await authStore.signInWithEmailAndPassword(authStore.currentUser.email, reauthPassword.value);
+            reauthContinue();
+        } catch {
+            showErrorToast("Incorrect password", currentInstance?.appContext, 3000);
+        }
+    }
+    reauthenticateLoading.value = false;
 }
 
-function closeReauthModal() {
-    reauthModalOpen.value = false;
+async function onChangePasswordSubmit() {
+    changePasswordLoading.value = true;
+    if (newPassword.value === confirmNewPassword.value) {
+        try {
+            await authStore.updatePassword(newPassword.value);
+            showSuccessToast("Password changed successfully", currentInstance?.appContext, 5000);
+            closeModals();
+        } catch (err) {
+            reportToastResult((err as Error)?.message);
+        }
+    } else {
+        showErrorToast("Passwords do not match", currentInstance?.appContext, 3000);
+    }
+    changePasswordLoading.value = false;
+}
+
+async function deleteAccount() {
+    try {
+        await authStore.deleteCurrentUser();
+        closeModals();
+        showSuccessToast("Account deleted successfully", currentInstance?.appContext, 5000);
+    } catch (err) {
+        reportToastResult((err as Error)?.message);
+    }
+}
+
+function reauthContinue() {
+    const reauthAction = currentReauthAction.value;
+    closeModals();
+    currentModal.value = reauthAction;
+}
+
+function closeModals() {
+    currentModal.value = null;
     currentReauthAction.value = null;
 }
 

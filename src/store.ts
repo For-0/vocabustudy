@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { type User, type UserProfile } from "./types";
-import { getCurrentUser, refreshCurrentUser, signInWithEmailAndPassword, setCurrentUser, signInWithGoogleCredential, showGooglePopup, createUserWithEmailAndPassword, updateProfile, updatePassword } from "./firebase-rest-api/auth";
+import { deleteCurrentUser, getCurrentUser, refreshCurrentUser, signInWithEmailAndPassword, setCurrentUser, signInWithGoogleCredential, showGooglePopup, createUserWithEmailAndPassword, updateProfile, updatePassword } from "./firebase-rest-api/auth";
 import { BroadcastChannel } from "broadcast-channel";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +40,8 @@ export const useAuthStore = defineStore("auth", () => {
         signInWithGoogleCredential,
         showGooglePopup,
         updateProfile,
-        updatePassword
+        updatePassword,
+        deleteCurrentUser
     };
 
     // @ts-expect-error

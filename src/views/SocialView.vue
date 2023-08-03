@@ -6,7 +6,7 @@
                 <p class="max-w-2xl mb-6 font-light text-white lg:mb-8 md:text-lg lg:text-xl dark:text-zinc-200 mx-auto">Vocabustudy offers additional social connections to help you on your learning journey.</p>         
             </div>
         </section>
-        <section class="bg-white dark:bg-gray-900">
+        <section class="bg-white dark:bg-stone-900">
             <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                 <div class="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
                     <h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">Connect with others in our Discord Server</h2>
@@ -16,7 +16,7 @@
                 </div>
             </div>
         </section>
-        <section class="bg-white dark:bg-gray-900">
+        <section class="bg-white dark:bg-stone-900">
             <div class="py-4 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                 <div class="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
                     <h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">Reinforce your learning with our YouTube Channel</h2>

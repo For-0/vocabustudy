@@ -11,7 +11,7 @@
                     <button type="button" class="w-6 h-6 flex text-sm rounded-full focus:ring-2 hover:ring-1 hover:ring-opacity-50 ring-zinc-300 items-center justify-center"
                         id="account-menu-button" :aria-expanded=accountMenuOpen @click.stop="{ accountMenuOpen = !accountMenuOpen; navbarExpanded = false; }">
                         <span class="sr-only">{{ accountMenuOpen ? "Close" : "Open" }} account menu</span>
-                        <Loader class="h-6 w-6 text-white" :size="1" v-if="currentNavigationProgress > 0 && currentNavigationProgress < 1" />
+                        <Loader class="h-6 w-6 text-white" :size="1" v-if="currentNavigationProgress !== null && currentNavigationProgress < 1" />
                         <div class="pfp-loader" v-else-if="authStore.currentUser && authStore.currentUser.photoUrl">
                             <img :src="authStore.currentUser.photoUrl" class="w-6 h-6 rounded-full" alt="" />
                         </div>
@@ -62,7 +62,7 @@
                 <div class="items-center justify-between w-full md:flex md:w-auto md:order-1 md:h-12 bg-white md:bg-transparent" id="navbar-cta" :class="{ 'hidden': !navbarExpanded }">
                     <ul
                         class="flex flex-col p-2 m-4 md:m-0 md:py-0 border border-zinc-100 rounded-lg bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 md:flex-row md:space-x-2 md:mt-0 md:border-0 md:bg-transparent md:dark:bg-transparent md:items-center md:h-full">
-                        <NavbarLink to="/browse/">Browse Sets</NavbarLink>
+                        <NavbarLink to="/search/">Search Sets</NavbarLink>
                         <NavbarLink to="/support-us/">Support Us</NavbarLink>
                         <NavbarLink to="/help-center/">Help</NavbarLink>
                     </ul>
@@ -70,7 +70,7 @@
             </div>
         </nav>
         
-        <div v-if="currentNavigationProgress > 0" class="bg-primary-alt h-1">
+        <div v-if="currentNavigationProgress !== null" class="bg-gradient-to-r from-primary-alt to-primary h-1">
             <div class="bg-secondary h-full transition-transform" :style="{ transform: `translateX(-50%)scaleX(${currentNavigationProgress})translateX(50%)` }"></div>
         </div>
 
@@ -108,8 +108,9 @@ const authStore = useAuthStore();
 const preferencesStore = usePreferencesStore();
 const currentInstance = getCurrentInstance();
 const totalNavigationTime = 5000; // 5 seconds
-const currentNavigationProgress = ref(0); // percentage (0-1)
+const currentNavigationProgress = ref<number | null>(null); // percentage (0-1)
 let navigationUpdateInterval = 0;
+let navigationClearTimeout = 0;
 
 function onDocumentClick() {
     accountMenuOpen.value = false;
@@ -120,6 +121,7 @@ const unsubscribe = preferencesStore.$onAction(({ name, after }) => {
     if (name === "startNavigation") {
         after(() => {
             clearInterval(navigationUpdateInterval);
+            clearTimeout(navigationClearTimeout);
             currentNavigationProgress.value = 0;
             navigationUpdateInterval = setInterval(() => {
                 const msIntoNavigation = Date.now() - preferencesStore.navigationStartedAt;
@@ -129,10 +131,11 @@ const unsubscribe = preferencesStore.$onAction(({ name, after }) => {
     } else if (name === "stopNavigation") {
         after(() => {
             clearInterval(navigationUpdateInterval);
+            clearTimeout(navigationClearTimeout);
             currentNavigationProgress.value = 1;
-            setTimeout(() => {
-                currentNavigationProgress.value = 0; // remove the progress bar after 0.1 seconds
-            }, 100);
+            navigationClearTimeout = setTimeout(() => {
+                currentNavigationProgress.value = null; // remove the progress bar after 0.1 seconds
+            }, 300);
         });
     }
 });

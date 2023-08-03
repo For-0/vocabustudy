@@ -44,7 +44,7 @@
 import { getCurrentInstance, ref } from 'vue';
 import Loader from '../components/Loader.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { resetPassword, verifyEmail } from '../firebase-rest-api/auth';
+import { resetPassword, verifyEmail, errorMessages } from '../firebase-rest-api/auth';
 import { showErrorToast, showSuccessToast, showWarningToast } from '../utils';
 import { useAuthStore } from '../store';
 
@@ -57,16 +57,8 @@ const currentInstance = getCurrentInstance();
 const authStore = useAuthStore();
 const currentEmail = ref("");
 
-const toastMessages: Record<string, [string, number, "error" | "warning"]> = {
-  EXPIRED_OOB_CODE: ["This link has expired!", 7000, "error"],
-  INVALID_OOB_CODE: ["This link has expired or was already used!", 7000, "error"],
-  USER_DISABLED: ["Your account has been disabled", 5000, "warning"],
-  WEAK_PASSWORD: ["Your password must be at least 6 characters", 5000, "warning"],
-  NetworkError: ["Can't connect to the authentication server", 5000, "error"],
-};
-
 function handleError(errorMessage: string) {
-    const [message, duration, type] = toastMessages[errorMessage.split(" ")[0]] || ["An unknown error occurred", 5000, "error"];
+    const [message, duration, type] = errorMessages[errorMessage.split(" ")[0]] || ["An unknown error occurred", 5000, "error"];
     if (type === "error") {
         showErrorToast(message, currentInstance?.appContext, duration);
     } else {

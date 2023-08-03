@@ -27,6 +27,21 @@ interface RawUserResponse {
 
 type GenericResponse = { idToken: string; refreshToken: string; expiresIn: string; } | { error: { errors: { domain: string, reason: string, message: string }[], code: number, message: string } };
 
+export const errorMessages: Record<string, [string, number, "error" | "warning"]> = {
+    EMAIL_NOT_FOUND: ["There is no user with that email address", 7000, "error"],
+    INVALID_PASSWORD: ["Incorrect password", 5000, "error"],
+    TOO_MANY_ATTEMPTS_TRY_LATER: ["Too many attempts! Please try again later", 7000, "warning"],
+    USER_DISABLED: ["Your account has been disabled", 5000, "warning"],
+    RESET_PASSWORD_EXCEED_LIMIT: ["Too many attempts! Please try again later", 7000, "warning"],
+    UNAUTHORIZED_DOMAIN: ["Invalid domain", 5000, "warning"],
+    "popup-closed": ["Popup closed", 5000, "warning"],
+    EMAIL_EXISTS: ["An account with that email address already exists", 7000, "error"],
+    WEAK_PASSWORD: ["Your password must be at least 6 characters", 5000, "warning"],
+    NetworkError: ["Can't connect to the authentication server", 5000, "error"],
+    EXPIRED_OOB_CODE: ["This link has expired!", 7000, "error"],
+    INVALID_OOB_CODE: ["This link has expired or was already used!", 7000, "error"],
+};
+
 const AuthPopup = {
     currentPopup: {
         window: null as Window | null,

@@ -76,6 +76,14 @@ export default function () {
                 }
             },
             {
+                path: '/search/',
+                name: 'search',
+                component: () => import('./views/SearchView.vue'),
+                meta: {
+                    title: "Search"
+                }
+            },
+            {
                 path: '/login/',
                 name: 'login',
                 component: () => import('./views/LoginView.vue'),
@@ -118,6 +126,14 @@ export default function () {
                 component: () => import('./views/NotFoundView.vue'),
                 meta: {
                     title: "Set Detail"
+                }
+            },
+            {
+                path: '/set/:id/edit/',
+                name: 'set-editor',
+                component: () => import('./views/NotFoundView.vue'),
+                meta: {
+                    title: "Set Editor"
                 }
             },
             {

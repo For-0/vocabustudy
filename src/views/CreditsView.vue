@@ -7,7 +7,7 @@
                     <p class="font-light text-gray-500 lg:mb-16 sm:text-xl dark:text-gray-400">Vocabustudy is built from the ground up by students, for students.</p>
                 </div> 
                 <div class="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
-                    <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
+                    <div class="items-center bg-stone-50 rounded-lg shadow sm:flex dark:bg-stone-800 dark:border-gray-700">
                         <a href="#">
                             <img src="../assets/images/credits/siddhant.png" alt="Siddhant Kameswar" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg mx-auto mt-4 sm:mt-auto" />
                         </a>
@@ -38,7 +38,7 @@
                             </ul>
                         </div>
                     </div> 
-                    <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
+                    <div class="items-center bg-stone-50 rounded-lg shadow sm:flex dark:bg-stone-800 dark:border-gray-700">
                         <a href="#">
                             <img src="../assets/images/credits/ruhan.jpg" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg mx-auto mt-4 sm:mt-auto" />
                         </a>
@@ -69,7 +69,7 @@
                             </ul>
                         </div>
                     </div> 
-                    <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
+                    <div class="items-center bg-stone-50 rounded-lg shadow sm:flex dark:bg-stone-800 dark:border-gray-700">
                         <a href="#">
                           <img src="../assets/images/credits/omkar.png" alt="Omkar Patil" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg mx-auto mt-4 sm:mt-auto" />
                         </a>
@@ -98,7 +98,7 @@
                             </ul>
                         </div>
                     </div> 
-                    <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
+                    <div class="items-center bg-stone-50 rounded-lg shadow sm:flex dark:bg-stone-800 dark:border-gray-700">
                         <a href="#">
                             <img src="../assets/images/credits/nikhil.jpg" alt="Nikhil Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg mx-auto mt-4 sm:mt-auto" />
                         </a>
