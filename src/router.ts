@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from './views/HomeView.vue'; // we import this here to make sure it loads instantly without having to wait for a network request
-import { useAuthStore } from './store';
+import { useAuthStore, usePreferencesStore } from './store';
 import type { Component } from 'vue';
 
 declare module "vue-router" {
@@ -132,10 +132,13 @@ export default function () {
     });
 
     const authStore = useAuthStore();
+    const preferencesStore = usePreferencesStore();
 
     router.beforeEach(async (to, _from) => {
-        document.title = to.meta.title ? `${to.meta.title} - Vocabustudy` : `Vocabustudy`;
-        document.querySelector("link[rel='canonical']")?.setAttribute("href", new URL(to.path, "https://vocabustudy.org").toString());
+        document.title = "Loading... - Vocabustudy"
+
+        preferencesStore.startNavigation();
+
         if (to.meta.requiresAuth) {
             await authStore.refreshCurrentUser();
             if (!authStore.currentUser) {
@@ -145,6 +148,12 @@ export default function () {
                 }
             }
         }
+    });
+
+    router.afterEach((to) => {
+        preferencesStore.stopNavigation();
+        document.title = to.meta.title ? `${to.meta.title} - Vocabustudy` : `Vocabustudy`;
+        document.querySelector("link[rel='canonical']")?.setAttribute("href", new URL(to.path, "https://vocabustudy.org").toString());
     });
 
     return router;

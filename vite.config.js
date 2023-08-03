@@ -13,6 +13,26 @@ function getAuthEmulatorUrl() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    auth: [
+                        "./src/views/AccountView",
+                        "./src/views/LoginView",
+                    ],
+                    staticPages: [
+                        "./src/views/CreditsView",
+                        "./src/views/NotFoundView",
+                        "./src/views/PrivacyPolicyView",
+                        "./src/views/SocialView",
+                        "./src/views/SupportUsView",
+                        "./src/views/TOSView",
+                    ]
+                },
+            },
+        },
+    },
     plugins: [
         vue(),
         /*VitePWA({

@@ -106,7 +106,7 @@ export const useUserProfileCacheStore = defineStore("user-profile-cache", () => 
     };
 });
 
-export const useThemeStore = defineStore("theme", () => {
+export const usePreferencesStore = defineStore("prefs", () => {
     const validateTheme = (theme: string | null) => theme === "light" || theme === "dark" ? theme : "system";
 
     const theme = ref<"light" | "dark" | "system">(validateTheme(localStorage.getItem("theme")));
@@ -122,8 +122,21 @@ export const useThemeStore = defineStore("theme", () => {
         theme.value = newTheme;
     }
 
+    const navigationStartedAt = ref(-1);
+
+    function startNavigation() {
+        navigationStartedAt.value = Date.now();
+    }
+
+    function stopNavigation() {
+        navigationStartedAt.value = -1;
+    }
+
     return {
         theme,
-        setTheme
+        setTheme,
+        navigationStartedAt,
+        startNavigation,
+        stopNavigation
     }
 });

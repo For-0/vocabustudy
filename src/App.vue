@@ -2,10 +2,10 @@
 import { RouterView } from 'vue-router';
 import Navbar from './components/navbar/Navbar.vue'
 import Footer from './components/Footer.vue';
-import { useThemeStore } from './store';
+import { usePreferencesStore } from './store';
 import { onMounted, onUnmounted, ref } from 'vue';
 
-const themeStore = useThemeStore();
+const themeStore = usePreferencesStore();
 
 const userPrefersDark = ref(false);
 let queryList: MediaQueryList | null = null;

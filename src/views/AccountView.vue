@@ -4,7 +4,7 @@
             <div class="lg:flex lg:items-center lg:justify-between">
                 <div class="min-w-0 flex-1">
                     <h2 class="text-2xl font-bold leading-7 text-zinc-900 sm:truncate sm:text-3xl sm:tracking-tight dark:text-white">My Account</h2>
-                    <p class="mt-1 text-zinc-500">
+                    <p class="mt-1 text-zinc-500 dark:text-zinc-400">
                         {{ authStore.currentUser?.email }}
                         <span
                             class="inline-flex items-center text-xs font-medium mr-3 px-2.5 py-0.5 rounded-full"
@@ -13,7 +13,7 @@
                             Email {{ authStore.currentUser?.emailVerified ? 'Verified' : 'Not Verified' }}
                         </span>
                     </p>
-                    <p class="mt-1 text-zinc-400 dark:text-zinc-600">Login methods: {{ authProviders }}</p>
+                    <p class="mt-1 text-zinc-400 dark:text-zinc-500">Login methods: {{ authProviders }}</p>
                 </div>
                 <div class="mt-5 flex lg:ml-4 lg:mt-0">
                     <button @click="authStore.logout()" type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700">Log Out</button>

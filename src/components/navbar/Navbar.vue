@@ -1,7 +1,7 @@
 <template>
     <header>
         <nav class="bg-primary">
-            <div class="flex flex-wrap items-stretch">
+            <div class="flex flex-wrap items-stretch relative">
                 <RouterLink to="/" class="flex items-center bg-white bg-opacity-0  px-4 h-12">
                     <img src="/icons/icon-192.png" class="h-6 w-6 mr-3 sm:h-7 sm:w-7 rounded-lg shadow shadow-white/25" alt="Vocabustudy Logo" height="28"
                         width="28" />
@@ -11,7 +11,8 @@
                     <button type="button" class="w-6 h-6 flex text-sm rounded-full focus:ring-2 hover:ring-1 hover:ring-opacity-50 ring-zinc-300 items-center justify-center"
                         id="account-menu-button" :aria-expanded=accountMenuOpen @click.stop="{ accountMenuOpen = !accountMenuOpen; navbarExpanded = false; }">
                         <span class="sr-only">{{ accountMenuOpen ? "Close" : "Open" }} account menu</span>
-                        <div class="pfp-loader" v-if="authStore.currentUser && authStore.currentUser.photoUrl">
+                        <Loader class="h-6 w-6 text-white" :size="1" v-if="currentNavigationProgress > 0 && currentNavigationProgress < 1" />
+                        <div class="pfp-loader" v-else-if="authStore.currentUser && authStore.currentUser.photoUrl">
                             <img :src="authStore.currentUser.photoUrl" class="w-6 h-6 rounded-full" alt="" />
                         </div>
                         <UserCircleIcon class="w-6 h-6 text-white" v-else />
@@ -23,19 +24,19 @@
                         </ul>
                         <ul class="py-2">
                             <div class="flex items-center justify-evenly text-gray-900 dark:text-white">
-                                <button :class="{ 'border border-primary': themeStore.theme === 'light' }"
+                                <button :class="{ 'border border-primary': preferencesStore.theme === 'light' }"
                                     class="h-6 w-6 flex items-center justify-center hover:bg-primary hover:bg-opacity-25 rounded-lg"
-                                    @click="themeStore.setTheme('light')">
+                                    @click="preferencesStore.setTheme('light')">
                                     <SunIcon class="h-4 w-4" />
                                 </button>
-                                <button :class="{ 'border border-primary': themeStore.theme === 'dark' }"
+                                <button :class="{ 'border border-primary': preferencesStore.theme === 'dark' }"
                                     class="h-6 w-6 flex items-center justify-center hover:bg-primary hover:bg-opacity-25 rounded-lg"
-                                    @click="themeStore.setTheme('dark')">
+                                    @click="preferencesStore.setTheme('dark')">
                                     <MoonIcon class="h-4 w-4" />
                                 </button>
-                                <button :class="{ 'border border-primary': themeStore.theme === 'system' }"
+                                <button :class="{ 'border border-primary': preferencesStore.theme === 'system' }"
                                     class="h-6 w-6 flex items-center justify-center hover:bg-primary hover:bg-opacity-25 rounded-lg"
-                                    @click="themeStore.setTheme('system')">
+                                    @click="preferencesStore.setTheme('system')">
                                     <ComputerDesktopIcon class="h-4 w-4" />
                                 </button>
                             </div>
@@ -68,6 +69,10 @@
                 </div>
             </div>
         </nav>
+        
+        <div v-if="currentNavigationProgress > 0" class="bg-primary-alt h-1">
+            <div class="bg-secondary h-full transition-transform" :style="{ transform: `translateX(-50%)scaleX(${currentNavigationProgress})translateX(50%)` }"></div>
+        </div>
 
         <div v-if="!verifyEmailHidden && authStore.currentUser && !authStore.currentUser.emailVerified" tabindex="-1" class="flex flex-col justify-between w-full p-4 border-b border-zinc-200 md:flex-row bg-zinc-50 dark:bg-zinc-700 dark:border-zinc-600">
             <div class="mb-4 md:mb-0 md:mr-4">
@@ -91,21 +96,46 @@ import { RouterLink } from 'vue-router'
 import NavbarLink from './NavbarLink.vue';
 import { Bars3Icon, UserCircleIcon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/vue/24/outline';
 import NavbarAccountMenuLink from './NavbarAccountMenuLink.vue';
-import { useAuthStore, useThemeStore } from '../../store';
+import { useAuthStore, usePreferencesStore } from '../../store';
 import { sendEmailVerification } from "../../firebase-rest-api/auth";
 import { showSuccessToast } from '../../utils';
+import Loader from '../Loader.vue';
 
 const accountMenuOpen = ref(false);
 const navbarExpanded = ref(false);
 const verifyEmailHidden = ref(false);
 const authStore = useAuthStore();
-const themeStore = useThemeStore();
+const preferencesStore = usePreferencesStore();
 const currentInstance = getCurrentInstance();
+const totalNavigationTime = 5000; // 5 seconds
+const currentNavigationProgress = ref(0); // percentage (0-1)
+let navigationUpdateInterval = 0;
 
 function onDocumentClick() {
     accountMenuOpen.value = false;
     navbarExpanded.value = false;
 }
+
+const unsubscribe = preferencesStore.$onAction(({ name, after }) => {
+    if (name === "startNavigation") {
+        after(() => {
+            clearInterval(navigationUpdateInterval);
+            currentNavigationProgress.value = 0;
+            navigationUpdateInterval = setInterval(() => {
+                const msIntoNavigation = Date.now() - preferencesStore.navigationStartedAt;
+                currentNavigationProgress.value = Math.min(msIntoNavigation / totalNavigationTime, 1);
+            }, 100);
+        });
+    } else if (name === "stopNavigation") {
+        after(() => {
+            clearInterval(navigationUpdateInterval);
+            currentNavigationProgress.value = 1;
+            setTimeout(() => {
+                currentNavigationProgress.value = 0; // remove the progress bar after 0.1 seconds
+            }, 100);
+        });
+    }
+});
 
 onMounted(() => {
     document.addEventListener('click', onDocumentClick);
@@ -113,6 +143,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     document.removeEventListener('click', onDocumentClick);
+    unsubscribe();
 });
 
 async function verifyEmail() {

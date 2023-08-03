@@ -56,7 +56,7 @@
                                 class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white">
                         </div>
 
-                        <p class="mt-3 text-zinc-400 dark:text-zinc-600 italic text-sm" v-if="currentMode === 'signup'">You must be at least 13 or have parental permission to create and use an account.</p>
+                        <p class="mt-3 text-zinc-400 dark:text-zinc-500 italic text-sm" v-if="currentMode === 'signup'">You must be at least 13 or have parental permission to create and use an account.</p>
                     
                         <button type="submit" :disabled="loading"
                             class="w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center">
@@ -73,7 +73,7 @@
                             <button @click="currentMode = 'forgot'" type="button" class="text-sm font-medium text-primary hover:underline dark:text-primary-alt">Forgot password?</button>
                         </div>
 
-                        <p class="text-zinc-400 dark:text-zinc-600 italic text-sm">By using this service, you agree to the <router-link :to="{ name: 'terms' }" class="hover:underline">Terms of Service</router-link> and <router-link :to="{ name: 'privacy' }" class="hover:underline">Privacy Policy</router-link>.</p>
+                        <p class="text-zinc-400 dark:text-zinc-500 italic text-sm">By using this service, you agree to the <router-link :to="{ name: 'terms' }" class="hover:underline">Terms of Service</router-link> and <router-link :to="{ name: 'privacy' }" class="hover:underline">Privacy Policy</router-link>.</p>
                     </form> 
                 </div>
             </div>
