@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { type User, type UserProfile } from "./types";
 import { deleteCurrentUser, getCurrentUser, refreshCurrentUser, signInWithEmailAndPassword, setCurrentUser, signInWithGoogleCredential, showGooglePopup, createUserWithEmailAndPassword, updateProfile, updatePassword } from "./firebase-rest-api/auth";
 import { BroadcastChannel } from "broadcast-channel";
+import type { VocabSet } from "./firebase-rest-api/firestore";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GenericFunction = (...args: any[]) => Promise<any>;
@@ -82,28 +83,50 @@ export const useAuthStore = defineStore("auth", () => {
     };
 });
 
-export const useUserProfileCacheStore = defineStore("user-profile-cache", () => {
-    const cache = ref<Map<string, UserProfile>>(new Map());
+const unknownUser = { displayName: "Unknown User", photoUrl: "", roles: [] };
 
-    async function getAll(uids: string[]) {
+export const useCacheStore = defineStore("cache", () => {
+    const userProfileCache = ref<Map<string, UserProfile>>(new Map());
+    const mySetsCache = ref<VocabSet[]>([]);
+    const mySetsState = ref({ hasNextPage: true, mostRecentTiming: 0, uid: null as string | null });
+
+    async function getAllProfiles(uids: string[]) {
         const uniqueUids = [...new Set(uids)];
 
-        const missingUids = uniqueUids.filter(uid => !cache.value.get(uid));
+        const missingUids = uniqueUids.filter(uid => !userProfileCache.value.get(uid));
 
         await Promise.all(missingUids.map(async uid => {
             const res = await fetch(`${DD_URL}users/${uid}`);
             if (res.ok) {
                 const data = await res.json() as UserProfile;
-                cache.value.set(uid, data);
+                userProfileCache.value.set(uid, data);
             }
         }));
 
-        return uids.map(uid => cache.value.get(uid) ?? { displayName: "Unknown User", photoUrl: "", roles: [] });
+        return uids.map(uid => userProfileCache.value.get(uid) ?? unknownUser);
+    }
+
+    function addSets(sets: VocabSet[]) {
+        mySetsCache.value = [...mySetsCache.value, ...sets];
+    }
+
+    function removeSet(setId: string) {
+        mySetsCache.value = mySetsCache.value.filter(set => set.id !== setId);
+    }
+
+    function resetMySets() {
+        mySetsCache.value = [];
+        mySetsState.value = { hasNextPage: true, mostRecentTiming: 0, uid: null };
     }
 
     return {
-        getAll,
-        cache
+        getAllProfiles,
+        userProfileCache,
+        mySetsCache,
+        mySetsState,
+        addSets,
+        resetMySets,
+        removeSet
     };
 });
 

@@ -105,6 +105,15 @@ export default function () {
                 }
             },
             {
+                path: '/my-sets/',
+                name: 'my-sets',
+                component: () => import('./views/MySetsView.vue'),
+                meta: {
+                    title: "My Sets",
+                    requiresAuth: true
+                }
+            },
+            {
                 path: '/auth-action/',
                 name: 'auth-action',
                 component: () => import('./views/AuthActionView.vue'),

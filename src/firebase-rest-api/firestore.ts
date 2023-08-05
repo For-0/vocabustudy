@@ -191,7 +191,8 @@ export class VocabSet<T extends SetTerms = SetTerms> extends FSDocument {
     likes: number;
     numTerms: number;
     nameWords: string[];
-    constructor({ name, description, creator, uid, visibility, collections, terms, numTerms, likes, pathParts, nameWords, createTime, updateTime, last }: VocabSet & { terms: T }) {
+    creationTime: Date;
+    constructor({ name, description, creator, uid, visibility, collections, terms, numTerms, likes, pathParts, nameWords, createTime, updateTime, last, creationTime }: VocabSet & { terms: T }) {
         super({ pathParts, createTime, updateTime, last });
         this.name = name;
         if (description) this.description = description;
@@ -203,6 +204,7 @@ export class VocabSet<T extends SetTerms = SetTerms> extends FSDocument {
         this.likes = likes;
         this.numTerms = numTerms;
         this.nameWords = nameWords;
+        this.creationTime = creationTime;
     }
 }
 

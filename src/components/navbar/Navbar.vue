@@ -20,7 +20,7 @@
                     <div class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 lg:mr-6 top-12" id="account-dropdown" :class="{ 'hidden': !accountMenuOpen }" @click.stop>
                         <ul class="py-2">
                             <NavbarAccountMenuLink to="/saved/">Saved Sets</NavbarAccountMenuLink>
-                            <NavbarAccountMenuLink to="/my-sets/" v-if="authStore.currentUser">My Sets</NavbarAccountMenuLink>
+                            <NavbarAccountMenuLink :to="{ name: 'my-sets' }" v-if="authStore.currentUser">My Sets</NavbarAccountMenuLink>
                         </ul>
                         <ul class="py-2">
                             <div class="flex items-center justify-evenly text-gray-900 dark:text-white">
@@ -123,7 +123,7 @@ const unsubscribe = preferencesStore.$onAction(({ name, after }) => {
             clearInterval(navigationUpdateInterval);
             clearTimeout(navigationClearTimeout);
             currentNavigationProgress.value = 0;
-            navigationUpdateInterval = setInterval(() => {
+            navigationUpdateInterval = window.setInterval(() => {
                 const msIntoNavigation = Date.now() - preferencesStore.navigationStartedAt;
                 currentNavigationProgress.value = Math.min(msIntoNavigation / totalNavigationTime, 1);
             }, 100);
@@ -133,7 +133,7 @@ const unsubscribe = preferencesStore.$onAction(({ name, after }) => {
             clearInterval(navigationUpdateInterval);
             clearTimeout(navigationClearTimeout);
             currentNavigationProgress.value = 1;
-            navigationClearTimeout = setTimeout(() => {
+            navigationClearTimeout = window.setTimeout(() => {
                 currentNavigationProgress.value = null; // remove the progress bar after 0.1 seconds
             }, 300);
         });
