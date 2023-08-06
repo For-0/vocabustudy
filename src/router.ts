@@ -28,6 +28,14 @@ export default function () {
                 }
             },
             {
+                path: '/saved/',
+                name: 'saved-sets',
+                component: () => import('./views/SavedSetsView.vue'),
+                meta: {
+                    title: "Saved Sets"
+                }
+            },
+            {
                 path: '/help-center/',
                 name: 'help-center',
                 component: () => import('./views/HelpCenterView.vue'),
@@ -130,7 +138,7 @@ export default function () {
                 }
             },
             {
-                path: '/set/:id/view/',
+                path: '/set/:id([\\w\\d]+)/view/',
                 name: 'set-detail',
                 component: () => import('./views/NotFoundView.vue'),
                 meta: {
@@ -138,12 +146,14 @@ export default function () {
                 }
             },
             {
-                path: '/set/:id/edit/',
+                path: '/set/:id([\\w\\d]+)/edit/',
                 name: 'set-editor',
-                component: () => import('./views/NotFoundView.vue'),
+                component: () => import('./views/SetEditorView.vue'),
                 meta: {
-                    title: "Set Editor"
-                }
+                    title: "Set Editor",
+                    requiresAuth: true
+                },
+                alias: '/set/:id(new)/'
             },
             {
                 path: '/collection/:id/',

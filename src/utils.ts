@@ -59,6 +59,15 @@ export function humanizeDate(date: Date) {
     return `${pluralizeWord("year", Math.floor(diffDays / 365))} ago`;
 }
 
+/**
+ * Get a list of all alphanumeric words in a string
+ * @param string The string to get words from
+ */
+export function getWords(string: string): string[] {
+    const alphaNum = string.replace(/\W/g, " ").toLowerCase();
+    return alphaNum.split(" ").map(el => el.trim()).filter(el => el);
+}
+
 export function showToast(props: { icon: Component, iconColor: string, iconSrText: string, text: string }, appContext: AppContext | undefined, duration: number) {
     if (!appContext) return;
     const toastContainer = document.getElementById("toast-container");

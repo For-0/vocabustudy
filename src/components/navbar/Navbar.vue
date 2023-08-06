@@ -21,7 +21,7 @@
                         </div>
                         <UserCircleIcon v-else class="w-6 h-6 text-white" />
                     </button>
-                    <div id="account-dropdown" class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 lg:mr-6 top-12" :class="{ 'hidden': !accountMenuOpen }" @click.stop>
+                    <div id="account-dropdown" class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 top-12" :class="{ 'hidden': !accountMenuOpen }">
                         <ul class="py-2">
                             <NavbarAccountMenuLink to="/saved/">Saved Sets</NavbarAccountMenuLink>
                             <NavbarAccountMenuLink v-if="authStore.currentUser" :to="{ name: 'my-sets' }">My Sets</NavbarAccountMenuLink>
@@ -73,7 +73,7 @@
                         <Bars3Icon class="w-6 h-6" />
                     </button>
                 </div>
-                <div id="navbar-cta" class="items-center justify-between w-full md:flex md:w-auto md:order-1 md:h-12 bg-white dark:bg-stone-800 md:bg-transparent lg:dark:bg-transparent" :class="{ 'hidden': !navbarExpanded }">
+                <div id="navbar-cta" class="items-center justify-between w-full md:flex md:w-auto md:order-1 md:h-12 bg-white dark:bg-stone-800 md:bg-transparent md:dark:bg-transparent" :class="{ 'hidden': !navbarExpanded }">
                     <ul
                         class="flex flex-col p-2 m-4 md:m-0 md:py-0 border border-zinc-100 rounded-lg bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 md:flex-row md:space-x-2 md:mt-0 md:border-0 md:bg-transparent md:dark:bg-transparent md:items-center md:h-full"
                     >

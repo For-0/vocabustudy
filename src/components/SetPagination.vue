@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row gap-3 flex-wrap mb-5">
-        <SetCard v-for="set in sets" :key="set.id" :set="set" :show-edit-controls="showEditControls" @delete-set="$emit(&quot;delete-set&quot;, set.id)" />
+        <SetCard v-for="set, i in sets" :key="set.id" :set="set" :creator="creators?.[i]" :show-edit-controls="showEditControls" @delete-set="$emit(&quot;delete-set&quot;, set.id)" />
     </div>
     <p v-if="isLoading" class="flex items-center text-zinc-600 dark:text-zinc-300 mb-3 text-lg">
         <Loader :size="2" class="w-6 h-6 mr-2" />
@@ -17,11 +17,12 @@ import SetCard from "./SetCard.vue";
 import Loader from "./Loader.vue";
 import { type VocabSet } from "../firebase-rest-api/firestore";
 import { ref } from "vue";
-
+import { type UserProfile } from "../types";
 const isLoading = ref(false);
 
 defineProps<{
     sets: VocabSet[];
+    creators?: UserProfile[];
     showEditControls: boolean;
     hasNextPage: boolean;
     mostRecentTiming: number;

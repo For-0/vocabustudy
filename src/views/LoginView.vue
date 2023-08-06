@@ -99,7 +99,7 @@ import Loader from '../components/Loader.vue';
 import { sendPasswordResetEmail, loadGoogleSignIn, renderGoogleButton, errorMessages } from '../firebase-rest-api/auth';
 import { showSuccessToast, showErrorToast, showWarningToast } from '../utils';
 import { useAuthStore } from '../store';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const currentMode = ref<'login' | 'signup' | 'forgot'>('login');
 const email = ref('');
@@ -110,6 +110,7 @@ const loading = ref(false);
 const currentInstance = getCurrentInstance();
 const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 const gsiButtonContainer = ref<HTMLDivElement | null>(null);
 
 function reportToastResult(errorMessage: string) {
@@ -167,18 +168,22 @@ async function onSubmit() {
     loading.value = false;
 }
 
-const unsubscribe = authStore.$subscribe((_, state) => {
+function handleState(state: typeof authStore["$state"]) {
     if (state.currentUser) {
-        void router.push({ name: "account" });
-        unsubscribe();
+        // redirect to /account if user is logged in
+        if (route.query.next) {
+            void router.push(route.query.next as string);
+        } else {
+            void router.push({ name: "account" });
+        }
     }
+}
+
+const unsubscribe = authStore.$subscribe((_, state) => {
+    handleState(state);
 });
 
-// redirect to /account if user is logged in
-if (authStore.currentUser) {
-    void router.push({ name: "account" });
-    unsubscribe();
-}
+handleState(authStore.$state);
 
 onMounted(async () => {
     if (!gsiButtonContainer.value) return;
