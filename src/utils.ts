@@ -1,5 +1,5 @@
 import { openDB } from "idb";
-import collectionData from "./collections.json" assert { type: "json" };
+import collectionData from "./assets/collections.json" assert { type: "json" };
 import type { VocabustudyDB } from "./types";
 import { type Component, createVNode, render, type AppContext } from "vue";
 import BaseToast from "./components/BaseToast.vue";

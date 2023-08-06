@@ -113,3 +113,8 @@ main {
     background-repeat: no-repeat;
     background-size: 100% 100%;
 }
+
+.dark [type="checkbox"]:checked, .dark [type="radio"]:checked {
+    background-color: currentColor;
+    border-color: transparent;
+}
