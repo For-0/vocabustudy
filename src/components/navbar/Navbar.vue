@@ -59,7 +59,7 @@
                         <Bars3Icon class="w-6 h-6" />
                     </button>
                 </div>
-                <div class="items-center justify-between w-full md:flex md:w-auto md:order-1 md:h-12 bg-white md:bg-transparent" id="navbar-cta" :class="{ 'hidden': !navbarExpanded }">
+                <div class="items-center justify-between w-full md:flex md:w-auto md:order-1 md:h-12 bg-white dark:bg-stone-800 md:bg-transparent lg:dark:bg-transparent" id="navbar-cta" :class="{ 'hidden': !navbarExpanded }">
                     <ul
                         class="flex flex-col p-2 m-4 md:m-0 md:py-0 border border-zinc-100 rounded-lg bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 md:flex-row md:space-x-2 md:mt-0 md:border-0 md:bg-transparent md:dark:bg-transparent md:items-center md:h-full">
                         <NavbarLink to="/search/">Search Sets</NavbarLink>

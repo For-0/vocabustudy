@@ -7,7 +7,7 @@
                     <p class="mt-1 text-zinc-500 dark:text-zinc-400">{{ authStore.currentUser?.email }}</p>
                 </div>
                 <div class="mt-5 flex lg:ml-4 lg:mt-0">
-                    <button type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700">Create +</button>
+                    <button type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700">Create Set <PlusCircleIcon class="w-4 h-4 inline relative" style="top: -1.4px;" /></button>
                 </div>
             </div>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { XMarkIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline';
+import { XMarkIcon, ExclamationCircleIcon, PlusCircleIcon } from '@heroicons/vue/24/outline';
 import { ref, getCurrentInstance } from 'vue';
 import { useAuthStore, useCacheStore } from '../store';
 import { useRouter } from 'vue-router';

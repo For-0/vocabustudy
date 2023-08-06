@@ -23,27 +23,27 @@
     const articles = [
     {
         id: 1,
-        title: "Article 1",
-        description: "Description of article 1",
-        link: "/help-center/article1",
+        title: "Coming soon!",
+        description: "New Help Center articles are on their way. Check back soon!",
+        link: "/help-center/#",
     },
     {
         id: 2,
-        title: "Article 2",
-        description: "Description of article 2",
-        link: "/help-center/article2",
+        title: "Coming soon!",
+        description: "New Help Center articles are on their way. Check back soon!",
+        link: "/help-center/#",
     },
     {
         id: 3,
-        title: "Article 3",
-        description: "Description of article 3",
-        link: "/help-center/article3",
+        title: "Coming soon!",
+        description: "New Help Center articles are on their way. Check back soon!",
+        link: "/help-center/#",
     },
     {
         id: 4,
-        title: "Article 4",
-        description: "Description of article 4",
-        link: "/help-center/article4",
+        title: "Coming soon!",
+        description: "New Help Center articles are on their way. Check back soon!",
+        link: "/help-center/#",
     },
     ]
 </script>

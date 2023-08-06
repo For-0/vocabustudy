@@ -27,7 +27,7 @@
                         <span class="flex-shrink mx-4 text-gray-400 text-sm">OR</span>
                         <div class="flex-grow border-t border-gray-400"></div>
                     </div> -->
-                    <div class="w-full flex justify-center" v-show="currentMode !== 'forgot'">
+                    <div class="w-full flex justify-center text-white" v-show="currentMode !== 'forgot'">
                         <div ref="gsiButtonContainer"></div>
                     </div>
                     <div class="inline-flex items-center justify-center w-full relative" v-show="currentMode !== 'forgot'">
@@ -73,7 +73,7 @@
                             <button @click="currentMode = 'forgot'" type="button" class="text-sm font-medium text-primary hover:underline dark:text-primary-alt">Forgot password?</button>
                         </div>
 
-                        <p class="text-zinc-400 dark:text-zinc-500 italic text-sm">By using this service, you agree to the <router-link :to="{ name: 'terms' }" class="hover:underline">Terms of Service</router-link> and <router-link :to="{ name: 'privacy' }" class="hover:underline">Privacy Policy</router-link>.</p>
+                        <p class="text-zinc-400 dark:text-zinc-500 italic text-sm">By using Vocabustudy, you agree to the <router-link :to="{ name: 'terms' }" class=" text-blue-600 dark:text-blue-500 hover:underline">Terms of Service</router-link> and <router-link :to="{ name: 'privacy' }" class=" text-blue-600 dark:text-blue-500 hover:underline">Privacy Policy</router-link>.</p>
                     </form> 
                 </div>
             </div>
@@ -180,7 +180,7 @@ onMounted(async () => {
             }
         });
     } else {
-        gsiButtonContainer.value.innerHTML = "Click to sign in with Google";
+        gsiButtonContainer.value.innerHTML = "Sign in with Google";
         gsiButtonContainer.value.addEventListener("click", async () => {
             try {
                 await authStore.showGooglePopup();
