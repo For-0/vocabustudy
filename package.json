@@ -37,6 +37,7 @@
     "autoprefixer": "^10.4.14",
     "broadcast-channel": "^5.1.0",
     "eslint": "^8.46.0",
+    "eslint-plugin-vue": "^9.16.1",
     "pinia": "^2.1.6",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",

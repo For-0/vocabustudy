@@ -8,8 +8,9 @@
                         {{ authStore.currentUser?.email }}
                         <span
                             class="inline-flex items-center text-xs font-medium mr-3 px-2.5 py-0.5 rounded-full"
-                            :class="authStore.currentUser?.emailVerified ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'">
-                            <span class="w-2 h-2 mr-1 rounded-full" :class="authStore.currentUser?.emailVerified ? 'bg-green-500' : 'bg-red-500'"></span>
+                            :class="authStore.currentUser?.emailVerified ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'"
+                        >
+                            <span class="w-2 h-2 mr-1 rounded-full" :class="authStore.currentUser?.emailVerified ? 'bg-green-500' : 'bg-red-500'" />
                             Email {{ authStore.currentUser?.emailVerified ? 'Verified' : 'Not Verified' }}
                         </span>
                     </p>
@@ -18,50 +19,52 @@
                     <p class="mt-1 text-zinc-400 dark:text-zinc-500">Login methods: {{ authProviders }}</p>
                 </div>
                 <div class="mt-5 flex lg:ml-4 lg:mt-0">
-                    <button @click="authStore.logout()" type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700">Log Out</button>
+                    <button type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="authStore.logout()">Log Out</button>
                 </div>
             </div>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
             <h2 class="text-xl font-bold leading-7 text-zinc-900 dark:text-white mb-3">Settings:</h2>
             <label for="display-name" class="font-semibold text-zinc-900 dark:text-white mb-2 block">Display Name</label>
             <div class="flex items-center mb-3">   
-                <input ref="displayNameInput" v-model="displayName" type="text" id="display-name" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" required>
-                <button :disabled="displayNameLoading" @click="saveDisplayName" type="button" title="Save" class="p-2.5 ml-2 text-sm font-medium text-white bg-green-700 rounded-lg border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                    <Loader class="w-4 h-4 !block" v-if="displayNameLoading" :size="1" />
-                    <CheckIcon class="w-4 h-4" aria-hidden="true" v-else />
+                <input id="display-name" ref="displayNameInput" v-model="displayName" type="text" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white" required>
+                <button :disabled="displayNameLoading" type="button" title="Save" class="p-2.5 ml-2 text-sm font-medium text-white bg-green-700 rounded-lg border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" @click="saveDisplayName">
+                    <Loader v-if="displayNameLoading" class="w-4 h-4 !block" :size="1" />
+                    <CheckIcon v-else class="w-4 h-4" aria-hidden="true" />
                     <span class="sr-only">Save</span>
                 </button>
             </div>
             <label for="photo-url" class="font-semibold text-zinc-900 dark:text-white mb-2 block">Profile Picture URL <span class="text-sm font-normal text-zinc-700 dark:text-zinc-200">(optional)</span></label>
             <div class="flex items-center mb-3">   
-                <input ref="photoUrlInput" v-model="photoUrl" type="url" id="photo-url" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white">
-                <button :disabled="photoUrlLoading" @click="savePhotoUrl" type="button" title="Save" class="p-2.5 ml-2 text-sm font-medium text-white bg-green-700 rounded-lg border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                    <Loader class="w-4 h-4 !block" v-if="photoUrlLoading" :size="1" />
-                    <CheckIcon class="w-4 h-4" aria-hidden="true" v-else />
+                <input id="photo-url" ref="photoUrlInput" v-model="photoUrl" type="url" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white">
+                <button :disabled="photoUrlLoading" type="button" title="Save" class="p-2.5 ml-2 text-sm font-medium text-white bg-green-700 rounded-lg border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800" @click="savePhotoUrl">
+                    <Loader v-if="photoUrlLoading" class="w-4 h-4 !block" :size="1" />
+                    <CheckIcon v-else class="w-4 h-4" aria-hidden="true" />
                     <span class="sr-only">Save</span>
                 </button>
             </div>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
             <div class="mt-5 flex lg:mt-0 justify-end">
-                <button @click="openReauthModal('change-password')" type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700">Change Password</button>
-                <button @click="openReauthModal('delete-account')" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Delete Account</button>
+                <button type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="openReauthModal('change-password')">Change Password</button>
+                <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" @click="openReauthModal('delete-account')">Delete Account</button>
             </div>
             <h2 class="text-xl font-bold leading-7 text-zinc-900 dark:text-white mb-3">Your Data:</h2>
             <p class="text-zinc-900 dark:text-white mb-2">
-                Your <span class="font-bold text-emerald-600"><EnvelopeIcon class="w-3 h-3 inline"/> Email</span> is private and will never be shared with anyone.
+                Your <span class="font-bold text-emerald-600"><EnvelopeIcon class="w-3 h-3 inline" /> Email</span> is private and will never be shared with anyone.
             </p>
             <p class="text-zinc-900 dark:text-white mb-2">
-                Your <span class="font-bold text-violet-600"><UserIcon class="w-3 h-3 inline"/> Display Name</span> and <span class="font-bold text-violet-600"><PhotoIcon class="w-3 h-3 inline"/> Profile Picture</span> are public and will be displayed on all sets you create. <span class="font-semibold">You can change these at any time.</span>
+                Your <span class="font-bold text-violet-600"><UserIcon class="w-3 h-3 inline" /> Display Name</span> and <span class="font-bold text-violet-600"><PhotoIcon class="w-3 h-3 inline" /> Profile Picture</span> are public and will be displayed on all sets you create. <span class="font-semibold">You can change these at any time.</span>
             </p>
             <p class="text-zinc-900 dark:text-white mb-2">Have more questions about your data? See our <router-link :to="{ name: 'privacy' }" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Privacy Policy</router-link>.</p>
         </div>
         
-        <div v-if="currentModal" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30"></div>
+        <div v-if="currentModal" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30">
+            <!-- empty -->
+        </div>
         <div v-show="currentModal === 'reauth'" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
             <div class="relative w-full max-w-md max-h-full">
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
-                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
+                    <button type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" @click="closeModals">
                         <XMarkIcon class="w-3 h-3" aria-hidden="true" />
                         <span class="sr-only">Close modal</span>
                     </button>
@@ -69,18 +72,18 @@
                         <h3 class="mb-3 text-xl font-medium text-zinc-900 dark:text-white">Reauthenticate</h3>
                         <p class="text-zinc-500 dark:text-zinc-400 mb-2">For your security, you must reauthenticate to continue</p>
                         <form class="space-y-3" @submit.prevent="onReauthSubmit">
-                            <div class="w-full flex justify-center" v-show="authStore.currentUser?.providers.includes('google.com')">
-                                <div ref="gsiButtonContainer"></div>
+                            <div v-show="authStore.currentUser?.providers.includes('google.com')" class="w-full flex justify-center">
+                                <div ref="gsiButtonContainer" />
                             </div>
-                            <div class="inline-flex items-center justify-center w-full relative" v-show="(authStore.currentUser?.providers.length || 0) >= 2">
+                            <div v-show="(authStore.currentUser?.providers.length || 0) >= 2" class="inline-flex items-center justify-center w-full relative">
                                 <hr class="w-64 h-px bg-zinc-200 border-0 dark:bg-zinc-700">
                                 <span class="absolute px-3 font-medium text-zinc-700 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-zinc-800">or</span>
                             </div>
                             <div v-show="authStore.currentUser?.providers.includes('password')">
                                 <label for="password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Password</label>
-                                <input v-model="reauthPassword" type="password" id="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
+                                <input id="password" v-model="reauthPassword" type="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
                             </div>
-                            <button :disabled="reauthenticateLoading" v-show="authStore.currentUser?.providers.includes('password')" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            <button v-show="authStore.currentUser?.providers.includes('password')" :disabled="reauthenticateLoading" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 <Loader v-if="reauthenticateLoading" class="w-4 h-4 mr-1" :size="1" />
                                 Reauthenticate
                             </button>
@@ -92,23 +95,23 @@
         <div v-show="currentModal === 'change-password'" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
             <div class="relative w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
-                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
+                    <button type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" @click="closeModals">
                         <XMarkIcon class="w-3 h-3" aria-hidden="true" />
                         <span class="sr-only">Close modal</span>
                     </button>
                     <div class="px-6 py-6 lg:px-8">
                         <h3 class="mb-3 text-xl font-medium text-zinc-900 dark:text-white">Change Password</h3>
-                        <p class="text-zinc-500 dark:text-zinc-400 mb-2" v-show="!authStore.currentUser?.providers.includes('password')">
+                        <p v-show="!authStore.currentUser?.providers.includes('password')" class="text-zinc-500 dark:text-zinc-400 mb-2">
                             Filling out this form will allow you to sign in with your email and password as well as with Google.
                         </p>
                         <form class="space-y-3" @submit.prevent="onChangePasswordSubmit">
                             <div>
                                 <label for="new-password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">New Password</label>
-                                <input v-model="newPassword" type="password" id="new-password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
+                                <input id="new-password" v-model="newPassword" type="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
                             </div>
                             <div>
                                 <label for="confirm-new-password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Confirm Password</label>
-                                <input v-model="confirmNewPassword" type="password" id="confirm-new-password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
+                                <input id="confirm-new-password" v-model="confirmNewPassword" type="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
                             </div>
                             <button :disabled="changePasswordLoading" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 <Loader v-if="changePasswordLoading" class="w-4 h-4 mr-1" :size="1" />
@@ -122,7 +125,7 @@
         <div v-show="currentModal === 'delete-account'" tabindex="-1" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
             <div class="relative w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
-                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" >
+                    <button type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" @click="closeModals">
                         <XMarkIcon class="w-3 h-3" aria-hidden="true" />
                         <span class="sr-only">Close modal</span>
                     </button>
@@ -132,10 +135,10 @@
                             <span class="font-bold mr-2">Are you sure you want to delete your account?</span>
                             Your sets will not be deleted.
                         </h3>
-                        <button @click="deleteAccount" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                        <button type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2" @click="deleteAccount">
                             Yes, I'm sure
                         </button>
-                        <button @click="closeModals" type="button" class="text-zinc-500 bg-white hover:bg-zinc-100 focus:ring-4 focus:outline-none focus:ring-zinc-200 rounded-lg border border-zinc-200 text-sm font-medium px-5 py-2.5 hover:text-zinc-900 focus:z-10 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-500 dark:hover:text-white dark:hover:bg-zinc-600 dark:focus:ring-zinc-600">No, cancel</button>
+                        <button type="button" class="text-zinc-500 bg-white hover:bg-zinc-100 focus:ring-4 focus:outline-none focus:ring-zinc-200 rounded-lg border border-zinc-200 text-sm font-medium px-5 py-2.5 hover:text-zinc-900 focus:z-10 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-500 dark:hover:text-white dark:hover:bg-zinc-600 dark:focus:ring-zinc-600" @click="closeModals">No, cancel</button>
                     </div>
                 </div>
             </div>
@@ -186,7 +189,7 @@ const authProviders = computed(() => {
 
 function handleState(state: (typeof authStore)["$state"]) {
     if (state.currentUser === null) {
-        router.push({ name: 'login' });
+        void router.push({ name: 'login' });
     } else {
         displayName.value = state.currentUser.displayName;
         photoUrl.value = state.currentUser.photoUrl;
@@ -245,7 +248,7 @@ async function openReauthModal(reason: "delete-account" | "change-password") {
                             await authStore.signInWithGoogleCredential(response.credential);
                             reauthContinue();
                         } catch (err) {
-                            reportToastResult((err as Error)?.message);
+                            reportToastResult((err as Error).message);
                         }
                     }
                 }
@@ -257,7 +260,7 @@ async function openReauthModal(reason: "delete-account" | "change-password") {
                     await authStore.showGooglePopup(true);
                     reauthContinue();
                 } catch (err) {
-                    reportToastResult((err as Error)?.message);
+                    reportToastResult((err as Error).message);
                 }
             });
         }
@@ -285,7 +288,7 @@ async function onChangePasswordSubmit() {
             showSuccessToast("Password changed successfully", currentInstance?.appContext, 5000);
             closeModals();
         } catch (err) {
-            reportToastResult((err as Error)?.message);
+            reportToastResult((err as Error).message);
         }
     } else {
         showErrorToast("Passwords do not match", currentInstance?.appContext, 3000);
@@ -299,7 +302,7 @@ async function deleteAccount() {
         closeModals();
         showSuccessToast("Account deleted successfully", currentInstance?.appContext, 5000);
     } catch (err) {
-        reportToastResult((err as Error)?.message);
+        reportToastResult((err as Error).message);
     }
 }
 

@@ -27,50 +27,62 @@
                         <span class="flex-shrink mx-4 text-gray-400 text-sm">OR</span>
                         <div class="flex-grow border-t border-gray-400"></div>
                     </div> -->
-                    <div class="w-full flex justify-center text-white" v-show="currentMode !== 'forgot'">
-                        <div ref="gsiButtonContainer"></div>
+                    <div v-show="currentMode !== 'forgot'" class="w-full flex justify-center text-white">
+                        <div ref="gsiButtonContainer">
+                            <!-- empty -->
+                        </div>
                     </div>
-                    <div class="inline-flex items-center justify-center w-full relative" v-show="currentMode !== 'forgot'">
+                    <div v-show="currentMode !== 'forgot'" class="inline-flex items-center justify-center w-full relative">
                         <hr class="w-64 h-px bg-zinc-200 border-0 dark:bg-zinc-700">
                         <span class="absolute px-3 font-medium text-zinc-700 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-zinc-800">or</span>
                     </div>
                     <form class="space-y-4 md:space-y-6" @submit.prevent="onSubmit">
                         <div v-if="currentMode === 'signup'">
                             <label for="display-name" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Display name</label>
-                            <input type="text" id="display-name" v-model="displayName" placeholder="John Doe" required
-                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white">
+                            <input
+                                id="display-name" v-model="displayName" type="text" placeholder="John Doe" required
+                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white"
+                            >
                         </div>
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Your email</label>
-                            <input type="email" id="email" v-model="email" placeholder="user@vocabustudy.org" required
-                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white">
+                            <input
+                                id="email" v-model="email" type="email" placeholder="user@vocabustudy.org" required
+                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white"
+                            >
                         </div>
                         <div v-if="currentMode !== 'forgot'">
                             <label for="password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Password</label>
-                            <input type="password" id="password" placeholder="••••••••" v-model="password" required
-                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white">
+                            <input
+                                id="password" v-model="password" type="password" placeholder="••••••••" required
+                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white"
+                            >
                         </div>
                         <div v-if="currentMode === 'signup'">
                             <label for="confirm-password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Confirm Password</label>
-                            <input type="password" id="confirm-password" placeholder="••••••••" v-model="confirmPassword" required
-                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white">
+                            <input
+                                id="confirm-password" v-model="confirmPassword" type="password" placeholder="••••••••" required
+                                class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white"
+                            >
                         </div>
 
-                        <p class="mt-3 text-zinc-400 dark:text-zinc-500 italic text-sm" v-if="currentMode === 'signup'">You must be at least 13 or have parental permission to create and use an account.</p>
+                        <p v-if="currentMode === 'signup'" class="mt-3 text-zinc-400 dark:text-zinc-500 italic text-sm">You must be at least 13 or have parental permission to create and use an account.</p>
                     
-                        <button type="submit" :disabled="loading"
-                            class="w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center">
-                            <Loader class="h-4 w-4 mr-3" :size="1" v-show="loading" />
+                        <button
+                            type="submit" :disabled="loading"
+                            class="w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex items-center justify-center"
+                        >
+                            <Loader v-show="loading" class="h-4 w-4 mr-3" :size="1" />
                             {{ currentMode === "login" ? "Log in" : currentMode === "signup" ? "Sign up" : "Send email" }}
                         </button>
                         <div class="flex items-center justify-between">
                             <div class="flex items-start">
                                 <p class="text-sm font-light text-zinc-500 dark:text-zinc-400">
                                     {{ currentMode === "login" ? "Don't have an account?" : "Already have an account?" }}
-                                    <button @click="currentMode = currentMode === 'login' ? 'signup' : 'login'" type="button" class="font-medium text-primary hover:underline  dark:text-primary-alt">{{ currentMode === "login" ? "Sign up" : "Log in" }}</button>
+                                    <button type="button" class="font-medium text-primary hover:underline  dark:text-primary-alt" @click="currentMode = currentMode === 'login' ? 'signup' : 'login'">{{ currentMode === "login" ? "Sign up" : "Log in" }}</button>
                                 </p>
                             </div>
-                            <button @click="currentMode = 'forgot'" type="button" class="text-sm font-medium text-primary hover:underline dark:text-primary-alt">Forgot password?</button>
+                            <button type="button" class="text-sm font-medium text-primary hover:underline dark:text-primary-alt" @click="currentMode = 'forgot'">Forgot password?</button>
                         </div>
 
                         <p class="text-zinc-400 dark:text-zinc-500 italic text-sm">By using Vocabustudy, you agree to the <router-link :to="{ name: 'terms' }" class=" text-blue-600 dark:text-blue-500 hover:underline">Terms of Service</router-link> and <router-link :to="{ name: 'privacy' }" class=" text-blue-600 dark:text-blue-500 hover:underline">Privacy Policy</router-link>.</p>
@@ -125,7 +137,7 @@ async function onSubmit() {
             try {
                 await authStore.signInWithEmailAndPassword(email.value, password.value);
             } catch(err) {
-                reportToastResult((err as Error)?.message);
+                reportToastResult((err as Error).message);
             }
             break;
         }
@@ -138,7 +150,7 @@ async function onSubmit() {
             try {
                 await authStore.createUserWithEmailAndPassword(email.value, password.value, displayName.value);
             } catch (err) {
-                reportToastResult((err as Error)?.message.split(" ")[0]);
+                reportToastResult((err as Error).message.split(" ")[0]);
             }
             break;
         }
@@ -147,7 +159,7 @@ async function onSubmit() {
                 await sendPasswordResetEmail(email.value);
                 showSuccessToast("Email sent!", currentInstance.appContext, 3000);
             } catch (err) {
-                reportToastResult((err as Error)?.message);
+                reportToastResult((err as Error).message);
             }
             break;
         }
@@ -157,14 +169,14 @@ async function onSubmit() {
 
 const unsubscribe = authStore.$subscribe((_, state) => {
     if (state.currentUser) {
-        router.push({ name: "account" });
+        void router.push({ name: "account" });
         unsubscribe();
     }
 });
 
 // redirect to /account if user is logged in
 if (authStore.currentUser) {
-    router.push({ name: "account" });
+    void router.push({ name: "account" });
     unsubscribe();
 }
 
@@ -176,7 +188,7 @@ onMounted(async () => {
             try {
                 await authStore.signInWithGoogleCredential(response.credential);
             } catch (err) {
-                reportToastResult((err as Error)?.message);
+                reportToastResult((err as Error).message);
             }
         });
     } else {
@@ -185,7 +197,7 @@ onMounted(async () => {
             try {
                 await authStore.showGooglePopup();
             } catch (err) {
-                reportToastResult((err as Error)?.message);
+                reportToastResult((err as Error).message);
             }
         });
     }    

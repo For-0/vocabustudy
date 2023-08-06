@@ -37,6 +37,8 @@ onUnmounted(() => {
             <Footer />
         </footer>
 
-        <div id="toast-container" class="fixed bottom-3 right-3 z-50"></div>
+        <div id="toast-container" class="fixed bottom-3 right-3 z-50">
+            <!-- empty -->
+        </div>
     </div>
 </template>

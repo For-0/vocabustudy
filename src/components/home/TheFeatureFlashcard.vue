@@ -1,18 +1,18 @@
 <template>
-    <div class="hidden lg:mt-0 lg:col-span-5 lg:flex flex-col items-center aspect-video self-center justify-self-stretch p-6 bg-white/25 rounded-lg" @mouseleave="{ clientX = null; clientY = null; }" ref="featureFlashcardContainer">
+    <div ref="featureFlashcardContainer" class="hidden lg:mt-0 lg:col-span-5 lg:flex flex-col items-center aspect-video self-center justify-self-stretch p-6 bg-white/25 rounded-lg" @mouseleave="{ clientX = null; clientY = null; }">
         <Flashcard
-            :style='{ "--x": animX, "--y": animY }'
+            :style="{ &quot;--x&quot;: animX, &quot;--y&quot;: animY }"
             v-bind="featureFlashcardValue"
-            @click="featureFlashcardFlipped = !featureFlashcardFlipped"
-            @mousemove="onFlashcardMouseMove"
             :flipped="featureFlashcardFlipped"
             class="feature-flashcard transition-transform preserve-3d ease-linear duration-100"
-            
+            @click="featureFlashcardFlipped = !featureFlashcardFlipped"
+            @mousemove="onFlashcardMouseMove"
         />
         <button
             type="button"
+            class="mt-3 flex text-zinc-900 bg-white border border-stone-300 focus:outline-none hover:bg-stone-100 focus:ring-4 focus:ring-stone-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-stone-800 dark:text-white dark:border-stone-600 dark:hover:bg-stone-700 dark:hover:border-stone-600 dark:focus:ring-stone-700"
             @click="featureFlashcardFlipped = !featureFlashcardFlipped"
-            class="mt-3 flex text-zinc-900 bg-white border border-stone-300 focus:outline-none hover:bg-stone-100 focus:ring-4 focus:ring-stone-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-stone-800 dark:text-white dark:border-stone-600 dark:hover:bg-stone-700 dark:hover:border-stone-600 dark:focus:ring-stone-700">
+        >
             <ArrowPathIcon class="w-5 h-5 mr-2" aria-hidden="true" />
             Flip
         </button>

@@ -11,14 +11,14 @@
                 </div>
             </div>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
-            <SetPagination :sets="cacheStore.mySetsCache" :show-edit-controls="true" @delete-set="deletingSet = $event" @load-more="loadNext" v-bind="cacheStore.mySetsState" />
+            <SetPagination :sets="cacheStore.mySetsCache" :show-edit-controls="true" v-bind="cacheStore.mySetsState" @delete-set="deletingSet = $event" @load-more="loadNext" />
         </div>
         
-        <div v-if="deletingSet" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30"></div>
+        <div v-if="deletingSet" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30" />
         <div v-show="deletingSet" tabindex="-1" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
             <div class="relative w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800">
-                    <button @click="closeModals" type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" >
+                    <button type="button" class="absolute top-3 right-2.5 text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white" @click="closeModals">
                         <XMarkIcon class="w-3 h-3" aria-hidden="true" />
                         <span class="sr-only">Close modal</span>
                     </button>
@@ -27,10 +27,10 @@
                         <h3 class="mb-5 text-lg font-normal text-zinc-500 dark:text-zinc-400">
                             <span class="font-bold">Are you sure you want to delete this set?</span>
                         </h3>
-                        <button @click="deleteSet" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                        <button type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2" @click="deleteSet">
                             Yes, I'm sure
                         </button>
-                        <button @click="closeModals" type="button" class="text-zinc-500 bg-white hover:bg-zinc-100 focus:ring-4 focus:outline-none focus:ring-zinc-200 rounded-lg border border-zinc-200 text-sm font-medium px-5 py-2.5 hover:text-zinc-900 focus:z-10 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-500 dark:hover:text-white dark:hover:bg-zinc-600 dark:focus:ring-zinc-600">No, cancel</button>
+                        <button type="button" class="text-zinc-500 bg-white hover:bg-zinc-100 focus:ring-4 focus:outline-none focus:ring-zinc-200 rounded-lg border border-zinc-200 text-sm font-medium px-5 py-2.5 hover:text-zinc-900 focus:z-10 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-500 dark:hover:text-white dark:hover:bg-zinc-600 dark:focus:ring-zinc-600" @click="closeModals">No, cancel</button>
                     </div>
                 </div>
             </div>
@@ -44,9 +44,7 @@ import { ref, getCurrentInstance } from 'vue';
 import { useAuthStore, useCacheStore } from '../store';
 import { useRouter } from 'vue-router';
 import { VocabSet, QueryBuilder, Firestore } from '../firebase-rest-api/firestore';
-import SetCard from '../components/SetCard.vue';
 import { showErrorToast } from '../utils';
-import Loader from '../components/Loader.vue';
 import SetPagination from '../components/SetPagination.vue';
 const deletingSet = ref<string | null>(null);
 const authStore = useAuthStore();
@@ -57,7 +55,7 @@ const currentInstance = getCurrentInstance();
 
 function handleState(state: (typeof authStore)["$state"]) {
     if (state.currentUser === null) {
-        router.push({ name: 'login' });
+        void router.push({ name: 'login' });
         return false;
     }
     if (cacheStore.mySetsState.uid && cacheStore.mySetsState.uid !== authStore.currentUser?.uid) {
@@ -116,12 +114,12 @@ async function loadNext() {
         } catch (err) {
             showErrorToast(`An unknown error occurred: ${(err as Error).message}`, currentInstance?.appContext, 7000);
         }
-        cacheStore.mySetsState.uid = authStore.currentUser?.uid;
+        cacheStore.mySetsState.uid = authStore.currentUser.uid;
     }
     isLoading.value = false;
 }
 
 if (handleState(authStore)) {
-    loadNext();
+    void loadNext();
 }
 </script>

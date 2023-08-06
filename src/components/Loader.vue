@@ -1,12 +1,8 @@
 <template>
-    <div class="spinner animate-spin inline-block border-current border-b-transparent" :class="borderClass"></div>
+    <div class="spinner animate-spin inline-block border-current border-b-transparent" :class="borderClass">
+        <!-- empty -->
+    </div>
 </template>
-<style>
-.spinner {
-    border-radius: 50%;
-    animation-duration: 0.5s;
-}
-</style>
 <script setup lang="ts">
 const props = defineProps<{
     size?: number
@@ -19,3 +15,9 @@ if (props.size === 1) {
     borderClass = `border-2`;
 }
 </script>
+<style>
+.spinner {
+    border-radius: 50%;
+    animation-duration: 0.5s;
+}
+</style>

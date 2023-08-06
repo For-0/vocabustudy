@@ -12,7 +12,7 @@
                     <h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">Connect with others in our Discord Server</h2>
                     <p class="mb-4 font-light">Our official Discord Server is a great place to connect with other students, get homework help, get the latest updates on Vocabustudy. We've also tailored our website to students from Westwood High School for study pings, test reminders, and custom roles for students.</p>
                     <p class="mb-4 font-medium">Feel free to join our Discord Server by clicking below, or going to <a href="https://go.vocabustudy.org/discord" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">https://go.vocabustudy.org/discord</a>.</p>
-                    <iframe src="https://discord.com/widget?id=1022663736936370349&theme=dark" width="300" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                    <iframe src="https://discord.com/widget?id=1022663736936370349&theme=dark" width="300" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">iframe is not supported</iframe>
                 </div>
             </div>
         </section>
@@ -23,7 +23,9 @@
                     <p class="mb-4 font-light">Take a look at our YouTube Channel! We post high-quality videos covering important topics in school. You can request videos through the Discord Server!</p>
                     <a href="https://www.youtube.com/@forzero" class="inline-flex items-center font-medium text-blue-600 hover:text-blue-800 dark:text-blue-500 dark:hover:text-blue-700">
                         Check out our YouTube Channel
-                        <svg class="ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        <svg class="ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
                     </a>
                 </div>
             </div>

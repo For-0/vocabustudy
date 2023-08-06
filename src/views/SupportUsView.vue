@@ -19,7 +19,7 @@
                 </ul>
                 <h2 class="max-w-2xl mb-4 text-3xl font-extrabold md:text-4xl xl:text-5xl dark:text-white mt-8">Make a paid <span class="text-primary">donation</span></h2>
                 <p class="mb-6 font-light text-zinc-500 lg:mb-8 md:text-lg lg:text-xl dark:text-zinc-400">If you can make a paid donation, thank you! We use Buy Me a Coffee for donations.</p>
-                <a href="https://www.buymeacoffee.com/forzero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+                <a href="https://www.buymeacoffee.com/forzero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;"></a>
             </div>
         </section>
     </main>

@@ -1,17 +1,19 @@
 <template>
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div v-for="collection, i in collections.c" :key="i" class="space-y-2">
-            <h5 class="text-black dark:text-white uppercase font-bold text-lg" v-if="typeof collection === 'object'">{{ collection.n }}</h5>
+            <h5 v-if="typeof collection === 'object'" class="text-black dark:text-white uppercase font-bold text-lg">{{ collection.n }}</h5>
             <CollectionCheckbox
-                :modelValue="modelValue.includes(i.toString())" :id="i.toString()"
+                :id="i.toString()" :model-value="modelValue.includes(i.toString())"
+                :name="(typeof collection === 'string' ? collection : 'General')"
                 @update:modelValue="newValue => updateSingleState(newValue, i.toString())"
-                :name="(typeof collection === 'string' ? collection : 'General')" />
+            />
             <template v-if="typeof collection === 'object'">
                 <CollectionCheckbox
-                    :modelValue="modelValue.includes(`${i}-${j}`)"
-                    @update:modelValue="newValue => updateSingleState(newValue, `${i}-${j}`)"
-                    v-for="subcollection, j in collection.s" :key="`${i}-${j}`"
-                    :id="`${i}:${j}`" :name="subcollection" />
+                    v-for="subcollection, j in collection.s"
+                    :id="`${i}:${j}`"
+                    :key="`${i}-${j}`" :model-value="modelValue.includes(`${i}-${j}`)"
+                    :name="subcollection" @update:modelValue="newValue => updateSingleState(newValue, `${i}-${j}`)"
+                />
             </template>
         </div>
     </div>

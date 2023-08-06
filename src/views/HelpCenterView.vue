@@ -11,7 +11,7 @@
                 <div class="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
                     <h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">Featured Articles</h2>
                     <div class="grid grid-cols-4 gap-4">
-                        <FeaturedArticle v-for="article in articles" :title="article.title" :description="article.description" :link="article.link" />
+                        <FeaturedArticle v-for="article in articles" :key="article.id" :title="article.title" :description="article.description" :link="article.link" />
                     </div>
                 </div>
             </div>
