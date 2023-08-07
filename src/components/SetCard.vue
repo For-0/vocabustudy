@@ -1,14 +1,14 @@
 <template>
     <div class="max-w-sm flex flex-col items-start p-6 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition duration-300 hover:scale-105">
-        <router-link :to="{ name: 'set-detail', params: { id: set.id } }">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">{{ set.name }}</h5>
+        <router-link :to="{ name: 'set-detail', params: { id: set.id } }" class="max-w-full">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h5>
         </router-link>
         <div v-if="creator" class="flex items-center space-x-4 mb-3">
             <img class="w-10 h-10 rounded-full" :src="creator.photoUrl || defaultPfp" alt="User profile picture">
-            <div class="font-medium dark:text-white">
-                <div>
-                    {{ creator.displayName }}
-                    <span v-if="creator.roles.includes('admin')" class="inline-flex items-center justify-center w-6 h-6 ml-1 text-sm font-semibold text-green-800 bg-green-100 dark:bg-green-700/25 dark:text-green-400 rounded-full" title="Admin">
+            <div class="font-medium dark:text-white max-w-full">
+                <div class="flex min-w-0">
+                    <span class="min-w-0 truncate">{{ creator.displayName }}</span>
+                    <span v-if="creator.roles.includes('admin')" class="shrink-0 inline-flex items-center justify-center w-6 h-6 ml-1 text-sm font-semibold text-green-800 bg-green-100 dark:bg-green-700/25 dark:text-green-400 rounded-full" title="Admin">
                         <ShieldCheckIcon class="w-3 h-3" />
                         <span class="sr-only">Admin</span>
                     </span>

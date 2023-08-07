@@ -176,6 +176,8 @@ function handleState(state: typeof authStore["$state"]) {
         } else {
             void router.push({ name: "account" });
         }
+        loading.value = false;
+        unsubscribe();
     }
 }
 

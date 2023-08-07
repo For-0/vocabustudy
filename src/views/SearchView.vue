@@ -10,14 +10,14 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                     </div>
-                    <input id="default-search" type="search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary" placeholder="Try &quot;50 States&quot;..." v-model="searchQuery">
+                    <input id="default-search" v-model="searchQuery" type="search" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary" placeholder="Try &quot;50 States&quot;...">
                     <button :disabled="isLoading" type="submit" class="flex items-center text-white absolute right-2.5 bottom-2.5 bg-primary hover:bg-primaryalt focus:ring-4 focus:outline-none focus:ring-zinc-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primaryalt dark:hover:bg-primary dark:focus:ring-white">
                         Search
                         <Loader v-if="isLoading" class="h-3 w-3 ml-2" :size="1" />
                     </button>
                 </div>
                 <p class="text-zinc-600 dark:text-zinc-400 text-sm mt-3">
-                    <button type="button" v-if="selectedCollections.length === 0" class="underline font-medium hover:text-zinc-700 dark:hover:text-zinc-300" @click="showCollectionsModal = true">Filter by collections...</button>
+                    <button v-if="selectedCollections.length === 0" type="button" class="underline font-medium hover:text-zinc-700 dark:hover:text-zinc-300" @click="showCollectionsModal = true">Filter by collections...</button>
                     <template v-else>
                         <span class="font-medium">{{ selectedCollections.length }}</span> collections selected.
                         <button type="button" class="underline font-medium hover:text-zinc-700 dark:hover:text-zinc-300" @click="showCollectionsModal = true">Modify selection...</button>
@@ -26,9 +26,12 @@
             </form>
         </div>
         <div class="mt-3 flex flex-col items-center">
-            <SetPagination :sets="sets" :creators="creators" :show-edit-controls="false" :has-next-page="hasNextPage" :most-recent-timing="mostRecentTiming" @load-more="loadMore" />
+            <SetPagination v-show="sets.length > 0" :sets="sets" :creators="creators" :show-edit-controls="false" :has-next-page="hasNextPage" :is-loading="isLoading" :most-recent-timing="mostRecentTiming" @load-more="loadMore" />
+            <p v-if="hasSearched && sets.length === 0 && !isLoading" class="text-zinc-500 dark:text-zinc-400 text-lg">No sets matched your search.</p>
         </div>
-        <div v-if="showCollectionsModal" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30" />
+        <div v-if="showCollectionsModal" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30">
+            <!-- empty -->
+        </div>
         <div v-show="showCollectionsModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
             <div class="relative w-full max-w-xl h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-zinc-800 h-full">
@@ -40,7 +43,7 @@
                         <h3 class="mb-3 text-xl font-medium text-zinc-900 dark:text-white">Select Collections</h3>
                         <p class="text-zinc-500 dark:text-zinc-400 mb-2">
                             You may select up to 10 different collections.
-                            <button @click="selectedCollections = []" class="underline hover:text-zinc-600 dark:hover:text-zinc-300 font-medium" type="button">Clear selection</button>
+                            <button class="underline hover:text-zinc-600 dark:hover:text-zinc-300 font-medium" type="button" @click="selectedCollections = []">Clear selection</button>
                         </p>
                         <CollectionsSelection v-model="selectedCollections" class="custom-scrollbar is-thumb-only overflow-y-scroll p-1" />
                     </div>
@@ -73,6 +76,11 @@ const cacheStore = useCacheStore();
 let queries: StructuredQuery[] = [];
 let lastSets: [VocabSet | null, VocabSet | null] = [null, null];
 let cachedRawQuery: [string[], string[]] = [[], []];
+const hasSearched = ref(false);
+
+if (!("structuredClone" in window)) {
+    (window as Window).structuredClone = <T>(obj: T) => JSON.parse(JSON.stringify(obj)) as T;
+}
 
 const baseQuery = new QueryBuilder()
     .select("name", "numTerms", "collections", "likes", "uid", "nameWords", "creationTime")
@@ -84,6 +92,7 @@ const baseQuery = new QueryBuilder()
 
 async function search() {
     if (isLoading.value) return;
+    hasSearched.value = true;
     hasNextPage.value = true;
     sets.value = [];
     creators.value = [];
@@ -93,19 +102,19 @@ async function search() {
     cachedRawQuery = [words, selectedCollections.value];
     lastSets = [null, null];
     if (words.length > 0)
-        queries.push(new QueryBuilder(JSON.parse(JSON.stringify(baseQuery))).where("nameWords", "ARRAY_CONTAINS_ANY", words).build());
+        queries.push(new QueryBuilder(structuredClone(baseQuery)).where("nameWords", "ARRAY_CONTAINS_ANY", words).build());
 
     if (selectedCollections.value.length > 0)
-        queries.push(new QueryBuilder(JSON.parse(JSON.stringify(baseQuery))).where("collections", "ARRAY_CONTAINS_ANY", selectedCollections.value).build());
+        queries.push(new QueryBuilder(structuredClone(baseQuery)).where("collections", "ARRAY_CONTAINS_ANY", selectedCollections.value).build());
 
     await loadMore();
 }
 
 async function loadMore() {
     isLoading.value = true;
-    if (hasNextPage && queries.length > 0) {
+    if (hasNextPage.value && queries.length > 0) {
         const newQueries = queries.map((query, i) => {
-            const copiedQuery = new QueryBuilder(JSON.parse(JSON.stringify(query)));
+            const copiedQuery = new QueryBuilder(structuredClone(query));
             const lastSet = lastSets[i];
             if (lastSet) {
                 copiedQuery.startAt([lastSet.likes, lastSet.pathParts.join("/")]);

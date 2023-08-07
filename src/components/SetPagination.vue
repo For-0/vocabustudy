@@ -16,9 +16,7 @@
 import SetCard from "./SetCard.vue";
 import Loader from "./Loader.vue";
 import { type VocabSet } from "../firebase-rest-api/firestore";
-import { ref } from "vue";
 import { type UserProfile } from "../types";
-const isLoading = ref(false);
 
 defineProps<{
     sets: VocabSet[];
@@ -26,6 +24,7 @@ defineProps<{
     showEditControls: boolean;
     hasNextPage: boolean;
     mostRecentTiming: number;
+    isLoading: boolean;
 }>();
 
 defineEmits<{
