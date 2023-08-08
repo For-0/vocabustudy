@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div class="grid gap-4" :class="gridConfig ?? 'grid-cols-2 md:grid-cols-3'">
         <div v-for="collection, i in collections.c" :key="i" class="space-y-2">
             <h5 v-if="typeof collection === 'object'" class="text-black dark:text-white uppercase font-bold text-lg">{{ collection.n }}</h5>
             <CollectionCheckbox
@@ -25,6 +25,7 @@ import CollectionCheckbox from "./CollectionCheckbox.vue";
 
 const props = defineProps<{
     modelValue: string[];
+    gridConfig?: string;
 }>();
 
 const emit = defineEmits<{

@@ -107,3 +107,8 @@ export function showErrorToast(text: string, appContext: AppContext | undefined,
 export function showWarningToast(text: string, appContext: AppContext | undefined, duration: number) {
     showToast({ icon: ExclamationTriangleIcon, iconColor: "yellow", iconSrText: "Warning", text }, appContext, duration);
 }
+
+export function swap<T>(array: T[], i: number, j: number) {
+    if (i === j || i < 0 || j < 0 || i >= array.length || j >= array.length) return;
+    [array[i], array[j]] = [array[j], array[i]];
+}

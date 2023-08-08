@@ -52,7 +52,7 @@
                 Your <span class="font-bold text-emerald-600"><EnvelopeIcon class="w-3 h-3 inline" /> Email</span> is private and will never be shared with anyone.
             </p>
             <p class="text-zinc-900 dark:text-white mb-2">
-                Your <span class="font-bold text-violet-600"><UserIcon class="w-3 h-3 inline" /> Display Name</span> and <span class="font-bold text-violet-600"><PhotoIcon class="w-3 h-3 inline" /> Profile Picture</span> are public and will be displayed on all sets you create. <span class="font-semibold">You can change these at any time.</span>
+                Your <span class="font-bold text-violet-600"><UserIcon class="w-3 h-3 inline" /> Display Name</span> and <span class="font-bold text-violet-600"><PhotoIcon class="w-3 h-3 inline" /> Profile Picture</span> will be displayed on all public interactions. <span class="font-semibold">You can change these at any time.</span>
             </p>
             <p class="text-zinc-900 dark:text-white mb-2">Have more questions about your data? See our <router-link :to="{ name: 'privacy' }" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Privacy Policy</router-link>.</p>
         </div>
@@ -148,7 +148,7 @@
 
 <script setup lang="ts">
 import { computed, ref, getCurrentInstance } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../store';
 import { CheckIcon, EnvelopeIcon, UserIcon, PhotoIcon } from '@heroicons/vue/20/solid';
 import Loader from '../components/Loader.vue';
@@ -158,6 +158,7 @@ import { loadGoogleSignIn, renderGoogleButton, errorMessages } from '../firebase
 
 const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 const displayName = ref('');
 const photoUrl = ref('');
 const displayNameInput = ref<HTMLInputElement | null>(null);
@@ -189,7 +190,7 @@ const authProviders = computed(() => {
 
 function handleState(state: (typeof authStore)["$state"]) {
     if (state.currentUser === null) {
-        void router.push({ name: 'login' });
+        void router.push({ name: 'login', params: { next: route.fullPath } });
     } else {
         displayName.value = state.currentUser.displayName;
         photoUrl.value = state.currentUser.photoUrl;

@@ -1,7 +1,7 @@
 <template>
     <main class="bg-white dark:bg-zinc-900 grow p-3">
         <div>
-            <h1 class="text-gray-900 dark:text-white text-3xl font-bold text-center">Search Sets</h1>   
+            <h1 class="text-gray-900 dark:text-white text-3xl font-bold text-center mt-5">Search Sets</h1>   
             <form class="lg:max-w-2xl mx-auto justify-center" @submit.prevent="search">   
                 <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                 <div class="relative">
@@ -26,7 +26,7 @@
             </form>
         </div>
         <div class="mt-3 flex flex-col items-center">
-            <SetPagination v-show="sets.length > 0" :sets="sets" :creators="creators" :show-edit-controls="false" :has-next-page="hasNextPage" :is-loading="isLoading" :most-recent-timing="mostRecentTiming" @load-more="loadMore" />
+            <SetPagination class="w-full justify-center" :sets="sets" :creators="creators" :show-edit-controls="false" :has-next-page="hasNextPage" :is-loading="isLoading" :most-recent-timing="mostRecentTiming" @load-more="loadMore" />
             <p v-if="hasSearched && sets.length === 0 && !isLoading" class="text-zinc-500 dark:text-zinc-400 text-lg">No sets matched your search.</p>
         </div>
         <div v-if="showCollectionsModal" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30">
@@ -61,14 +61,15 @@ import { Firestore, QueryBuilder, VocabSet } from '../firebase-rest-api/firestor
 import { type StructuredQuery, type UserProfile } from '../types';
 import { showErrorToast, getWords } from '../utils';
 import Loader from '../components/Loader.vue';
-import { useCacheStore } from '../store';
+import { useCacheStore, usePreferencesStore } from '../store';
 
-const selectedCollections = ref<string[]>([]);
 const showCollectionsModal = ref(false);
 const isLoading = ref(false);
 const mostRecentTiming = ref(0);
 const hasNextPage = ref(true);
-const searchQuery = ref("");
+const preferencesStore = usePreferencesStore();
+const searchQuery = ref(preferencesStore.lastSearch?.search ?? "");
+const selectedCollections = ref(preferencesStore.lastSearch?.collections ?? []);
 const sets = ref<VocabSet[]>([]);
 const creators = ref<UserProfile[]>([]);
 const currentInstance = getCurrentInstance();
@@ -92,6 +93,9 @@ const baseQuery = new QueryBuilder()
 
 async function search() {
     if (isLoading.value) return;
+
+    preferencesStore.setLastSearch(searchQuery.value, selectedCollections.value);
+
     hasSearched.value = true;
     hasNextPage.value = true;
     sets.value = [];

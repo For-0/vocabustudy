@@ -7,7 +7,7 @@
             </div>
             <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
                 <FeatureItem title="Completely free" description="Vocabustudy is part of a mission to create innovative, student-conscious applications for all, for free. We'll never charge you for using our applications." :icon="CurrencyDollarIcon" />
-                <FeatureItem title="Simple interface" description="No ads and no promotions. At Vocabustudy, studying is simple and effective, and without distractions." :icon="CursorArrowRaysIcon" />
+                <FeatureItem title="Simple interface" description="No ads and no promotions. At Vocabustudy, studying is simple and effective, and without distractions." :icon="CursorArrowRippleIcon" />
                 <FeatureItem title="Same features" description="Take a test, review flashcards, and even study using our learn mode. The same features at other websites are free at Vocabustudy." :icon="AcademicCapIcon" />
             </div>
         </div>
@@ -15,5 +15,5 @@
 </template>
 <script setup lang="ts">
 import FeatureItem from './FeatureItem.vue';
-import { CurrencyDollarIcon, CursorArrowRaysIcon, AcademicCapIcon } from "@heroicons/vue/24/solid"
+import { CurrencyDollarIcon, CursorArrowRippleIcon, AcademicCapIcon } from "@heroicons/vue/24/solid"
 </script>

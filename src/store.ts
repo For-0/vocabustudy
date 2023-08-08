@@ -132,18 +132,27 @@ export const useCacheStore = defineStore("cache", () => {
 
 export const usePreferencesStore = defineStore("prefs", () => {
     const validateTheme = (theme: string | null) => theme === "light" || theme === "dark" ? theme : "system";
+    const parseLastSearch = (raw: string | null) => JSON.parse(raw ?? "null") as { search: string, collections: string[] } | null;
 
     const theme = ref<"light" | "dark" | "system">(validateTheme(localStorage.getItem("theme")));
+    const lastSearch = ref(parseLastSearch(localStorage.getItem("previous_search")));
 
     window.addEventListener("storage", e => {
         if (e.key === "theme") {
             theme.value = validateTheme(e.newValue);
+        } else if (e.key === "previous_search") {
+            lastSearch.value = parseLastSearch(e.newValue);
         }
     });
 
     function setTheme(newTheme: "light" | "dark" | "system") {
         localStorage.setItem("theme", newTheme);
         theme.value = newTheme;
+    }
+
+    function setLastSearch(search: string, collections: string[]) {
+        localStorage.setItem("previous_search", JSON.stringify({ search, collections }));
+        lastSearch.value = { search, collections };
     }
 
     const navigationStartedAt = ref(-1);
@@ -161,6 +170,8 @@ export const usePreferencesStore = defineStore("prefs", () => {
         setTheme,
         navigationStartedAt,
         startNavigation,
-        stopNavigation
+        stopNavigation,
+        lastSearch,
+        setLastSearch
     }
 });

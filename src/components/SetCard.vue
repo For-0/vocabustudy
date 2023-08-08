@@ -27,15 +27,18 @@
             </span>
         </div>
         <div class="mb-3 flex flex-row flex-wrap gap-1">
-            <span class="bg-green-100 text-green-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-green-800/25 dark:text-green-400 border border-green-400">
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-emerald-800/25 dark:text-emerald-400 border border-emerald-400">
                 <HandThumbUpIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                 {{ pluralizeWord("like", set.likes) }}
             </span>
-            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-yellow-800/25 dark:text-yellow-300 border border-yellow-300">
+            <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-blue-800/25 dark:text-blue-300 border border-blue-300">
                 <QueueListIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                 {{ pluralizeWord("term", set.numTerms) }}
             </span>
-            <router-link v-for="collection in parseCollections(set.collections)" :key="collection.id" :to="{ name: 'collection-detail', params: { id: collection.id } }" class="bg-primary/20 text-primary dark:bg-secondary/10 text-xs font-medium px-2.5 py-0.5 rounded border border-primary">
+            <!-- <router-link v-for="collection in parseCollections(set.collections)" :key="collection.id" :to="{ name: 'collection-detail', params: { id: collection.id } }" class="bg-primary/20 text-primary dark:bg-primary/15 text-xs font-medium px-2.5 py-0.5 rounded border border-primary">
+                {{ collection.name }}
+            </router-link> -->
+            <router-link v-for="collection in parseCollections(set.collections)" :key="collection.id" :to="{ name: 'collection-detail', params: { id: collection.id } }" class="bg-violet-100 text-violet-800 dark:text-violet-300 dark:bg-violet-800/25  text-xs font-medium px-2.5 py-0.5 rounded border border-violet-400">
                 {{ collection.name }}
             </router-link>
         </div>

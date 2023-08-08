@@ -25,11 +25,11 @@
             <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-6">
                 <dl class="grid max-w-screen-md gap-8 mx-auto dark:text-white grid-cols-2 sm:grid-cols-4 text-zinc-900 mb-3">
                     <div class="flex flex-col items-center justify-center">
-                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.uniqueVisitors }}+</dt>
+                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.uniqueVisitors }}</dt>
                         <dd class="font-light text-gray-500 dark:text-gray-400">unique visitors*</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">
-                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.numCountries }}+</dt>
+                        <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.numCountries }}</dt>
                         <dd class="font-light text-gray-500 dark:text-gray-400">countries</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">

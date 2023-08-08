@@ -4,8 +4,8 @@ service cloud.firestore {
     function isCreator() {
     	return auth() && resource != null && (resource.data.uid == request.auth.uid || request.auth.token.admin == true);
     }
-    function isNotImpersonating(bypassName) {
-    	return request.resource != null && (request.auth.token.admin == true || (request.resource.data.uid == request.auth.uid && (bypassName || request.resource.data.creator == request.auth.token.name)));
+    function isNotImpersonating() {
+    	return request.resource != null && (request.auth.token.admin == true || (request.resource.data.uid == request.auth.uid));
     }
     function onlyUpdated(keys) {
     	return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
@@ -33,14 +33,14 @@ service cloud.firestore {
       return limitResourceKeys(requiredFields.concat(additionalKeys), []) && request.resource.data.response == null;
     }
     function validateSet() {
-      return isNotImpersonating(false) && request.resource.data.terms.size() >= 1 && nameWordsMatchesName() && request.resource.data.numTerms == request.resource.data.terms.size();
+      return isNotImpersonating() && request.resource.data.terms.size() >= 1 && nameWordsMatchesName() && request.resource.data.numTerms == request.resource.data.terms.size();
     }
     match /sets/{set_id} {
       allow get: if resource == null || canView();
       allow list: if resource.data.visibility == 2 || isCreator();
       allow delete: if isCreator();
-      allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility", "creator", "nameWords", "numTerms", "collections"]) && validateSet();
-      allow create: if auth() && limitResourceKeys(["name", "uid", "terms", "visibility", "creator", "nameWords", "numTerms", "collections", "likes", "creationTime"], ["description"]) && request.resource.data.likes == 0 && validateSet() && request.resource.data.creationTime == request.time;
+      allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility", "nameWords", "numTerms", "collections"]) && validateSet();
+      allow create: if auth() && limitResourceKeys(["name", "uid", "terms", "visibility", "nameWords", "numTerms", "collections", "likes", "creationTime"], ["description"]) && request.resource.data.likes == 0 && validateSet() && request.resource.data.creationTime == request.time;
       match /social/{uid} {
         allow list, get: if true;
         allow delete: if auth() && uid == request.auth.uid;
@@ -50,7 +50,7 @@ service cloud.firestore {
     match /collections/{collection_id} {
       allow read: if true;
       allow delete: if isCreator();
-      allow create: if auth() && limitResourceKeys(["name", "uid", "sets"], []) && isNotImpersonating(true);
+      allow create: if auth() && limitResourceKeys(["name", "uid", "sets"], []) && isNotImpersonating();
       allow update: if isCreator() && onlyUpdated(["name", "sets"]);
     }
     match /{path=**}/social/{uid} {

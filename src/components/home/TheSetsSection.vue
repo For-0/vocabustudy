@@ -3,6 +3,7 @@
         <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
             <div class="max-w-screen-md mb-8 lg:mb-16">
                 <h2 class="mb-4 text-3xl tracking-tight font-extrabold text-stone-900 dark:text-white">From History to Biology, Vocabustudy has you covered.</h2>
+                <p class="text-zinc-500 sm:text-xl dark:text-zinc-400">Explore our hundreds of sets today!</p>
             </div>
             <div class="space-y-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
                 <SetCard v-for="set, i in featureSets" :key="set.id" :set="set" :creator="profiles[i]" />

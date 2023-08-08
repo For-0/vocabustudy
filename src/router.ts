@@ -140,9 +140,9 @@ export default function () {
             {
                 path: '/set/:id([\\w\\d]+)/view/',
                 name: 'set-detail',
-                component: () => import('./views/NotFoundView.vue'),
+                component: () => import('./views/SetViewerView.vue'),
                 meta: {
-                    title: "Set Detail"
+                    title: "View Set"
                 }
             },
             {
@@ -150,10 +150,10 @@ export default function () {
                 name: 'set-editor',
                 component: () => import('./views/SetEditorView.vue'),
                 meta: {
-                    title: "Set Editor",
+                    title: "Edit Set",
                     requiresAuth: true
                 },
-                alias: '/set/:id(new)/'
+                alias: '/set/:id(new|new-guide)/'
             },
             {
                 path: '/collection/:id/',

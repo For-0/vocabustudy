@@ -45,7 +45,7 @@
 import { XMarkIcon, ExclamationCircleIcon, PlusCircleIcon } from '@heroicons/vue/24/outline';
 import { ref, getCurrentInstance } from 'vue';
 import { useAuthStore, useCacheStore } from '../store';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { VocabSet, QueryBuilder, Firestore } from '../firebase-rest-api/firestore';
 import { showErrorToast } from '../utils';
 import SetPagination from '../components/SetPagination.vue';
@@ -53,12 +53,13 @@ const deletingSet = ref<string | null>(null);
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const router = useRouter();
+const route = useRoute();
 const isLoading = ref(true);
 const currentInstance = getCurrentInstance();
 
 function handleState(state: (typeof authStore)["$state"]) {
     if (state.currentUser === null) {
-        void router.push({ name: 'login' });
+        void router.push({ name: 'login', params: { next: route.fullPath } });
         return false;
     }
     if (cacheStore.mySetsState.uid && cacheStore.mySetsState.uid !== authStore.currentUser?.uid) {

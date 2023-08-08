@@ -7,12 +7,13 @@
                 "6th Grade",
                 "7th Grade",
                 "8th Grade / Prealgebra",
-                "Algebra 1",
+                "Algebra 1",    
                 "Geometry",
                 "Algebra 2",
                 "Precalculus",
                 "Trigonometry",
-                "Calculus",
+                "Calculus AB",
+                "Calculus BC",
                 "Multivariable Calculus",
                 "Statistics"
             ]
@@ -20,7 +21,11 @@
         {
             "n": "Language Arts",
             "s": [
-                "Newsmedia"
+                "Newsmedia",
+                "English 1",
+                "English 2",
+                "English 3",
+                "English 4"
             ]
         },
         {
@@ -38,12 +43,16 @@
         {
             "n": "Social Studies",
             "s": [
-                "US History",
+                "8th Grade US History",
                 "Texas History",
                 "World History",
                 "Cultural",
                 "Government",
-                "Economics"
+                "Economics",
+                "AP Human Geography",
+                "US History",
+                "AP US History",
+                "IB US History"
             ]
         },
         {
@@ -72,16 +81,29 @@
                 "7th Grade",
                 "8th Grade",
                 "9th/Biology",
-                "10th/Chemistry",
-                "11th/Physics",
-                "12th/Anatomy",
+                "Chemistry",
+                "Physics",
+                "Anatomy",
                 "IB Biology",
                 "IB Chemistry",
                 "Geography",
-                "Astronomy"
+                "Astronomy",
+                "AP Biology",
+                "AP Chemistry",
+                "AP Physics 1",
+                "AP Physics C"
             ]
         },
-        "Computer Science",
-        "BIM"
+        {
+            "n": "Engineering",
+            "s": [
+                "Intro to CS",
+                "AP CS Principles",
+                "AP CS A",
+                "CS 3",
+                "Electrical",
+                "Aerospace"
+            ]
+        }
     ]
 }
