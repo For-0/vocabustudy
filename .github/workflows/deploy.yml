@@ -1,0 +1,25 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      expires:
+        required: false
+        default: "7d"
+      channelId:
+        required: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download built site
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOCAB_U_STUDY }}'
+          projectId: vocab-u-study
+          target: "vocabustudy"
+          expires: ${{ inputs.expires }}
+          channelId: ${{ inputs.channelId }}

@@ -1,17 +1,34 @@
 name: Build
 on:
   workflow_call:
-
+    inputs:
+      artifact-retention-days:
+        description: 'Number of days to retain build artifacts'
+        required: false
+        default: 1
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v3
-          with:
-            node-version: 18
-            cache: "npm"
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        name: Cache node modules
+        id: cache-npm
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-npm-cache-
       - run: npm ci
+        name: Install dependencies
       - run: npm run build
+        name: Build
         env:
           CF_API_TOKEN: '${{ secrets.CF_API_TOKEN }}'
           CF_ZONE_ID: '${{ secrets.CF_ZONE_ID }}'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
+          retention-days: ${{ inputs.artifact-retention-days }}

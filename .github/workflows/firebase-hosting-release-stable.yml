@@ -1,18 +1,15 @@
 name: Deploy Stable
-'on':
+on:
   release:
     types: [released]
 jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/workflows/build.yml
-        secrets: inherit
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOCAB_U_STUDY }}'
-          channelId: live
-          projectId: vocab-u-study
-          target: "vocabustudy"
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    with:
+      artifact-retention-days: 7
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
+      channelId: live
