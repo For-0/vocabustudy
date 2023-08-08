@@ -3,13 +3,9 @@ on:
   release:
     types: [released]
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
+  build-and-deploy:
+    uses: ./.github/workflows/build-and-deploy.yml
     secrets: inherit
     with:
       artifact-retention-days: 7
-  deploy:
-    uses: ./.github/workflows/deploy.yml
-    secrets: inherit
-    with:
       channelId: live

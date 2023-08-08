@@ -1,4 +1,4 @@
-name: Build
+name: Build and Deploy
 on:
   workflow_call:
     inputs:
@@ -6,8 +6,16 @@ on:
         description: 'Number of days to retain build artifacts'
         required: false
         default: 1
+        type: number
+      expires:
+        required: false
+        default: "7d"
+        type: string
+      channelId:
+        required: false
+        type: string
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -26,9 +34,11 @@ jobs:
         env:
           CF_API_TOKEN: '${{ secrets.CF_API_TOKEN }}'
           CF_ZONE_ID: '${{ secrets.CF_ZONE_ID }}'
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          name: dist
-          path: dist
-          retention-days: ${{ inputs.artifact-retention-days }}
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VOCAB_U_STUDY }}'
+          projectId: vocab-u-study
+          target: "vocabustudy"
+          expires: ${{ inputs.expires }}
+          channelId: ${{ inputs.channelId }}

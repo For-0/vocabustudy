@@ -1,11 +1,8 @@
 name: Manual Deploy
 on: workflow_dispatch
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
-  deploy:
-    uses: ./.github/workflows/deploy.yml
+  build-and-deploy:
+    uses: ./.github/workflows/build-and-deploy.yml
     secrets: inherit
     with:
       channelId: preview
