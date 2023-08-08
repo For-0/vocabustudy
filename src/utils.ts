@@ -68,6 +68,22 @@ export function getWords(string: string): string[] {
     return alphaNum.split(" ").map(el => el.trim()).filter(el => el);
 }
 
+export function generateDocumentId() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const targetLength = 20;
+    const maxMultiple = 248; // Math.floor(256 / chars.length) * chars.length; - largest multiple of chars.length that is smaller than 256 (largest possible byte value)
+    let id = "";
+    while (id.length < targetLength) {
+        const bytes = new Uint8Array(40);
+        window.crypto.getRandomValues(bytes);
+        for (const byte of bytes) {
+            if (id.length >= targetLength) break;
+            if (byte < maxMultiple) id += chars.charAt(byte % chars.length);
+        }
+    }
+    return id;
+}
+
 export function showToast(props: { icon: Component, iconColor: string, iconSrText: string, text: string }, appContext: AppContext | undefined, duration: number) {
     if (!appContext) return;
     const toastContainer = document.getElementById("toast-container");

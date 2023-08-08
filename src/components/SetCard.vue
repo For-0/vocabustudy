@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-sm flex flex-col items-start p-6 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition duration-300 hover:scale-105">
         <router-link :to="{ name: 'set-detail', params: { id: set.id } }" class="max-w-full">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h5>
+            <h3 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h3>
         </router-link>
         <div v-if="creator" class="flex items-center space-x-4 mb-3">
             <img class="w-10 h-10 rounded-full" :src="creator.photoUrl || defaultPfp" alt="User profile picture">

@@ -1,7 +1,7 @@
 <template>
     <div ref="featureFlashcardContainer" class="hidden lg:mt-0 lg:col-span-5 lg:flex flex-col items-center aspect-video self-center justify-self-stretch p-6 bg-white/25 rounded-lg" @mouseleave="{ clientX = null; clientY = null; }">
         <Flashcard
-            :style="{ &quot;--x&quot;: animX, &quot;--y&quot;: animY }"
+            :style="{ '--x': animX, '--y': animY }"
             v-bind="featureFlashcardValue"
             :flipped="featureFlashcardFlipped"
             class="feature-flashcard transition-transform preserve-3d ease-linear duration-100"

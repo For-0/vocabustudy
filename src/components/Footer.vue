@@ -3,7 +3,12 @@
         <div class="mx-auto max-w-screen-xl text-center">
             <div class="mb-2 md-both:pt-6 md-both:mb-4">
                 <a href="/" class="flex justify-center items-center md-both:text-2xl font-semibold text-white">
-                    <img src="/icons/icon-192.png" alt="Vocabustudy Logo" class="w-4 h-4 md-both:w-8 md-both:h-8 mr-2 shadow shadow-white/25 rounded-lg"> Vocabustudy <a href="https://github.com/For-0/vocabustudy/releases" target="_blank"><span class="hidden md-both:inline text-sm px-2 py-1 ml-2 bg-secondary bg-opacity-75 hover:bg-opacity-100 rounded">v{{ currentVersion }}</span></a>
+                    <img src="/icons/icon-192.png" alt="Vocabustudy Logo" class="w-4 h-4 md-both:w-8 md-both:h-8 mr-2 shadow shadow-white/25 rounded-lg">
+                    Vocabustudy
+                    <a href="https://github.com/For-0/vocabustudy/releases" target="_blank">
+                        <span class="hidden md-both:inline text-sm px-2 py-1 ml-2 bg-secondary bg-opacity-75 hover:bg-opacity-100 rounded">v{{ currentVersion }}</span>
+                        <span class="sr-only">Github releases</span>
+                    </a>
                 </a>
             </div>
             <ul class="flex flex-wrap justify-center items-center md-both:mb-4 text-white text-sm md-both:text-base gap-x-4 md-both:gap-x-6 mx-10">

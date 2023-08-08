@@ -3,7 +3,7 @@
         <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
             <div class="max-w-screen-md mb-8 lg:mb-16">
                 <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-zinc-900 dark:text-white">Studying, the way it should be.</h2>
-                <p class="text-zinc-500 sm:text-xl dark:text-zinc-400">Tired of paywalls, ads, and limited features? Let's change that.</p>
+                <p class="text-zinc-600 sm:text-xl dark:text-zinc-400">Tired of paywalls, ads, and limited features? Let's change that.</p>
             </div>
             <div class="space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0">
                 <FeatureItem title="Completely free" description="Vocabustudy is part of a mission to create innovative, student-conscious applications for all, for free. We'll never charge you for using our applications." :icon="CurrencyDollarIcon" />

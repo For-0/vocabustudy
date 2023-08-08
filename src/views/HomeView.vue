@@ -21,32 +21,32 @@
                 <TheFeatureFlashcard />           
             </div>
         </section>
-        <section class="bg-gray-200 dark:bg-stone-900">
+        <section class="bg-zinc-200 dark:bg-stone-900">
             <div class="max-w-screen-xl px-4 py-8 mx-auto text-center lg:py-16 lg:px-6">
                 <dl class="grid max-w-screen-md gap-8 mx-auto dark:text-white grid-cols-2 sm:grid-cols-4 text-zinc-900 mb-3">
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.uniqueVisitors }}</dt>
-                        <dd class="font-light text-gray-500 dark:text-gray-400">unique visitors*</dd>
+                        <dd class="font-light text-zinc-600 dark:text-zinc-400">unique visitors*</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.numCountries }}</dt>
-                        <dd class="font-light text-gray-500 dark:text-gray-400">countries</dd>
+                        <dd class="font-light text-zinc-600 dark:text-zinc-400">countries</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl md:text-4xl font-extrabold">{{ stats.pageViews }}</dt>
-                        <dd class="font-light text-gray-500 dark:text-gray-400">views</dd>
+                        <dd class="font-light text-zinc-600 dark:text-zinc-400">views</dd>
                     </div>
                     <div class="flex flex-col items-center justify-center">
                         <dt class="mb-2 text-3xl md:text-4xl font-extrabold">230+</dt>
-                        <dd class="font-light text-gray-500 dark:text-gray-400">sets created</dd>
+                        <dd class="font-light text-zinc-600 dark:text-zinc-400">sets created</dd>
                     </div>
                 </dl>
-                <p class="text-gray-500 dark:text-gray-400 mb-3">last 30 days</p>
-                <p class="text-gray-400 dark:text-gray-500 text-sm">*Number of unique IP addresses</p>
+                <p class="text-zinc-600 dark:text-zinc-400 mb-3">last 30 days</p>
+                <p class="text-zinc-600 dark:text-zinc-400 text-sm">*Number of unique IP addresses</p>
             </div>
         </section>
         <TheFeaturesSection />
-        <Suspense>
+        <Suspense v-once>
             <TheSetsSection />
             <template #fallback>
                 <div class="bg-stone-200 dark:bg-stone-800">
@@ -69,7 +69,6 @@ import TheSetsSection from '../components/home/TheSetsSection.vue';
 import Loader from '../components/Loader.vue';
 
 const authStore = useAuthStore();
-
 
 const stats = SITE_ANALYTICS;
 </script>
