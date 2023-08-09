@@ -10,14 +10,18 @@ export type OnlyProperties<T> = Pick<T,
     { [K in keyof T]: T[K] extends Function ? never : K }[keyof T]
 >;
 
+/* eslint-disable @typescript-eslint/consistent-type-definitions */ // we use type aliases to define an explicit shape
+
 /** A standard term/definition pair. Timelines also fall into this category */
-export interface TermDefinition { term: string, definition: string } 
+export type TermDefinition = { term: string, definition: string } 
 
 /** A study guide reading */
-export interface StudyGuideReading { body: string, type: 0, title: string }
+export type StudyGuideReading = { body: string, type: 0, title: string }
 
 /** A study guide quiz */
-export interface StudyGuideQuiz { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string }
+export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string }
+
+/* eslint-enable @typescript-eslint/consistent-type-definitions */
 
 /** The document `terms` field */
 export type SetTerms = TermDefinition[]|(StudyGuideQuiz|StudyGuideReading)[];

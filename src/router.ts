@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from './views/HomeView.vue'; // we import this here to make sure it loads instantly without having to wait for a network request
 import { useAuthStore, usePreferencesStore } from './store';
-import type { Component } from 'vue';
 
 declare module "vue-router" {
     interface RouteMeta {
@@ -17,7 +16,7 @@ export default function () {
             {
                 path: '/',
                 name: 'home',
-                component: HomeView as Component,
+                component: HomeView,
             },
             {
                 path: '/credits/',
@@ -146,14 +145,14 @@ export default function () {
                 }
             },
             {
-                path: '/set/:id([\\w\\d]+)/edit/',
+                path: '/:type(set|quizlet)/:id([\\w\\d-]+)/edit/',
                 name: 'set-editor',
                 component: () => import('./views/SetEditorView.vue'),
                 meta: {
                     title: "Edit Set",
                     requiresAuth: true
                 },
-                alias: '/set/:id(new|new-guide)/'
+                alias: '/:type(set)/:id(new|new-guide)/'
             },
             {
                 path: '/collection/:id/',

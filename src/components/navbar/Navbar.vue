@@ -23,7 +23,7 @@
                     </button>
                     <div id="account-dropdown" class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 top-12" :class="{ 'hidden': !accountMenuOpen }">
                         <ul class="py-2">
-                            <NavbarAccountMenuLink to="/saved/">Saved Sets</NavbarAccountMenuLink>
+                            <NavbarAccountMenuLink :to="{ name: 'saved-sets' }">Saved Sets</NavbarAccountMenuLink>
                             <NavbarAccountMenuLink v-if="authStore.currentUser" :to="{ name: 'my-sets' }">My Sets</NavbarAccountMenuLink>
                         </ul>
                         <ul class="py-2">
@@ -77,9 +77,10 @@
                     <ul
                         class="flex flex-col p-2 m-4 md:m-0 md:py-0 border border-zinc-100 rounded-lg bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 md:flex-row md:space-x-2 md:mt-0 md:border-0 md:bg-transparent md:dark:bg-transparent md:items-center md:h-full"
                     >
-                        <NavbarLink to="/search/">Search Sets</NavbarLink>
-                        <NavbarLink to="/support-us/">Support Us</NavbarLink>
-                        <NavbarLink to="/help-center/">Help</NavbarLink>
+                        <NavbarLink :to="{ name: 'search' }">Search Sets</NavbarLink>
+                        <NavbarLink v-if="authStore.currentUser" :to="{ name: 'my-sets' }">My Sets</NavbarLink>
+                        <NavbarLink :to="{ name: 'support-us' }">Support Us</NavbarLink>
+                        <NavbarLink :to="{ name: 'help-center' }">Help</NavbarLink>
                     </ul>
                 </div>
             </div>

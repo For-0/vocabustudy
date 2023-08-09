@@ -7,7 +7,7 @@
                     <p class="mt-1 text-zinc-500 dark:text-zinc-400">{{ authStore.currentUser?.email }}</p>
                 </div>
                 <div class="mt-5 flex lg:ml-4 lg:mt-0">
-                    <router-link to="/set/new/" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700 inline-flex items-center">
+                    <router-link :to="{ name: 'set-editor', params: { id: 'new', type: 'set' } }" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700 inline-flex items-center">
                         Create Set
                         <PlusCircleIcon class="w-4 h-4 ml-1" />
                     </router-link>
@@ -98,14 +98,14 @@ async function loadNext() {
     if (authStore.currentUser && cacheStore.mySetsState.hasNextPage) {
         const query = new QueryBuilder()
             .select("collections", "likes", "visibility", "name", "numTerms", "creationTime")
-            .orderBy(["likes", "__name__"], "DESCENDING")
+            .orderBy(["creationTime", "__name__"], "DESCENDING")
             .where("uid", "EQUAL", authStore.currentUser.uid)
             .from(VocabSet.collectionKey)
             .limit(10);
 
         if (cacheStore.mySetsCache.length > 0) {
             const lastSet = cacheStore.mySetsCache[cacheStore.mySetsCache.length - 1];
-            query.startAt([lastSet.likes, lastSet.pathParts.join("/")]);
+            query.startAt([lastSet.creationTime.getTime(), lastSet.pathParts.join("/")]);
         }
         try {
             const start = Date.now();

@@ -1,18 +1,15 @@
 <template>
-    <div class="shadow dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 border rounded-md p-3 group">
-        <div class="mb-3">
-            <input
-                v-model="termComputed" type="text" placeholder="Term" required
-                class="text-lg bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-50 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
-            >
-        </div>
+    <div class="shadow dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 dark:bg-zinc-900 border rounded-md p-3 group">
+        <textarea
+            v-model="termComputed" type="text" placeholder="Term"
+            rows="2" required
+            class="mb-3 custom-scrollbar is-thumb-only text-lg bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
+        />
         <textarea
             v-model="definitionComputed" type="text" placeholder="Definition"
             rows="3" required
-            class="mb-3 custom-scrollbar is-thumb-only text-sm bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-50 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
-        >
-            <!-- empty -->
-        </textarea>
+            class="mb-3 custom-scrollbar is-thumb-only text-sm bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
+        />
 
         <div class="flex items-center justify-between">
             <button type="button" class="group-first:invisible bg-transparent border border-zinc-300 hover:bg-zinc-100 focus:ring-4 focus:outline-none focus:ring-zinc-200 font-medium rounded-lg text-sm p-2.5 dark:border-zinc-600 dark:hover:bg-zinc-800 dark:hover:border-gray-600 dark:focus:ring-gray-700" @click="$emit('move-left')">

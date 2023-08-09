@@ -79,10 +79,6 @@ let lastSets: [VocabSet | null, VocabSet | null] = [null, null];
 let cachedRawQuery: [string[], string[]] = [[], []];
 const hasSearched = ref(false);
 
-if (!("structuredClone" in window)) {
-    (window as Window).structuredClone = <T>(obj: T) => JSON.parse(JSON.stringify(obj)) as T;
-}
-
 const baseQuery = new QueryBuilder()
     .select("name", "numTerms", "collections", "likes", "uid", "nameWords", "creationTime")
     .where("visibility", "EQUAL", 2)
@@ -148,7 +144,9 @@ async function loadMore() {
             if (results.length < 10) {
                 hasNextPage.value = false;
             }
-            creators.value = [...creators.value, ...await cacheStore.getAllProfiles(results.map(el => el.doc.uid))];
+            try {
+                creators.value = [...creators.value, ...await cacheStore.getAllProfiles(results.map(el => el.doc.uid))];
+            } catch { /* empty */ }
             sets.value = [...sets.value, ...results.map(el => el.doc)];
         } catch (err) {
             showErrorToast(`An unknown error occurred: ${(err as Error).message}`, currentInstance?.appContext, 7000);

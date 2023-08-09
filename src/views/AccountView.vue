@@ -69,11 +69,11 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                     <div class="px-6 py-6 lg:px-8">
-                        <h3 class="mb-3 text-xl font-medium text-zinc-900 dark:text-white">Reauthenticate</h3>
-                        <p class="text-zinc-500 dark:text-zinc-400 mb-2">For your security, you must reauthenticate to continue</p>
+                        <h3 class="mb-2 text-xl font-medium text-zinc-900 dark:text-white">Change Password</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 mb-3">Please reauthenticate to change your password.</p>
                         <form class="space-y-3" @submit.prevent="onReauthSubmit">
                             <div v-show="authStore.currentUser?.providers.includes('google.com')" class="w-full flex justify-center">
-                                <div ref="gsiButtonContainer" />
+                                <div ref="gsiButtonContainer" class="text-gray-900 dark:text-white" />
                             </div>
                             <div v-show="(authStore.currentUser?.providers.length || 0) >= 2" class="inline-flex items-center justify-center w-full relative">
                                 <hr class="w-64 h-px bg-zinc-200 border-0 dark:bg-zinc-700">
@@ -83,7 +83,7 @@
                                 <label for="password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Password</label>
                                 <input id="password" v-model="reauthPassword" type="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
                             </div>
-                            <button v-show="authStore.currentUser?.providers.includes('password')" :disabled="reauthenticateLoading" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            <button v-show="authStore.currentUser?.providers.includes('password')" :disabled="reauthenticateLoading" type="submit" class="justify-center flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 <Loader v-if="reauthenticateLoading" class="w-4 h-4 mr-1" :size="1" />
                                 Reauthenticate
                             </button>
@@ -113,7 +113,7 @@
                                 <label for="confirm-new-password" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Confirm Password</label>
                                 <input id="confirm-new-password" v-model="confirmNewPassword" type="password" placeholder="••••••••" class="bg-zinc-50 border border-zinc-300 text-zinc-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:border-zinc-500 dark:bg-zinc-600 dark:placeholder-zinc-400 dark:text-white" required>
                             </div>
-                            <button :disabled="changePasswordLoading" type="submit" class="flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            <button :disabled="changePasswordLoading" type="submit" class="justify-center flex items-center w-full text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 <Loader v-if="changePasswordLoading" class="w-4 h-4 mr-1" :size="1" />
                                 Change Password
                             </button>
@@ -255,7 +255,7 @@ async function openReauthModal(reason: "delete-account" | "change-password") {
                 }
             });
         } else {
-            gsiButtonContainer.value.innerHTML = "Continue with google emulator";
+            gsiButtonContainer.value.innerHTML = "(Dev) Continue with Google Emulator";
             gsiButtonContainer.value.addEventListener("click", async () => {
                 try {
                     await authStore.showGooglePopup(true);

@@ -48,7 +48,8 @@ export default defineConfig(async ({ mode }) => {
         build: {
             rollupOptions: {
                 output: {
-                    manualChunks: {
+                    // https://github.com/vitejs/vite/issues/5189
+                    /*manualChunks: {
                         auth: [
                             "./src/views/AccountView.vue",
                             "./src/views/LoginView.vue",
@@ -62,7 +63,7 @@ export default defineConfig(async ({ mode }) => {
                             "./src/views/SupportUsView.vue",
                             "./src/views/TOSView.vue",
                         ]
-                    },
+                    },*/
                 },
             },
         },

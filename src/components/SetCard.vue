@@ -47,7 +47,7 @@
                 View
                 <ArrowRightIcon class="w-3.5 h-3.5 ml-2" />
             </router-link>
-            <router-link :to="{ name: 'set-editor', params: { id: set.id } }" class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center transition-colors text-yellow-500 bg-yellow-100 hover:bg-yellow-500 hover:text-white rounded-lg focus:ring-4 focus:outline-none focus:ring-yellow-500">
+            <router-link :to="{ name: 'set-editor', params: { id: set.id, type: 'set' } }" class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center transition-colors text-yellow-500 bg-yellow-100 hover:bg-yellow-500 hover:text-white rounded-lg focus:ring-4 focus:outline-none focus:ring-yellow-500">
                 Edit
                 <PencilSquareIcon class="w-3.5 h-3.5 ml-2" />
             </router-link>

@@ -7,9 +7,11 @@ function getRequestHeaders(idToken?: string) {
     return headers;
 }
 
-function throwResponseError(error?: { status: string }) {
-    if (error)
-        throw new Error(error.status);
+function throwResponseError(error?: { status: string, code: number, message: string }) {
+    if (error) {
+        console.error("[firestore-rest]", error.code, error.status, error.message);
+        throw new Error(error.status); // this error will be caught, which is why we also log it
+    }
 }
 
 export const Firestore = {
@@ -116,23 +118,27 @@ export const Firestore = {
         };
     },
     deleteDocument: async function (collection: string, documentId: string, idToken: string) {
-        await fetch(`${Firestore.baseUrl}/${collection}/${documentId}`, {
+        const res = await fetch(`${Firestore.baseUrl}/${collection}/${documentId}`, {
             method: "DELETE",
             headers: getRequestHeaders(idToken)
         });
+        const json = await res.json() as FirestoreRestError;
+        throwResponseError(json.error);
     },
     updateDocument: async function (collection: string, documentId: string, fields: FirestoreFieldObject, idToken: string, merge = false, requireExistence: boolean | null = null) {
         const endpointUrl = new URL(`${Firestore.baseUrl}/${collection}/${documentId}`);
         if (requireExistence !== null) endpointUrl.searchParams.append("currentDocument.exists", requireExistence.toString());
         if (merge) Object.keys(fields).forEach(field => { endpointUrl.searchParams.append("updateMask.fieldPaths", field); });
-        await fetch(endpointUrl, {
+        const res = await fetch(endpointUrl, {
             method: "PATCH",
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({ fields: Firestore.specifyFields(fields) })
         });
+        const json = await res.json() as FirestoreRestError;
+        throwResponseError(json.error);
     },
     commitWrites: async function (writes: BatchWriteWrite[], idToken: string) {
-        await fetch(`${this.baseUrl}:commit`, {
+        const res=  await fetch(`${this.baseUrl}:commit`, {
             method: "POST",
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({
@@ -146,6 +152,8 @@ export const Firestore = {
                 }))
             })
         });
+        const json = await res.json() as FirestoreRestError;
+        throwResponseError(json.error);
     }
 };
 
