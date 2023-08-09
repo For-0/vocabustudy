@@ -26,7 +26,7 @@
                 {{ getVisibility(set.visibility) }}
             </span>
         </div>
-        <div class="mb-3 flex flex-row flex-wrap gap-1">
+        <div class="mb-3 flex flex-row flex-wrap gap-1 max-h-12 overflow-y-auto custom-scrollbar is-thumb-only">
             <span class="bg-emerald-100 text-emerald-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-emerald-800/25 dark:text-emerald-400 border border-emerald-400">
                 <HandThumbUpIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                 {{ pluralizeWord("like", set.likes) }}

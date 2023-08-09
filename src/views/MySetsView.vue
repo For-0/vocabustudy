@@ -11,10 +11,14 @@
                         Create Set
                         <PlusCircleIcon class="w-4 h-4 ml-1" />
                     </router-link>
+                    <router-link :to="{ name: 'set-editor', params: { id: 'new-guide', type: 'set' } }" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700 inline-flex items-center">
+                        Create Guide
+                        <SquaresPlusIcon class="w-4 h-4 ml-1" />
+                    </router-link>
                 </div>
             </div>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
-            <SetPagination :sets="cacheStore.mySetsCache" :show-edit-controls="true" v-bind="cacheStore.mySetsState" :is-loading="isLoading" @delete-set="deletingSet = $event" @load-more="loadNext" />
+            <SetPagination class="w-full justify-center" :sets="cacheStore.mySetsCache" :show-edit-controls="true" v-bind="cacheStore.mySetsState" :is-loading="isLoading" @delete-set="deletingSet = $event" @load-more="loadNext" />
         </div>
         
         <div v-if="deletingSet" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30" />
@@ -42,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { XMarkIcon, ExclamationCircleIcon, PlusCircleIcon } from '@heroicons/vue/24/outline';
+import { XMarkIcon, ExclamationCircleIcon, PlusCircleIcon, SquaresPlusIcon } from '@heroicons/vue/24/outline';
 import { ref, getCurrentInstance } from 'vue';
 import { useAuthStore, useCacheStore } from '../store';
 import { useRouter, useRoute } from 'vue-router';

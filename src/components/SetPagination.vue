@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row gap-5 flex-wrap mb-5 justify-between" v-bind="$attrs">
+    <div class="flex flex-row gap-5 flex-wrap mb-5" v-bind="$attrs">
         <SetCard v-for="set, i in sets" :key="set.id" :set="set" :creator="creators?.[i]" :show-edit-controls="showEditControls" @delete-set="$emit(&quot;delete-set&quot;, set.id)" />
     </div>
     <p v-if="isLoading" class="flex items-center text-zinc-600 dark:text-zinc-300 mb-3 text-lg">
