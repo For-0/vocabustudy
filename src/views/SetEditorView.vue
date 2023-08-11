@@ -208,16 +208,12 @@ import Loader from '../components/Loader.vue';
 import TermDefinitionEditor from '../components/TermDefinitionEditor.vue';
 import { BatchWriter, Firestore, VocabSet } from '../firebase-rest-api/firestore';
 import { useAuthStore, useCacheStore } from '../store';
-import type { SetTerms, StudyGuideQuiz, StudyGuideReading, TermDefinition } from '../types';
-import { swap, showErrorToast, generateDocumentId, getWords } from "../utils";
+import type { StudyGuideQuiz, StudyGuideReading, TermDefinitionSet, StudyGuide } from '../types';
+import { swap, showErrorToast, generateDocumentId, getWords, isStudyGuide, studyGuideItemIsReading } from "../utils";
 import CollectionsSelection from '../components/CollectionsSelection.vue';
 import { detectAndGetQuizletSet } from "../converters/quizlet";
 import { DocumentPlusIcon } from '@heroicons/vue/24/solid';
 import GuideQuestionEditor from '../components/GuideQuestionEditor.vue';
-
-type PartialVocabSet<T extends SetTerms = SetTerms> = Pick<VocabSet<T>, "name" | "collections" | "terms" | "visibility" | "description"> & Partial<Pick<VocabSet, "uid">>;
-type TermDefinitionSet = PartialVocabSet<TermDefinition[]>;
-type StudyGuide = PartialVocabSet<(StudyGuideQuiz|StudyGuideReading)[]>;
 
 const currentSet = ref<TermDefinitionSet | StudyGuide | null>(null);
 const visibilityDropdownOpen = ref(false);
@@ -247,14 +243,18 @@ const blankSet: TermDefinitionSet = {
     name: "Untitled Set",
     collections: [],
     terms: [{ term: "", definition: "" }],
-    visibility: 2
+    visibility: 2,
+    uid: "",
+    pathParts: []
 };
 
 const blankGuide: StudyGuide = {
     name: "Untitled Guide",
     collections: ["-:1"],
     terms: [{ title: "", type: 0, body: "" }],
-    visibility: 2
+    visibility: 2,
+    uid: "",
+    pathParts: []
 };
 
 const currentInstance = getCurrentInstance();
@@ -271,13 +271,6 @@ function handleState(state: (typeof authStore)["$state"]) {
     return true;
 }
 
-function isStudyGuide(set: PartialVocabSet): set is StudyGuide {
-    return set.collections.includes("-:1");
-}
-
-function studyGuideItemIsReading(item: StudyGuideQuiz | StudyGuideReading): item is StudyGuideReading {
-    return item.type === 0;
-}
 
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
@@ -421,7 +414,7 @@ async function saveSet() {
             const documentId = generateDocumentId();
             batchWriter.update<VocabSet>(
                 ["sets", documentId],
-                { ...serializedSet, uid: authStore.currentUser!.uid, likes: 0 },
+                { ...serializedSet, uid: authStore.currentUser!.uid, likes: [], comments: {} },
                 [{ fieldPath: "creationTime", setToServerValue: "REQUEST_TIME" }]
             );
         } else

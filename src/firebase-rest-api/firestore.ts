@@ -71,7 +71,8 @@ export const Firestore = {
             headers: getRequestHeaders(idToken),
             body: JSON.stringify({ structuredQuery })
         });
-        const json = await res.json() as ({ document: FirestoreRestDocument | null | undefined, done: boolean } & FirestoreRestError)[];
+        const json = await res.json() as ({ document: FirestoreRestDocument | null | undefined, done: boolean } & FirestoreRestError)[] & FirestoreRestError;
+        if ("error" in json && json.error) throwResponseError(json.error);
         if ("error" in json[0] && json[0].error) throwResponseError(json[0].error);
         if (json.some(({ document }) => document === null || document === undefined)) return [];
         return json.map((info) => {
@@ -125,10 +126,11 @@ export const Firestore = {
         const json = await res.json() as FirestoreRestError;
         throwResponseError(json.error);
     },
-    updateDocument: async function (collection: string, documentId: string, fields: FirestoreFieldObject, idToken: string, merge = false, requireExistence: boolean | null = null) {
+    updateDocument: async function (collection: string, documentId: string, fields: FirestoreFieldObject, idToken: string, updateMask: string[] | null) {
         const endpointUrl = new URL(`${Firestore.baseUrl}/${collection}/${documentId}`);
-        if (requireExistence !== null) endpointUrl.searchParams.append("currentDocument.exists", requireExistence.toString());
-        if (merge) Object.keys(fields).forEach(field => { endpointUrl.searchParams.append("updateMask.fieldPaths", field); });
+        endpointUrl.searchParams.append("currentDocument.exists", "true");
+        endpointUrl.searchParams.append("mask.fieldPaths", "__name__");
+        if (updateMask) updateMask.forEach(field => { endpointUrl.searchParams.append("updateMask.fieldPaths", field); });
         const res = await fetch(endpointUrl, {
             method: "PATCH",
             headers: getRequestHeaders(idToken),
@@ -195,11 +197,12 @@ export class VocabSet<T extends SetTerms = SetTerms> extends FSDocument {
     visibility: number | string[];
     collections: string[];
     terms: T;
-    likes: number;
+    likes: string[];
+    comments: Record<string, string>;
     numTerms: number;
     nameWords: string[];
     creationTime: Date;
-    constructor({ name, description, uid, visibility, collections, terms, numTerms, likes, pathParts, nameWords, createTime, updateTime, last, creationTime }: VocabSet & { terms: T }) {
+    constructor({ name, description, uid, visibility, collections, terms, numTerms, likes, comments, pathParts, nameWords, createTime, updateTime, last, creationTime }: VocabSet & { terms: T }) {
         super({ pathParts, createTime, updateTime, last });
         this.name = name;
         if (description) this.description = description;
@@ -208,6 +211,7 @@ export class VocabSet<T extends SetTerms = SetTerms> extends FSDocument {
         this.collections = collections;
         this.terms = terms;
         this.likes = likes;
+        this.comments = comments;
         this.numTerms = numTerms;
         this.nameWords = nameWords;
         this.creationTime = creationTime;
@@ -282,9 +286,9 @@ export class QueryBuilder {
     /**
      * @param offsets A number to start after the nth document, or a string to start after a document with that path
      */
-    startAt(offsets: (number | string)[], before = false) {
+    startAt(offsets: (Date | number | string)[], before = false) {
         this.query.startAt = {
-            values: offsets.map(el => typeof el === "number" ? Firestore.createField(el) : { referenceValue: el }),
+            values: offsets.map(el => typeof el === "string" ? { referenceValue: el } : Firestore.createField(el)),
             before
         };
         return this;

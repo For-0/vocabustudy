@@ -40,29 +40,26 @@ async function loadMoreLikedSets() {
     isLoading.value = true;
     if (authStore.currentUser && hasNextPage.value) {
         const query = new QueryBuilder()
-            .select("uid")
-            .from("social", true)
-            .orderBy(["__name__"], "DESCENDING")
-            .where("uid", "EQUAL", authStore.currentUser.uid)
-            .where("like", "EQUAL", true)
+            .select("name", "creationTime", "numTerms", "collections", "likes", "uid")
+            .from("sets")
+            .orderBy(["creationTime", "__name__"], "DESCENDING")
+            .where("visibility", "EQUAL", 2)
+            .where("likes", "ARRAY_CONTAINS", authStore.currentUser.uid)
             .limit(10);
 
         if (sets.value.length > 0) {
             const lastSet = sets.value[sets.value.length - 1];
-            query.startAt([lastSet.likes, lastSet.pathParts.join("/")]);
+            query.startAt([lastSet.creationTime, lastSet.pathParts.join("/")]);
         }
         try {
             const start = Date.now();
-            const results = await Firestore.getDocuments(query.build(), authStore.currentUser.token.access);
-            const setIds = results.map(el => el.pathParts[el.pathParts.length - 3]);
-            const newSets = setIds.length < 1? [] :
-                VocabSet.fromMultiple(await Firestore.getDocumentsForIds(VocabSet.collectionKey, setIds, ["name", "creationTime", "numTerms", "collections", "likes", "uid"], authStore.currentUser.token.access));
-            mostRecentTiming.value= Date.now() - start;
+            const results = VocabSet.fromMultiple(await Firestore.getDocuments(query.build(), authStore.currentUser.token.access));
+            mostRecentTiming.value = Date.now() - start;
             if (results.length < 10) {
                 hasNextPage.value = false;
             }
-            creators.value = [...creators.value, ...await cacheStore.getAllProfiles(newSets.map(set => set.uid))];
-            sets.value = [...sets.value, ...newSets];
+            creators.value = [...creators.value, ...await cacheStore.getAllProfiles(results.map(set => set.uid))];
+            sets.value = [...sets.value, ...results];
         } catch (err) {
             showErrorToast(`An unknown error occurred: ${(err as Error).message}`, currentInstance?.appContext, 7000);
         }

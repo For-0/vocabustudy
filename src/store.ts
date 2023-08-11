@@ -23,10 +23,10 @@ export const useAuthStore = defineStore("auth", () => {
         currentUser.value = user;
     }
 
-    function withBroadcast<T extends GenericFunction>(fn: T): FunctionRequiringRefresh<T> {
+    function withBroadcast<T extends GenericFunction>(fn?: T): FunctionRequiringRefresh<T> {
         return async (...args: Parameters<T>) => {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const result = await fn(...args);
+            const result = await fn?.(...args);
             await reloadCurrentUser();
             await broadcastUpdate();
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -74,7 +74,9 @@ export const useAuthStore = defineStore("auth", () => {
     });
 
     void reloadCurrentUser(); // this completes much faster than refreshCurrentUser, so we can use it to get the initial state while we wait for the refresh to complete
-    void refreshCurrentUser(true);
+    void refreshCurrentUser(true).then(user => {
+        if (currentUser.value && !user) return withBroadcast()();
+    });
 
     return {
         currentUser,
@@ -96,14 +98,34 @@ export const useCacheStore = defineStore("cache", () => {
         const missingUids = uniqueUids.filter(uid => !userProfileCache.value.get(uid));
 
         await Promise.all(missingUids.map(async uid => {
+            try {
+                const res = await fetch(`${DD_URL}users/${uid}`);
+                if (res.ok) {
+                    const data = await res.json() as UserProfile;
+                    userProfileCache.value.set(uid, data);
+                }
+            } catch { /* empty */ }
+        }));
+
+        return uids.map(uid => userProfileCache.value.get(uid) ?? unknownUser);
+    }
+
+    async function getProfile(uid: string) {
+        const profile = userProfileCache.value.get(uid);
+        if (profile) return profile;
+
+        try {
             const res = await fetch(`${DD_URL}users/${uid}`);
             if (res.ok) {
                 const data = await res.json() as UserProfile;
                 userProfileCache.value.set(uid, data);
+                return data;
+            } else {
+                return unknownUser;
             }
-        }));
-
-        return uids.map(uid => userProfileCache.value.get(uid) ?? unknownUser);
+        } catch {
+            return unknownUser;
+        }
     }
 
     function addSets(sets: VocabSet[]) {
@@ -121,6 +143,7 @@ export const useCacheStore = defineStore("cache", () => {
 
     return {
         getAllProfiles,
+        getProfile,
         userProfileCache,
         mySetsCache,
         mySetsState,

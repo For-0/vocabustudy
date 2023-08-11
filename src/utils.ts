@@ -1,6 +1,6 @@
 import { openDB } from "idb";
 import collectionData from "./assets/collections.json" assert { type: "json" };
-import type { VocabustudyDB } from "./types";
+import type { PartialVocabSet, StudyGuide, StudyGuideQuiz, StudyGuideReading, VocabustudyDB } from "./types";
 import { type Component, createVNode, render, type AppContext } from "vue";
 import BaseToast from "./components/BaseToast.vue";
 import { XMarkIcon, CheckIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
@@ -36,6 +36,16 @@ export function parseCollections(collections: string[]) {
         return { name: resolvedName, id: el.join(":") };
     });
     return collectionNames;
+}
+
+/** Typescript helper for whether a set is a studyguide */
+export function isStudyGuide(set: PartialVocabSet): set is StudyGuide {
+    return set.collections.includes("-:1");
+}
+
+/** Same as above but for study guide items */
+export function studyGuideItemIsReading(item: StudyGuideQuiz | StudyGuideReading): item is StudyGuideReading {
+    return item.type === 0;
 }
 
 export function pluralizeWord(word: string, number: number) {

@@ -137,12 +137,18 @@ export default function () {
                 }
             },
             {
-                path: '/set/:id([\\w\\d]+)/view/',
-                name: 'set-detail',
+                path: '/:type(set|quizlet)/:id([\\w\\d]+)/view/',
                 component: () => import('./views/SetViewerView.vue'),
-                meta: {
-                    title: "View Set"
-                }
+                children: [
+                    {
+                        path: '',
+                        component: () => import('./views/set-viewer/SetOverviewView.vue'),
+                        name: "set-detail",
+                        meta: {
+                            title: "View Set"
+                        }
+                    }
+                ]
             },
             {
                 path: '/:type(set|quizlet)/:id([\\w\\d-]+)/edit/',

@@ -82,7 +82,7 @@ const hasSearched = ref(false);
 const baseQuery = new QueryBuilder()
     .select("name", "numTerms", "collections", "likes", "uid", "nameWords", "creationTime")
     .where("visibility", "EQUAL", 2)
-    .orderBy(["likes", "__name__"], "DESCENDING")
+    .orderBy(["creationTime", "__name__"], "DESCENDING")
     .from(VocabSet.collectionKey)
     .limit(10)
     .build();
@@ -117,7 +117,7 @@ async function loadMore() {
             const copiedQuery = new QueryBuilder(structuredClone(query));
             const lastSet = lastSets[i];
             if (lastSet) {
-                copiedQuery.startAt([lastSet.likes, lastSet.pathParts.join("/")]);
+                copiedQuery.startAt([lastSet.creationTime, lastSet.pathParts.join("/")]);
             }
             return copiedQuery.build();
         });
@@ -144,9 +144,7 @@ async function loadMore() {
             if (results.length < 10) {
                 hasNextPage.value = false;
             }
-            try {
-                creators.value = [...creators.value, ...await cacheStore.getAllProfiles(results.map(el => el.doc.uid))];
-            } catch { /* empty */ }
+            creators.value = [...creators.value, ...await cacheStore.getAllProfiles(results.map(el => el.doc.uid))];
             sets.value = [...sets.value, ...results.map(el => el.doc)];
         } catch (err) {
             showErrorToast(`An unknown error occurred: ${(err as Error).message}`, currentInstance?.appContext, 7000);

@@ -1,5 +1,5 @@
 import type { DBSchema } from "idb";
-import type { FSDocument } from "./firebase-rest-api/firestore";
+import type { FSDocument, VocabSet } from "./firebase-rest-api/firestore";
 
 export type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
@@ -20,6 +20,11 @@ export type StudyGuideReading = { body: string, type: 0, title: string }
 
 /** A study guide quiz */
 export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string }
+
+export type PartialVocabSet<T extends SetTerms = SetTerms> = Pick<VocabSet<T>, "name" | "collections" | "terms" | "visibility" | "description" | "uid" | "pathParts">;
+export type TermDefinitionSet = PartialVocabSet<TermDefinition[]>;
+export type StudyGuide = PartialVocabSet<(StudyGuideQuiz|StudyGuideReading)[]>;
+export type PartialSetForViewer = (TermDefinitionSet & Pick<VocabSet, "creationTime" | "likes" | "comments">) | (StudyGuide & Pick<VocabSet, "creationTime" | "likes" | "comments">);
 
 /* eslint-enable @typescript-eslint/consistent-type-definitions */
 
@@ -82,10 +87,10 @@ export type StructuredQuery = Partial<{
 }>;
 
 
-export interface FieldTransform {
-    fieldPath: string;
-    setToServerValue: "REQUEST_TIME";
-}
+export type FieldTransform = { fieldPath: string; } & (
+    { setToServerValue: "REQUEST_TIME"; } |
+    { [key in "appendMissingElements" | "removeAllFromArray"]: NonNullable<RawFirestoreField["arrayValue"]>; }
+);
 
 export interface BatchWriteWrite { pathParts: string[], update: Record<string, FirestoreField>, updateTransforms: FieldTransform[] }
 

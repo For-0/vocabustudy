@@ -15,9 +15,9 @@
 import SetCard from '../SetCard.vue';
 
 const featureSets = [
-    { id: "Pm4jGqMQQjGTncfCxbbx", name: "Unit 6 Vocab: US History", collections: ["3:0"], numTerms: 16, likes: 1, createTime: new Date(1672977414555), uid: "nWasbt2yvXewc8AhGSqwmfT4gVu2" },
-    { id: "UvecvkGJic1gp7HFKAw3", name: "Unit 6 Advanced Biology ", collections: ["5:4"], numTerms: 22, likes: 1, createTime: new Date(1674228853036), uid: "bcNOi4FCxUcJaAxUglAVBrm5FTr1" },
-    { id: "D3NQ1SrKusHR4Bgmwx6Y", name: "Geometry Unit 2", collections: ["0:5"], numTerms: 42, likes: 2, createTime: new Date(1672977414555), uid: "mnDmw8WhAGSup4W2kH0EsRCgb072" },
+    { id: "Pm4jGqMQQjGTncfCxbbx", name: "Unit 6 Vocab: US History", collections: ["3:0"], numTerms: 16, likes: [""], createTime: new Date(1672977414555), uid: "nWasbt2yvXewc8AhGSqwmfT4gVu2" },
+    { id: "UvecvkGJic1gp7HFKAw3", name: "Unit 6 Advanced Biology ", collections: ["5:4"], numTerms: 22, likes: [""], createTime: new Date(1674228853036), uid: "bcNOi4FCxUcJaAxUglAVBrm5FTr1" },
+    { id: "D3NQ1SrKusHR4Bgmwx6Y", name: "Geometry Unit 2", collections: ["0:5"], numTerms: 42, likes: ["", ""], createTime: new Date(1672977414555), uid: "mnDmw8WhAGSup4W2kH0EsRCgb072" },
 ];
 // hardcode profiles to reduce number of requests
 const profiles = [

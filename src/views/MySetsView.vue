@@ -109,7 +109,7 @@ async function loadNext() {
 
         if (cacheStore.mySetsCache.length > 0) {
             const lastSet = cacheStore.mySetsCache[cacheStore.mySetsCache.length - 1];
-            query.startAt([lastSet.creationTime.getTime(), lastSet.pathParts.join("/")]);
+            query.startAt([lastSet.creationTime, lastSet.pathParts.join("/")]);
         }
         try {
             const start = Date.now();
