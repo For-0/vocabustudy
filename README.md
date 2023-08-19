@@ -29,7 +29,7 @@
     </li>
     <li>Install NPM packages: <code>npm install</code> (Make sure you have <a href="https://nodejs.org/en/">Node.JS</a> installed)</li>
     <li>Install <code>firebase-tools</code> <strong>globally</strong>: <code>npm install -g firebase-tools</code></li>
-    <li>Start <a href="https://parceljs.org">Parcel</a>: <code>npm run watch</code></li>
+    <li>Start <a href="https://vitejs.dev/">Vite</a>: <code>npm run dev</code></li>
     <li>Start the Firebase Emulator (Make sure you have Java installed and on your path): <code>npm run emulator</code></li>
 </ol>
 </body>
