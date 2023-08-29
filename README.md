@@ -5,7 +5,7 @@
 <a href="https://vocabustudy.org/"><img src="https://raw.githubusercontent.com/For-0/vocabustudy/main/src/icons/icon-192.png" align="center"></a>
 </p>
 <h1 align="center">Vocabustudy - Study Vocab, For Free.</h1>
-<div align="center">
+<div align="center" >
     <a href="https://vocabustudy.org/"><img src="https://img.shields.io/github/v/release/for-0/vocabustudy?label=latest%20version&amp;style=for-the-badge" alt="GitHub  release (latest by date)"></a>
     <a href="https://nightly.vocabustudy.org/"><img src="https://img.shields.io/github/v/release/for-0/vocabustudy?include_prereleases&amp;label=latest%20nightly&amp;style=for-the-badge" alt="GitHub release (latest by date including pre-releases)"></a>
     <img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/for-0/vocabustudy/lint.yml?event=push&label=lint&logo=eslint&style=for-the-badge">
