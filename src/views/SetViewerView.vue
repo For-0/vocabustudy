@@ -40,7 +40,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { UserProfile, PartialSetForViewer } from '../types';
+import type { UserProfile, PartialSetForViewer, TermDefinition, StudyGuideQuiz, StudyGuideReading } from '../types';
 import { useAuthStore, useCacheStore } from '../store';
 import Loader from '../components/Loader.vue';
 import { pluralizeWord } from '../utils';
@@ -58,6 +58,52 @@ const creator = ref<UserProfile | null>(null);
 
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
+
+const StarredTerms = {
+    getAllStarred() {
+        return JSON.parse(localStorage.getItem("starred_terms") ?? "{}") as Record<string, number[] | undefined>;
+    },
+    getStarredTermList(initialList?: TermDefinition[]|(StudyGuideQuiz|StudyGuideReading)[]) {
+        const starredIndices = this.getCurrentSet();
+        if (initialList) return initialList.filter((_, i) => starredIndices.includes(i));
+        return ((currentSet.value?.terms ?? [])).filter((_, i) => starredIndices.includes(i));
+    },
+    /**
+     * @returns Indexes of starred terms
+     */
+    getCurrentSet() {
+        return this.getAllStarred()[route.params.id as string] ?? [];
+    },
+    saveStarredList(starList) {
+        const orig = this.getAllStarred();
+        orig[setId] = starList;
+        localStorage.setItem("starred_terms", JSON.stringify(orig));
+        document.querySelectorAll("star-button").forEach(sb => sb.toggleOn(starList.includes(parseInt(sb.dataset.termIndex || "-1"))));
+    },
+    /**
+     * Find out if a term in the current set is starred
+     * @param termIndex Index of the term
+     */
+    isStarred(termIndex) {
+        return this.getCurrentSet().includes(termIndex);
+    },
+    setStar(termIndex, isStarred) {
+        const starList = this.getCurrentSet();
+        const possibleIndex = starList.indexOf(termIndex);
+        if (isStarred && possibleIndex === -1) starList.push(termIndex);
+        else if (!isStarred && possibleIndex !== -1) starList.splice(possibleIndex, 1);
+        this.saveStarredList(starList);
+    },
+    setStars(termIndexes, isStarred) {
+        const starList = this.getCurrentSet();
+        for (const termIndex of termIndexes) {
+            const possibleIndex = starList.indexOf(termIndex);
+            if (isStarred && possibleIndex === -1) starList.push(termIndex);
+            else if (!isStarred && possibleIndex !== -1) starList.splice(possibleIndex, 1);
+        }
+        this.saveStarredList(starList);
+    }
+};
 
 function handleState(state: (typeof authStore)["$state"]) {
     if (state.currentUser) {
@@ -104,7 +150,7 @@ function updateComment(newComment: string) {
 function updateLike(like: boolean) {
     if (authStore.currentUser && currentSet.value) {
         if (like) currentSet.value.likes = [...currentSet.value.likes, authStore.currentUser.uid];
-        else currentSet.value.likes = currentSet.value.likes.filter(uid => uid !== authStore.currentUser.uid);
+        else currentSet.value.likes = currentSet.value.likes.filter(uid => uid !== authStore.currentUser!.uid);
     }
 }
 

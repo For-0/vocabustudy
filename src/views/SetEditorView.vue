@@ -401,6 +401,7 @@ async function saveSet() {
         }
     } else if (currentSet.value.terms.length < 4) {
         showErrorToast("You must have at least 4 items in your set.", currentInstance?.appContext, 7000);
+        return;
     }
 
     isSaveLoading.value = true;
