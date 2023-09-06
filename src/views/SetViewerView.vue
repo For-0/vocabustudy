@@ -21,15 +21,9 @@
                     <QueueListIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                     {{ pluralizeWord("term", currentSet.terms.length) }}
                 </span>
-                
-                <!-- <button v-if="authStore.currentUser" :disabled="isLikeLoading" type="submit" class="border text-white border-primary bg-primary hover:bg-primary-alt focus:ring-primary/50 my-3 inline-flex items-center focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5">
-                    <Loader v-if="isLikeLoading" class="w-4 h-4 mr-1" :size="1" />
-                    <span class="sr-only">Like</span>
-                    <HeartIcon class="w-4 h-4 ml-1" />
-                </button> -->
             </div>
             <router-view v-slot="{ Component }">
-                <component :is="Component" :current-set="currentSet" :creator="creator" @update-comment="updateComment" @update-like="updateLike" />
+                <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" />
             </router-view>
         </div>
         <div v-else class="w-full h-full flex items-center justify-center dark:text-white text-3xl">
@@ -39,7 +33,7 @@
     </main>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import type { UserProfile, PartialSetForViewer, TermDefinition, StudyGuideQuiz, StudyGuideReading } from '../types';
 import { useAuthStore, useCacheStore } from '../store';
 import Loader from '../components/Loader.vue';
@@ -58,68 +52,57 @@ const creator = ref<UserProfile | null>(null);
 
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
+const starredList = ref(getStarredTerms(localStorage.getItem("starred_terms")));
 
-const StarredTerms = {
-    getAllStarred() {
-        return JSON.parse(localStorage.getItem("starred_terms") ?? "{}") as Record<string, number[] | undefined>;
-    },
-    getStarredTermList(initialList?: TermDefinition[]|(StudyGuideQuiz|StudyGuideReading)[]) {
-        const starredIndices = this.getCurrentSet();
-        if (initialList) return initialList.filter((_, i) => starredIndices.includes(i));
-        return ((currentSet.value?.terms ?? [])).filter((_, i) => starredIndices.includes(i));
-    },
-    /**
-     * @returns Indexes of starred terms
-     */
-    getCurrentSet() {
-        return this.getAllStarred()[route.params.id as string] ?? [];
-    },
-    saveStarredList(starList) {
-        const orig = this.getAllStarred();
-        orig[setId] = starList;
-        localStorage.setItem("starred_terms", JSON.stringify(orig));
-        document.querySelectorAll("star-button").forEach(sb => sb.toggleOn(starList.includes(parseInt(sb.dataset.termIndex || "-1"))));
-    },
+function getStarredTerms(rawStarredTerms: string | null) {
+    const parsed: Record<string, number[] | undefined> = JSON.parse(rawStarredTerms ?? "{}");
+    return parsed[route.params.id as string] ?? [];
+}
+
+function onStorage(e: StorageEvent) {
+    if (e.key === "starred_terms") {
+        starredList.value = getStarredTerms(e.newValue);
+    }
+}
+
+function saveStarredList() {
+    const parsed: Record<string, number[] | undefined> = JSON.parse(localStorage.getItem("starred_terms") ?? "{}");
+    parsed[route.params.id as string] = starredList.value;
+    localStorage.setItem("starred_terms", JSON.stringify(parsed));
+}
+
+/*const StarredTerms = {
     /**
      * Find out if a term in the current set is starred
      * @param termIndex Index of the term
-     */
-    isStarred(termIndex) {
-        return this.getCurrentSet().includes(termIndex);
+     *
+    isStarred(termIndex: number) {
+        return starredList.value.includes(termIndex);
     },
-    setStar(termIndex, isStarred) {
-        const starList = this.getCurrentSet();
-        const possibleIndex = starList.indexOf(termIndex);
-        if (isStarred && possibleIndex === -1) starList.push(termIndex);
-        else if (!isStarred && possibleIndex !== -1) starList.splice(possibleIndex, 1);
-        this.saveStarredList(starList);
+    setStar(termIndex: number, isStarred: boolean) {
+        const possibleIndex = starredList.value.indexOf(termIndex);
+        if (isStarred && possibleIndex === -1) starredList.value.push(termIndex);
+        else if (!isStarred && possibleIndex !== -1) starredList.value.splice(possibleIndex, 1);
+        saveStarredList();
     },
-    setStars(termIndexes, isStarred) {
-        const starList = this.getCurrentSet();
-        for (const termIndex of termIndexes) {
-            const possibleIndex = starList.indexOf(termIndex);
-            if (isStarred && possibleIndex === -1) starList.push(termIndex);
-            else if (!isStarred && possibleIndex !== -1) starList.splice(possibleIndex, 1);
+    setStars(termIndices: number[], isStarred: boolean) {
+        for (const termIndex of termIndices) {
+            const possibleIndex = starredList.value.indexOf(termIndex);
+            if (isStarred && possibleIndex === -1) starredList.value.push(termIndex);
+            else if (!isStarred && possibleIndex !== -1) starredList.value.splice(possibleIndex, 1);
         }
-        this.saveStarredList(starList);
+        saveStarredList();
     }
-};
-
-function handleState(state: (typeof authStore)["$state"]) {
-    if (state.currentUser) {
-        // Load social document
-    }
-}
+};*/
 
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
     // Edit an existing set
     if (typeof route.params.id === "string" && route.params.type === "set") {
-        const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"]));
+        const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);
             currentSet.value = set as PartialSetForViewer;
-            handleState(authStore.$state);
             document.title = document.title.replace("Edit Set", `Edit ${set.name}`);
         } else {
             loadingError.value = "not-found";
@@ -156,5 +139,10 @@ function updateLike(like: boolean) {
 
 onMounted(() => {
     void loadInitialSet();
+    addEventListener("storage", onStorage);
 });
+
+onUnmounted(() => {
+    removeEventListener("storage", onStorage);
+})
 </script>

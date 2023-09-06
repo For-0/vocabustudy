@@ -54,9 +54,13 @@
     <!-- term/definitions -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3">
         <!-- eslint-disable vue/no-v-html -->
-        <div v-for="({ term, definition }, index) in currentSet.terms" :key="index" class="shadow dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 dark:bg-zinc-900 border rounded-md p-3">
+        <div v-for="({ term, definition }, index) in currentSet.terms" :key="index" class="shadow dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 dark:bg-zinc-900 border rounded-md p-3 relative">
             <h3 class="text-lg pb-4 border-b border-inherit prose prose-zinc dark:prose-invert" v-html="styleAndSanitize(term, true)" />
             <p class="text-sm mt-3 prose prose-zinc dark:prose-invert" v-html="styleAndSanitize(definition, true)" />
+            <button class="text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 p-1 h-7 w-7 rounded-lg text-sm inline-flex items-center dark:hover:bg-zinc-600 dark:hover:text-white absolute top-3 right-3" title="Star" type="button">
+                <StarSolidIcon v-if="starredTerms.includes(index)" class="w-5 h-5" />
+                <StarOutlineIcon v-else class="w-5 h-5" />
+            </button>
         </div>
         <!-- eslint-enable vue/no-v-html -->
     </div>
@@ -135,8 +139,8 @@ import { styleAndSanitize } from '../../markdown';
 import type { FieldTransform, PartialSetForViewer, StudyGuideQuiz, StudyGuideReading, UserProfile } from "../../types";
 import ProfileDate from '../../components/ProfileDate.vue';
 import { computed, getCurrentInstance, ref, onMounted } from 'vue';
-import { DocumentTextIcon, HeartIcon as HeartOutlineIcon } from "@heroicons/vue/24/outline";
-import { HeartIcon as HeartSolidIcon } from "@heroicons/vue/24/solid";
+import { DocumentTextIcon, HeartIcon as HeartOutlineIcon, StarIcon as StarOutlineIcon } from "@heroicons/vue/24/outline";
+import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
 import { XMarkIcon, ChatBubbleBottomCenterTextIcon, PencilSquareIcon, CheckIcon } from "@heroicons/vue/20/solid";
 import { useAuthStore, useCacheStore } from '../../store';
 import defaultPfp from "../../assets/images/default-pfp.svg";
@@ -146,6 +150,7 @@ import { BatchWriter, Firestore, VocabSet } from '../../firebase-rest-api/firest
 const props = defineProps<{
     currentSet: PartialSetForViewer;
     creator: UserProfile;
+    starredTerms: number[];
 }>();
 
 const emit = defineEmits<{
