@@ -145,7 +145,15 @@ export default function () {
                         component: () => import('./views/set-viewer/SetOverviewView.vue'),
                         name: "set-detail",
                         meta: {
-                            title: "View Set"
+                            title: "View Set" // TODO: make these titles include set name
+                        }
+                    },
+                    {
+                        path: 'flashcards/',
+                        component: () => import('./views/set-viewer/FlashcardsView.vue'),
+                        name: "flashcards",
+                        meta: {
+                            title: "Flashcards"
                         }
                     }
                 ]

@@ -10,22 +10,9 @@
                 "Unknown"
             }}
         </div>
-        <div v-else-if="currentSet" class="my-3">
-            <!-- Header - title, like -->
-            <div class="flex flex-wrap gap-x-3 mb-3 text-zinc-900 dark:text-white">
-                <h2 class="text-2xl leading-7 sm:text-3xl grow">
-                    {{ currentSet.name }}
-                </h2>
-
-                <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-blue-800/25 dark:text-blue-300 border border-blue-300">
-                    <QueueListIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
-                    {{ pluralizeWord("term", currentSet.terms.length) }}
-                </span>
-            </div>
-            <router-view v-slot="{ Component }">
-                <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" />
-            </router-view>
-        </div>
+        <router-view v-else-if="currentSet" v-slot="{ Component }">
+            <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" />
+        </router-view>
         <div v-else class="w-full h-full flex items-center justify-center dark:text-white text-3xl">
             <Loader class="w-10 h-10 mr-3" :size="2" />
             Loading...
@@ -34,14 +21,12 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import type { UserProfile, PartialSetForViewer, TermDefinition, StudyGuideQuiz, StudyGuideReading } from '../types';
+import type { UserProfile, PartialSetForViewer } from '../types';
 import { useAuthStore, useCacheStore } from '../store';
 import Loader from '../components/Loader.vue';
-import { pluralizeWord } from '../utils';
 import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
 import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
-import { QueueListIcon } from '@heroicons/vue/20/solid';
 
 const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | null>(null);
 const currentSet = ref<PartialSetForViewer | null>(null);
@@ -54,8 +39,12 @@ const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const starredList = ref(getStarredTerms(localStorage.getItem("starred_terms")));
 
+function parseStarredTerms(rawStarredTerms: string | null) {
+    return JSON.parse(rawStarredTerms ?? "{}") as Record<string, number[] | undefined>;
+}
+
 function getStarredTerms(rawStarredTerms: string | null) {
-    const parsed: Record<string, number[] | undefined> = JSON.parse(rawStarredTerms ?? "{}");
+    const parsed = parseStarredTerms(rawStarredTerms);
     return parsed[route.params.id as string] ?? [];
 }
 
@@ -66,9 +55,15 @@ function onStorage(e: StorageEvent) {
 }
 
 function saveStarredList() {
-    const parsed: Record<string, number[] | undefined> = JSON.parse(localStorage.getItem("starred_terms") ?? "{}");
+    const parsed = parseStarredTerms(localStorage.getItem("starred_terms"));
     parsed[route.params.id as string] = starredList.value;
     localStorage.setItem("starred_terms", JSON.stringify(parsed));
+}
+
+function toggleStar(termIndex: number) {
+    if (starredList.value.includes(termIndex)) starredList.value = starredList.value.filter(i => i !== termIndex);
+    else starredList.value = [...starredList.value, termIndex];
+    saveStarredList();
 }
 
 /*const StarredTerms = {
