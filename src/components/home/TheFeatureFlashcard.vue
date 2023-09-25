@@ -29,10 +29,11 @@ const featureFlashcardValues = [
     { front: "When does water reach its boiling point?", back: "Water reaches its boiling point at 100° Celsius, or 212° Fahrenheit." },
     { front: "Why are giraffes' tongues black?", back: "Giraffes have extra melanin on their tongues, protecting them from sunburns." },
     { front: "When was the Grand Canyon declared a UNESCO World Heritage Site?", back: "It was granted UNESCO status in 1979." },
-    { front: "What is sublimation?", back: "Sublimation is the transition of a substance directly from a solid state to a gas state." },
+    { front: "![ice cube](https://www.publicdomainpictures.net/pictures/170000/velka/ice-cubes-1462092848ELH.jpg) What is sublimation?", back: "Sublimation is the transition of a substance directly from a solid state to a gas state." },
     { front: "Approximately how much of plastic produced is recycled?", back: "Only 9%!" },
     { front: "What was the lowest temperature ever recorded on Earth?", back: "The lowest temperature ever recorded on Earth was -89.2 °C (-128.6 °F; 184.0 K) on July 21, 1983 in Antartica." },
     // TODO: add pictures
+    // TODO: For pictures, change <Flashcard> to make them smaller
 ];
 
 const featureFlashcardValue = featureFlashcardValues[Math.floor(Math.random() * featureFlashcardValues.length)];

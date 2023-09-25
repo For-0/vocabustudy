@@ -24,7 +24,8 @@ export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers:
 export type PartialVocabSet<T extends SetTerms = SetTerms> = Pick<VocabSet<T>, "name" | "collections" | "terms" | "visibility" | "description" | "uid" | "pathParts">;
 export type TermDefinitionSet = PartialVocabSet<TermDefinition[]>;
 export type StudyGuide = PartialVocabSet<(StudyGuideQuiz|StudyGuideReading)[]>;
-export type PartialSetForViewer = (TermDefinitionSet & Pick<VocabSet, "creationTime" | "likes" | "comments">) | (StudyGuide & Pick<VocabSet, "creationTime" | "likes" | "comments">);
+export type ViewerExtraSetProperties = Pick<VocabSet, "creationTime" | "likes" | "comments">;
+export type ViewerPartialSet = (TermDefinitionSet | StudyGuide) & ViewerExtraSetProperties;
 
 /* eslint-enable @typescript-eslint/consistent-type-definitions */
 

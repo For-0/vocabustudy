@@ -145,7 +145,7 @@
 <script setup lang="ts">
 import { isStudyGuide, showErrorToast, studyGuideItemIsReading, pluralizeWord } from '../../utils';
 import { styleAndSanitize } from '../../markdown';
-import type { FieldTransform, PartialSetForViewer, StudyGuideQuiz, StudyGuideReading, UserProfile } from "../../types";
+import type { FieldTransform, ViewerPartialSet, StudyGuideQuiz, StudyGuideReading, UserProfile } from "../../types";
 import ProfileDate from '../../components/ProfileDate.vue';
 import { computed, getCurrentInstance, ref, onMounted } from 'vue';
 import { DocumentTextIcon, HeartIcon as HeartOutlineIcon, StarIcon as StarOutlineIcon } from "@heroicons/vue/24/outline";
@@ -157,7 +157,7 @@ import Loader from '../../components/Loader.vue';
 import { BatchWriter, Firestore, VocabSet } from '../../firebase-rest-api/firestore';
 
 const props = defineProps<{
-    currentSet: PartialSetForViewer;
+    currentSet: ViewerPartialSet;
     creator: UserProfile;
     starredTerms: number[];
 }>();

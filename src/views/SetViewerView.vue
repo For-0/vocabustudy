@@ -21,7 +21,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import type { UserProfile, PartialSetForViewer } from '../types';
+import type { UserProfile, ViewerPartialSet } from '../types';
 import { useAuthStore, useCacheStore } from '../store';
 import Loader from '../components/Loader.vue';
 import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
@@ -29,7 +29,7 @@ import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
 
 const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | null>(null);
-const currentSet = ref<PartialSetForViewer | null>(null);
+const currentSet = ref<ViewerPartialSet | null>(null);
 
 const route = useRoute();
 
@@ -66,30 +66,6 @@ function toggleStar(termIndex: number) {
     saveStarredList();
 }
 
-/*const StarredTerms = {
-    /**
-     * Find out if a term in the current set is starred
-     * @param termIndex Index of the term
-     *
-    isStarred(termIndex: number) {
-        return starredList.value.includes(termIndex);
-    },
-    setStar(termIndex: number, isStarred: boolean) {
-        const possibleIndex = starredList.value.indexOf(termIndex);
-        if (isStarred && possibleIndex === -1) starredList.value.push(termIndex);
-        else if (!isStarred && possibleIndex !== -1) starredList.value.splice(possibleIndex, 1);
-        saveStarredList();
-    },
-    setStars(termIndices: number[], isStarred: boolean) {
-        for (const termIndex of termIndices) {
-            const possibleIndex = starredList.value.indexOf(termIndex);
-            if (isStarred && possibleIndex === -1) starredList.value.push(termIndex);
-            else if (!isStarred && possibleIndex !== -1) starredList.value.splice(possibleIndex, 1);
-        }
-        saveStarredList();
-    }
-};*/
-
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
     // Edit an existing set
@@ -97,7 +73,7 @@ async function loadInitialSet() {
         const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);
-            currentSet.value = set as PartialSetForViewer;
+            currentSet.value = set as ViewerPartialSet;
             document.title = document.title.replace("Edit Set", `Edit ${set.name}`);
         } else {
             loadingError.value = "not-found";

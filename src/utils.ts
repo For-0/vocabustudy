@@ -138,3 +138,23 @@ export function swap<T>(array: T[], i: number, j: number) {
     if (i === j || i < 0 || j < 0 || i >= array.length || j >= array.length) return;
     [array[i], array[j]] = [array[j], array[i]];
 }
+
+/**
+ * Performs a Fisher-Yates shuffle on an array
+ */
+export function shuffle<T>(arr: T[]) {
+    let currentIndex = arr.length, randomIndex: number;
+    while (currentIndex > 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+    }
+}
+
+/**
+ * Modulus that supports negative numbers
+ * https://stackoverflow.com/a/17323608
+ */
+export function mod(n: number, m: number) {
+    return (n % m + m ) % m;
+}

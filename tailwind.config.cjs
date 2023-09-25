@@ -27,6 +27,9 @@ module.exports = {
             },
             screens: {
                 'md-both': { 'raw': '(min-height: 850px) and (min-width: 768px)' }
+            },
+            translate: {
+                'screen': '100vw'
             }
         }
     },
