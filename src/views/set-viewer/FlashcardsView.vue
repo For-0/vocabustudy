@@ -2,7 +2,7 @@
     <div class="fixed inset-0 bg-zinc-100 dark:bg-zinc-900 z-10 flex flex-col text-zinc-800 dark:text-white">
         <!-- Header -->
         <div class="bg-white dark:bg-zinc-800 py-3 px-5 flex items-center shadow z-30 lg:z-auto">
-            <AcademicCapIcon class="w-6 h-46 mr-2" /> <!-- TODO: find a better icon (font awesome) -->
+            <Square2StackIcon class="w-6 h-6 mr-2" />
             <p class="font-semibold text-lg hidden lg:block">Flashcards</p>
             <div class="text-center mx-auto">
                 <h2 class="text-xl font-bold">{{ currentSet.name }}</h2>
@@ -16,7 +16,7 @@
         <div class="grow flex relative s">
             <div class="w-full absolute lg:static lg:w-48 lg:pb-6 z-30 lg:z-auto">
                 <!-- Configuration -->
-                <div class="p-3 lg:block bg-zinc-100 dark:bg-zinc-900 flex flex-col items-start" :class="{ 'hidden': !optionsExpanded }">
+                <div class="p-3 lg:block bg-zinc-100 dark:bg-zinc-900 flex flex-col items-start lg:bg-transparent" :class="{ 'hidden': !optionsExpanded }">
                     <p class="font-semibold mb-2">Answer With:</p>
                     <div class="flex items-center mb-2">
                         <input id="flashcard-answer-with-term" v-model="answerWith" type="radio" value="term" name="flashcard-answer-with" class="cursor-pointer w-4 h-4 text-primary bg-zinc-100 border-zinc-300 focus:ring-primary dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { AcademicCapIcon, ArrowLeftIcon, ArrowPathIcon, ArrowRightIcon, ChevronDownIcon, StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { ArrowLeftIcon, ArrowPathIcon, ArrowRightIcon, ChevronDownIcon, Square2StackIcon, StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
 import { ChevronDoubleRightIcon } from "@heroicons/vue/20/solid";
 import type { TermDefinitionSet, ViewerExtraSetProperties, UserProfile } from "../../types";

@@ -137,7 +137,7 @@ export default function () {
                 }
             },
             {
-                path: '/:type(set|quizlet)/:id([\\w\\d]+)/view/',
+                path: '/:type(set|quizlet)/:id([\\w\\d]+)/',
                 component: () => import('./views/SetViewerView.vue'),
                 children: [
                     {
@@ -149,11 +149,23 @@ export default function () {
                         }
                     },
                     {
+                        path: 'view/',
+                        redirect: { name: "set-detail" }
+                    },
+                    {
                         path: 'flashcards/',
                         component: () => import('./views/set-viewer/FlashcardsView.vue'),
                         name: "flashcards",
                         meta: {
                             title: "Flashcards"
+                        }
+                    },
+                    {
+                        path: 'learn/',
+                        component: () => import('./views/set-viewer/LearnView.vue'),
+                        name: "learn",
+                        meta: {
+                            title: "Learn"
                         }
                     }
                 ]

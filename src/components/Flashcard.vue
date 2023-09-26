@@ -4,12 +4,12 @@
         <div class="relative w-full h-full transition-transform duration-300 preserve-3d" :class="{ 'rotate-y-180': flipped }">
             <!-- Front -->
             <div class="flex flex-col lg:flex-row gap-6 absolute w-full h-full backface-hidden items-center p-6 cursor-pointer bg-white border border-zinc-200 rounded-lg shadow-sm hover:bg-zinc-100 dark:bg-zinc-800 dark:border-zinc-700 dark:hover:bg-stone-800">
-                <FlashcardImageCarousel :images="frontImages" />
+                <ImageCarousel :images="frontImages" />
                 <p class="lg:grow max-w-full break-words max-h-full overflow-y-auto custom-scrollbar is-thumb-only text-center my-auto" v-html="parsedFront" />
             </div>
             <!-- Back -->
             <div class="rotate-y-180 flex flex-col lg:flex-row gap-6 absolute w-full h-full backface-hidden items-center p-6 cursor-pointer bg-white border border-zinc-200 rounded-lg shadow-sm hover:bg-zinc-100 dark:bg-zinc-800 dark:border-zinc-700 dark:hover:bg-stone-800">
-                <FlashcardImageCarousel :images="backImages" />
+                <ImageCarousel :images="backImages" />
                 <p class="lg:grow max-w-full break-words max-h-full overflow-y-auto custom-scrollbar is-thumb-only text-center my-auto" v-html="parsedBack" />
             </div>
         </div>
@@ -17,7 +17,7 @@
 </template>
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import FlashcardImageCarousel from "./set-viewer/FlashcardImageCarousel.vue";
+import ImageCarousel from "./set-viewer/ImageCarousel.vue";
 import { styleAndSanitizeImages } from "../markdown";
 const props = defineProps<{
     front: string;

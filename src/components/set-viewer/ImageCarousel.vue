@@ -1,7 +1,7 @@
 <template>
-    <div v-if="images.length > 0" class="relative w-full lg:h-full lg:w-auto">
+    <div v-if="images.length > 0" class="relative w-full" :class="{ 'lg:h-full lg:w-auto': !alwaysVertical }">
         <!-- Image -->
-        <img :src="images[currentImage]" class="block rounded-lg lg:max-w-2xl max-h-96 lg:h-full lg:min-w-[16rem] lg:max-h-none w-full object-cover">
+        <img :src="images[currentImage]" class="block rounded-lg max-h-96 w-full object-cover" :class="{ 'lg:max-w-2xl lg:h-full lg:min-w-[16rem] lg:max-h-none': !alwaysVertical }">
         <!-- Slider indicators -->
         <div v-if="images.length > 1" class="absolute flex space-x-3 -translate-x-1/2 bottom-5 left-1/2">
             <button v-for="_, i in images" :key="i" type="button" class="w-3 h-3 rounded-full" :class="currentImage === i ? 'bg-white dark:bg-zinc-700' : 'bg-white/50 dark:bg-zinc-700/50 hover:bg-white dark:hover:bg-zinc-800'" @click.stop="currentImage = i" />
@@ -25,10 +25,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { mod } from "../../utils";
-import { ChevronRightIcon, type ChevronLeftIcon } from '@heroicons/vue/24/outline';
+import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{
-    images: string[]
+    images: string[],
+    alwaysVertical?: boolean
 }>();
 
 const currentImage = ref(0);
