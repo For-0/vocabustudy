@@ -15,7 +15,7 @@ function throwResponseError(error?: { status: string, code: number, message: str
 }
 
 export const Firestore = {
-    dbServer: "https://firestore.googleapis.com/v1/",
+    dbServer: `${FIRESTORE_EMULATOR_URL ?? "https://firestore.googleapis.com"}/v1/`,
     projectPrefix: "projects/vocab-u-study/databases/(default)/documents",
     get baseUrl() {
         return this.dbServer + this.projectPrefix;
@@ -158,9 +158,6 @@ export const Firestore = {
         throwResponseError(json.error);
     }
 };
-
-if (location.hostname === "localhost")
-    Firestore.dbServer = "http://localhost:8080/v1/";
 
 export abstract class BaseFirestoreDocument {
     get id(): string {

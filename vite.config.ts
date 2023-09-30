@@ -4,10 +4,10 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 //import { VitePWA } from "vite-plugin-pwa";
 
-function getAuthEmulatorUrl(mode: string) {
-    if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME}-9099.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/:443`
-    else if (mode !== "production") return "http://localhost:9099";
-    // else if (process.env.GITPOD_WORKSPACE_URL) return `https://${9099}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}/:443`;
+function getEmulatorUrl(mode: string, port: number) {
+    if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME}-${port}.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}:443`
+    else if (process.env.GITPOD_WORKSPACE_URL) return `https://${port}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}:443`;
+    else if (mode !== "production") return `http://localhost:${port}`;
     else return null;
 }
 
@@ -78,7 +78,8 @@ export default defineConfig(async ({ mode }) => {
         define: {
             YEAR: new Date().getFullYear(),
             VERSION: JSON.stringify(process.env.npm_package_version),
-            AUTH_EMULATOR_URL: JSON.stringify(getAuthEmulatorUrl(mode)),
+            AUTH_EMULATOR_URL: JSON.stringify(getEmulatorUrl(mode, 9099)),
+            FIRESTORE_EMULATOR_URL: JSON.stringify(getEmulatorUrl(mode, 8080)),
             WORKERS_ENDPOINT: JSON.stringify(process.env.NODE_ENV === "production" ? "https://api.vocabustudy.org/" : "http://localhost:8787/"),
             DD_URL: JSON.stringify(env.USE_LOCAL_DD ? "http://localhost:8091/" : "https://dd.vocabustudy.org/"),
             SITE_ANALYTICS: JSON.stringify(mode === "production" ? await getSiteAnalytics(env) : { pageViews: 0, uniqueVisitors: 0, numCountries: 0 }),
