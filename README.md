@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/badge/Offline-In%20Progress-yellow?style=for-the-badge" alt="Editable on Chromebooks">
     <br>
     <br>
-<p>Vocabustudy is a <b>simplistic tool</b> for <b>studying Vocabulary</b>. Vocabustudy is created <b>by students, for students</b>.</p>
+<p>Vocabustudy is a <b>simplistic tool</b> for <b>studying Vocabulary</b>. Vocabustudy is created <b>by students, for students</b>.</p>    
     <p>No Ads - Always Free - No Account Needed - Feedback is Welcome!</p>
 </div>
 <h2>What is Nightly?</h2>
