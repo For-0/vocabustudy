@@ -35,94 +35,101 @@
                 </button>
             </div>
             <div class="gap-3 flex flex-col grow p-3 lg:p-6 min-w-0">
-                <div class="grow relative justify-center pt-3 min-h-0 overflow-y-auto custom-scrollbar is-thumb-only">
-                    <p class="opacity-50 font-bold mb-2">{{ answerWith === "term" ? "Definition" : "Term" }}:</p>
-                    <ImageCarousel :images="questionState.questionImages" :always-vertical="true" class="mb-6 max-w-3xl" />
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <p class="grow break-words text-2xl" v-html="questionState.question" />
-                    <button class="text-yellow-600 bg-transparent hover:bg-yellow-600/10 hover:text-yellow-500 absolute right-0 top-0 p-1 h-7 w-7 rounded-lg text-sm inline-flex items-center" title="Star" type="button" @click.stop="$emit('toggle-star', questionState.currentTerm)" @keyup.stop>
-                        <StarSolidIcon v-if="starredTerms.includes(questionState.currentTerm)" class="w-5 h-5" />
-                        <StarOutlineIcon v-else class="w-5 h-5" />
-                    </button>
-                </div>
-                
-                <div v-if="currentSection === 'mc' && questionState.mcqOptions" class="grid gap-3 grid-cols-1 md:grid-cols-2">
-                    <!-- MC Answer Choices -->
-                    <LearnMCButton :content="questionState.mcqOptions[0]" :state="getMcqButtonState(0)" @click="onMcqButtonClicked(0)">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M9.283 4.002V12H7.971V5.338h-.065L6.072 6.656V5.385l1.899-1.383h1.312Z" />
-                            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
-                        </svg>
-                    </LearnMCButton>
-                    <LearnMCButton :content="questionState.mcqOptions[1]" :state="getMcqButtonState(1)" @click="onMcqButtonClicked(1)">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M6.646 6.24v.07H5.375v-.064c0-1.213.879-2.402 2.637-2.402 1.582 0 2.613.949 2.613 2.215 0 1.002-.6 1.667-1.287 2.43l-.096.107-1.974 2.22v.077h3.498V12H5.422v-.832l2.97-3.293c.434-.475.903-1.008.903-1.705 0-.744-.557-1.236-1.313-1.236-.843 0-1.336.615-1.336 1.306Z" />
-                            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
-                        </svg>
-                    </LearnMCButton>
-                    <LearnMCButton :content="questionState.mcqOptions[2]" :state="getMcqButtonState(2)" @click="onMcqButtonClicked(2)">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M7.918 8.414h-.879V7.342h.838c.78 0 1.348-.522 1.342-1.237 0-.709-.563-1.195-1.348-1.195-.79 0-1.312.498-1.348 1.055H5.275c.036-1.137.95-2.115 2.625-2.121 1.594-.012 2.608.885 2.637 2.062.023 1.137-.885 1.776-1.482 1.875v.07c.703.07 1.71.64 1.734 1.917.024 1.459-1.277 2.396-2.93 2.396-1.705 0-2.707-.967-2.754-2.144H6.33c.059.597.68 1.06 1.541 1.066.973.006 1.6-.563 1.588-1.354-.006-.779-.621-1.318-1.541-1.318Z" />
-                            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
-                        </svg>
-                    </LearnMCButton>
-                    <LearnMCButton :content="questionState.mcqOptions[3]" :state="getMcqButtonState(3)" @click="onMcqButtonClicked(3)">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M7.519 5.057c.22-.352.439-.703.657-1.055h1.933v5.332h1.008v1.107H10.11V12H8.85v-1.559H4.978V9.322c.77-1.427 1.656-2.847 2.542-4.265ZM6.225 9.281v.053H8.85V5.063h-.065c-.867 1.33-1.787 2.806-2.56 4.218Z" />
-                            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
-                        </svg>
-                    </LearnMCButton>
-                </div>
-
-                <template v-else>
-                    <div v-if="questionState.hasAnswered && !questionState.frqCorrect" class="max-h-1/4 flex items-center justify-between p-3.5 mb-3.5 text-sm text-emerald-800 border border-emerald-300 rounded-lg bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <span class="break-words min-w-0 max-h-full overflow-y-auto custom-scrollbar is-thumb-only" v-html="questionState.frqCorrectDisplay" />
-                        <CheckCircleIcon class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
-                    </div>
-                    <form @submit.prevent="onFrqSubmit">   
-                        <AccentKeyboard v-if="!questionState.hasAnswered && currentSet.accents.length > 0" :accents="currentSet.accents" class="mb-3" @add-accent="onInputAccent" />
-                        <div class="relative">
-                            <input
-                                ref="frqAnswerInput" v-model="questionState.frqAnswer" type="text"
-                                class="block w-full p-4 text-sm border rounded-lg transition-colors"
-                                :class="{
-                                    'text-zinc-900 border-zinc-300 bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:border-primary': !questionState.hasAnswered,
-                                    'text-emerald-800 border-emerald-300 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800': questionState.hasAnswered && questionState.frqCorrect,
-                                    'text-rose-800 border-rose-300 bg-rose-50 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800': questionState.hasAnswered && !questionState.frqCorrect
-                                }"
-                                :placeholder="`Type the ${answerWith}...`" required :disabled="questionState.hasAnswered"
-                            >
-                            <button v-if="!questionState.hasAnswered" type="submit" class="transition-colors text-white absolute right-2.5 bottom-2.5 bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800">Check</button>
-                            <CheckCircleIcon v-else-if="questionState.frqCorrect" class="right-2.5 bottom-3.5 absolute w-6 h-6 text-emerald-800 dark:text-emerald-400" />
-                            <XCircleIcon v-else class="right-3.5 bottom-3.5 absolute w-6 h-6 text-rose-800 dark:text-rose-400" />
-                        </div>
-                    </form>
+                <template v-if="questionState.isDone">
+                    <h3 class="text-2xl font-bold">All done!</h3>
+                    <p class="text-lg opacity-75 font-bold">You finished Learn mode.</p>
+                    <p class="text-lg font-bold mb-2">Most Missed Terms:</p>
                 </template>
-
-                <div class="flex gap-2 items-center">
-                    <span><strong>{{ Math.round(percentComplete) }}%</strong> Complete</span>
-                    <div class="bg-zinc-200 rounded-full h-2.5 dark:bg-zinc-700 min-w-[10rem] max-w-sm w-1/4">
-                        <div class="bg-primary h-2.5 rounded-full" :style="{ 'width': `${percentComplete}%` }" />
+                <template v-else>
+                    <div class="grow relative justify-center pt-3 min-h-0 overflow-y-auto custom-scrollbar is-thumb-only">
+                        <p class="opacity-50 font-bold mb-2">{{ answerWith === "term" ? "Definition" : "Term" }}:</p>
+                        <ImageCarousel :images="questionState.questionImages" :always-vertical="true" class="mb-6 max-w-3xl" />
+                        <!-- eslint-disable-next-line vue/no-v-html -->
+                        <p class="grow break-words text-2xl" v-html="questionState.question" />
+                        <button class="text-yellow-600 bg-transparent hover:bg-yellow-600/10 hover:text-yellow-500 absolute right-0 top-0 p-1 h-7 w-7 rounded-lg text-sm inline-flex items-center" title="Star" type="button" @click.stop="$emit('toggle-star', questionState.currentTerm)" @keyup.stop>
+                            <StarSolidIcon v-if="starredTerms.includes(questionState.currentTerm)" class="w-5 h-5" />
+                            <StarOutlineIcon v-else class="w-5 h-5" />
+                        </button>
                     </div>
-                    <button class="ml-auto font-medium mr-2 text-sm opacity-75 hover:opacity-100" :class="{ 'invisible': !questionState.hasAnswered }" @click="overrideResult">
-                        Override: I was {{ isCorrect ? "in" : "" }}correct
-                    </button>
-                    <button
-                        type="button"
-                        class="border focus:outline-none focus:ring-4 font-medium inline-flex items-center rounded-lg text-sm px-5 py-2.5"
-                        :class="questionState.hasAnswered ? 'text-white border-transparent bg-emerald-700 hover:bg-emerald-800 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800' : 'text-zinc-900 bg-white border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700'"
-                        @click="onNextButtonClick"
-                    >
-                        <!--
-                            If they haven't answered, "Skip"
-                            If they have, and there are terms left, "Next" (There are terms left if upcomingTerms.length > 0, or if we are only in the MCQ sectoin)
-                            Else, "Finish"
-                        -->
-                        {{ !questionState.hasAnswered ? "Skip" : currentSection === "mc" ? "Next" : upcomingTerms.length === 0 ? "Finish" : "Next" }}
-                        <ArrowRightIcon class="w-5 h-5 ml-2" aria-hidden="true" />
-                    </button>
-                </div>
+                    
+                    <div v-if="currentSection === 'mc' && questionState.mcqOptions" class="grid gap-3 grid-cols-1 md:grid-cols-2">
+                        <!-- MC Answer Choices -->
+                        <LearnMCButton :content="questionState.mcqOptions[0]" :state="getMcqButtonState(0)" @click="onMcqButtonClicked(0)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M9.283 4.002V12H7.971V5.338h-.065L6.072 6.656V5.385l1.899-1.383h1.312Z" />
+                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
+                            </svg>
+                        </LearnMCButton>
+                        <LearnMCButton :content="questionState.mcqOptions[1]" :state="getMcqButtonState(1)" @click="onMcqButtonClicked(1)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M6.646 6.24v.07H5.375v-.064c0-1.213.879-2.402 2.637-2.402 1.582 0 2.613.949 2.613 2.215 0 1.002-.6 1.667-1.287 2.43l-.096.107-1.974 2.22v.077h3.498V12H5.422v-.832l2.97-3.293c.434-.475.903-1.008.903-1.705 0-.744-.557-1.236-1.313-1.236-.843 0-1.336.615-1.336 1.306Z" />
+                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
+                            </svg>
+                        </LearnMCButton>
+                        <LearnMCButton :content="questionState.mcqOptions[2]" :state="getMcqButtonState(2)" @click="onMcqButtonClicked(2)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M7.918 8.414h-.879V7.342h.838c.78 0 1.348-.522 1.342-1.237 0-.709-.563-1.195-1.348-1.195-.79 0-1.312.498-1.348 1.055H5.275c.036-1.137.95-2.115 2.625-2.121 1.594-.012 2.608.885 2.637 2.062.023 1.137-.885 1.776-1.482 1.875v.07c.703.07 1.71.64 1.734 1.917.024 1.459-1.277 2.396-2.93 2.396-1.705 0-2.707-.967-2.754-2.144H6.33c.059.597.68 1.06 1.541 1.066.973.006 1.6-.563 1.588-1.354-.006-.779-.621-1.318-1.541-1.318Z" />
+                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
+                            </svg>
+                        </LearnMCButton>
+                        <LearnMCButton :content="questionState.mcqOptions[3]" :state="getMcqButtonState(3)" @click="onMcqButtonClicked(3)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M7.519 5.057c.22-.352.439-.703.657-1.055h1.933v5.332h1.008v1.107H10.11V12H8.85v-1.559H4.978V9.322c.77-1.427 1.656-2.847 2.542-4.265ZM6.225 9.281v.053H8.85V5.063h-.065c-.867 1.33-1.787 2.806-2.56 4.218Z" />
+                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
+                            </svg>
+                        </LearnMCButton>
+                    </div>
+
+                    <template v-else>
+                        <div v-if="questionState.hasAnswered && !questionState.frqCorrect" class="max-h-1/4 flex items-center justify-between p-3.5 mb-3.5 text-sm text-emerald-800 border border-emerald-300 rounded-lg bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span class="break-words min-w-0 max-h-full overflow-y-auto custom-scrollbar is-thumb-only" v-html="questionState.frqCorrectDisplay" />
+                            <CheckCircleIcon class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
+                        </div>
+                        <form @submit.prevent="onFrqSubmit">   
+                            <AccentKeyboard v-if="!questionState.hasAnswered && currentSet.accents.length > 0" :accents="currentSet.accents" class="mb-3" @add-accent="onInputAccent" />
+                            <div class="relative">
+                                <input
+                                    ref="frqAnswerInput" v-model="questionState.frqAnswer" type="text"
+                                    class="block w-full p-4 text-sm border rounded-lg transition-colors"
+                                    :class="{
+                                        'text-zinc-900 border-zinc-300 bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:border-primary': !questionState.hasAnswered,
+                                        'text-emerald-800 border-emerald-300 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800': questionState.hasAnswered && questionState.frqCorrect,
+                                        'text-rose-800 border-rose-300 bg-rose-50 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800': questionState.hasAnswered && !questionState.frqCorrect
+                                    }"
+                                    :placeholder="`Type the ${answerWith}...`" required :disabled="questionState.hasAnswered"
+                                >
+                                <button v-if="!questionState.hasAnswered" type="submit" class="transition-colors text-white absolute right-2.5 bottom-2.5 bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800">Check</button>
+                                <CheckCircleIcon v-else-if="questionState.frqCorrect" class="right-2.5 bottom-3.5 absolute w-6 h-6 text-emerald-800 dark:text-emerald-400" />
+                                <XCircleIcon v-else class="right-3.5 bottom-3.5 absolute w-6 h-6 text-rose-800 dark:text-rose-400" />
+                            </div>
+                        </form>
+                    </template>
+
+                    <div class="flex gap-2 items-center">
+                        <span><strong>{{ Math.round(percentComplete) }}%</strong> Complete</span>
+                        <div class="bg-zinc-200 rounded-full h-2.5 dark:bg-zinc-700 min-w-[10rem] max-w-sm w-1/4">
+                            <div class="bg-primary h-2.5 rounded-full" :style="{ 'width': `${percentComplete}%` }" />
+                        </div>
+                        <button class="ml-auto font-medium mr-2 text-sm opacity-75 hover:opacity-100" :class="{ 'invisible': !questionState.hasAnswered }" @click="overrideResult">
+                            Override: I was {{ isCorrect ? "in" : "" }}correct
+                        </button>
+                        <button
+                            type="button"
+                            class="border focus:outline-none focus:ring-4 font-medium inline-flex items-center rounded-lg text-sm px-5 py-2.5"
+                            :class="questionState.hasAnswered ? 'text-white border-transparent bg-emerald-700 hover:bg-emerald-800 focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800' : 'text-zinc-900 bg-white border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700'"
+                            @click="onNextButtonClick"
+                        >
+                            <!--
+                                If they haven't answered, "Skip"
+                                If they have, and there are terms left, "Next" (There are terms left if upcomingTerms.length > 0, or if we are only in the MCQ sectoin)
+                                Else, "Finish"
+                            -->
+                            {{ !questionState.hasAnswered ? "Skip" : currentSection === "mc" ? "Next" : upcomingTerms.length === 0 ? "Finish" : "Next" }}
+                            <ArrowRightIcon class="w-5 h-5 ml-2" aria-hidden="true" />
+                        </button>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -173,6 +180,7 @@ const questionState = ref<{
     questionImages: string[];
     // Whether the user has answered the question
     hasAnswered: boolean;
+    isDone: boolean;
 }>({
     currentTerm: 0,
     mcqOptions: null,
@@ -183,7 +191,8 @@ const questionState = ref<{
     frqCorrectDisplay: "",
     question: "",
     questionImages: [],
-    hasAnswered: false
+    hasAnswered: false,
+    isDone: false
 });
 const optionsExpanded = ref(false);
 
@@ -215,6 +224,7 @@ const getMcqButtonState = (index: number) => {
 
 function restart(section: LearnSection = "mc") {
     currentSection.value = section;
+    questionState.value.isDone = false;
     upcomingTerms.value = getDefaultList();
     nextQuestion();
 }
@@ -224,6 +234,7 @@ function nextQuestion() {
         if (currentSection.value === "mc") {
             restart("fr");
         } else {
+            questionState.value.isDone = true;
             // TODO: Show end screen
         }
     } else {
@@ -245,8 +256,28 @@ function nextQuestion() {
     }
 }
 
-function overrideResult() {
+function applyQuestionResult(wasCorrect: boolean) {
+    if (wasCorrect) {
+        // Remove the current term
+        upcomingTerms.value.splice(upcomingTerms.value.indexOf(questionState.value.currentTerm), 1);
+    } else {
+        // Add the current term again
+        upcomingTerms.value.push(questionState.value.currentTerm);
+    }
+}
 
+function overrideResult() {
+    if (isCorrect.value) {
+        // They selected Override: Incorrect, so add the current term back in twice
+        upcomingTerms.value.push(questionState.value.currentTerm, questionState.value.currentTerm);
+    } else {
+        // Override: Correct. The last term in the list will always be the current term (we pushed it in applyQuestionResult)
+        upcomingTerms.value.pop();
+        // Then just splice the other instance of it
+        applyQuestionResult(true);
+    }
+
+    nextQuestion();
 }
 
 function onKeyPress(e: KeyboardEvent) {
@@ -279,7 +310,7 @@ function onNextButtonClick() {
         upcomingTerms.value.shift();
         questionState.value.hasAnswered = true;
         questionState.value.selectedMcqOption = null;
-        upcomingTerms.value.push(questionState.value.currentTerm);
+        applyQuestionResult(false);
     }
 }
 
@@ -288,13 +319,7 @@ function onMcqButtonClicked(index: number) {
     questionState.value.hasAnswered = true;
     questionState.value.selectedMcqOption = index;
 
-    if (index === questionState.value.correctMcqOption) {
-        // Remove the current term
-        upcomingTerms.value.splice(upcomingTerms.value.indexOf(questionState.value.currentTerm), 1);
-    } else {
-        // Add the current term again
-        upcomingTerms.value.push(questionState.value.currentTerm);
-    }
+    applyQuestionResult(index === questionState.value.correctMcqOption);
 }
 
 function onFrqSubmit() {
@@ -303,13 +328,7 @@ function onFrqSubmit() {
     const correctAnswer = props.currentSet.terms[questionState.value.currentTerm][answerWith.value];
     questionState.value.frqCorrect = checkAnswers(questionState.value.frqAnswer, correctAnswer);
 
-    if (questionState.value.frqCorrect) {
-        // Remove the current term
-        upcomingTerms.value.splice(upcomingTerms.value.indexOf(questionState.value.currentTerm), 1);
-    } else {
-        // Add the current term again
-        upcomingTerms.value.push(questionState.value.currentTerm);
-    }
+    applyQuestionResult(questionState.value.frqCorrect);
 }
 
 onMounted(() => {
