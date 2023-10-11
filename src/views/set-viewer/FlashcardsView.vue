@@ -174,11 +174,11 @@ function goToTerm(listIndex: number) {
 }
 
 function onKeyUp(e: KeyboardEvent) {
-    if (e.code === "ArrowRight") {
+    if (e.key === "ArrowRight") {
         goToTerm(currentListIndex.value + 1);
-    } else if (e.code === "ArrowLeft") {
+    } else if (e.key === "ArrowLeft") {
         goToTerm(currentListIndex.value - 1);
-    } else if (e.code === "Space") {
+    } else if (e.key === " ") {
         flip();
     }
 }

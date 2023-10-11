@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-    <div ref="root" class="group w-full h-full lg:aspect-video lg:h-auto font-normal text-zinc-900 dark:text-white text-xl bg-transparent perspective">
+    <div ref="root" class="group w-full h-full lg:aspect-video lg:h-auto max-h-full font-normal text-zinc-900 dark:text-white text-xl bg-transparent perspective">
         <div class="relative w-full h-full transition-transform duration-300 preserve-3d" :class="{ 'rotate-y-180': flipped }">
             <!-- Front -->
             <div class="flex flex-col lg:flex-row gap-6 absolute w-full h-full backface-hidden items-center p-6 cursor-pointer bg-white border border-zinc-200 rounded-lg shadow-sm hover:bg-zinc-100 dark:bg-zinc-800 dark:border-zinc-700 dark:hover:bg-stone-800">

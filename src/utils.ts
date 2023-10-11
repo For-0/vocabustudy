@@ -5,6 +5,9 @@ import { type Component, createVNode, render, type AppContext } from "vue";
 import BaseToast from "./components/BaseToast.vue";
 import { XMarkIcon, CheckIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
 
+const ignoredCharsRE = /[*_.]/g;
+const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
+
 export async function getLocalDb() {
     return await openDB<VocabustudyDB>("vocabustudy-database", 2, {
         upgrade(db, oldVersion) {
@@ -67,6 +70,15 @@ export function humanizeDate(date: Date) {
     if (diffDays < 30) return `${pluralizeWord("week", Math.floor(diffDays / 7))} ago`;
     if (diffDays < 365) return `${pluralizeWord("month", Math.floor(diffDays / 30))} ago`;
     return `${pluralizeWord("year", Math.floor(diffDays / 365))} ago`;
+}
+
+export function normalizeAnswer(answer: string): string {
+    return answer.replace(ignoredCharsRE, "").replace(mdLinkRE, "").trim();
+}
+export function checkAnswers(answer: string, correct: string) {
+    const cleanAnswer = normalizeAnswer(answer).toUpperCase();
+    const possibleCorrect = [correct, ...correct.split(","), ...correct.split("/")].map(el => el = normalizeAnswer(el).toUpperCase());
+    return possibleCorrect.includes(cleanAnswer);
 }
 
 /**
@@ -177,7 +189,7 @@ export function getRandomChoices(numToGenerate: number, max: number, numToInclud
         const rand = Math.floor(Math.random() * max);
         if (!nums.includes(rand) && rand !== numToInclude) nums.push(rand);
     }
-    if (numToInclude) {
+    if (numToInclude !== undefined) {
         const numToIncludeIndex = Math.floor(Math.random() * (numToGenerate + 1));
         nums.splice(numToIncludeIndex, 0, numToInclude);
     }

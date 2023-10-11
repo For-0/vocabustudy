@@ -1,9 +1,7 @@
 <template>
-    <button :disabled="state !== 'clickable'" type="button" class="break-words max-h-36 md:max-h-64 inline-flex items-center text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 rounded-lg text-lg px-4 py-3.5 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2 shrink-0" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M6.646 6.24v.07H5.375v-.064c0-1.213.879-2.402 2.637-2.402 1.582 0 2.613.949 2.613 2.215 0 1.002-.6 1.667-1.287 2.43l-.096.107-1.974 2.22v.077h3.498V12H5.422v-.832l2.97-3.293c.434-.475.903-1.008.903-1.705 0-.744-.557-1.236-1.313-1.236-.843 0-1.336.615-1.336 1.306Z" />
-            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2Zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2Z" />
-        </svg>
+    <button :disabled="state !== 'clickable'" type="button" class="break-words transition-colors max-h-36 md:max-h-64 inline-flex items-center border focus:outline-none focus:ring-4 rounded-lg text-lg px-4 py-3.5" :class="classes[state]" @click="$emit('click')">
+        <slot />
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <span class="min-w-0 overflow-auto custom-scrollbar is-thumb-only max-h-full" v-html="content" />
     </button>
 </template>
@@ -16,8 +14,14 @@ defineProps<{
     content: string
 }>();
 
+defineEmits<{
+    click: []
+}>();
+
 const classes: Record<ButtonState, string> = {
-    clickable:  "text-zinc-900 bg-white border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700",
-    correct: "text-emerald-500 border-emerald-500 hover:bg-emerald-100"
+    clickable: "text-zinc-900 bg-white border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700",
+    correct: "text-emerald-500 border-emerald-500 bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-400",
+    incorrect: "text-rose-500 border-rose-500 bg-rose-100 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-400",
+    unclickable: "text-zinc-900 bg-white border-zinc-300 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 opacity-50"
 };
 </script>

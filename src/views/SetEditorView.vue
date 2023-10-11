@@ -200,6 +200,7 @@
 </template>
 
 <script setup lang="ts">
+// TODO: Autosave backups
 import { CheckCircleIcon, ChevronDownIcon, XMarkIcon, TagIcon, XCircleIcon } from '@heroicons/vue/20/solid';
 import { PlusCircleIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
 import { onMounted, onUnmounted, ref, getCurrentInstance, computed } from 'vue';

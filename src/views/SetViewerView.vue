@@ -21,12 +21,13 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import type { UserProfile, ViewerPartialSet } from '../types';
+import type { UserProfile, ViewerPartialSet, StudyGuide, TermDefinitionSet } from '../types';
 import { useAuthStore, useCacheStore } from '../store';
 import Loader from '../components/Loader.vue';
 import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
 import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
+import { isStudyGuide } from '../utils';
 
 const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | null>(null);
 const currentSet = ref<ViewerPartialSet | null>(null);
@@ -38,6 +39,9 @@ const creator = ref<UserProfile | null>(null);
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const starredList = ref(getStarredTerms(localStorage.getItem("starred_terms")));
+
+// Anything not in ASCII
+const accentsRe = /[^\p{ASCII}]/gu;
 
 function parseStarredTerms(rawStarredTerms: string | null) {
     return JSON.parse(rawStarredTerms ?? "{}") as Record<string, number[] | undefined>;
@@ -66,6 +70,27 @@ function toggleStar(termIndex: number) {
     saveStarredList();
 }
 
+function addAccents(set: TermDefinitionSet | StudyGuide) {
+    const accents: string[] = [];
+    if (!isStudyGuide(set)) {
+        const accentsSet = new Set<string>();
+        for (const { term, definition } of set.terms) {
+            const termAccents = [...term.match(accentsRe) ?? [], ...definition.match(accentsRe) ?? []];
+            for (const accent of termAccents) {
+                accentsSet.add(accent);
+                accentsSet.add(accent.toUpperCase())
+            }
+        }
+        const collator = new Intl.Collator();
+        accents.push(...accentsSet);
+        accents.sort((a, b) => collator.compare(a, b));
+    }
+    return {
+        ...set,
+        accents
+    };
+}
+
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
     // Edit an existing set
@@ -73,7 +98,7 @@ async function loadInitialSet() {
         const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);
-            currentSet.value = set as ViewerPartialSet;
+            currentSet.value = addAccents(set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
             document.title = document.title.replace("Edit Set", `Edit ${set.name}`);
         } else {
             loadingError.value = "not-found";
@@ -84,7 +109,7 @@ async function loadInitialSet() {
         const setOrError = await detectAndGetQuizletSet(route.params.id);
         if (typeof setOrError === "string") loadingError.value = setOrError;
         else {
-            currentSet.value = setOrError;
+            currentSet.value = addAccents(setOrError) as ViewerPartialSet;
             document.title = document.title.replace("Edit Set", `Edit ${setOrError.name}`);
         }
     } else {
