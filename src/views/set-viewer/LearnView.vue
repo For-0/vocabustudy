@@ -39,6 +39,7 @@
                     <h3 class="text-2xl font-bold">All done!</h3>
                     <p class="text-lg opacity-75 font-bold">You finished Learn mode.</p>
                     <p class="text-lg font-bold mb-2">Most Missed Terms:</p>
+                    <!-- TODO: Render missedTerms -->
                 </template>
                 <template v-else>
                     <div class="grow relative justify-center pt-3 min-h-0 overflow-y-auto custom-scrollbar is-thumb-only">
@@ -195,6 +196,7 @@ const questionState = ref<{
     isDone: false
 });
 const optionsExpanded = ref(false);
+const missedTerms = ref<{ mc: number[], fr: number[] }>({ mc: [], fr: [] });
 
 const percentComplete = computed(() => {
     const total = onlyStarred.value ? props.starredTerms.length : props.currentSet.terms.length;
@@ -205,9 +207,33 @@ const percentComplete = computed(() => {
 
 });
 
-const isCorrect = computed(() => currentSection.value === "mc" ? questionState.value.correctMcqOption === questionState.value.selectedMcqOption : questionState.value.frqCorrect);
+const isCorrect = computed({
+    get() {
+        if (questionState.value.hasAnswered) {
+            if (currentSection.value === "mc") {
+                return questionState.value.correctMcqOption === questionState.value.selectedMcqOption;
+            } else {
+                return questionState.value.frqCorrect;
+            }
+        } else {
+            // If they haven't answered, it's not correct
+            return false;
+        }
+    },
+    set(newValue) {
+        // Change the result
+        if (questionState.value.hasAnswered) {
+            if (currentSection.value === "mc") {
+                questionState.value.selectedMcqOption = newValue ? questionState.value.correctMcqOption : null;
+            } else {
+                questionState.value.frqCorrect = newValue;
+            }
+        }
+    }
+});
 
 const getDefaultList = () => onlyStarred.value ? props.starredTerms.slice() : props.currentSet.terms.map((_, i) => i);
+/** Given a button index, figure out what color it should be */
 const getMcqButtonState = (index: number) => {
     if (questionState.value.hasAnswered) {
         if (index === questionState.value.correctMcqOption) {
@@ -226,24 +252,31 @@ function restart(section: LearnSection = "mc") {
     currentSection.value = section;
     questionState.value.isDone = false;
     upcomingTerms.value = getDefaultList();
+    missedTerms.value = { mc: [], fr: [] };
     nextQuestion();
 }
 
 function nextQuestion() {
     if (upcomingTerms.value.length === 0) {
+        // We're done with the current section
         if (currentSection.value === "mc") {
             restart("fr");
         } else {
             questionState.value.isDone = true;
-            // TODO: Show end screen
         }
     } else {
+        // Choose the current term
         questionState.value.currentTerm = upcomingTerms.value[Math.floor(Math.random() * upcomingTerms.value.length)]
         const currentTerm = props.currentSet.terms[questionState.value.currentTerm];
+
+        // Get the question (depends on what answer with is) and parse it into markdown
         const questionRaw = currentTerm[answerWith.value === "term" ? "definition" : "term"];
         ({ parsed: questionState.value.question, images: questionState.value.questionImages } = styleAndSanitizeImages(questionRaw));
+
         questionState.value.hasAnswered = false;
+
         if (currentSection.value === "mc") {
+            // Generate the MCQ options, look them up, and parse them
             const mcqOptionIndices = getRandomChoices(3, props.currentSet.terms.length, questionState.value.currentTerm);
             questionState.value.mcqOptions = mcqOptionIndices.map(i => styleAndSanitizeImages(props.currentSet.terms[i][answerWith.value]).parsed) as [string, string, string, string];
             questionState.value.correctMcqOption = mcqOptionIndices.indexOf(questionState.value.currentTerm);
@@ -251,31 +284,26 @@ function nextQuestion() {
             questionState.value.frqAnswer = "";
             questionState.value.frqCorrect = false;
             questionState.value.frqCorrectDisplay = styleAndSanitizeImages(currentTerm[answerWith.value]).parsed;
+            // Once vue updates the DOM, focus the input
             void nextTick().then(() => frqAnswerInput.value?.focus());
         }
     }
 }
 
-function applyQuestionResult(wasCorrect: boolean) {
-    if (wasCorrect) {
+function applyQuestionResult() {
+    if (isCorrect.value) {
         // Remove the current term
         upcomingTerms.value.splice(upcomingTerms.value.indexOf(questionState.value.currentTerm), 1);
     } else {
         // Add the current term again
         upcomingTerms.value.push(questionState.value.currentTerm);
+        missedTerms.value[currentSection.value].push(questionState.value.currentTerm);
     }
 }
 
 function overrideResult() {
-    if (isCorrect.value) {
-        // They selected Override: Incorrect, so add the current term back in twice
-        upcomingTerms.value.push(questionState.value.currentTerm, questionState.value.currentTerm);
-    } else {
-        // Override: Correct. The last term in the list will always be the current term (we pushed it in applyQuestionResult)
-        upcomingTerms.value.pop();
-        // Then just splice the other instance of it
-        applyQuestionResult(true);
-    }
+    isCorrect.value = !isCorrect.value;
+    applyQuestionResult();
 
     nextQuestion();
 }
@@ -294,23 +322,26 @@ function onKeyPress(e: KeyboardEvent) {
 
 function onInputAccent(accent: string) {
     if (frqAnswerInput.value && frqAnswerInput.value === document.activeElement) {
+        // If the user is typing in the input, insert the accent at the cursor
         const { selectionStart, selectionEnd } = frqAnswerInput.value;
         if (selectionStart !== null && selectionEnd !== null)
             frqAnswerInput.value.setRangeText(accent, selectionStart, selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
     } else {
+        // Otherwise, append the accent to the end of the input
         questionState.value.frqAnswer += accent;
     }
 }
 
 function onNextButtonClick() {
     if (questionState.value.hasAnswered) {
+        // Apply the progress
+        applyQuestionResult();
         nextQuestion();
     } else {
         // Skip question
-        upcomingTerms.value.shift();
         questionState.value.hasAnswered = true;
         questionState.value.selectedMcqOption = null;
-        applyQuestionResult(false);
+        questionState.value.frqCorrect = false;
     }
 }
 
@@ -318,8 +349,6 @@ function onMcqButtonClicked(index: number) {
     if (questionState.value.hasAnswered || currentSection.value !== "mc") return;
     questionState.value.hasAnswered = true;
     questionState.value.selectedMcqOption = index;
-
-    applyQuestionResult(index === questionState.value.correctMcqOption);
 }
 
 function onFrqSubmit() {
@@ -327,8 +356,6 @@ function onFrqSubmit() {
     questionState.value.hasAnswered = true;
     const correctAnswer = props.currentSet.terms[questionState.value.currentTerm][answerWith.value];
     questionState.value.frqCorrect = checkAnswers(questionState.value.frqAnswer, correctAnswer);
-
-    applyQuestionResult(questionState.value.frqCorrect);
 }
 
 onMounted(() => {
