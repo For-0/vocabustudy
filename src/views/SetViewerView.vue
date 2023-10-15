@@ -11,7 +11,7 @@
             }}
         </div>
         <router-view v-else-if="currentSet" v-slot="{ Component }">
-            <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" />
+            <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" @star-all="starAll" />
         </router-view>
         <div v-else class="w-full h-full flex items-center justify-center dark:text-white text-3xl">
             <Loader class="w-10 h-10 mr-3" :size="2" />
@@ -66,7 +66,12 @@ function saveStarredList() {
 
 function toggleStar(termIndex: number) {
     if (starredList.value.includes(termIndex)) starredList.value = starredList.value.filter(i => i !== termIndex);
-    else starredList.value = [...starredList.value, termIndex];
+    else starredList.value = starredList.value.concat(termIndex);
+    saveStarredList();
+}
+
+function starAll(termIndices: number[]) {
+    starredList.value = starredList.value.concat(termIndices.filter(el => !starredList.value.includes(el)));
     saveStarredList();
 }
 

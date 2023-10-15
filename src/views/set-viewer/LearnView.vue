@@ -25,7 +25,7 @@
                         <label for="learn-answer-with-definition" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Definition</label>
                     </div>
                     <div class="flex items-center mb-4">
-                        <input id="learn-only-starred" v-model="onlyStarred" type="checkbox" class="cursor-pointer w-4 h-4 text-yellow-500 bg-zinc-100 border-zinc-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
+                        <input id="learn-only-starred" v-model="onlyStarredCheck" type="checkbox" class="cursor-pointer w-4 h-4 text-yellow-500 bg-zinc-100 border-zinc-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
                         <label for="learn-only-starred" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Only Starred</label>
                     </div>
                     <button type="button" class="text-zinc-900 bg-white border mb-4 border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="restart()">Restart</button>
@@ -34,12 +34,42 @@
                     <ChevronDownIcon class="w-6 h-6 transition-transform" :class="{ 'rotate-180': optionsExpanded }" />
                 </button>
             </div>
-            <div class="gap-3 flex flex-col grow p-3 lg:p-6 min-w-0">
+            <div class="flex flex-col grow p-3 lg:p-6 min-w-0" :class="{ 'gap-3': !questionState.isDone }">
                 <template v-if="questionState.isDone">
-                    <h3 class="text-2xl font-bold">All done!</h3>
-                    <p class="text-lg opacity-75 font-bold">You finished Learn mode.</p>
-                    <p class="text-lg font-bold mb-2">Most Missed Terms:</p>
-                    <!-- TODO: Render missedTerms -->
+                    <h3 class="text-4xl font-bold">All done!</h3>
+                    <p class="opacity-75 mb-4 text-xl">You finished Learn mode.</p>
+                    <template v-if="missedTerms.size > 0">
+                        <p class="text-lg font-bold mb-2">Most Missed Terms:</p>
+                        <button class="self-start mb-2 text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-amber-300 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center mr-2 dark:focus:ring-amber-900" type="button" @click="starAllMissed">
+                            <StarOutlineIcon class="w-3 h-3 mr-2" />
+                            Star All Terms
+                        </button>
+                        <div class="relative overflow-y-auto shadow-md rounded-lg custom-scrollbar is-thumb-only">
+                            <table class="w-full text-sm text-left text-zinc-500 dark:text-zinc-400">
+                                <thead class="text-xs text-zinc-700 uppercase bg-zinc-50 dark:bg-zinc-700 dark:text-zinc-400 whitespace-nowrap">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Term</th>
+                                        <th scope="col" class="px-6 py-3">MCQs Missed</th>
+                                        <th scope="col" class="px-6 py-3">FRQs Missed</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="overflow-wrap: anywhere;">
+                                    <tr v-for="[i, item], rowIndex in missedTerms" :key="i" class="border-b dark:border-zinc-700" :class="rowIndex % 2 === 0 ? 'bg-white dark:bg-zinc-900' : 'bg-zinc-50 dark:bg-zinc-800'">
+                                        <th scope="row" class="px-6 py-4 font-medium text-zinc-900 dark:text-white">
+                                            {{ currentSet.terms[i].term }}
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            {{ item.mc }}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            {{ item.fr }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </template>
+                    <p v-else class="text-lg font-bold mb-2">No terms missed!</p>
                 </template>
                 <template v-else>
                     <div class="grow relative justify-center pt-3 min-h-0 overflow-y-auto custom-scrollbar is-thumb-only">
@@ -140,8 +170,8 @@
 import { ChevronDownIcon, StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
 import type { TermDefinitionSet, ViewerExtraSetProperties, UserProfile } from "../../types";
-import { ref, onMounted, onUnmounted, computed, nextTick } from "vue";
-import { getRandomChoices, checkAnswers } from "../../utils";
+import { ref, onMounted, onUnmounted, computed, nextTick, getCurrentInstance } from "vue";
+import { getRandomChoices, checkAnswers, showWarningToast, showSuccessToast } from "../../utils";
 import { styleAndSanitizeImages } from "../../markdown";
 import ImageCarousel from "../../components/set-viewer/ImageCarousel.vue";
 import LearnMCButton from "../../components/set-viewer/LearnMCButton.vue";
@@ -156,13 +186,15 @@ const props = defineProps<{
     starredTerms: number[];
 }>();
 
-defineEmits<{
-    "toggle-star": [term: number]
+const emit = defineEmits<{
+    "toggle-star": [term: number];
+    "star-all": [termIndices: number[]];
 }>();
 
 const answerWith = ref<"term" | "definition">("term");
 const upcomingTerms = ref<number[]>([]);
 const currentSection = ref<LearnSection>("mc");
+const onlyStarredCheck = ref(false);
 const onlyStarred = ref(false);
 const frqAnswerInput = ref<HTMLInputElement | null>(null);
 const questionState = ref<{
@@ -196,7 +228,8 @@ const questionState = ref<{
     isDone: false
 });
 const optionsExpanded = ref(false);
-const missedTerms = ref<{ mc: number[], fr: number[] }>({ mc: [], fr: [] });
+const missedTerms = ref<Map<number, { mc: number, fr: number }>>(new Map());
+const currentInstance = getCurrentInstance();
 
 const percentComplete = computed(() => {
     const total = onlyStarred.value ? props.starredTerms.length : props.currentSet.terms.length;
@@ -251,8 +284,15 @@ const getMcqButtonState = (index: number) => {
 function restart(section: LearnSection = "mc") {
     currentSection.value = section;
     questionState.value.isDone = false;
+    // Make sure we have enough starred terms
+    onlyStarred.value = onlyStarredCheck.value && props.starredTerms.length >= 1;
+    if (onlyStarredCheck.value && !onlyStarred.value) {
+        showWarningToast("You don't have any starred terms.", currentInstance?.appContext, 5000);
+        onlyStarredCheck.value = false;
+    }
     upcomingTerms.value = getDefaultList();
-    missedTerms.value = { mc: [], fr: [] };
+    if (section === "mc")
+        missedTerms.value.clear();
     nextQuestion();
 }
 
@@ -297,7 +337,12 @@ function applyQuestionResult() {
     } else {
         // Add the current term again
         upcomingTerms.value.push(questionState.value.currentTerm);
-        missedTerms.value[currentSection.value].push(questionState.value.currentTerm);
+        const questionMissedTerms =
+            // get the current term's missed terms, or
+            missedTerms.value.get(questionState.value.currentTerm) ??
+            // create a new missed terms object and add it to the map
+            (missedTerms.value.set(questionState.value.currentTerm, { mc: 0, fr: 0 }), missedTerms.value.get(questionState.value.currentTerm)!);
+        questionMissedTerms[currentSection.value]++;
     }
 }
 
@@ -306,6 +351,11 @@ function overrideResult() {
     applyQuestionResult();
 
     nextQuestion();
+}
+
+function starAllMissed() {
+    emit("star-all", [...missedTerms.value.keys()]);
+    showSuccessToast("All terms starred", currentInstance?.appContext, 5000);
 }
 
 function onKeyPress(e: KeyboardEvent) {
