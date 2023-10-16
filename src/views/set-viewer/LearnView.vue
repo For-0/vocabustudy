@@ -11,29 +11,9 @@
             </button>
         </div>
         <div class="grow flex relative min-h-0">
-            <div class="w-full absolute lg:static lg:w-48 lg:pb-6 z-30 lg:z-auto shrink-0">
-                <!-- Configuration -->
-                <!-- TODO: Make some of this a component? -->
-                <div class="p-3 lg:block bg-zinc-100 dark:bg-zinc-900 flex flex-col items-start lg:bg-transparent" :class="{ 'hidden': !optionsExpanded }">
-                    <p class="font-semibold mb-2">Answer With:</p>
-                    <div class="flex items-center mb-2">
-                        <input id="learn-answer-with-term" v-model="answerWith" type="radio" value="term" name="flashcard-answer-with" class="cursor-pointer w-4 h-4 text-primary bg-zinc-100 border-zinc-300 focus:ring-primary dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
-                        <label for="learn-answer-with-term" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Term</label>
-                    </div>
-                    <div class="flex items-center mb-4">
-                        <input id="learn-answer-with-definition" v-model="answerWith" type="radio" value="definition" name="flashcard-answer-with" class="cursor-pointer w-4 h-4 text-primary bg-zinc-100 border-zinc-300 focus:ring-primary dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
-                        <label for="learn-answer-with-definition" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Definition</label>
-                    </div>
-                    <div class="flex items-center mb-4">
-                        <input id="learn-only-starred" v-model="onlyStarredCheck" type="checkbox" class="cursor-pointer w-4 h-4 text-yellow-500 bg-zinc-100 border-zinc-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
-                        <label for="learn-only-starred" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Only Starred</label>
-                    </div>
-                    <button type="button" class="text-zinc-900 bg-white border mb-4 border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="restart()">Restart</button>
-                </div>
-                <button class="absolute lg:hidden bottom-0 left-1/2 -translate-x-1/2 text-zinc-400 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 p-2 rounded-full text-sm inline-flex items-center" type="button" :class="{ 'translate-y-1/2': optionsExpanded, 'translate-y-full rounded-t-none': !optionsExpanded }" @click="optionsExpanded = !optionsExpanded">
-                    <ChevronDownIcon class="w-6 h-6 transition-transform" :class="{ 'rotate-180': optionsExpanded }" />
-                </button>
-            </div>
+            <StudyModeConfiguration v-model:answer-with="answerWith" v-model:only-starred="onlyStarredCheck">
+                <button type="button" class="text-zinc-900 bg-white border mb-4 border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="restart()">Restart</button>
+            </StudyModeConfiguration>
             <div class="flex flex-col grow p-3 lg:p-6 min-w-0" :class="{ 'gap-3': !questionState.isDone }">
                 <template v-if="questionState.isDone">
                     <h3 class="text-4xl font-bold">All done!</h3>
@@ -137,7 +117,7 @@
                         </form>
                     </template>
 
-                    <div class="flex gap-2 items-center">
+                    <div class="flex gap-2 items-center flex-wrap">
                         <span><strong>{{ Math.round(percentComplete) }}%</strong> Complete</span>
                         <div class="bg-zinc-200 rounded-full h-2.5 dark:bg-zinc-700 min-w-[10rem] max-w-sm w-1/4">
                             <div class="bg-primary h-2.5 rounded-full" :style="{ 'width': `${percentComplete}%` }" />
@@ -167,9 +147,9 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronDownIcon, StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
-import type { TermDefinitionSet, ViewerExtraSetProperties, UserProfile } from "../../types";
+import type { TermDefinitionSet, ViewerExtraSetProperties } from "../../types";
 import { ref, onMounted, onUnmounted, computed, nextTick, getCurrentInstance } from "vue";
 import { getRandomChoices, checkAnswers, showWarningToast, showSuccessToast } from "../../utils";
 import { styleAndSanitizeImages } from "../../markdown";
@@ -177,12 +157,12 @@ import ImageCarousel from "../../components/set-viewer/ImageCarousel.vue";
 import LearnMCButton from "../../components/set-viewer/LearnMCButton.vue";
 import { ArrowRightIcon, CheckCircleIcon, XCircleIcon } from "@heroicons/vue/20/solid";
 import AccentKeyboard from "../../components/set-viewer/AccentKeyboard.vue";
+import StudyModeConfiguration from "../../components/set-viewer/StudyModeConfiguration.vue";
 
 type LearnSection = "mc" | "fr";
 
 const props = defineProps<{
     currentSet: TermDefinitionSet & ViewerExtraSetProperties;
-    creator: UserProfile;
     starredTerms: number[];
 }>();
 
@@ -227,7 +207,7 @@ const questionState = ref<{
     hasAnswered: false,
     isDone: false
 });
-const optionsExpanded = ref(false);
+
 const missedTerms = ref<Map<number, { mc: number, fr: number }>>(new Map());
 const currentInstance = getCurrentInstance();
 

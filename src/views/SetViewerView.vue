@@ -82,7 +82,7 @@ function addAccents(set: TermDefinitionSet | StudyGuide) {
         for (const { term, definition } of set.terms) {
             const termAccents = [...term.match(accentsRe) ?? [], ...definition.match(accentsRe) ?? []];
             for (const accent of termAccents) {
-                accentsSet.add(accent);
+                accentsSet.add(accent.toLowerCase());
                 accentsSet.add(accent.toUpperCase())
             }
         }

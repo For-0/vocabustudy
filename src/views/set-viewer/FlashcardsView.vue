@@ -14,38 +14,19 @@
             </button>
         </div>
         <div class="grow flex relative s">
-            <div class="w-full absolute lg:static lg:w-48 lg:pb-6 z-30 lg:z-auto">
-                <!-- Configuration -->
-                <div class="p-3 lg:block bg-zinc-100 dark:bg-zinc-900 flex flex-col items-start lg:bg-transparent" :class="{ 'hidden': !optionsExpanded }">
-                    <p class="font-semibold mb-2">Answer With:</p>
-                    <div class="flex items-center mb-2">
-                        <input id="flashcard-answer-with-term" v-model="answerWith" type="radio" value="term" name="flashcard-answer-with" class="cursor-pointer w-4 h-4 text-primary bg-zinc-100 border-zinc-300 focus:ring-primary dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
-                        <label for="flashcard-answer-with-term" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Term</label>
+            <StudyModeConfiguration v-model:only-starred="onlyStarred" v-model:answer-with="answerWith">
+                <button type="button" class="text-zinc-900 bg-white border mb-4 border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="shuffleList">Shuffle</button>
+                <form class=" mt-auto z-30" @submit.prevent="goToTerm(gotoInputValue! - 1)">
+                    <label for="flashcards-goto" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Go To:</label>
+                    <div class="relative">
+                        <input id="flashcards-goto" v-model="gotoInputValue" required min="1" :max="currentList.length" type="number" class="block w-full p-2 text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 sm:text-xs focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:border-primary">
+                        <button type="submit" class="text-white absolute right-1 top-1/2 -translate-y-1/2 hover:bg-primary-alt focus:ring-2 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm p-1.5 bg-primary">
+                            <ChevronDoubleRightIcon class="w-3 h-3" />
+                        </button>
                     </div>
-                    <div class="flex items-center mb-4">
-                        <input id="flashcard-answer-with-definition" v-model="answerWith" type="radio" value="definition" name="flashcard-answer-with" class="cursor-pointer w-4 h-4 text-primary bg-zinc-100 border-zinc-300 focus:ring-primary dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
-                        <label for="flashcard-answer-with-definition" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Definition</label>
-                    </div>
-                    <div class="flex items-center mb-4">
-                        <input id="flashcard-only-starred" v-model="onlyStarred" type="checkbox" class="cursor-pointer w-4 h-4 text-yellow-500 bg-zinc-100 border-zinc-300 rounded focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600">
-                        <label for="flashcard-only-starred" class="cursor-pointer ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-300">Only Starred</label>
-                    </div>
-                    <button type="button" class="text-zinc-900 bg-white border mb-4 border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700" @click="shuffleList">Shuffle</button>
-                    <form class=" mt-auto z-30" @submit.prevent="goToTerm(gotoInputValue! - 1)">
-                        <label for="flashcards-goto" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Go To:</label>
-                        <div class="relative">
-                            <input id="flashcards-goto" v-model="gotoInputValue" required min="1" :max="currentList.length" type="number" class="block w-full p-2 text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 sm:text-xs focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white dark:focus:border-primary">
-                            <button type="submit" class="text-white absolute right-1 top-1/2 -translate-y-1/2 hover:bg-primary-alt focus:ring-2 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm p-1.5 bg-primary">
-                                <ChevronDoubleRightIcon class="w-3 h-3" />
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                </form>
+            </StudyModeConfiguration>
                 
-                <button class="absolute lg:hidden bottom-0 left-1/2 -translate-x-1/2 text-zinc-400 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 p-2 rounded-full text-sm inline-flex items-center" type="button" :class="{ 'translate-y-1/2': optionsExpanded, 'translate-y-full rounded-t-none': !optionsExpanded }" @click="optionsExpanded = !optionsExpanded">
-                    <ChevronDownIcon class="w-6 h-6 transition-transform" :class="{ 'rotate-180': optionsExpanded }" />
-                </button>
-            </div>
             <div class="gap-3 lg:gap-6 flex flex-col grow p-3 lg:p-6">
                 <div class="grow relative max-w-6xl w-full mx-auto flex items-center justify-center" @click="flip">
                     <!-- There are two flashcards so we can animate them moving in and out -->
@@ -83,17 +64,17 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowLeftIcon, ArrowPathIcon, ArrowRightIcon, ChevronDownIcon, Square2StackIcon, StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { ArrowLeftIcon, ArrowPathIcon, ArrowRightIcon, Square2StackIcon, StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
 import { ChevronDoubleRightIcon } from "@heroicons/vue/20/solid";
-import type { TermDefinitionSet, ViewerExtraSetProperties, UserProfile } from "../../types";
+import type { TermDefinitionSet, ViewerExtraSetProperties } from "../../types";
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import Flashcard from "../../components/Flashcard.vue";
 import { shuffle } from "../../utils";
+import StudyModeConfiguration from "../../components/set-viewer/StudyModeConfiguration.vue";
 
 const props = defineProps<{
     currentSet: TermDefinitionSet & ViewerExtraSetProperties;
-    creator: UserProfile;
     starredTerms: number[];
 }>();
 
@@ -106,7 +87,6 @@ const currentList = ref<number[]>([]);
 const onlyStarred = ref(false);
 const currentListIndex = ref(0);
 const gotoInputValue = ref<number | null>(null);
-const optionsExpanded = ref(false);
 
 enum FlashcardElementPosition {
     Left,
