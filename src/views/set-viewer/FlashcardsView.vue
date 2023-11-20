@@ -8,10 +8,10 @@
                 <h2 class="text-xl font-bold">{{ currentSet.name }}</h2>
                 <p class="font-semibold">{{ currentListIndex + 1 }} / {{ currentList.length }} terms</p>
             </div>
-            <button type="button" class="text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
+            <router-link :to="{ name: 'set-detail', params: { id: currentSet.pathParts[currentSet.pathParts.length - 1] } }" class="text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
                 <XMarkIcon class="w-6 h-6" aria-hidden="true" />
                 <span class="sr-only">Close</span>
-            </button>
+            </router-link>
         </div>
         <div class="grow flex relative s">
             <StudyModeConfiguration v-model:only-starred="onlyStarred" v-model:answer-with="answerWith">

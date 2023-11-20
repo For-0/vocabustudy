@@ -16,6 +16,16 @@
         
             <ProfileDate v-if="creator" :profile="creator" :date="currentSet.creationTime" />
         </div>
+        <div class="flex flex-wrap gap-3 mb-3">
+            <router-link
+                v-for="{ name, routeName, icon } in studyModes" :key="routeName"
+                :to="{ name: routeName, params: { id: currentSet.pathParts[currentSet.pathParts.length - 1] } }"
+                class="px-5 py-3 text-base font-medium text-center inline-flex items-center text-white bg-primary rounded-lg hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50"
+            >
+                <component :is="icon" class="w-5 h-5 text-white me-2" />
+                {{ name }}
+            </router-link>
+        </div>
         <!-- Study Guide -->
         <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-800">
         <template v-if="isStudyGuide(currentSet)">
@@ -148,12 +158,14 @@ import { styleAndSanitize } from '../../markdown';
 import type { FieldTransform, ViewerPartialSet, StudyGuideQuiz, StudyGuideReading, UserProfile } from "../../types";
 import ProfileDate from '../../components/ProfileDate.vue';
 import { computed, getCurrentInstance, ref, onMounted } from 'vue';
-import { DocumentTextIcon, HeartIcon as HeartOutlineIcon, StarIcon as StarOutlineIcon } from "@heroicons/vue/24/outline";
+import { DocumentTextIcon, HeartIcon as HeartOutlineIcon, Square2StackIcon, StarIcon as StarOutlineIcon, PuzzlePieceIcon } from "@heroicons/vue/24/outline";
 import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
 import { XMarkIcon, ChatBubbleBottomCenterTextIcon, PencilSquareIcon, CheckIcon, QueueListIcon } from "@heroicons/vue/20/solid";
 import { useAuthStore, useCacheStore } from '../../store';
 import defaultPfp from "../../assets/images/default-pfp.svg";
 import Loader from '../../components/Loader.vue';
+import LearnIcon from "../../components/LearnIcon.vue";
+import TestIcon from "../../components/TestIcon.vue";
 import { BatchWriter, Firestore, VocabSet } from '../../firebase-rest-api/firestore';
 
 const props = defineProps<{
@@ -167,6 +179,13 @@ const emit = defineEmits<{
     "update-like": [like: boolean];
     "toggle-star": [termIndex: number];
 }>();
+
+const studyModes = [
+    { name: "Flashcards", routeName: "flashcards", icon: Square2StackIcon },
+    { name: "Learn", routeName: "learn", icon: LearnIcon },
+    { name: "Test", routeName: "test", icon: TestIcon },
+    { name: "Match", routeName: "test", icon: PuzzlePieceIcon }
+];
 
 const socialDrawerOpen = ref(false);
 const currentStudyGuidePage = ref(0);

@@ -176,22 +176,44 @@ export function mod(n: number, m: number) {
  * @param num The number of random elements to generate. Does not include numToInclude
  * @param max 1 + the max any element in the list can be
  * @param numToInclude An optional number to include in the list
- * @param canBeSmaller If the length of the outputted list can be smaller if max is not big enough
  */
-export function getRandomChoices(numToGenerate: number, max: number, numToInclude?: number, canBeSmaller = false) {
+export function getRandomChoices(numToGenerate: number, max: number, numToInclude?: number) {
     const nums: number[] = [];
-    if (canBeSmaller) numToGenerate = Math.min(numToGenerate, max);
+    numToGenerate = Math.min(numToGenerate, max);
     // +!!numToInclude will be 1 when there is a numToInclude and 0 when there isn't
     // If we need more items than we can get, return an empty list
     if (numToGenerate > max - +!!numToInclude) return nums;
+    // Add random numbers to the list until we have enough
     for (let i = 0; i < 100000; i++) {
         if (nums.length >= numToGenerate) break;
         const rand = Math.floor(Math.random() * max);
         if (!nums.includes(rand) && rand !== numToInclude) nums.push(rand);
     }
+    // Add the numToInclude to a random index in the list
     if (numToInclude !== undefined) {
         const numToIncludeIndex = Math.floor(Math.random() * (numToGenerate + 1));
         nums.splice(numToIncludeIndex, 0, numToInclude);
     }
     return nums;
+}
+
+/**
+ * Makes `numGroups` arrays of unique numbers from 0 to `maxNumber` - 1
+ * The total number of elements will not exceed `maxAmount` (and of course `maxNumber`)
+ * @param numGroups The number of groups to make
+ * @param maxNumber The max number any element in the groups can be
+ * @param maxAmount The max number of elements across all groups
+ */
+export function makeRandomGroups(numGroups: number, maxNumber: number, maxAmount: number) {
+    const numElements = Math.min(maxAmount, maxNumber);
+    // Generate {numElements} elements from 0 to {maxNumber} - 1
+    const allNumbers = getRandomChoices(numElements, maxNumber);
+    const numPerGroup = Math.floor(numElements / numGroups);
+    const numExtra = numElements % numGroups;
+    const groups =
+        // Make an array with {numGroups} elements, each element being the number of items in that group
+        Array<number>(numGroups).fill(numPerGroup).fill(numPerGroup + 1, 0, numExtra)
+        // Replace each element with its section from `allNumbers`
+        .map(el => allNumbers.splice(0, el));
+    return groups;
 }

@@ -4,7 +4,7 @@ import { useAuthStore, usePreferencesStore } from './store';
 
 declare module "vue-router" {
     interface RouteMeta {
-        title?: string;
+        title: string | false | undefined; // If title is `false`, this page has no unique title. If it's undefined, don't change the previous title
         requiresAuth?: boolean;
     }
 }
@@ -17,6 +17,9 @@ export default function () {
                 path: '/',
                 name: 'home',
                 component: HomeView,
+                meta: {
+                    title: false
+                }
             },
             {
                 path: '/credits/',
@@ -143,10 +146,7 @@ export default function () {
                     {
                         path: '',
                         component: () => import('./views/set-viewer/SetOverviewView.vue'),
-                        name: "set-detail",
-                        meta: {
-                            title: "View Set" // TODO: make these titles include set name
-                        }
+                        name: "set-detail"
                     },
                     {
                         path: 'view/',
@@ -155,18 +155,17 @@ export default function () {
                     {
                         path: 'flashcards/',
                         component: () => import('./views/set-viewer/FlashcardsView.vue'),
-                        name: "flashcards",
-                        meta: {
-                            title: "Flashcards"
-                        }
+                        name: "flashcards"
                     },
                     {
                         path: 'learn/',
                         component: () => import('./views/set-viewer/LearnView.vue'),
-                        name: "learn",
-                        meta: {
-                            title: "Learn"
-                        }
+                        name: "learn"
+                    },
+                    {
+                        path: 'test/',
+                        component: () => import('./views/set-viewer/TestView.vue'),
+                        name: "test"
                     }
                 ]
             },
@@ -194,8 +193,10 @@ export default function () {
     const authStore = useAuthStore();
     const preferencesStore = usePreferencesStore();
 
-    router.beforeEach(async (to, _from) => {
-        document.title = "Loading... - Vocabustudy"
+    router.beforeEach(async (to, from) => {
+        // Show the loading title if we're not navigating between two non name changing pages
+        if (!(to.meta.name === undefined && from.meta.name === undefined))
+            document.title = "Loading... - Vocabustudy"
 
         preferencesStore.startNavigation();
 
@@ -212,7 +213,8 @@ export default function () {
 
     router.afterEach((to) => {
         preferencesStore.stopNavigation();
-        document.title = to.meta.title ? `${to.meta.title} - Vocabustudy` : `Vocabustudy`;
+        if (to.meta.title !== undefined)
+            document.title = to.meta.title !== false ? `${to.meta.title} - Vocabustudy` : `Vocabustudy`;
         document.querySelector("link[rel='canonical']")?.setAttribute("href", new URL(to.path, "https://vocabustudy.org").toString());
     });
 

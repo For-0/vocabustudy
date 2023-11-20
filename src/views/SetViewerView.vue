@@ -104,7 +104,7 @@ async function loadInitialSet() {
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);
             currentSet.value = addAccents(set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
-            document.title = document.title.replace("Edit Set", `Edit ${set.name}`);
+            document.title = `${currentSet.value.name} - Vocabustudy`;
         } else {
             loadingError.value = "not-found";
         }
@@ -115,7 +115,7 @@ async function loadInitialSet() {
         if (typeof setOrError === "string") loadingError.value = setOrError;
         else {
             currentSet.value = addAccents(setOrError) as ViewerPartialSet;
-            document.title = document.title.replace("Edit Set", `Edit ${setOrError.name}`);
+            document.title = `${currentSet.value.name} - Vocabustudy`
         }
     } else {
         loadingError.value = "not-found";
