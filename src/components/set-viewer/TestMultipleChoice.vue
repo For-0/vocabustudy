@@ -1,24 +1,25 @@
 <template>
-    <div class="mb-2 flex gap-1 items-center">
-        <CheckIcon v-if="showResult && correctIndex === selectedIndex" class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
-        <XMarkIcon v-else-if="showResult && correctIndex !== selectedIndex" class="w-6 h-6 text-rose-800 dark:text-rose-400 shrink-0" />
-
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="font-semibold text-zinc-900 dark:text-white" v-html="question" />
-    </div>
-    <div class="mb-3 flex flex-row justify-stretch items-start gap-3 flex-wrap">
-        <label
-            v-for="answer, i in answers" :key="i"
-            class="flex items-center px-4 border rounded"
-            :class="getRadioContainerClass(i)"    
-        >
-            <input
-                :id="`${id}-${i}`" v-model="selectedIndex" :value="i" type="radio" :name="id" required :disabled="props.showResult"
-                class="w-4 h-4 outline-none" :class="getRadioClass()"
-            >
+    <div class="mb-3">
+        <div class="mb-2 flex gap-1 items-center">
+            <CheckIcon v-if="showResult && correctIndex === selectedIndex" class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
+            <XMarkIcon v-else-if="showResult && correctIndex !== selectedIndex" class="w-6 h-6 text-rose-800 dark:text-rose-400 shrink-0" />
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <p :for="`${id}-${i}`" class="w-full py-4 ml-2 text-sm font-medium" v-html="answer" />
-        </label> 
+            <p class="font-semibold text-zinc-900 dark:text-white" v-html="question" />
+        </div>
+        <div class="flex flex-row justify-stretch items-start gap-3 flex-wrap">
+            <label
+                v-for="answer, i in answers" :key="i"
+                class="flex items-center px-4 border rounded"
+                :class="getRadioContainerClass(i)"
+            >
+                <input
+                    :id="`${id}-${i}`" v-model="selectedIndex" :value="i" type="radio" :name="id" required :disabled="props.showResult"
+                    class="w-4 h-4 outline-none" :class="getRadioClass()"
+                >
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p :for="`${id}-${i}`" class="w-full py-4 ml-2 text-sm font-medium" v-html="answer" />
+            </label>
+        </div>
     </div>
 </template>
 

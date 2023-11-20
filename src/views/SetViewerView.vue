@@ -27,7 +27,7 @@ import Loader from '../components/Loader.vue';
 import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
 import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
-import { isStudyGuide } from '../utils';
+import { isStudyGuide, studyGuideItemIsReading } from '../utils';
 
 const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | null>(null);
 const currentSet = ref<ViewerPartialSet | null>(null);
@@ -76,9 +76,24 @@ function starAll(termIndices: number[]) {
 }
 
 function addAccents(set: TermDefinitionSet | StudyGuide) {
-    const accents: string[] = [];
-    if (!isStudyGuide(set)) {
-        const accentsSet = new Set<string>();
+    const accentsSet = new Set<string>();
+    
+    if (isStudyGuide(set)) {
+        // Iterate over all of the quizzes
+        for (const item of set.terms) {
+            if (!studyGuideItemIsReading(item)) {
+                // Iterate over all of the short answer (1) questions
+                for (const { answers } of item.questions.filter(q => q.type === 1)) {
+                    // Add all of the accents in the answers
+                    const answerAccents = answers.flatMap(answer => answer.match(accentsRe) ?? []);
+                    for (const accent of answerAccents) {
+                        accentsSet.add(accent.toLowerCase());
+                        accentsSet.add(accent.toUpperCase())
+                    }
+                }
+            }
+        }
+    } else {
         for (const { term, definition } of set.terms) {
             const termAccents = [...term.match(accentsRe) ?? [], ...definition.match(accentsRe) ?? []];
             for (const accent of termAccents) {
@@ -86,10 +101,11 @@ function addAccents(set: TermDefinitionSet | StudyGuide) {
                 accentsSet.add(accent.toUpperCase())
             }
         }
-        const collator = new Intl.Collator();
-        accents.push(...accentsSet);
-        accents.sort((a, b) => collator.compare(a, b));
     }
+
+    const collator = new Intl.Collator();
+    const accents = [...accentsSet].sort((a, b) => collator.compare(a, b));
+
     return {
         ...set,
         accents

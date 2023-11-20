@@ -1,9 +1,9 @@
 <template>
     <div class="mb-3">
-        <div class="flex flex-row justify-stretch gap-3 mb-2">
+        <div class="flex flex-row justify-stretch gap-3">
             <div class="grow max-w-3xl">
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <label :for="id" class="block mb-2 text-sm font-semibold text-zinc-900 dark:text-white" v-html="question" />
+                <label :for="id" class="block mb-2 font-semibold text-zinc-900 dark:text-white" v-html="question" />
                 <div class="relative">
                     <input
                         :id="id" ref="input" :value="answer" type="text" :disabled="!!validation" required
@@ -19,13 +19,13 @@
                     <XMarkIcon v-else-if="validation" class="w-6 h-6 text-rose-800 dark:text-rose-400 top-1/2 -translate-y-1/2 right-3 absolute" />
                 </div>
             </div>
-            <div v-if="(typeof validation === 'string')" class="max-w-3xl p-2.5 mt-7 text-sm grow text-emerald-800 border border-emerald-300 rounded-lg bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800 relative">
+            <div v-if="(typeof validation === 'string')" class="max-w-3xl p-2.5 mt-8 text-sm grow text-emerald-800 border border-emerald-300 rounded-lg bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800 relative">
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <span class="break-words min-w-0 max-h-full overflow-y-auto custom-scrollbar is-thumb-only" v-html="validation" />
                 <CheckIcon class="w-6 h-6 text-emerald-800 dark:text-emerald-400 top-1/2 -translate-y-1/2 right-3 absolute" />
             </div>
         </div>
-        <AccentKeyboard v-if="focused && accents.length" :accents="accents" tabindex="-1" @add-accent="onInputAccent" />
+        <AccentKeyboard v-if="focused && accents.length" :accents="accents" tabindex="-1" class="mt-2" @add-accent="onInputAccent" />
     </div>
 </template>
 

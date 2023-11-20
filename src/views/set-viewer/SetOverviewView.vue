@@ -16,7 +16,7 @@
         
             <ProfileDate v-if="creator" :profile="creator" :date="currentSet.creationTime" />
         </div>
-        <div class="flex flex-wrap gap-3 mb-3">
+        <div v-if="!isStudyGuide(currentSet)" class="flex flex-wrap gap-3 mb-3">
             <router-link
                 v-for="{ name, routeName, icon } in studyModes" :key="routeName"
                 :to="{ name: routeName, params: { id: currentSet.pathParts[currentSet.pathParts.length - 1] } }"
@@ -43,31 +43,21 @@
                             <svg v-else class="w-4 h-4 mr-2" :class="currentStudyGuidePage === i ? 'text-primary dark:text-primary-light' : 'text-zinc-400 group-hover:text-zinc-500 dark:group-hover:text-zinc-300'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M2 10h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1zm9-9h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 9a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-3zm0-10a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2h-3zM2 9a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H2zm7 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-3zM0 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm5.354.854a.5.5 0 1 0-.708-.708L3 3.793l-.646-.647a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0l2-2z" />
                             </svg>
-                            {{ page.title }}
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <span v-html="styleAndSanitize(page.title, true)" />
                         </button>
                     </li>
                 </ul>
             </div>
             <div class="text-zinc-700 dark:text-zinc-300">
-                <h3 class="text-lg mb-3">{{ currentStudyGuideItem.title }}</h3>
-                <p v-if="studyGuideItemIsReading(currentStudyGuideItem!)" class="mb-3 prose lg:prose-xl prose-zinc dark:prose-invert">
-                    {{ currentStudyGuideItem.body }}
-                </p>
+                <h3 class="text-xl mb-3 font-bold text-zinc-800 dark:text-zinc-200">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    {{ currentStudyGuidePage + 1 }}. <span v-html="styleAndSanitize(currentStudyGuideItem.title, true)" />:
+                </h3>
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <p v-if="studyGuideItemIsReading(currentStudyGuideItem!)" class="mb-3 prose prose-zinc dark:prose-invert" v-html="styleAndSanitize(currentStudyGuideItem.body)" />
         
-                <!-- guide quiz
-                <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3">
-                    <GuideQuestionEditor
-                        v-for="(_, index) in currentStudyGuideItem.questions"
-                        :key="index" v-model:question="currentStudyGuideItem.questions[index]"
-                        @move-left="swap(currentStudyGuideItem.questions, index, index - 1)"
-                        @move-right="swap(currentStudyGuideItem.questions, index, index + 1)"
-                        @remove="currentStudyGuideItem.questions.splice(index, 1)"
-                    />
-                    <button class="cursor-pointer border-zinc-400 dark:border-zinc-600 border-dashed hover:border-zinc-500 dark:hover:border-zinc-500 text-zinc-400 dark:text-zinc-600 hover:text-zinc-500 dark:hover:text-zinc-500 border-2 rounded-md p-3" type="button" @click="currentStudyGuideItem.questions.push({ question: '', type: 0, answers: [''] })">
-                        <PlusCircleIcon class="w-9 h-9 mx-auto my-3" />
-                        <p class="text-center mb-2">Add a question</p>
-                    </button>
-                </div>-->
+                <GuideQuiz v-else :quiz="currentStudyGuideItem" :accents="props.currentSet.accents" />
             </div>
         </template>
         <!-- term/definitions -->
@@ -167,6 +157,7 @@ import Loader from '../../components/Loader.vue';
 import LearnIcon from "../../components/LearnIcon.vue";
 import TestIcon from "../../components/TestIcon.vue";
 import { BatchWriter, Firestore, VocabSet } from '../../firebase-rest-api/firestore';
+import GuideQuiz from '../../components/set-viewer/GuideQuiz.vue';
 
 const props = defineProps<{
     currentSet: ViewerPartialSet;
