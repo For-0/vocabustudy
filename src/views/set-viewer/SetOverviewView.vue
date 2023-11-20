@@ -184,7 +184,7 @@ const studyModes = [
     { name: "Flashcards", routeName: "flashcards", icon: Square2StackIcon },
     { name: "Learn", routeName: "learn", icon: LearnIcon },
     { name: "Test", routeName: "test", icon: TestIcon },
-    { name: "Match", routeName: "test", icon: PuzzlePieceIcon }
+    { name: "Match", routeName: "match", icon: PuzzlePieceIcon }
 ];
 
 const socialDrawerOpen = ref(false);

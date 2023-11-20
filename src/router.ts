@@ -166,6 +166,11 @@ export default function () {
                         path: 'test/',
                         component: () => import('./views/set-viewer/TestView.vue'),
                         name: "test"
+                    },
+                    {
+                        path: 'match/',
+                        component: () => import('./views/set-viewer/MatchView.vue'),
+                        name: "match"
                     }
                 ]
             },

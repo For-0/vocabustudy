@@ -271,8 +271,4 @@ img {
         max-width: 128px;
     }
 }
-
-body {
-    overflow: hidden;
-}
 </style>
