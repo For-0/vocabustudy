@@ -110,7 +110,7 @@ main {
 }
 
 .striped-background {
-    background-image: url("../assets/images/striped-background.svg");
+    background-image: url("/images/striped-background.svg");
     background-repeat: no-repeat;
     background-size: 100% 100%;
 }

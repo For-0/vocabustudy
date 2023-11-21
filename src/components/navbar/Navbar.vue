@@ -65,7 +65,7 @@
                         </ul>
                     </div>
                     <button
-                        type="button" class="inline-flex items-center p-2 text-sm text-white bg-white bg-opacity-0 rounded-lg md:hidden hover:bg-opacity-10 focus:outline-none"
+                        type="button" class="ml-4 inline-flex items-center p-2 text-sm text-white bg-white bg-opacity-0 rounded-lg md:hidden hover:bg-opacity-10 focus:outline-none"
                         aria-controls="navbar-cta"
                         :aria-expanded="navbarExpanded" @click.stop="{ navbarExpanded = !navbarExpanded; accountMenuOpen = false; }"
                     >
