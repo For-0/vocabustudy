@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 //import { VitePWA } from "vite-plugin-pwa";
 
@@ -46,29 +46,26 @@ export default defineConfig(async ({ mode }) => {
 
     return {
         build: {
+            // https://github.com/vitejs/vite/issues/5189
+            modulePreload: {
+                resolveDependencies: (_url, _deps, _context) => {
+                    return [];
+                }
+            },
             rollupOptions: {
                 output: {
-                    // https://github.com/vitejs/vite/issues/5189
-                    /*manualChunks: {
-                        auth: [
-                            "./src/views/AccountView.vue",
-                            "./src/views/LoginView.vue",
-                            "./src/views/MySetsView.vue",
-                        ],
-                        staticPages: [
-                            "./src/views/CreditsView.vue",
-                            "./src/views/NotFoundView.vue",
-                            "./src/views/PrivacyPolicyView.vue",
-                            "./src/views/SocialView.vue",
-                            "./src/views/SupportUsView.vue",
-                            "./src/views/TOSView.vue",
-                        ]
-                    },*/
-                },
-            },
+                    sourcemapExcludeSources: true,
+                    manualChunks: id => {
+                        const url = new URL(id, import.meta.url);
+                        const chunkName = url.searchParams.get("chunkName");
+                        if (chunkName) return chunkName;
+                    }
+                }
+            }
         },
         plugins: [
             vue(),
+            splitVendorChunkPlugin()
         ],
         resolve: {
             alias: {

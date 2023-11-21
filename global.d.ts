@@ -16,8 +16,8 @@ declare module "*.vue" {
     export default component;
 }
 
-/*declare module "*.vue?chunk=static" {
+declare module "*#" {
     import { ComponentOptions } from "vue";
     const component: ComponentOptions;
     export default component;
-}*/
+}

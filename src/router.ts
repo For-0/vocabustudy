@@ -24,7 +24,7 @@ export default function () {
             {
                 path: '/credits/',
                 name: 'credits',
-                component: () => import('./views/CreditsView.vue'),
+                component: () => import('./views/CreditsView.vue?chunkName=static#'),
                 meta: {
                     title: "Credits"
                 }
@@ -48,7 +48,7 @@ export default function () {
             {
                 path: '/social/',
                 name: 'social',
-                component: () => import('./views/SocialView.vue'),
+                component: () => import('./views/SocialView.vue?chunkName=static#'),
                 meta: {
                     title: "Social"
                 }
@@ -64,7 +64,7 @@ export default function () {
             {
                 path: '/support-us/',
                 name: 'support-us',
-                component: () => import('./views/SupportUsView.vue'),
+                component: () => import('./views/SupportUsView.vue?chunkName=static#'),
                 meta: {
                     title: "Support Us"
                 }
@@ -72,7 +72,7 @@ export default function () {
             {
                 path: '/privacy/',
                 name: 'privacy',
-                component: () => import('./views/PrivacyPolicyView.vue'),
+                component: () => import('./views/PrivacyPolicyView.vue?chunkName=static#'),
                 meta: {
                     title: "Privacy Policy"
                 }
@@ -80,7 +80,7 @@ export default function () {
             {
                 path: '/terms/',
                 name: 'terms',
-                component: () => import('./views/TOSView.vue'),
+                component: () => import('./views/TOSView.vue?chunkName=static#'),
                 meta: {
                     title: "Terms of Service"
                 }
@@ -96,7 +96,7 @@ export default function () {
             {
                 path: '/login/',
                 name: 'login',
-                component: () => import('./views/LoginView.vue'),
+                component: () => import('./views/LoginView.vue?chunkName=auth#'),
                 meta: {
                     title: "Log in"
                 }
@@ -108,7 +108,7 @@ export default function () {
             {
                 path: '/account/',
                 name: 'account',
-                component: () => import('./views/AccountView.vue'),
+                component: () => import('./views/AccountView.vue?chunkName=auth#'),
                 meta: {
                     title: "Account",
                     requiresAuth: true
@@ -117,7 +117,7 @@ export default function () {
             {
                 path: '/my-sets/',
                 name: 'my-sets',
-                component: () => import('./views/MySetsView.vue'),
+                component: () => import('./views/MySetsView.vue?chunkName=auth#'),
                 meta: {
                     title: "My Sets",
                     requiresAuth: true
@@ -141,11 +141,11 @@ export default function () {
             },
             {
                 path: '/:type(set|quizlet)/:id([\\w\\d]+)/',
-                component: () => import('./views/SetViewerView.vue'),
+                component: () => import('./views/SetViewerView.vue?chunkName=set-detail#'),
                 children: [
                     {
                         path: '',
-                        component: () => import('./views/set-viewer/SetOverviewView.vue'),
+                        component: () => import('./views/set-viewer/SetOverviewView.vue?chunkName=set-detail#'),
                         name: "set-detail"
                     },
                     {
@@ -154,22 +154,22 @@ export default function () {
                     },
                     {
                         path: 'flashcards/',
-                        component: () => import('./views/set-viewer/FlashcardsView.vue'),
+                        component: () => import('./views/set-viewer/FlashcardsView.vue?chunkName=set-detail#'),
                         name: "flashcards"
                     },
                     {
                         path: 'learn/',
-                        component: () => import('./views/set-viewer/LearnView.vue'),
+                        component: () => import('./views/set-viewer/LearnView.vue?chunkName=set-detail#'),
                         name: "learn"
                     },
                     {
                         path: 'test/',
-                        component: () => import('./views/set-viewer/TestView.vue'),
+                        component: () => import('./views/set-viewer/TestView.vue?chunkName=set-detail#'),
                         name: "test"
                     },
                     {
                         path: 'match/',
-                        component: () => import('./views/set-viewer/MatchView.vue'),
+                        component: () => import('./views/set-viewer/MatchView.vue?chunkName=set-detail#'),
                         name: "match"
                     }
                 ]
