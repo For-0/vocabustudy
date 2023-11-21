@@ -1,5 +1,5 @@
 <template>
-    <main class="px-6 bg-white dark:bg-zinc-900 grow" @change="isUnsaved = true">
+    <main class="px-6 bg-white dark:bg-zinc-900 grow" @change="onChange">
         <!-- Loading errors -->
         <div v-if="loadingError" class="w-full h-full flex flex-col gap-y-3 md:flex-row items-center justify-center dark:text-white text-3xl">
             <span class="font-bold">Error</span>
@@ -196,21 +196,40 @@
                 </div>
             </div>
         </div>
+
+        <!-- autosave backup toast -->
+        <div v-if="unsavedBackupToast.visible" class="w-[calc(100vw_-_1.5rem)] max-w-xs p-4 text-zinc-500 bg-white rounded-lg shadow dark:bg-zinc-800 dark:text-zinc-400 flex fixed left-3 bottom-3" role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-amber-500 bg-amber-100 rounded-lg dark:text-amber-300 dark:bg-amber-900">
+                <ArchiveBoxIcon class="w-4 h-4" />
+            </div>
+            <div class="ms-3 text-sm font-normal">
+                <span class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">Unsaved backup found</span>
+                <div class="mb-2 text-sm font-normal">Would you like to restore the backup from <strong>{{ unsavedBackupToast.date.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" }) }}</strong>?</div> 
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" class="inline-flex justify-center w-full px-2 py-1.5 text-xs font-medium text-center text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800" @click="restoreBackup">Restore Backup</button>
+                    <button type="button" class="inline-flex justify-center w-full px-2 py-1.5 text-xs font-medium text-center text-white bg-rose-400 rounded-lg hover:bg-rose-500 focus:ring-4 focus:outline-none focus:ring-rose-300 dark:bg-rose-500 dark:hover:bg-rose-600 dark:focus:ring-rose-800" @click="deleteBackup">Delete Backup</button>
+                </div>    
+            </div>
+            <button type="button" class="-mx-1.5 -my-1.5 bg-zinc items-center justify-center flex-shrink-0 text-zinc-400 hover:text-zinc-900 rounded-lg focus:ring-2 focus:ring-zinc-300 p-1.5 hover:bg-zinc-100 inline-flex h-8 w-8 dark:text-zinc-500 dark:hover:text-white dark:bg-zinc-800 dark:hover:bg-zinc-700" aria-label="Close" @click="unsavedBackupToast.visible = false">
+                <span class="sr-only">Close</span>
+                <XMarkIcon class="w-4 h-4" />
+            </button>
+        </div>
     </main>
 </template>
 
 <script setup lang="ts">
 // TODO: Autosave backups
-import { CheckCircleIcon, ChevronDownIcon, XMarkIcon, TagIcon, XCircleIcon } from '@heroicons/vue/20/solid';
+import { CheckCircleIcon, ChevronDownIcon, XMarkIcon, TagIcon, XCircleIcon, ArchiveBoxIcon } from '@heroicons/vue/20/solid';
 import { PlusCircleIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
-import { onMounted, onUnmounted, ref, getCurrentInstance, computed } from 'vue';
+import { onMounted, onUnmounted, ref, getCurrentInstance, computed, toRaw } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import Loader from '../components/Loader.vue';
 import TermDefinitionEditor from '../components/TermDefinitionEditor.vue';
 import { BatchWriter, Firestore, VocabSet } from '../firebase-rest-api/firestore';
 import { useAuthStore, useCacheStore } from '../store';
-import type { StudyGuideQuiz, StudyGuideReading, TermDefinitionSet, StudyGuide } from '../types';
-import { swap, showErrorToast, generateDocumentId, getWords, isStudyGuide, studyGuideItemIsReading } from "../utils";
+import type { StudyGuideQuiz, StudyGuideReading, TermDefinitionSet, StudyGuide, AutosaveBackup } from '../types';
+import { swap, showErrorToast, generateDocumentId, getWords, isStudyGuide, studyGuideItemIsReading, getLocalDb } from "../utils";
 import CollectionsSelection from '../components/CollectionsSelection.vue';
 import { detectAndGetQuizletSet } from "../converters/quizlet";
 import { DocumentPlusIcon } from '@heroicons/vue/24/solid';
@@ -231,6 +250,10 @@ const currentModal = ref<"import-items" | null>(null);
 const importItemsManualInput = ref("");
 const importTermLineRe = /^(.+?)(?: {2,}|\t+)(.+)$/;
 const isSaveLoading = ref(false);
+const unsavedBackupToast = ref({
+    visible: false,
+    date: new Date()
+});
 const form = ref<HTMLFormElement>();
 let isUnsaved = false;
 
@@ -352,6 +375,7 @@ function removeGuideItem(index: number) {
     }
 }
 
+/** Look for a guide page with unfilled inputs */
 function findInvalidGuidePage() {
     if (currentSet.value && isStudyGuide(currentSet.value)) {
         for (let i = 0; i < currentSet.value.terms.length; i++) {
@@ -374,12 +398,12 @@ function serializeSet() {
     if (!currentSet.value) return null;
     const nameWords = getWords(currentSet.value.name.replace(/\p{Diacritic}/gu, ""));
     const numTerms = currentSet.value.terms.length;
-    const serialized: Pick<VocabSet, "name" | "nameWords" | "collections" | "numTerms" | "terms" | "visibility" | "description"> = {
+    const serialized: AutosaveBackup["set"] = {
         name: currentSet.value.name,
         nameWords,
-        collections: currentSet.value.collections,
+        collections: toRaw(currentSet.value.collections),
         numTerms,
-        terms: currentSet.value.terms,
+        terms: toRaw(currentSet.value.terms),
         visibility: currentSet.value.visibility,
     };
     if (currentSet.value.description) serialized.description = currentSet.value.description;
@@ -427,6 +451,7 @@ async function saveSet() {
         try {
             // Commit the writes and go back to my sets
             await batchWriter.commit(authStore.currentUser!.token.access);
+            await deleteBackup();
             isUnsaved = false;
             cacheStore.resetMySets();
             await router.push({ name: "my-sets" });
@@ -437,11 +462,28 @@ async function saveSet() {
     isSaveLoading.value = false;
 }
 
-function handleBeforeUnload(e: BeforeUnloadEvent) {
-    if (isUnsaved) {
-        e.preventDefault();
-        return (e.returnValue = "");
+async function checkForBackup() {
+    const localDb = await getLocalDb();
+    const backup = await localDb.get("autosave-backups", route.params.id as string);
+    if (backup) {
+        unsavedBackupToast.value = {
+            visible: true,
+            date: backup.timestamp
+        };
     }
+}
+
+async function deleteBackup() {
+    const localDb = await getLocalDb();
+    await localDb.delete("autosave-backups", route.params.id as string);
+    unsavedBackupToast.value.visible = false;
+}
+
+async function restoreBackup() {
+    const localDb = await getLocalDb();
+    const backup = (await localDb.get("autosave-backups", route.params.id as string))!;
+    currentSet.value = { ...backup.set, uid: authStore.currentUser!.uid, pathParts: ["sets", route.params.id as string] } as TermDefinitionSet | StudyGuide;
+    unsavedBackupToast.value.visible = false
 }
 
 // Event listeners
@@ -450,15 +492,35 @@ onBeforeRouteLeave((_to, _from) => {
     if (isUnsaved && !confirm("You have unsaved changes. Are you sure you want to leave?")) return false;
 });
 
-onMounted(() => {
+onMounted(async () => {
     document.addEventListener("click", closeDropdown);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    if (handleState(authStore.$state)) void loadInitialSet();
+    if (handleState(authStore.$state)) {
+        await loadInitialSet();
+        await checkForBackup();
+    }
 });
 
 onUnmounted(() => {
     document.removeEventListener("click", closeDropdown);
     window.removeEventListener("beforeunload", handleBeforeUnload);
 });
+
+async function onChange() {
+    isUnsaved = true;
+
+    // Save a backup
+    const localDb = await getLocalDb();
+    const serializedSet = serializeSet();
+    if (serializedSet)
+        await localDb.put("autosave-backups", { setId: route.params.id as string, set: serializedSet, timestamp: new Date() });
+}
+
+function handleBeforeUnload(e: BeforeUnloadEvent) {
+    if (isUnsaved) {
+        e.preventDefault();
+        return (e.returnValue = "");
+    }
+}
 </script>

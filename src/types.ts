@@ -132,13 +132,16 @@ export interface User {
 
 export type UserProfile = Pick<User, "displayName" | "photoUrl"> & { roles: string[] };
 
+export interface AutosaveBackup {
+    setId: string;
+    set: Pick<VocabSet, "name" | "nameWords" | "collections" | "numTerms" | "terms" | "visibility" | "description">;
+    timestamp: Date;
+}
+
 export interface VocabustudyDB extends DBSchema {
     "autosave-backups": {
         key: string;
-        value: {
-            set: unknown;
-            timestamp: Date;
-        }
+        value: AutosaveBackup;
     }
     general: {
         key: "current-user";
