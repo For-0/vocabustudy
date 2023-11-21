@@ -3,9 +3,6 @@
         <section class="bg-white dark:bg-stone-900 striped-background">
             <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 h-[calc(100vh-3rem)] lg:grid-cols-12">
                 <div class="mx-auto place-self-center lg:ml-0 lg:col-span-7">
-                    <a href="https://github.com/For-0/vocabustudy/releases" class="inline-flex justify-between items-center py-1 px-1 pr-4 mb-4 text-sm text-gray-700 dark:text-white bg-gray-100 dark:bg-stone-900 rounded-full hover:bg-gray-200" aria-label="New year, new Vocabustudy.">
-                        <span class="text-xs bg-primary rounded-full text-white px-4 py-1 mr-2">UI Refresh</span> <span class="text-sm font-medium">New year, new Vocabustudy.</span>
-                    </a>
                     <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl text-white">Learn Vocabulary,</h1>
                     <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl text-white">For Free.</h1>
                     <p class="max-w-2xl mb-6 font-light text-stone-300 lg:mb-8 md:text-lg lg:text-xl">Studying, the way it should be.</p>
