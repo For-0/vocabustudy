@@ -37,12 +37,7 @@ extractImagesPurify.addHook("uponSanitizeElement", (node) => {
     }
 });
 
-const markedOptions: marked.MarkedOptions = { 
-    headerIds: false,
-    mangle: false
-};
-
-const parseMarkdown = (text: string, inline: boolean) => inline ? marked.parseInline(text, markedOptions) : marked.parse(text, markedOptions);
+const parseMarkdown = (text: string, inline: boolean) => (inline ? marked.parseInline(text) : marked.parse(text)) as string;
 
 /**
  * Apply markdown styling 

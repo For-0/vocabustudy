@@ -1,6 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/web-manifest",
     "name": "Vocabustudy",
+    "short_name": "Vocabustudy",
     "display": "standalone",
     "scope": "/",
     "id": "vocabustudy-pwa",
@@ -8,9 +9,16 @@
     "theme_color": "#795548",
     "background_color": "#ffffff",
     "description": "Study vocab, for free.",
+    "orientation": "portrait",
+    "dir": "ltr",
+    "lang": "en-US",
+    "categories": ["education"],
+    "launch_handler": {
+        "client_mode": "auto"
+    },
     "icons": [
         {"src": "/favicon.ico", "type": "image/x-icon", "sizes": "48x48"},
-        {"src": "/icons/icon-192.png", "type": "image/png", "sizes": "192x192"},
+        {"src": "/icons/icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any"},
         {"src": "/icons/icon-512.png", "type": "image/png", "sizes": "512x512"},
         {"src": "/icons/icon-192-maskable.png", "type": "image/png", "sizes": "192x192", "purpose": "maskable"},
         {"src": "/icons/icon-512-maskable.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable"}
