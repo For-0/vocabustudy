@@ -10,7 +10,7 @@
                         <MagnifyingGlassIcon class="w-5 h-5 mr-2" aria-hidden="true" />
                         Search Sets
                     </router-link>
-                    <router-link v-if="!authStore.currentUser" to="/login/" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-stone-900 border border-stone-300 rounded-lg bg-stone-100 hover:bg-stone-200 focus:ring-4 focus:ring-stone-100">
+                    <router-link to="/login/" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-stone-900 border border-stone-300 rounded-lg bg-stone-100 hover:bg-stone-200 focus:ring-4 focus:ring-stone-100">
                         <UserCircleIcon class="w-5 h-5 mr-2" aria-hidden="true" />
                         Sign Up
                     </router-link> 
@@ -61,11 +61,8 @@
 import { MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/vue/24/outline';
 import TheFeatureFlashcard from '../components/home/TheFeatureFlashcard.vue';
 import TheFeaturesSection from '../components/home/TheFeaturesSection.vue';
-import { useAuthStore } from '../store';
 import TheSetsSection from '../components/home/TheSetsSection.vue';
 import Loader from '../components/Loader.vue';
-
-const authStore = useAuthStore();
 
 const stats = SITE_ANALYTICS;
 </script>

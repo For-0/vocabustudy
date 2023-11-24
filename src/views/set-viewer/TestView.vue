@@ -252,23 +252,3 @@ onMounted(() => {
     restart();
 });
 </script>
-
-<style>
-img {
-    @apply shadow;
-    max-width: 320px;
-    border-radius: 0.375rem;
-}
-
-@media (max-width: 768px) {
-    img {
-        max-width: 256px;
-    }
-}
-
-@media (max-width: 640px) {
-    img {
-        max-width: 128px;
-    }
-}
-</style>

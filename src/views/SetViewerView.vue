@@ -7,6 +7,7 @@
                 loadingError === "not-found" ? "This set could not be found" :
                 loadingError === "unauthorized" ? "You don't have permission to view this set" :
                 loadingError === "quizlet-not-supported" ? "You need to install the Quizlet converter extension to view Quizlet sets" : // TODO: link to help center
+                loadingError === "offline" ? "You're offline" :
                 "Unknown"
             }}
         </div>
@@ -29,7 +30,7 @@ import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
 import { isStudyGuide, studyGuideItemIsReading } from '../utils';
 
-const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | null>(null);
+const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | "offline" | null>(null);
 const currentSet = ref<ViewerPartialSet | null>(null);
 
 const route = useRoute();
@@ -116,6 +117,10 @@ function addAccents(set: TermDefinitionSet | StudyGuide) {
 async function loadInitialSet() {
     // Edit an existing set
     if (typeof route.params.id === "string" && route.params.type === "set") {
+        if (!navigator.onLine) {
+            loadingError.value = "offline";
+            return;
+        }
         const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);
@@ -163,3 +168,46 @@ onUnmounted(() => {
     removeEventListener("storage", onStorage);
 })
 </script>
+<style scoped>
+main {
+    :deep(.drag-item) {
+        transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
+        
+        * {
+            /* Prevent user from dragging children */
+            pointer-events: none;
+        }
+    }
+
+    :deep(.match) {
+        height: 10px;
+        position: absolute;
+        --x: var(--x2) - var(--x1);
+        --y: var(--y2) - var(--y1);
+
+        /* Direction - inverse tangent */
+        --angle: atan2(var(--y), var(--x));
+        /* Subtract half the height from the y so that it's centered */
+        transform: translate(calc(1px * var(--x1)), calc(1px * var(--y1) - 5px)) skewY(var(--angle));
+
+        /* Magnitude - pythagorean theorem */
+        width: calc(1px * (var(--x)));
+
+        transform-origin: top left;
+    }
+
+    :deep(img) {
+        @apply shadow;
+        max-width: 320px;
+        border-radius: 0.375rem;
+
+        @media (max-width: 768px) {
+            max-width: 256px;
+        }
+
+        @media (max-width: 640px) {
+            max-width: 128px;
+        }
+    }
+}
+</style>

@@ -216,11 +216,17 @@ export default function () {
         }
     });
 
-    router.afterEach((to) => {
+    router.afterEach(to => {
         preferencesStore.stopNavigation();
         if (to.meta.title !== undefined)
             document.title = to.meta.title !== false ? `${to.meta.title} - Vocabustudy` : `Vocabustudy`;
         document.querySelector("link[rel='canonical']")?.setAttribute("href", new URL(to.path, "https://vocabustudy.org").toString());
+    });
+
+    router.onError(() => {
+        if (!navigator.onLine) {
+            void router.push({ name: "not-found" });
+        }
     });
 
     return router;

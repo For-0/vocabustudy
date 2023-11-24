@@ -272,32 +272,3 @@ onMounted(() => {
     void restart();
 });
 </script>
-
-<style>
-img {
-    @apply shadow;
-    max-width: 320px;
-    border-radius: 0.375rem;
-}
-
-@media (max-width: 768px) {
-    img {
-        max-width: 256px;
-    }
-}
-
-@media (max-width: 640px) {
-    img {
-        max-width: 128px;
-    }
-}
-
-.drag-item {
-    transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
-}
-
-.drag-item * {
-    /* Prevent user from dragging children */
-    pointer-events: none;
-}
-</style>

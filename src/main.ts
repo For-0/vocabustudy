@@ -12,7 +12,7 @@ app.use(createRouter());
 
 app.mount('#app');
 
-
+// Polyfills
 if (!("structuredClone" in window)) {
     (window as Window).structuredClone = <T>(obj: T) => JSON.parse(JSON.stringify(obj)) as T;
 }
@@ -41,4 +41,8 @@ if (!("randomUUID" in crypto)) {
         configurable: false,
         writable: false
     });
+}
+
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+    void navigator.serviceWorker.register("/service-worker.js");
 }

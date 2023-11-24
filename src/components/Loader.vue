@@ -15,9 +15,3 @@ if (props.size === 1) {
     borderClass = `border-2`;
 }
 </script>
-<style>
-.spinner {
-    border-radius: 50%;
-    animation-duration: 0.5s;
-}
-</style>

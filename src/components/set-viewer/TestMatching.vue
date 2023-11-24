@@ -136,22 +136,3 @@ onUnmounted(() => {
     window.removeEventListener("resize", updateDivPositions);
 });
 </script>
-
-<style>
-.match {
-    height: 10px;
-    position: absolute;
-    --x: var(--x2) - var(--x1);
-    --y: var(--y2) - var(--y1);
-
-    /* Direction - inverse tangent */
-    --angle: atan2(var(--y), var(--x));
-    /* Subtract half the height from the y so that it's centered */
-    transform: translate(calc(1px * var(--x1)), calc(1px * var(--y1) - 5px)) skewY(var(--angle));
-
-    /* Magnitude - pythagorean theorem */
-    width: calc(1px * (var(--x)));
-
-    transform-origin: top left;
-}
-</style>

@@ -1,8 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import { serviceWorkerPlugin } from "./service-worker-plugin";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
-//import { VitePWA } from "vite-plugin-pwa";
 
 function getEmulatorUrl(mode: string, port: number) {
     if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME}-${port}.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}:443`
@@ -55,17 +54,33 @@ export default defineConfig(async ({ mode }) => {
             rollupOptions: {
                 output: {
                     sourcemapExcludeSources: true,
-                    manualChunks: id => {
+                    manualChunks: (id: string) => {
                         const url = new URL(id, import.meta.url);
                         const chunkName = url.searchParams.get("chunkName");
                         if (chunkName) return chunkName;
+                        // Force these files to be in the index chunk
+                        if (
+                            id.includes("Loader.vue") ||
+                            id.includes("default-pfp.svg") ||
+                            id.endsWith("index.html") ||
+                            id.endsWith("src/store.ts") ||
+                            id.includes("src/firebase-rest-api") ||
+                            id.endsWith("src/utils.ts") ||
+                            id.includes("vite:asset") ||
+                            id.includes("SetCard.vue") ||
+                            id.includes("SetPagination.vue") ||
+                            id.includes("Flashcard.vue"))
+                        {
+                            return "index";
+                        }
                     }
                 }
             }
         },
         plugins: [
             vue(),
-            splitVendorChunkPlugin()
+            splitVendorChunkPlugin(),
+            serviceWorkerPlugin
         ],
         resolve: {
             alias: {
@@ -79,7 +94,7 @@ export default defineConfig(async ({ mode }) => {
             FIRESTORE_EMULATOR_URL: JSON.stringify(getEmulatorUrl(mode, 8080)),
             WORKERS_ENDPOINT: JSON.stringify(process.env.NODE_ENV === "production" ? "https://api.vocabustudy.org/" : "http://localhost:8787/"),
             DD_URL: JSON.stringify(env.USE_LOCAL_DD ? "http://localhost:8091/" : "https://dd.vocabustudy.org/"),
-            SITE_ANALYTICS: JSON.stringify(mode === "production" ? await getSiteAnalytics(env) : { pageViews: 0, uniqueVisitors: 0, numCountries: 0 }),
+            SITE_ANALYTICS: JSON.stringify(mode === "production" && env.CF_API_TOKEN ? await getSiteAnalytics(env) : { pageViews: 0, uniqueVisitors: 0, numCountries: 0 }),
         }
     };
 });

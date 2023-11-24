@@ -30,7 +30,7 @@ import { ref, computed, onUnmounted, onMounted } from 'vue';
 import { ArrowPathIcon } from '@heroicons/vue/20/solid';
 import Flashcard from '../components/Flashcard.vue';
 
-const featureFlashcardValue = { front: "Oops...", back: "This page doesn't exist. 404!" };
+const featureFlashcardValue = { front: "Oops...", back: navigator.onLine ? "This page doesn't exist. 404!" : "You're offline!" };
 
 const featureFlashcardFlipped = ref(false);
 const featureFlashcardContainer = ref<HTMLElement | null>(null);
@@ -64,8 +64,3 @@ onUnmounted(() => {
     document.getElementById("app")?.removeEventListener('scrollend', updateFeatureFlashcardCenter);
 });
 </script>
-<style scoped>
-.feature-flashcard {
-    transform: perspective(1000px) rotateX(calc(1deg * var(--x, 0))) rotateY(calc(1deg * var(--y, 0)));
-}
-</style>

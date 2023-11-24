@@ -69,9 +69,3 @@ onUnmounted(() => {
     document.getElementById("app")?.removeEventListener('scrollend', updateFeatureFlashcardCenter);
 });
 </script>
-
-<style scoped>
-.feature-flashcard {
-    transform: perspective(1000px) rotateX(calc(1deg * var(--x, 0))) rotateY(calc(1deg * var(--y, 0)));
-}
-</style>

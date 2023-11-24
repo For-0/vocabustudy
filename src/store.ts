@@ -74,9 +74,11 @@ export const useAuthStore = defineStore("auth", () => {
     });
 
     void reloadCurrentUser(); // this completes much faster than refreshCurrentUser, so we can use it to get the initial state while we wait for the refresh to complete
-    void refreshCurrentUser(true).then(user => {
-        if (currentUser.value && !user) return withBroadcast()();
-    });
+    
+    if (navigator.onLine)
+        void refreshCurrentUser(true).then(user => {
+            if (currentUser.value && !user) return withBroadcast()();
+        });
 
     return {
         currentUser,
@@ -113,6 +115,8 @@ export const useCacheStore = defineStore("cache", () => {
     async function getProfile(uid: string) {
         const profile = userProfileCache.value.get(uid);
         if (profile) return profile;
+
+        if (!navigator.onLine) return unknownUser;
 
         try {
             const res = await fetch(`${DD_URL}users/${uid}`);

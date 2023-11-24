@@ -68,6 +68,6 @@
     </main>
 </template>
 <script setup lang="ts">
-import PrivacyPolicySection from '../components/home/PrivacyPolicySection.vue';
+import PrivacyPolicySection from '../components/PrivacyPolicySection.vue';
 import { ClockIcon } from '@heroicons/vue/20/solid';
 </script>

@@ -2,7 +2,7 @@
     "extends": "@vue/tsconfig/tsconfig.dom.json",
     "compilerOptions": {
         "types": ["vite/client"],
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "lib": [
             // Target ES2020 to align with Vite.
             // <https://vitejs.dev/config/build-options.html#build-target>
