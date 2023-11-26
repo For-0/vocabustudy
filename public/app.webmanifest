@@ -5,7 +5,7 @@
     "display": "standalone",
     "scope": "/",
     "id": "vocabustudy-pwa",
-    "start_url": "/my-sets/",
+    "start_url": "/saved/",
     "theme_color": "#795548",
     "background_color": "#ffffff",
     "description": "Study vocab, for free.",

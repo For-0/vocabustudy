@@ -24,7 +24,7 @@ export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers:
 export type PartialVocabSet<T extends SetTerms = SetTerms> = Pick<VocabSet<T>, "name" | "collections" | "terms" | "visibility" | "description" | "uid" | "pathParts">;
 export type TermDefinitionSet = PartialVocabSet<TermDefinition[]>;
 export type StudyGuide = PartialVocabSet<(StudyGuideQuiz|StudyGuideReading)[]>;
-export type ViewerExtraSetProperties = Pick<VocabSet, "creationTime" | "likes" | "comments"> & { accents: string[] };
+export type ViewerExtraSetProperties = Pick<VocabSet, "creationTime" | "updateTime" | "likes" | "comments"> & { accents: string[] };
 export type ViewerPartialSet = (TermDefinitionSet | StudyGuide) & ViewerExtraSetProperties;
 
 /* eslint-enable @typescript-eslint/consistent-type-definitions */
@@ -146,5 +146,9 @@ export interface VocabustudyDB extends DBSchema {
     general: {
         key: "current-user";
         value: User | null;
+    }
+    "offline-sets": {
+        key: string;
+        value: ViewerPartialSet;
     }
 }

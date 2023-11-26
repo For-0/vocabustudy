@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-sm flex flex-col items-start p-6 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition duration-300 hover:scale-105">
-        <router-link :to="{ name: 'set-detail', params: { id: set.id, type: 'set' } }" class="max-w-full">
+        <router-link :to="{ name: 'set-detail', params: resolvedId }" class="max-w-full">
             <h3 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h3>
         </router-link>
         <ProfileDate v-if="creator" class="mb-3" :date="resolvedCreationTime" :profile="creator" />
@@ -85,4 +85,9 @@ defineEmits<{
 }>();
 
 const resolvedCreationTime = computed(() => props.set.creationTime ?? props.set.createTime);
+const resolvedId = computed(() => {
+    const parts = props.set.id.split("/");
+    if (parts.length === 1) return { id: parts[0], type: "set" };
+    else return { id: parts[1], type: parts[0] };
+});
 </script>

@@ -11,9 +11,23 @@
                 "Unknown"
             }}
         </div>
-        <router-view v-else-if="currentSet" v-slot="{ Component }">
-            <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" @star-all="starAll" />
-        </router-view>
+        <template v-else-if="currentSet">
+            <router-view v-slot="{ Component }">
+                <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" @star-all="starAll" />
+            </router-view>
+            <div>
+                <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-800">
+                <p class="font-medium dark:text-white mb-2">Offline:</p>
+                <button
+                    v-if="!offlineStatus || offlineStatus < currentSet.updateTime" type="button"
+                    class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-xs px-3 py-2 me-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700"
+                    @click="saveForOffline(false)"
+                >
+                    {{ offlineStatus ? "Update Save" : "Save for Offline" }}
+                </button>
+                <button v-if="offlineStatus" type="button" class="border text-rose-800 border-rose-300 bg-rose-50 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800 focus:outline-none hover:bg-rose-100 hover:border-rose-400 focus:ring-4 focus:ring-rose-200 font-medium rounded-lg text-xs px-3 py-2 dark:hover:bg-rose-900 dark:hover:border-rose-700 dark:focus:ring-rose-700" @click="saveForOffline(true)">Remove Save</button>
+            </div>
+        </template>
         <div v-else class="w-full h-full flex items-center justify-center dark:text-white text-3xl">
             <Loader class="w-10 h-10 mr-3" :size="2" />
             Loading...
@@ -21,17 +35,18 @@
     </main>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, toRaw } from 'vue';
 import type { UserProfile, ViewerPartialSet, StudyGuide, TermDefinitionSet } from '../types';
 import { useAuthStore, useCacheStore } from '../store';
 import Loader from '../components/Loader.vue';
 import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
 import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
-import { isStudyGuide, studyGuideItemIsReading } from '../utils';
+import { isStudyGuide, studyGuideItemIsReading, getLocalDb } from '../utils';
 
 const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | "offline" | null>(null);
 const currentSet = ref<ViewerPartialSet | null>(null);
+const offlineStatus = ref<Date | null>(null);
 
 const route = useRoute();
 
@@ -76,6 +91,25 @@ function starAll(termIndices: number[]) {
     saveStarredList();
 }
 
+async function saveForOffline(remove: boolean) {
+    const offlineId = `${route.params.type as string}/${route.params.id as string}`.toLowerCase();
+    const db = await getLocalDb();
+    if (remove) {
+        await db.delete("offline-sets", offlineId);
+        offlineStatus.value = null;
+    } else if (currentSet.value) {
+        const toSave = toRaw(currentSet.value);
+        for (const key of Object.keys(toSave)) {
+            if (!["accents", "collections", "comments", "creationTime", "description", "likes", "name", "pathParts", "terms", "uid", "updateTime", "visibility"].includes(key)) {
+                // @ts-expect-error
+                delete toSave[key]; // eslint-disable-line @typescript-eslint/no-dynamic-delete
+            }
+        }
+        await db.put("offline-sets", toSave, offlineId);
+        offlineStatus.value = currentSet.value.updateTime;
+    }
+}
+
 function addAccents(set: TermDefinitionSet | StudyGuide) {
     const accentsSet = new Set<string>();
     
@@ -115,12 +149,25 @@ function addAccents(set: TermDefinitionSet | StudyGuide) {
 
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
-    // Edit an existing set
-    if (typeof route.params.id === "string" && route.params.type === "set") {
-        if (!navigator.onLine) {
+    const offlineId = `${route.params.type as string}/${route.params.id as string}`.toLowerCase();
+    const db = await getLocalDb();
+    const offlineSet = await db.get("offline-sets", offlineId);
+
+    offlineStatus.value = offlineSet?.updateTime ?? null;
+
+    if (!navigator.onLine) {
+        if (offlineSet) {
+            creator.value = await cacheStore.getProfile(offlineSet.uid);
+            currentSet.value = offlineSet;
+            document.title = `${currentSet.value.name} - Vocabustudy`;
+        } else
             loadingError.value = "offline";
-            return;
-        }
+        return;
+    }
+    
+    // Vocabustudy set
+    if (typeof route.params.id === "string" && route.params.type === "set") {
+        
         const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);

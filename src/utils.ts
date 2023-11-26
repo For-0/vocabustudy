@@ -9,11 +9,23 @@ const ignoredCharsRE = /[*_.]/g;
 const mdLinkRE = /!?\[[^\]]*\]\([^)]*\)/g;
 
 export async function getLocalDb() {
-    return await openDB<VocabustudyDB>("vocabustudy-database", 2, {
+    return await openDB<VocabustudyDB>("vocabustudy-database", 3, {
         upgrade(db, oldVersion) {
-            if (oldVersion === 0)
+            /*
+            DB History:
+            v1: autosave-backups
+            v2: general
+            v3: offline-sets
+            */
+
+            if (oldVersion <= 0)
                 db.createObjectStore("autosave-backups", { keyPath: "setId" });
-            db.createObjectStore("general");
+            
+            if (oldVersion <= 1)
+                db.createObjectStore("general");
+            
+            if (oldVersion <= 2)
+                db.createObjectStore("offline-sets");
         }
     });
 }

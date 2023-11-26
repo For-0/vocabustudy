@@ -192,6 +192,15 @@ export const usePreferencesStore = defineStore("prefs", () => {
         navigationStartedAt.value = -1;
     }
 
+    const isOnline = ref(navigator.onLine);
+
+    function updateOnline() {
+        isOnline.value = navigator.onLine;
+    }
+
+    window.addEventListener("online", updateOnline);
+    window.addEventListener("offline", updateOnline);
+
     return {
         theme,
         setTheme,
@@ -199,6 +208,7 @@ export const usePreferencesStore = defineStore("prefs", () => {
         startNavigation,
         stopNavigation,
         lastSearch,
-        setLastSearch
+        setLastSearch,
+        isOnline
     }
 });

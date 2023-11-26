@@ -4,7 +4,7 @@
             <h2 class="text-2xl font-bold leading-7 text-zinc-900 sm:text-3xl sm:tracking-tight dark:text-white">Saved Sets</h2>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
         </div>
-        <div v-if="authStore.currentUser" class="my-3">
+        <div v-if="preferencesStore.isOnline && authStore.currentUser" class="my-3">
             <div class="mb-3">
                 <h3 class="text-xl font-bold leading-7 text-zinc-900 sm:text-2xl sm:tracking-tight dark:text-white">Liked Sets:</h3>
                 <p class="mt-1 text-zinc-500 dark:text-zinc-400">{{ authStore.currentUser?.email }}</p>
@@ -14,7 +14,10 @@
         <div class="my-3">
             <div class="mb-3">
                 <h3 class="text-xl font-bold leading-7 text-zinc-900 sm:text-2xl sm:tracking-tight dark:text-white">Offline Sets:</h3>
-                <p class="mt-1 text-zinc-500 dark:text-zinc-400 italic">Coming soon!</p>
+            </div>
+            <div class="flex flex-row gap-5 flex-wrap mb-5" v-bind="$attrs">
+                <!-- @vue-skip -->
+                <SetCard v-for="set in offlineSets" :key="set.id" :set="set" :show-edit-controls="false" />
             </div>
         </div>
     </main>
@@ -22,20 +25,24 @@
 
 <script setup lang="ts">
 import { ref, getCurrentInstance } from 'vue';
-import { useAuthStore, useCacheStore } from '../store';
+import { useAuthStore, useCacheStore, usePreferencesStore } from '../store';
 import { VocabSet, QueryBuilder, Firestore } from '../firebase-rest-api/firestore';
-import { showErrorToast } from '../utils';
+import { showErrorToast, getLocalDb } from '../utils';
 import SetPagination from '../components/SetPagination.vue';
-import { type UserProfile } from '../types';
+import { type UserProfile, type ViewerPartialSet } from '../types';
+import SetCard from '../components/SetCard.vue';
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
+const preferencesStore = usePreferencesStore();
 const isLoading = ref(true);
 const currentInstance = getCurrentInstance();
 const hasNextPage = ref(true);
 const mostRecentTiming = ref(0);
 const sets = ref<VocabSet[]>([]);
+const offlineSets = ref<(ViewerPartialSet & { id: string; numTerms: number })[]>([]);
 const creators = ref<UserProfile[]>([]);
 
+// @
 async function loadMoreLikedSets() {
     isLoading.value = true;
     if (authStore.currentUser && hasNextPage.value) {
@@ -67,5 +74,20 @@ async function loadMoreLikedSets() {
     isLoading.value = false;
 }
 
-void loadMoreLikedSets();
+async function loadOfflineSets() {
+    const db = await getLocalDb();
+    let _offlineSets: typeof offlineSets.value = [];
+    const tx = db.transaction("offline-sets", "readonly");
+    let cursor = await tx.store.openCursor();
+    while (cursor) {
+        _offlineSets.push({ ...cursor.value, id: cursor.primaryKey, numTerms: cursor.value.terms.length });
+        cursor = await cursor.continue();
+    }
+    offlineSets.value = _offlineSets;
+}
+
+if (preferencesStore.isOnline)
+    void loadMoreLikedSets();
+
+void loadOfflineSets();
 </script>

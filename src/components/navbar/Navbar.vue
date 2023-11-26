@@ -24,7 +24,7 @@
                     <div id="account-dropdown" class="z-50 text-base list-none bg-white divide-y divide-zinc-100 rounded-lg shadow dark:bg-zinc-800 dark:divide-zinc-600 py-0 absolute right-0 top-12" :class="{ 'hidden': !accountMenuOpen }">
                         <ul class="py-2">
                             <NavbarAccountMenuLink :to="{ name: 'saved-sets' }">Saved Sets</NavbarAccountMenuLink>
-                            <NavbarAccountMenuLink v-if="authStore.currentUser && isOnline" :to="{ name: 'my-sets' }">My Sets</NavbarAccountMenuLink>
+                            <NavbarAccountMenuLink v-if="authStore.currentUser && preferencesStore.isOnline" :to="{ name: 'my-sets' }">My Sets</NavbarAccountMenuLink>
                         </ul>
                         <ul class="py-2">
                             <div class="flex items-center justify-evenly text-gray-900 dark:text-white">
@@ -52,7 +52,7 @@
                             </div>
                         </ul>
                         <ul class="py-2">
-                            <NavbarAccountMenuLink v-if="authStore.currentUser && isOnline" :to="{ name: 'account' }">My Account</NavbarAccountMenuLink>
+                            <NavbarAccountMenuLink v-if="authStore.currentUser && preferencesStore.isOnline" :to="{ name: 'account' }">My Account</NavbarAccountMenuLink>
                             <li v-if="authStore.currentUser">
                                 <a
                                     class="cursor-pointer block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700 dark:text-zinc-200 dark:hover:text-white"
@@ -61,7 +61,7 @@
                                     Log Out
                                 </a>
                             </li>
-                            <NavbarAccountMenuLink v-if="!authStore.currentUser && isOnline" :to="{ name: 'login' }">Log In</NavbarAccountMenuLink>
+                            <NavbarAccountMenuLink v-if="!authStore.currentUser && preferencesStore.isOnline" :to="{ name: 'login' }">Log In</NavbarAccountMenuLink>
                         </ul>
                     </div>
                     <button
@@ -75,7 +75,7 @@
                 </div>
                 <div id="navbar-cta" class="items-center justify-between w-full md:flex md:w-auto md:order-1 md:h-12 bg-white dark:bg-stone-800 md:bg-transparent md:dark:bg-transparent" :class="{ 'hidden': !navbarExpanded }">
                     <ul
-                        v-if="isOnline"
+                        v-if="preferencesStore.isOnline"
                         class="flex flex-col p-2 m-4 md:m-0 md:py-0 border border-zinc-100 rounded-lg bg-zinc-50 dark:bg-zinc-800 dark:border-zinc-700 md:flex-row md:space-x-2 md:mt-0 md:border-0 md:bg-transparent md:dark:bg-transparent md:items-center md:h-full"
                     >
                         <NavbarLink :to="{ name: 'search' }">Search Sets</NavbarLink>
@@ -91,7 +91,7 @@
             <div class="bg-secondary h-full transition-transform" :style="{ transform: `translateX(-50%)scaleX(${currentNavigationProgress})translateX(50%)` }" />
         </div>
 
-        <div v-if="!verifyEmailHidden && authStore.currentUser && !authStore.currentUser.emailVerified && isOnline" tabindex="-1" class="flex flex-col justify-between w-full p-4 border-b border-zinc-200 md:flex-row bg-zinc-50 dark:bg-zinc-700 dark:border-zinc-600">
+        <div v-if="!verifyEmailHidden && authStore.currentUser && !authStore.currentUser.emailVerified && preferencesStore.isOnline" tabindex="-1" class="flex flex-col justify-between w-full p-4 border-b border-zinc-200 md:flex-row bg-zinc-50 dark:bg-zinc-700 dark:border-zinc-600">
             <div class="mb-4 md:mb-0 md:mr-4">
                 <h2 class="mb-1 text-base font-semibold text-zinc-900 dark:text-white">Please verify your email address</h2>
                 <p class="flex items-center text-sm font-normal text-zinc-500 dark:text-zinc-400">Verifying your email address allows you to use the full features of Vocabustudy</p>
@@ -126,7 +126,6 @@ const preferencesStore = usePreferencesStore();
 const currentInstance = getCurrentInstance();
 const totalNavigationTime = 5000; // 5 seconds
 const currentNavigationProgress = ref<number | null>(null); // percentage (0-1)
-const isOnline = ref(navigator.onLine);
 let navigationUpdateInterval = 0;
 let navigationClearTimeout = 0;
 
@@ -158,20 +157,12 @@ const unsubscribe = preferencesStore.$onAction(({ name, after }) => {
     }
 });
 
-function onOnlineChange() {
-    isOnline.value = navigator.onLine;
-}
-
 onMounted(() => {
     document.addEventListener('click', onDocumentClick);
-    window.addEventListener('online', onOnlineChange);
-    window.addEventListener('offline', onOnlineChange);
 });
 
 onUnmounted(() => {
     document.removeEventListener('click', onDocumentClick);
-    window.removeEventListener('online', onOnlineChange);
-    window.removeEventListener('offline', onOnlineChange);
     unsubscribe();
 });
 
