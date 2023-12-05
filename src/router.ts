@@ -124,6 +124,15 @@ export default function () {
                 }
             },
             {
+                path: '/my-collections/',
+                name: 'my-collections',
+                component: () => import('./views/MyCollectionsView.vue?chunkName=auth#'),
+                meta: {
+                    title: "My Collections",
+                    requiresAuth: true
+                }
+            },
+            {
                 path: '/auth-action/',
                 name: 'auth-action',
                 component: () => import('./views/AuthActionView.vue'),
@@ -185,11 +194,19 @@ export default function () {
                 alias: '/:type(set)/:id(new|new-guide)/'
             },
             {
-                path: '/collection/:id/',
+                path: '/search/:id/',
                 name: 'collection-detail',
                 component: () => import('./views/NotFoundView.vue'),
                 meta: {
                     title: "Collection Detail"
+                }
+            },
+            {
+                path: '/collection/:id/',
+                name: 'custom-collection-detail',
+                component: () => import('./views/NotFoundView.vue'),
+                meta: {
+                    title: "Custom Collection Detail"
                 }
             }
         ]

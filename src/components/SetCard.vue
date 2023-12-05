@@ -14,7 +14,7 @@
                 {{ getVisibility(set.visibility) }}
             </span>
         </div>
-        <div class="mb-3 flex flex-row flex-wrap gap-1 max-h-12 overflow-y-auto custom-scrollbar is-thumb-only">
+        <div class="mb-3 flex flex-row flex-wrap gap-1 max-h-14 overflow-y-auto custom-scrollbar is-thumb-only">
             <span class="bg-emerald-100 text-emerald-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-emerald-800/25 dark:text-emerald-400 border border-emerald-400">
                 <HandThumbUpIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                 {{ pluralizeWord("like", set.likes.length) }}
@@ -35,11 +35,11 @@
                 View
                 <ArrowRightIcon class="w-3.5 h-3.5 ml-2" />
             </router-link>
-            <router-link :to="{ name: 'set-editor', params: { id: set.id, type: 'set' } }" class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center transition-colors text-yellow-500 bg-yellow-100 hover:bg-yellow-500 hover:text-white rounded-lg focus:ring-4 focus:outline-none focus:ring-yellow-500">
+            <router-link :to="{ name: 'set-editor', params: { id: set.id, type: 'set' } }" class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center border text-yellow-800 border-yellow-300 bg-yellow-50 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-800 hover:text-yellow-900 hover:bg-yellow-100 hover:border-yellow-400 dark:hover:bg-yellow-900 dark:hover:border-yellow-700 dark:hover:text-yellow-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-yellow-200 dark:focus:ring-yellow-700">
                 Edit
                 <PencilSquareIcon class="w-3.5 h-3.5 ml-2" />
             </router-link>
-            <button class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center transition-colors text-red-500 bg-red-100 hover:bg-red-500 hover:text-white rounded-lg focus:ring-4 focus:outline-none focus:ring-red-500" @click="$emit('delete-set')">
+            <button class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center border text-rose-800 border-rose-300 bg-rose-50 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800 hover:text-rose-900 hover:bg-rose-100 hover:border-rose-400 dark:hover:bg-rose-900 dark:hover:border-rose-700 dark:hover:text-rose-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-red-200 dark:focus:ring-red-700" @click="$emit('delete-set')">
                 Delete
                 <TrashIcon class="w-3.5 h-3.5 ml-2" />
             </button>

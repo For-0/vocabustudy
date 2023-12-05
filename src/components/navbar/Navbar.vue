@@ -25,6 +25,7 @@
                         <ul class="py-2">
                             <NavbarAccountMenuLink :to="{ name: 'saved-sets' }">Saved Sets</NavbarAccountMenuLink>
                             <NavbarAccountMenuLink v-if="authStore.currentUser && preferencesStore.isOnline" :to="{ name: 'my-sets' }">My Sets</NavbarAccountMenuLink>
+                            <NavbarAccountMenuLink v-if="authStore.currentUser && preferencesStore.isOnline" :to="{ name: 'my-collections' }">My Collections</NavbarAccountMenuLink>
                         </ul>
                         <ul class="py-2">
                             <div class="flex items-center justify-evenly text-gray-900 dark:text-white">
