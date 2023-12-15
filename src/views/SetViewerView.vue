@@ -15,7 +15,7 @@
             <router-view v-slot="{ Component }">
                 <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" @star-all="starAll" />
             </router-view>
-            <div>
+            <div v-if="!isQuizletSourceSet">
                 <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-800">
                 <p class="font-medium dark:text-white mb-2">Offline:</p>
                 <button
@@ -31,6 +31,24 @@
         <div v-else class="w-full h-full flex items-center justify-center dark:text-white text-3xl">
             <Loader class="w-10 h-10 mr-3" :size="2" />
             Loading...
+
+            <!-- Import quizlet source modal -->
+            <div v-if="isQuizletSourceSet" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30" />
+            <div v-if="isQuizletSourceSet" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-40 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full justify-center items-center flex">
+                <div class="relative w-full max-w-md max-h-full">
+                    <div class="bg-white rounded-lg shadow dark:bg-zinc-800">
+                        <div class="px-6 py-6 lg:px-8">
+                            <h3 class="mb-3 text-xl font-medium text-zinc-900 dark:text-white">Quizlet Source Import:</h3>
+
+                            <label for="quizlet-source-import" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">Paste the source code of the Quizlet set page (or just the <code>NEXT_DATA</code> element) below:</label>
+                            <textarea id="quizlet-source-import" v-model="quizletSourceValue" rows="4" class="custom-scrollbar is-thumb-only block p-2.5 w-full text-sm text-zinc-900 bg-zinc-100 rounded-lg border border-zinc-200 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:focus:border-primary" />
+                        </div>
+                        <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                            <button class="text-white bg-primary hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button" @click="loadQuizletSource">Load</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </template>
@@ -42,6 +60,7 @@ import Loader from '../components/Loader.vue';
 import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
 import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
+import { parseQuizletSource } from '../converters/quizlet-source';
 import { isStudyGuide, studyGuideItemIsReading, getLocalDb } from '../utils';
 
 const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | "offline" | null>(null);
@@ -55,6 +74,9 @@ const creator = ref<UserProfile | null>(null);
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
 const starredList = ref(getStarredTerms(localStorage.getItem("starred_terms")));
+
+const isQuizletSourceSet = route.params.type === "quizlet" && route.params.id === "source";
+const quizletSourceValue = ref("");
 
 // Anything not in ASCII
 const accentsRe = /[^\p{ASCII}]/gu;
@@ -164,11 +186,12 @@ async function loadInitialSet() {
             loadingError.value = "offline";
         return;
     }
+
+    const { id, type } = route.params as { id: string, type: string };
     
     // Vocabustudy set
-    if (typeof route.params.id === "string" && route.params.type === "set") {
-        
-        const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, route.params.id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
+    if (type === "set") {
+        const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
         if (set) {
             creator.value = await cacheStore.getProfile(set.uid);
             currentSet.value = addAccents(set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
@@ -178,8 +201,9 @@ async function loadInitialSet() {
         }
     }
     // Import from quizlet (the two possible values for params.type are set and quizlet)
-    else if (typeof route.params.id === "string") {
-        const setOrError = await detectAndGetQuizletSet(route.params.id);
+    else if (type === "quizlet") {
+        if (id === "source") return; // Don't load anything yet if the user is importing a Quizlet source
+        const setOrError = await detectAndGetQuizletSet(id);
         if (typeof setOrError === "string") loadingError.value = setOrError;
         else {
             currentSet.value = addAccents(setOrError) as ViewerPartialSet;
@@ -187,6 +211,17 @@ async function loadInitialSet() {
         }
     } else {
         loadingError.value = "not-found";
+    }
+}
+
+function loadQuizletSource() {
+    if (isQuizletSourceSet && quizletSourceValue.value) {
+        const result = parseQuizletSource(quizletSourceValue.value);
+        if (result) {
+            currentSet.value = addAccents(result.set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
+            document.title = `${currentSet.value.name} - Vocabustudy`;
+            creator.value = result.creator;
+        }
     }
 }
 

@@ -74,7 +74,7 @@
             <!-- eslint-enable vue/no-v-html -->
         </div>
         <!-- Social menu -->
-        <div class="fixed top-0 right-0 z-40 w-full md:w-96 h-screen p-4 flex flex-col duration-75 transition-transform bg-white dark:bg-zinc-800" :class="{ 'translate-x-full': !socialDrawerOpen }" tabindex="-1" @click.stop>
+        <div v-if="route.params.type !== 'quizlet'" class="fixed top-0 right-0 z-40 w-full md:w-96 h-screen p-4 flex flex-col duration-75 transition-transform bg-white dark:bg-zinc-800" :class="{ 'translate-x-full': !socialDrawerOpen }" tabindex="-1" @click.stop>
             <h5 class="mb-2 text-base font-semibold text-zinc-500 uppercase dark:text-zinc-400">Likes ({{ currentSet.likes.length }})</h5>
             <div class="mb-3 flex bg-inherit items-cenn">
                 <div class="space-x-1 md:-space-x-3 flex md:hover:space-x-1 bg-inherit overflow-hidden min-w-0 grow items-center">
@@ -136,7 +136,7 @@
                 </div>
             </form>
         </div>
-        <button type="button" title="Comments" class="fixed top-20 right-0 text-zinc-300 border shadow focus:outline-none hover:bg-primary-alt font-medium rounded-tl-full rounded-bl-full border-r-0 text-sm pr-1 p-2.5 bg-primary border-primary-alt hover:border-primary" @click.stop="socialDrawerOpen = true">
+        <button v-if="route.params.type !== 'quizlet'" type="button" title="Comments" class="fixed top-20 right-0 text-zinc-300 border shadow focus:outline-none hover:bg-primary-alt font-medium rounded-tl-full rounded-bl-full border-r-0 text-sm pr-1 p-2.5 bg-primary border-primary-alt hover:border-primary" @click.stop="socialDrawerOpen = true">
             <ChatBubbleBottomCenterTextIcon class="w-5 h-5" />
         </button>
     </div>
@@ -158,6 +158,7 @@ import LearnIcon from "../../components/LearnIcon.vue";
 import TestIcon from "../../components/TestIcon.vue";
 import { BatchWriter, Firestore, VocabSet } from '../../firebase-rest-api/firestore';
 import GuideQuiz from '../../components/set-viewer/GuideQuiz.vue';
+import { useRoute } from 'vue-router';
 
 const props = defineProps<{
     currentSet: ViewerPartialSet;
@@ -188,6 +189,7 @@ const isSavingComment = ref(false);
 const likeLoading = ref(false);
 const commentInputValue = ref("");
 const currentInstance = getCurrentInstance();
+const route = useRoute();
 
 async function updateProfiles() {
     await cacheStore.getAllProfiles([...Object.keys(props.currentSet.comments), ...props.currentSet.likes]);

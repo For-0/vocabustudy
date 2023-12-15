@@ -79,14 +79,7 @@ function closeModals() {
 async function deleteSet() {
     if (deletingSet.value && authStore.currentUser) {
         try {
-            await fetch(`${WORKERS_ENDPOINT}delete-set/`, {
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${authStore.currentUser.token.access}`
-                },
-                method: "POST",
-                body: JSON.stringify({ id: deletingSet.value })
-            });
+            await Firestore.deleteDocument(VocabSet.collectionKey, deletingSet.value, authStore.currentUser.token.access);
             cacheStore.removeSet(deletingSet.value);
             closeModals();
         } catch (err) {
