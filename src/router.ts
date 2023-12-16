@@ -204,7 +204,7 @@ export default function () {
             {
                 path: '/collection/:id/',
                 name: 'custom-collection-detail',
-                component: () => import('./views/NotFoundView.vue'),
+                component: () => import('./views/CollectionDetailView.vue'),
                 meta: {
                     title: "Custom Collection Detail"
                 }
