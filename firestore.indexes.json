@@ -13,7 +13,7 @@
                     "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "likes",
+                    "fieldPath": "creationTime",
                     "order": "DESCENDING"
                 }
             ]
@@ -31,7 +31,7 @@
                     "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "likes",
+                    "fieldPath": "creationTime",
                     "order": "DESCENDING"
                 }
             ]
@@ -45,21 +45,7 @@
                     "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "likes",
-                    "order": "DESCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "sets",
-            "queryScope": "COLLECTION",
-            "fields": [
-                {
-                    "fieldPath": "visibility",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "likes",
+                    "fieldPath": "creationTime",
                     "order": "DESCENDING"
                 }
             ]
@@ -75,38 +61,10 @@
                 {
                     "fieldPath": "uid",
                     "order": "ASCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "sets",
-            "queryScope": "COLLECTION",
-            "fields": [
-                {
-                    "fieldPath": "visibility",
-                    "order": "ASCENDING"
                 },
                 {
-                    "fieldPath": "uid",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "likes",
+                    "fieldPath": "creationTime",
                     "order": "DESCENDING"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "social",
-            "queryScope": "COLLECTION_GROUP",
-            "fields": [
-                {
-                    "fieldPath": "like",
-                    "order": "ASCENDING"
-                },
-                {
-                    "fieldPath": "uid",
-                    "order": "ASCENDING"
                 }
             ]
         }
@@ -125,12 +83,6 @@
         },
         {
             "collectionGroup": "sets",
-            "fieldPath": "creator",
-            "ttl": false,
-            "indexes": []
-        },
-        {
-            "collectionGroup": "sets",
             "fieldPath": "description",
             "ttl": false,
             "indexes": []
@@ -144,49 +96,6 @@
         {
             "collectionGroup": "sets",
             "fieldPath": "terms",
-            "ttl": false,
-            "indexes": []
-        },
-        {
-            "collectionGroup": "social",
-            "fieldPath": "comment",
-            "ttl": false,
-            "indexes": [
-                {
-                    "order": "ASCENDING",
-                    "queryScope": "COLLECTION"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "social",
-            "fieldPath": "leaderboard",
-            "ttl": false,
-            "indexes": [
-                {
-                    "order": "ASCENDING",
-                    "queryScope": "COLLECTION"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "social",
-            "fieldPath": "like",
-            "ttl": false,
-            "indexes": [
-                {
-                    "order": "ASCENDING",
-                    "queryScope": "COLLECTION"
-                },
-                {
-                    "order": "ASCENDING",
-                    "queryScope": "COLLECTION_GROUP"
-                }
-            ]
-        },
-        {
-            "collectionGroup": "social",
-            "fieldPath": "name",
             "ttl": false,
             "indexes": []
         }
