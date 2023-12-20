@@ -1,6 +1,19 @@
 tasks:
   - init: npm ci && npm i -g firebase-tools
-    command: npm run build
+    command: npm run dev
+
+ports:
+  - name: Vite
+    port: 5173
+    onOpen: "open-browser"
+  - name: Firestore Emulator
+    port: 8080
+    visibility: public
+    onOpen: ignore
+  - name: Auth Emulator
+    port: 9099
+    visibility: public
+    onOpen: ignore
 
 additionalRepositories:
   - url: https://github.com/For-0/vocabustudy-internals

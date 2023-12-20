@@ -1,0 +1,109 @@
+{
+    "c": [
+        {
+            "n": "Math",
+            "s": [
+                "Elementary School",
+                "6th Grade",
+                "7th Grade",
+                "8th Grade / Prealgebra",
+                "Algebra 1",    
+                "Geometry",
+                "Algebra 2",
+                "Precalculus",
+                "Trigonometry",
+                "Calculus AB",
+                "Calculus BC",
+                "Multivariable Calculus",
+                "Statistics"
+            ]
+        },
+        {
+            "n": "Language Arts",
+            "s": [
+                "Newsmedia",
+                "English 1",
+                "English 2",
+                "English 3",
+                "English 4"
+            ]
+        },
+        {
+            "n": "Fine Arts",
+            "s": [
+                "Art",
+                "Orchestra",
+                "Theater",
+                "Choir",
+                "Instrument Specific",
+                "Band",
+                "Dance"
+            ]
+        },
+        {
+            "n": "Social Studies",
+            "s": [
+                "8th Grade US History",
+                "Texas History",
+                "World History",
+                "Cultural",
+                "Government",
+                "Economics",
+                "AP Human Geography",
+                "US History",
+                "AP US History",
+                "IB US History"
+            ]
+        },
+        {
+            "n": "LOTE",
+            "s": [
+                "Spanish",
+                "Chinese",
+                "German",
+                "French"
+            ],
+            "o": [
+                "1A",
+                "1B",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6"
+            ]
+        },
+        {
+            "n": "Science",
+            "s": [
+                "Elementary School",
+                "6th Grade",
+                "7th Grade",
+                "8th Grade",
+                "9th/Biology",
+                "Chemistry",
+                "Physics",
+                "Anatomy",
+                "IB Biology",
+                "IB Chemistry",
+                "Geography",
+                "Astronomy",
+                "AP Biology",
+                "AP Chemistry",
+                "AP Physics 1",
+                "AP Physics C"
+            ]
+        },
+        {
+            "n": "Engineering",
+            "s": [
+                "Intro to CS",
+                "AP CS Principles",
+                "AP CS A",
+                "CS 3",
+                "Electrical",
+                "Aerospace"
+            ]
+        }
+    ]
+}

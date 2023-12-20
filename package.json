@@ -1,105 +1,44 @@
 {
   "name": "vocabustudy",
   "version": "1.6.3",
-  "description": "A free tool for studying vocab",
-  "targets": {
-    "pages": {
-      "source": [
-        "src/index.pug",
-        "src/set-detail.pug",
-        "src/guide-detail.pug",
-        "src/learn-results.pug",
-        "src/set-editor.pug",
-        "src/user-sets.pug",
-        "src/privacy.pug",
-        "src/custom-collections.pug",
-        "src/404.pug",
-        "src/google867623008d63d621.html",
-        "src/help-center.pug",
-        "src/terms.pug",
-        "src/auth-action.pug",
-        "src/forms.pug",
-        "src/login.pug",
-        "src/account.pug"
-      ],
-      "context": "browser",
-      "distDir": "./dist"
-    },
-    "service-worker": {
-      "source": "src/service-worker.js",
-      "context": "service-worker",
-      "outputFormat": "esmodule",
-      "distDir": "./dist"
-    }
-  },
+  "description": "Study vocab, for free",
   "browserslist": "last 10 Chrome versions, last 10 Firefox versions, last 10 Edge versions, last 5 Safari versions",
   "scripts": {
-    "start": "parcel",
-    "prebuild": "mv .postcssrc.prod.json .postcssrc.json",
-    "build": "rm -rf dist && parcel build --no-source-maps",
-    "postbuild": "mv .postcssrc.json .postcssrc.prod.json",
-    "cleanup": "rm -rf .parcel-cache dist",
-    "watch": "npm run cleanup && parcel watch --no-hmr",
-    "emulator": "firebase emulators:start --only auth,firestore,hosting:vocabustudy --import ../vocabustudy-internals/emulator-data --export-on-exit",
-    "emulator:lightweight": "firebase emulators:start --only hosting:vocabustudy",
+    "emulator": "firebase emulators:start --only auth,firestore --import ../vocabustudy-internals/emulator-data --export-on-exit",
     "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\"",
-    "lint": "eslint src/js && stylelint src/css && pug-lint src"
+    "lint": "eslint src/",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "keywords": [],
-  "author": "Siddhant Kameswar",
+  "author": "Siddhant Kameswar, Ruhan Gupta",
   "license": "GPL-3.0",
-  "dependencies": {
-    "@bulvar/bulma": "^0.11.13",
-    "@creativebulma/bulma-tagsinput": "^1.0.3",
-    "@creativebulma/bulma-tooltip": "^1.2.0",
-    "@vizuaalog/bulmajs": "^0.12.2",
-    "broadcast-channel": "^4.20.1",
-    "bulma-list": "^1.2.0",
-    "bulma-quickview": "^2.0.0",
-    "bulma-toast": "^2.4.1",
-    "dompurify": "^2.4.1",
-    "fitty": "^2.3.6",
-    "fscreen": "^1.2.0",
-    "idb": "^7.1.1",
-    "marked": "^4.2.3"
-  },
+  "type": "module",
   "devDependencies": {
-    "@firebase/rules-unit-testing": "^2.0.5",
-    "@fullhuman/postcss-purgecss": "^5.0.0",
-    "@parcel/packager-raw-url": "^2.8.2",
-    "@parcel/service-worker": "^2.8.2",
-    "@parcel/transformer-jsonld": "^2.8.2",
-    "@parcel/transformer-pug": "^2.8.2",
-    "@parcel/transformer-sass": "^2.8.2",
-    "@parcel/transformer-webmanifest": "^2.8.2",
-    "@types/dompurify": "^2.4.0",
-    "@types/fscreen": "^1.0.1",
-    "@types/marked": "^4.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.54.1",
-    "@typescript-eslint/parser": "^5.54.1",
-    "eslint": "^8.28.0",
-    "firebase": "^9.14.0",
-    "mocha": "^10.2.0",
-    "parcel": "^2.8.2",
-    "process": "^0.11.10",
-    "pug-lint": "^2.6.0",
-    "sharp": "^0.31.2",
-    "stylelint": "^14.16.1",
-    "stylelint-config-standard-scss": "^6.1.0",
-    "typed-query-selector": "^2.9.2",
-    "typescript": "^4.9.5"
+    "@heroicons/vue": "^2.0.18",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/dompurify": "^3.0.5",
+    "@types/google-one-tap": "^1.2.5",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/tsconfig": "^0.4.0",
+    "autoprefixer": "^10.4.16",
+    "broadcast-channel": "^6.0.0",
+    "dompurify": "^3.0.6",
+    "eslint": "^8.54.0",
+    "eslint-plugin-vue": "^9.18.1",
+    "idb": "^7.1.1",
+    "marked": "^10.0.0",
+    "pinia": "^2.1.7",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.0",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5"
   },
-  "@parcel/transformer-js": {
-    "inlineEnvironment": [
-      "npm_package_version",
-      "NODE_ENV",
-      "CODESPACES",
-      "GITPOD_WORKSPACE_URL",
-      "CODESPACE_NAME",
-      "GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"
-    ]
-  },
-  "@parcel/bundler-default": {
-    "maxParallelRequests": 50
-  }
+  "private": true
 }

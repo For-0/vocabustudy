@@ -75,3 +75,8 @@ parcel-bundle-reports/
 .replit
 replit.nix
 .postcssrc.json
+.env*.local
+
+# rollup-plugin-visualizer output
+stats.html
+stats.yml

@@ -1,10 +1,20 @@
 {
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
     "compilerOptions": {
-        "isolatedModules": true,
-        "target": "ESNext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "module": "ESNext",
-        "noImplicitThis": true
+        "types": ["vite/client"],
+        "moduleResolution": "bundler",
+        "lib": [
+            // Target ES2020 to align with Vite.
+            // <https://vitejs.dev/config/build-options.html#build-target>
+            // Support for newer versions of language built-ins are
+            // left for the users to include, because that would require:
+            //   - either the project doesn't need to support older versions of browsers;
+            //   - or the project has properly included the necessary polyfills.
+            "ES2020",
+            "ES2023.Array",
+      
+            "DOM",
+            "DOM.Iterable"
+        ],
     }
 }
