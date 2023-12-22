@@ -1,9 +1,0 @@
-name: Manual Deploy
-on: workflow_dispatch
-jobs:
-  build-and-deploy:
-    uses: ./.github/workflows/build-and-deploy.yml
-    secrets: inherit
-    with:
-      channelId: preview
-      expires: "1d"
