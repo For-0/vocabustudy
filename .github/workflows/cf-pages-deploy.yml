@@ -37,7 +37,7 @@ jobs:
       uses: grimsteel/fast-cf-pages-upload-action@v1
       with:
         # Cloudflare API Token
-        apiToken: ${{ secrets.CF_TOKEN }}
+        apiToken: ${{ secrets.CF_PAGES_TOKEN }}
         # Cloudflare Account ID
         accountId: daa146e0a1ac15f8e20fec96ba76b918
         # Pages project name
