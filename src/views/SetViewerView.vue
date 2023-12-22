@@ -15,7 +15,7 @@
             <router-view v-slot="{ Component }">
                 <component :is="Component" :current-set="currentSet" :creator="creator" :starred-terms="starredList" @update-comment="updateComment" @update-like="updateLike" @toggle-star="toggleStar" @star-all="starAll" />
             </router-view>
-            <div v-if="!isQuizletSourceSet">
+            <div v-if="!isQuizletSourceSet" class="mb-3">
                 <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-800">
                 <p class="font-medium dark:text-white mb-2">Offline:</p>
                 <button

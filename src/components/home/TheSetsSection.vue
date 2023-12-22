@@ -16,13 +16,13 @@ import SetCard from '../SetCard.vue';
 
 const featureSets = [
     { id: "Pm4jGqMQQjGTncfCxbbx", name: "Unit 6 Vocab: US History", collections: ["3:0"], numTerms: 16, likes: [""], createTime: new Date(1672977414555), uid: "nWasbt2yvXewc8AhGSqwmfT4gVu2" },
-    { id: "UvecvkGJic1gp7HFKAw3", name: "Unit 6 Advanced Biology ", collections: ["5:4"], numTerms: 22, likes: [""], createTime: new Date(1674228853036), uid: "bcNOi4FCxUcJaAxUglAVBrm5FTr1" },
+    { id: "R78lr1TzvG4pavVIBxGO", name: "Biology Unit 2 Module 2 - Cell Transport", collections: ["5:4", "5:8"], numTerms: 15, likes: [""], createTime: new Date(1695006045027), uid: "indXd3yqrqVZw07LCWHnTm69ZAg1" },
     { id: "D3NQ1SrKusHR4Bgmwx6Y", name: "Geometry Unit 2", collections: ["0:5"], numTerms: 42, likes: ["", ""], createTime: new Date(1672977414555), uid: "mnDmw8WhAGSup4W2kH0EsRCgb072" },
 ];
 // hardcode profiles to reduce number of requests
 const profiles = [
     {"displayName":"Ruhan Gupta","photoUrl":"https://lh3.googleusercontent.com/a/ALm5wu0HlFfEYrj6KtjhIVVAmo4islLn0KujjTjSPFYl=s96-c","roles":["admin"]},
-    {"displayName":"William Langdon","photoUrl":"https://lh3.googleusercontent.com/a/AEdFTp6xvn7yqC08ZEJ_hXP08ldW_PCODY-TS2OuKk-CKg=s96-c","roles":[]},
+    {"displayName":"NikhilAdmin","photoUrl":"https://lh3.googleusercontent.com/a-/AFdZucqTZkXCw5xnjIm4L5TW0cUno7rkGoTN-2m-FxzYXA=s96-c","roles":["admin"]},
     {"displayName":"Omkar Admin","photoUrl":"https://lh3.googleusercontent.com/a-/ACNPEu_QwBsJ2IQHKbAsJmSRZqOHQOIDYz0IpfP4XpHepQ=s96-c","roles":["admin"]}
 ];
 </script>

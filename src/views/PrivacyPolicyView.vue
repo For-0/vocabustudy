@@ -1,5 +1,5 @@
 <template>
-    <main class="bg-zinc-100 dark:bg-zinc-800">
+    <main class="bg-white dark:bg-zinc-900">
         <h1 class="flex items-center lg:text-4xl font-extrabold leading-tight text-zinc-900 text-3xl dark:text-white mt-10 ml-10 mr-10 lg:ml-20">
             Privacy Policy<span class="bg-zinc-100 text-zinc-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded ml-2 dark:bg-zinc-700 dark:text-zinc-400 border border-zinc-500" title="Last Updated"><ClockIcon class="w-2.5 h-2.5 mr-1.5" /> Aug 2, 2023</span>
         </h1>
