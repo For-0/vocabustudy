@@ -3,18 +3,22 @@
         <router-link :to="{ name: 'set-detail', params: resolvedId }" class="max-w-full">
             <h3 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h3>
         </router-link>
+        <!-- Search page - we have the creator -->
         <ProfileDate v-if="creator" class="mb-3" :date="resolvedCreationTime" :profile="creator" />
+        <!-- My sets - we have the visibility -->
         <div v-else-if="set.visibility !== undefined" class="text-sm text-zinc-500 dark:text-zinc-400 mb-3" :title="resolvedCreationTime.toLocaleString()">
             Created {{ humanizeDate(resolvedCreationTime) }}
             <span
-                class="inline-flex items-center text-xs font-medium mr-3 px-2.5 py-0.5 rounded-full"
+                class="inline-flex items-center text-xs font-medium mr-3 px-2.5 py-0.5 rounded-full opacity-75"
                 :class="visibilityBadgeColors[getVisibility(set.visibility)][0]"
             >
                 <span class="w-2 h-2 mr-1 rounded-full" :class="visibilityBadgeColors[getVisibility(set.visibility)][1]" />
                 {{ getVisibility(set.visibility) }}
             </span>
         </div>
-        <div class="mb-3 flex flex-row flex-wrap gap-1 max-h-14 overflow-y-auto custom-scrollbar is-thumb-only">
+        <!-- Custom collection, sets by user - we only have creation time -->
+        <p v-else class="text-sm text-zinc-500 dark:text-zinc-400 mb-3" :title="resolvedCreationTime.toLocaleString()">Created {{ humanizeDate(resolvedCreationTime) }}</p>
+        <div class="mb-3 flex flex-row flex-wrap gap-1 max-h-14 overflow-y-auto custom-scrollbar is-thumb-only opacity-75">
             <span class="bg-emerald-100 text-emerald-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-emerald-800/25 dark:text-emerald-400 border border-emerald-400">
                 <HandThumbUpIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
                 {{ pluralizeWord("like", set.likes.length) }}
@@ -30,7 +34,7 @@
                 {{ collection.name }}
             </router-link>
         </div>
-        <div v-if="showEditControls" class="flex flex-row flex-wrap gap-2 mt-auto">
+        <div v-if="showEditControls" class="flex flex-row flex-wrap gap-2 mt-auto opacity-75">
             <router-link :to="{ name: 'set-detail', params: { id: set.id, type: 'set' } }" class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-primary rounded-lg hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50">
                 View
                 <ArrowRightIcon class="w-3.5 h-3.5 ml-2" />

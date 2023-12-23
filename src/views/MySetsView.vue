@@ -18,7 +18,7 @@
                 </div>
             </div>
             <hr class="h-px my-4 bg-zinc-200 border-0 dark:bg-zinc-700">
-            <SetPagination class="w-full" :sets="cacheStore.mySetsCache" :show-edit-controls="true" v-bind="cacheStore.mySetsState" :is-loading="isLoading" @delete-set="deletingSet = $event" @load-more="loadNext" />
+            <SetPagination class="w-full" :sets="cacheStore.mySetsCache" :show-edit-controls="true" v-bind="cacheStore.mySetsState" :is-loading="isLoading" :group-by-month="true" @delete-set="deletingSet = $event" @load-more="loadNext" />
         </div>
         
         <div v-if="deletingSet" class="bg-zinc-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30" />
