@@ -130,7 +130,7 @@ export interface User {
     providers: ("password" | "google.com")[]
 }
 
-export type UserProfile = Pick<User, "displayName" | "photoUrl"> & { roles: string[] };
+export type UserProfile = Pick<User, "displayName" | "photoUrl" | "uid"> & { roles: string[] };
 
 export interface AutosaveBackup {
     setId: string;

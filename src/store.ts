@@ -94,7 +94,7 @@ export const useCacheStore = defineStore("cache", () => {
     const mySetsCache = ref<VocabSet[]>([]);
     const mySetsState = ref({ hasNextPage: true, mostRecentTiming: 0, uid: null as string | null });
 
-    async function getAllProfiles(uids: string[]) {
+    async function getAllProfiles(uids: string[]): Promise<UserProfile[]> {
         const uniqueUids = [...new Set(uids)];
 
         const missingUids = uniqueUids.filter(uid => !userProfileCache.value.get(uid));
@@ -103,32 +103,34 @@ export const useCacheStore = defineStore("cache", () => {
             try {
                 const res = await fetch(`${DD_URL}users/${uid}`);
                 if (res.ok) {
-                    const data = await res.json() as UserProfile;
-                    userProfileCache.value.set(uid, data);
+                    const data = await res.json() as Pick<UserProfile, "displayName" | "photoUrl" | "roles">;
+                    userProfileCache.value.set(uid, { ...data, uid });
                 }
             } catch { /* empty */ }
         }));
 
-        return uids.map(uid => userProfileCache.value.get(uid) ?? unknownUser);
+        return uids.map(uid => userProfileCache.value.get(uid) ?? { ...unknownUser, uid });
     }
 
-    async function getProfile(uid: string) {
+    async function getProfile(uid: string): Promise<UserProfile> {
         const profile = userProfileCache.value.get(uid);
         if (profile) return profile;
+        const unknownUserWithUid = { ...unknownUser, uid };
 
-        if (!navigator.onLine) return unknownUser;
+        if (!navigator.onLine) return unknownUserWithUid;
 
         try {
             const res = await fetch(`${DD_URL}users/${uid}`);
             if (res.ok) {
-                const data = await res.json() as UserProfile;
-                userProfileCache.value.set(uid, data);
-                return data;
+                const data = await res.json() as Pick<UserProfile, "displayName" | "photoUrl" | "roles">;
+                const profile = { ...data, uid };
+                userProfileCache.value.set(uid, profile);
+                return profile;
             } else {
-                return unknownUser;
+                return unknownUserWithUid;
             }
         } catch {
-            return unknownUser;
+            return unknownUserWithUid;
         }
     }
 
