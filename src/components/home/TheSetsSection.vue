@@ -21,8 +21,8 @@ const featureSets = [
 ];
 // hardcode profiles to reduce number of requests
 const profiles = [
-    {"displayName":"Ruhan Gupta","photoUrl":"https://lh3.googleusercontent.com/a/ALm5wu0HlFfEYrj6KtjhIVVAmo4islLn0KujjTjSPFYl=s96-c","roles":["admin"]},
-    {"displayName":"NikhilAdmin","photoUrl":"https://lh3.googleusercontent.com/a-/AFdZucqTZkXCw5xnjIm4L5TW0cUno7rkGoTN-2m-FxzYXA=s96-c","roles":["admin"]},
-    {"displayName":"Omkar Admin","photoUrl":"https://lh3.googleusercontent.com/a-/ACNPEu_QwBsJ2IQHKbAsJmSRZqOHQOIDYz0IpfP4XpHepQ=s96-c","roles":["admin"]}
+    {"displayName":"Ruhan Gupta","photoUrl":"https://lh3.googleusercontent.com/a/ALm5wu0HlFfEYrj6KtjhIVVAmo4islLn0KujjTjSPFYl=s96-c","roles":["admin"], uid: "nWasbt2yvXewc8AhGSqwmfT4gVu2"},
+    {"displayName":"NikhilAdmin","photoUrl":"https://lh3.googleusercontent.com/a-/AFdZucqTZkXCw5xnjIm4L5TW0cUno7rkGoTN-2m-FxzYXA=s96-c","roles":["admin"], uid: "indXd3yqrqVZw07LCWHnTm69ZAg1"},
+    {"displayName":"Omkar Admin","photoUrl":"https://lh3.googleusercontent.com/a-/ACNPEu_QwBsJ2IQHKbAsJmSRZqOHQOIDYz0IpfP4XpHepQ=s96-c","roles":["admin"], uid: "mnDmw8WhAGSup4W2kH0EsRCgb072"}
 ];
 </script>
