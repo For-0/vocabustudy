@@ -1,5 +1,5 @@
 import type { DBSchema } from "idb";
-import type { FSDocument, VocabSet } from "./firebase-rest-api/firestore";
+import type { FSDocument, VocabSet, FirestoreDate } from "./firebase-rest-api/firestore";
 
 export type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>;
@@ -54,7 +54,7 @@ export interface RawFirestoreFieldObject { [key: string]: RawFirestoreField }
 export interface FirestoreFieldObject { [key: string]: FirestoreField }
 /* eslint-enable @typescript-eslint/consistent-indexed-object-style */
 
-export type FirestoreField = null | number | boolean | string | Date | FSDocument | FirestoreField[] | FirestoreFieldObject;
+export type FirestoreField = null | number | boolean | string | FirestoreDate | FSDocument | FirestoreField[] | FirestoreFieldObject;
 
 
 export interface FieldFilter {
@@ -130,7 +130,7 @@ export interface User {
     providers: ("password" | "google.com")[]
 }
 
-export type UserProfile = Pick<User, "displayName" | "photoUrl"> & { roles: string[] };
+export type UserProfile = Pick<User, "displayName" | "photoUrl" | "uid"> & { roles: string[] };
 
 export interface AutosaveBackup {
     setId: string;

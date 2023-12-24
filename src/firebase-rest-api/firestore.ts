@@ -14,6 +14,19 @@ function throwResponseError(error?: { status: string, code: number, message: str
     }
 }
 
+export class FirestoreDate extends Date {
+    originalDate: string; // original date string with nanoseconds
+
+    constructor(date: string) {
+        super(Date.parse(date));
+        this.originalDate = date;
+    }
+
+    toISOString(): string {
+        return this.originalDate;
+    }
+}
+
 export const Firestore = {
     dbServer: `${FIRESTORE_EMULATOR_URL ?? "https://firestore.googleapis.com"}/v1/`,
     projectPrefix: "projects/vocab-u-study/databases/(default)/documents",
@@ -30,7 +43,7 @@ export const Firestore = {
         else if (field.arrayValue?.values) return field.arrayValue.values.map(Firestore.parseField);
         else if (field.arrayValue) return [];
         else if ("nullValue" in field) return null;
-        else if (field.timestampValue) return new Date(Date.parse(field.timestampValue));
+        else if (field.timestampValue) return new FirestoreDate(field.timestampValue);
         else return null;
     },
     createField: (value: FirestoreField): RawFirestoreField => {
@@ -198,7 +211,7 @@ export class VocabSet<T extends SetTerms = SetTerms> extends FSDocument {
     comments: Record<string, string>;
     numTerms: number;
     nameWords: string[];
-    creationTime: Date;
+    creationTime: FirestoreDate;
     constructor({ name, description, uid, visibility, collections, terms, numTerms, likes, comments, pathParts, nameWords, createTime, updateTime, last, creationTime }: VocabSet & { terms: T }) {
         super({ pathParts, createTime, updateTime, last });
         this.name = name;
@@ -283,7 +296,7 @@ export class QueryBuilder {
     /**
      * @param offsets A number to start after the nth document, or a string to start after a document with that path
      */
-    startAt(offsets: (Date | number | string)[], before = false) {
+    startAt(offsets: (FirestoreDate | number | string)[], before = false) {
         this.query.startAt = {
             values: offsets.map(el => typeof el === "string" ? { referenceValue: el } : Firestore.createField(el)),
             before
