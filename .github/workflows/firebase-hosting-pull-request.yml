@@ -1,7 +1,0 @@
-name: PR Hosting Preview
-on: pull_request
-jobs:
-  build-and-deploy:
-    uses: ./.github/workflows/build-and-deploy.yml
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
-    secrets: inherit

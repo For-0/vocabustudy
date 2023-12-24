@@ -1,0 +1,49 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  release:
+    types: [released]
+  pull_request:
+
+concurrency:
+  group: "cf-pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/cache@v3
+      name: Cache node modules
+      id: cache-npm
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-npm-cache-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-npm-cache-
+    - run: npm ci
+      name: Install dependencies
+    - run: npm run build
+      name: Build
+      env:
+        CF_API_TOKEN: '${{ secrets.CF_API_TOKEN }}'
+        CF_ZONE_ID: '${{ secrets.CF_ZONE_ID }}'
+    - name: Deploy
+      uses: grimsteel/fast-cf-pages-upload-action@v1
+      with:
+        # Cloudflare API Token
+        apiToken: ${{ secrets.CF_PAGES_TOKEN }}
+        # Cloudflare Account ID
+        accountId: daa146e0a1ac15f8e20fec96ba76b918
+        # Pages project name
+        projectName: vocabustudy
+        # Directory to upload
+        directory: dist
+        # GitHub Token
+        githubToken:  ${{ secrets.GITHUB_TOKEN }}
+          
