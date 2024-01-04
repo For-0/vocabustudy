@@ -71,5 +71,9 @@ service cloud.firestore {
           (form_type == 'other' && validateFormResponse([]))
         );
     }
+    match /featured_sets/{id} {
+      allow list: if auth() && resource.data.domain in request.auth.token.get("domains", []).concat([request.auth.token.email.split("@")[1]]);
+      allow update: if auth() && request.auth.token.admin == true;
+    }
   }
 }
