@@ -33,7 +33,12 @@ service cloud.firestore {
       return limitResourceKeys(requiredFields.concat(additionalKeys), []) && request.resource.data.response == null;
     }
     function validateSet() {
-      return isNotImpersonating() && request.resource.data.terms.size() >= 1 && nameWordsMatchesName() && request.resource.data.numTerms == request.resource.data.terms.size();
+      return
+        isNotImpersonating() &&
+        request.resource.data.terms.size() >= 1 &&
+        nameWordsMatchesName() &&
+        request.resource.data.numTerms == request.resource.data.terms.size() &&
+        request.resource.data.updatedTime == request.time;
     }
     function onlyAddedRemoved(list1, list2) {
       let set1 = list1.toSet();
@@ -44,12 +49,12 @@ service cloud.firestore {
       allow get: if resource == null || canView();
       allow list: if (resource.data.visibility == 2 || isCreator()) && request.query.limit <= 10 && (!("likes" in resource.data) || resource.data.likes.hasAny([request.auth.uid]));
       allow delete: if isCreator();
-      allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility", "nameWords", "numTerms", "collections"]) && validateSet();
+      allow update: if isCreator() && onlyUpdated(["name", "terms", "description", "visibility", "nameWords", "numTerms", "collections", "updatedTime"]) && validateSet();
       allow update: if auth() && canView() && onlyUpdated(["likes", "comments"]) &&
         onlyAddedRemoved(request.resource.data.likes, resource.data.likes) && onlyAddedRemoved(request.resource.data.comments.keys(), resource.data.comments.keys())
         && request.resource.data.comments.get(request.auth.uid, "") is string;
       allow create: if auth() &&
-        limitResourceKeys(["name", "uid", "terms", "visibility", "nameWords", "numTerms", "collections", "likes", "creationTime", "comments"], ["description"]) &&
+        limitResourceKeys(["name", "uid", "terms", "visibility", "nameWords", "numTerms", "collections", "likes", "creationTime", "comments", "updatedTime"], ["description"]) &&
         request.resource.data.likes == [] && request.resource.data.comments == {} && validateSet() && request.resource.data.creationTime == request.time;
     }
     match /collections/{collection_id} {

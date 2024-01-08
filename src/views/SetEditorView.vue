@@ -440,12 +440,13 @@ async function saveSet() {
             batchWriter.update<VocabSet>(
                 ["sets", documentId],
                 { ...serializedSet, uid: authStore.currentUser!.uid, likes: [], comments: {} },
-                [{ fieldPath: "creationTime", setToServerValue: "REQUEST_TIME" }]
+                [{ fieldPath: "creationTime", setToServerValue: "REQUEST_TIME" }, { fieldPath: "updatedTime", setToServerValue: "REQUEST_TIME" }]
             );
         } else
             batchWriter.update<VocabSet>(
                 ["sets", route.params.id as string],
-                { ...serializedSet }
+                { ...serializedSet },
+                [{ fieldPath: "updatedTime", setToServerValue: "REQUEST_TIME" }]
             );
         try {
             // Commit the writes and go back to my sets
