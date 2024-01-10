@@ -119,7 +119,7 @@ const parseMarkdown = (text: string, inline: boolean) => (inline ? marked.parseI
  */
 export function styleAndSanitize(text: string, inline=false) {
     const markdown = parseMarkdown(text, inline);
-    return mainPurify.sanitize(markdown, purifyOptions);
+    return mainPurify.sanitize(markdown, purifyOptions) as string;
 }
 
 /**
@@ -129,6 +129,6 @@ export function styleAndSanitize(text: string, inline=false) {
 export function styleAndSanitizeImages(text: string, inline=false) {
     const markdown = parseMarkdown(text, inline);
     extractedImages = [];
-    const parsed = extractImagesPurify.sanitize(markdown, purifyOptions);
+    const parsed = extractImagesPurify.sanitize(markdown, purifyOptions) as string;
     return { parsed, images: extractedImages};
 }
