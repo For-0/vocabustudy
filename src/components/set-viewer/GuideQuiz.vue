@@ -2,7 +2,7 @@
     <form class="divide-y divide-zinc-200 dark:divide-zinc-700" @submit.prevent="onTestSubmit">
         <template v-for="question, i in questions" :key="i">
             <TestMultipleChoice
-                v-if="question.type === 0" v-model:correct="question.isCorrect" :answers="question.answers" :correct-index="question.correctIndex"
+                v-if="question.type === 0" v-model:correct="question.isCorrect" :answers="question.answers" :correct-indices="question.correctIndices"
                 :question="question.question" :show-result="showResult" class="py-3"
             />
             <TestShortAnswer
@@ -40,7 +40,7 @@ const questions = ref<({
     type: 0;
     question: string;
     answers: string[];
-    correctIndex: number;
+    correctIndices: Set<number>;
     isCorrect: boolean;
 } | {
     type: 1;
@@ -64,7 +64,8 @@ function restart() {
                 type: 0,
                 question: styleAndSanitize(question.question, true),
                 answers: answerOrder.map(i => styleAndSanitize(question.answers[i], true)),
-                correctIndex: answerOrder.indexOf(0), // The correct answer is always the first one
+                // The correct answer defaults to the first one
+                correctIndices: new Set(question.correct?.map(idx => answerOrder.indexOf(idx)) ?? [answerOrder.indexOf(0)]), 
                 isCorrect: false
             };
         } else {

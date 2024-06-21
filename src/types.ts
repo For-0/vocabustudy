@@ -19,7 +19,7 @@ export type TermDefinition = { term: string, definition: string }
 export type StudyGuideReading = { body: string, type: 0, title: string }
 
 /** A study guide quiz */
-export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers: string[]}[], type: 1, title: string }
+export type StudyGuideQuiz = { questions: {type: 0|1, question: string, answers: string[], correct?: number[]}[], type: 1, title: string }
 
 export type PartialVocabSet<T extends SetTerms = SetTerms> = Pick<VocabSet<T>, "name" | "collections" | "terms" | "visibility" | "description" | "uid" | "pathParts">;
 export type TermDefinitionSet = PartialVocabSet<TermDefinition[]>;

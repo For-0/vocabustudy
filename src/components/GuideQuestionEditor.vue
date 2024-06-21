@@ -6,11 +6,19 @@
                 class="text-base bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
             >
         </div>
-        <input
-            v-for="_, i in questionComputed.answers" :key="i" v-model="questionComputed.answers[i]" type="text" 
-            :placeholder="getInputPlaceholder(i)" required
-            class="mb-3 text-sm bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
-        >
+        <div class="flex items-center gap-3 mb-3"  v-for="_, i in questionComputed.answers" :key="i">
+            <!-- correct checkbox for multiple choice -->
+            <input
+                type="checkbox" v-if="questionComputed.type === 0" title="correct" :value="i"
+                v-model.number="questionComputed.correct"
+                class="w-4 h-4 text-emerald-600 bg-zinc-100 border-zinc-300 rounded focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600"
+            />
+            <input
+                v-model="questionComputed.answers[i]" type="text" 
+                :placeholder="getInputPlaceholder(i)" required
+                class="text-sm bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50 grow"
+            />
+        </div>
 
         <div class="mb-3 flex">
             <div class="flex items-center mr-4">
@@ -47,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { ChevronUpIcon, ChevronDownIcon, TrashIcon, PlusCircleIcon } from "@heroicons/vue/20/solid";
 import type { StudyGuideQuiz } from '../types';
 
@@ -73,19 +81,11 @@ const questionComputed = computed({
     }
 });
 
-/* function handleEditOnLast(i: number) {
-    if (i === questionComputed.value.answers.length - 1)
-        questionComputed.value.answers.push("");
-
-    const lastNonBlank = questionComputed.value.answers.findLastIndex(val => val);
-    questionComputed.value.answers.splice(lastNonBlank + 1, questionComputed.value.answers.length - lastNonBlank - 2);
-} */
-
 function getInputPlaceholder(index: number) {
     if (questionComputed.value.type === 0) {
         // Multiple choice
-        if (index === 0) return "Correct answer choice";
-        else return "Incorrect answer choice";
+        if (index === 0) return "Answer choice";
+        else return "Answer choice";
     } else {
         // Short answer
         if (index === 0) return "Correct answer";
@@ -98,4 +98,14 @@ function handleRadioChange(e: Event, value: 0 | 1) {
         questionComputed.value.type = value;
     }
 }
+
+onMounted(() => {
+    if (props.question.type === 0 && !props.question.correct) {
+        // default to the first one being correct
+        emit("update:question", {
+            ...props.question,
+            correct: [0]
+        });
+    }
+});
 </script>

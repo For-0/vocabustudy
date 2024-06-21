@@ -120,7 +120,10 @@
                             @move-right="swap(currentStudyGuideItem.questions, index, index + 1)"
                             @remove="currentStudyGuideItem.questions.splice(index, 1)"
                         />
-                        <button class="cursor-pointer border-zinc-400 dark:border-zinc-600 border-dashed hover:border-zinc-500 dark:hover:border-zinc-500 text-zinc-400 dark:text-zinc-600 hover:text-zinc-500 dark:hover:text-zinc-500 border-2 rounded-md p-3" type="button" @click="currentStudyGuideItem.questions.push({ question: '', type: 0, answers: [''] })">
+                        <button
+                            class="cursor-pointer border-zinc-400 dark:border-zinc-600 border-dashed hover:border-zinc-500 dark:hover:border-zinc-500 text-zinc-400 dark:text-zinc-600 hover:text-zinc-500 dark:hover:text-zinc-500 border-2 rounded-md p-3"
+                            type="button" @click="currentStudyGuideItem.questions.push({ question: '', type: 0, answers: [''], correct: [0] })"
+                        >
                             <PlusCircleIcon class="w-9 h-9 mx-auto my-3" />
                             <p class="text-center mb-2">Add a question</p>
                         </button>

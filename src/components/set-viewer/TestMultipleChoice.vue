@@ -1,8 +1,8 @@
 <template>
     <div class="mb-3">
         <div class="mb-2 flex gap-1 items-center">
-            <CheckIcon v-if="showResult && correctIndex === selectedIndex" class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
-            <XMarkIcon v-else-if="showResult && correctIndex !== selectedIndex" class="w-6 h-6 text-rose-800 dark:text-rose-400 shrink-0" />
+            <CheckIcon v-if="showResult && correctIndices.has(selectedIndex)" class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
+            <XMarkIcon v-else-if="showResult && !correctIndices.has(selectedIndex)" class="w-6 h-6 text-rose-800 dark:text-rose-400 shrink-0" />
             <!-- eslint-disable-next-line vue/no-v-html -->
             <p class="font-semibold text-zinc-900 dark:text-white" v-html="question" />
         </div>
@@ -30,7 +30,7 @@ import { CheckIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 const props = defineProps<{
     question: string;
     answers: string[];
-    correctIndex: number;
+    correctIndices: Set<number>;
     showResult: boolean;
 }>();
 
@@ -43,7 +43,7 @@ const selectedIndex = ref(-1);
 
 function getRadioContainerClass(i: number) {
     if (props.showResult) {
-        if (props.correctIndex === i) {
+        if (props.correctIndices.has(i)) {
             return "text-emerald-800 border-emerald-300 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800";
         } else if (selectedIndex.value === i) {
             return "text-rose-800 border-rose-300 bg-rose-50 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800";
@@ -58,7 +58,7 @@ function getRadioClass() {
 }
 
 watch(selectedIndex, (value) => {
-    emit("update:correct", value === props.correctIndex);
+    emit("update:correct", props.correctIndices.has(value));
 });
 
 // Reset selectedIndex when we hide the result
