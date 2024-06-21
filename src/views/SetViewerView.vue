@@ -8,6 +8,7 @@
                 loadingError === "unauthorized" ? "You don't have permission to view this set" :
                 loadingError === "quizlet-not-supported" ? "You need to install the Quizlet converter extension to view Quizlet sets" : // TODO: link to help center
                 loadingError === "offline" ? "You're offline" :
+                loadingError === "server-error" ? "500: Internal Server Error" :
                 "Unknown"
             }}
         </div>
@@ -61,9 +62,10 @@ import { VocabSet, Firestore } from '../firebase-rest-api/firestore';
 import { useRoute } from 'vue-router';
 import { detectAndGetQuizletSet } from '../converters/quizlet';
 import { parseQuizletSource } from '../converters/quizlet-source';
+import { importGenericSet } from "../converters/generic";
 import { isStudyGuide, studyGuideItemIsReading, getLocalDb } from '../utils';
 
-const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | "offline" | null>(null);
+const loadingError = ref<"not-found" | "unauthorized" | "quizlet-not-supported" | "offline" | "server-error" | null>(null);
 const currentSet = ref<ViewerPartialSet | null>(null);
 const offlineStatus = ref<Date | null>(null);
 
@@ -206,7 +208,7 @@ async function loadInitialSet() {
             loadingError.value = "unauthorized";
         }
     }
-    // Import from quizlet (the two possible values for params.type are set and quizlet)
+    // Import from quizlet (the three possible values for params.type are set, quizlet, and import)
     else if (type === "quizlet") {
         if (id === "source") return; // Don't load anything yet if the user is importing a Quizlet source
         const setOrError = await detectAndGetQuizletSet(id);
@@ -214,6 +216,16 @@ async function loadInitialSet() {
         else {
             currentSet.value = addAccents(setOrError) as ViewerPartialSet;
             document.title = `${currentSet.value.name} - Vocabustudy`
+        }
+    } else if (type === "import") {
+        // generic import
+        const url = window.atob(id.replaceAll("-", "+").replaceAll("_", "/"));
+        const setOrError = await importGenericSet(url);
+        if ("error" in setOrError) loadingError.value = setOrError.error;
+        else {
+            currentSet.value = addAccents(setOrError.set as TermDefinitionSet | StudyGuide) as ViewerPartialSet as ViewerPartialSet;
+            document.title = `${currentSet.value.name} - Vocabustudy`;
+            creator.value = setOrError.creator;
         }
     } else {
         loadingError.value = "not-found";
