@@ -64,7 +64,7 @@ export function studyGuideItemIsReading(item: StudyGuideQuiz | StudyGuideReading
 }
 
 export function pluralizeWord(word: string, number: number) {
-    return `${number} ${word}${number === 1 ? "" : "s"}`;
+    return `${number.toString()} ${word}${number === 1 ? "" : "s"}`;
 }
 
 export function humanizeDate(date: Date) {

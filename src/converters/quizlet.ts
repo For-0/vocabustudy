@@ -6,7 +6,7 @@ declare global {
         chrome?: {
             runtime: {
                 sendMessage?: (extensionId: string, message: unknown, callback: (response: unknown) => void) => void;
-                lastError?: object;
+                lastError?: { message?: string };
             }
         }
     }
@@ -43,7 +43,7 @@ export class FirefoxAddonMessager {
     waitForPong(timeout=1000) {
         if (this.receivedPong) return Promise.resolve();
         return Promise.race([
-            new Promise((_resolve, reject) => setTimeout(() => { reject("timed out"); }, timeout)),
+            new Promise((_resolve, reject) => setTimeout(() => { reject(new Error("timed out")); }, timeout)),
             new Promise<void>(resolve => this.floatingPongPromise = { resolve })
         ]);
     }
@@ -58,7 +58,7 @@ const converterExtensionId = "eghgpfmnjfjhpfiipnpgmpfiggiejgop";
 function sendMessagePromise(extensionId: string, message: unknown) {
     return new Promise((resolve, reject) => {
             window.chrome?.runtime.sendMessage?.(extensionId, message, response => {
-                if (window.chrome!.runtime.lastError) reject(window.chrome!.runtime.lastError);
+                if (window.chrome!.runtime.lastError) reject(new Error(window.chrome!.runtime.lastError.message ?? ""));
                 else resolve(response);
             });
         }

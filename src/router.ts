@@ -149,7 +149,7 @@ export default function () {
                 }
             },
             {
-                path: '/:type(set|quizlet)/:id([\\w\\d]+)/',
+                path: '/:type(set|quizlet|import)/:id([\\w_-]+)/',
                 component: () => import('./views/SetViewerView.vue?chunkName=set-detail#'),
                 children: [
                     {

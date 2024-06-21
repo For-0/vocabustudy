@@ -12,7 +12,7 @@
             //   - or the project has properly included the necessary polyfills.
             "ES2020",
             "ES2023.Array",
-      
+            "ES2021.String",
             "DOM",
             "DOM.Iterable"
         ],

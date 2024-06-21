@@ -416,7 +416,7 @@ function authEventUid(authEvent: {type: string, eventId: string, sessionId: stri
  */
 export async function showGooglePopup(isReauth = false) {
     AuthPopup.rejectExistingPopup();
-    const actionUrl = new URL(`${AUTH_EMULATOR_URL}/emulator/auth/handler`);
+    const actionUrl = new URL(`${AUTH_EMULATOR_URL!}/emulator/auth/handler`);
     actionUrl.searchParams.append("apiKey", apiKey);
     actionUrl.searchParams.append("appName", "[DEFAULT]");
     actionUrl.searchParams.append("authType", "signInViaPopup");
@@ -462,7 +462,7 @@ export async function showGooglePopup(isReauth = false) {
                         authEndpointRequest`:signInWithIdp${{requestUri: iframeEvent.authEvent.urlResponse, returnSecureToken: true}}`
                         .then(res => fetchUser(res))
                         .then((user: User) => { resolve(user); })
-                        .catch((err: any) => { reject(err); }); // eslint-disable-line @typescript-eslint/no-explicit-any
+                        .catch((err: any) => { reject(err); }); // eslint-disable-line
                     }
                     return { status: "ACK" };
                 }

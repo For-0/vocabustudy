@@ -46,7 +46,7 @@ function parseRichText({ type, content }: RichText) {
 /** parse the media of a single card side */
 function parseMedia(media: Media[]) {
     return media.map(({ type, richText, plainText, url }) => {
-        if (type === 2) return `![image](${url})`;
+        if (type === 2 && url) return `![image](${url})`;
         else if (richText) return parseRichText(richText);
         else if (plainText) return plainText;
         return null;
@@ -117,7 +117,8 @@ export function parseQuizletSource(quizletSource: string): { set: Omit<ViewerPar
         creator: {
             photoUrl: photoUrl?.includes("http") ? photoUrl : "",
             roles: [],
-            displayName: username
+            displayName: username,
+            uid: ""
         }
     };
 }

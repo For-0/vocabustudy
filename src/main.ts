@@ -34,7 +34,7 @@ if (!("findLastIndex" in Array.prototype)) {
 if (!("randomUUID" in crypto)) {
     Object.defineProperty(crypto as Crypto, "randomUUID", {
         value: () => {
-            const uuidTemplate = (1e7).toString() + -1e3 + -4e3 + -8e3 + -1e11;
+            const uuidTemplate = "10000000-1000-4000-8000-100000000000";
             return uuidTemplate.replace(/[018]/g, c => (parseInt(c) ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> parseInt(c) / 4).toString(16));
         },
         enumerable: false,
