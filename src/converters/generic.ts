@@ -1,3 +1,4 @@
+import { FirestoreDate } from "../firebase-rest-api/firestore";
 import type { UserProfile, ViewerPartialSet } from "../types";
 
 export async function importGenericSet(importUrl: string): Promise<{ set: Omit<ViewerPartialSet, "accents">, creator: UserProfile } | { error: "not-found" | "server-error" }> {
@@ -15,6 +16,8 @@ export async function importGenericSet(importUrl: string): Promise<{ set: Omit<V
         else if (!res.ok) return { error: "server-error" };
         else {
             const { set, creator } = await res.json() as { set: Omit<ViewerPartialSet, "accents">, creator: UserProfile };
+
+            set.creationTime = new FirestoreDate(set.creationTime as unknown as string);
 
             return { set, creator };
         }

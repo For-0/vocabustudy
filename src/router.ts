@@ -216,6 +216,14 @@ export default function () {
                 meta: {
                     title: "User Profile"
                 }
+            },
+            {
+                path: '/import/',
+                name: 'import',
+                component: () => import('./views/ImportView.vue'),
+                meta: {
+                    title: "Import Set"
+                }
             }
         ]
     });
