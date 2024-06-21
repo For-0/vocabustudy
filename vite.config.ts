@@ -4,9 +4,9 @@ import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 function getEmulatorUrl(mode: string, port: number) {
-    if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME}-${port}.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}:443`
-    else if (process.env.GITPOD_WORKSPACE_URL) return `https://${port}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}:443`;
-    else if (mode !== "production") return `http://localhost:${port}`;
+    if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME!}-${port.toString()}.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN!}:443`
+    else if (process.env.GITPOD_WORKSPACE_URL) return `https://${port.toString()}-${process.env.GITPOD_WORKSPACE_URL.replace("https://", "")}:443`;
+    else if (mode !== "production") return `http://localhost:${port.toString()}`;
     else return null;
 }
 
@@ -21,7 +21,7 @@ async function getSiteAnalytics(env: Record<string, string>) {
         body: JSON.stringify({
             query: "query SiteAnalytics($from:Date,$zoneTag:string){viewer{zones(filter:{zoneTag:$zoneTag}){httpRequests1dGroups(filter:{date_gt:$from},limit:1){sum{countryMap{clientCountryName}pageViews}uniq{uniques}}}}}",
             variables: {
-                from: `${fromDate.getFullYear()}-${(fromDate.getMonth() + 1).toString().padStart(2, "0")}-${fromDate.getDate().toString().padStart(2, "0")}`,
+                from: `${fromDate.getFullYear().toString().padStart(4, "0")}-${(fromDate.getMonth() + 1).toString().padStart(2, "0")}-${fromDate.getDate().toString().padStart(2, "0")}`,
                 zoneTag: env.CF_ZONE_ID
             }
         })

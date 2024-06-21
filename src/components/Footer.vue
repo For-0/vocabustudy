@@ -71,5 +71,5 @@
 <script setup lang="ts">
     const currentVersion = VERSION;
 
-    const copyright = `© 2022-${YEAR} Siddhant Kameswar. All Rights Reserved.`
+    const copyright = `© 2022-${YEAR.toString()} Siddhant Kameswar. All Rights Reserved.`
 </script>

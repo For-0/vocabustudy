@@ -84,14 +84,14 @@ if (mode === "verifyEmail") {
         return authStore.refreshCurrentUser(true);
     }).then(() => {
         showSuccessToast("Email verified successfully!", currentInstance?.appContext, 3000);
-    }).catch((err: Error) => {
-        handleError(err.message);
+    }).catch((err: unknown) => {
+        if (err instanceof Error) handleError(err.message);
     });
 } else if (mode === "resetPassword") {
     resetPassword(oobCode, undefined).then(({ email }) => {
         currentEmail.value = email;
-    }).catch((err: Error) => {
-        handleError(err.message);
+    }).catch((err: unknown) => {
+        if (err instanceof Error) handleError(err.message);
     });
 }
 
@@ -104,8 +104,8 @@ function onSubmit() {
     resetPassword(oobCode, password.value).then(() => {
         showSuccessToast("Password changed successfully!", currentInstance?.appContext, 3000);
         void router.push({ name: "login" });
-    }).catch((err: Error) => {
-        handleError(err.message.split(" ")[0]);
+    }).catch((err: unknown) => {
+        if (err instanceof Error) handleError(err.message.split(" ")[0]);
     }).finally(() => {
         loading.value = false;
     });

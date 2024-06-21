@@ -6,7 +6,7 @@
   "scripts": {
     "emulator": "firebase emulators:start --only auth,firestore --import ../vocabustudy-internals/emulator-data",
     "test:rules": "firebase emulators:exec --only firestore \"mocha 'test/security-rules/index.test.mjs' --full-trace --timeout 5000\"",
-    "lint": "eslint src/",
+    "lint": "eslint src/**/*.{ts,vue} vite.config.ts",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

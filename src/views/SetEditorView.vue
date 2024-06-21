@@ -422,7 +422,7 @@ async function saveSet() {
     if (isStudyGuide(currentSet.value)) {
         const invalidGuideIndex = findInvalidGuidePage();
         if (invalidGuideIndex !== null) {
-            showErrorToast(`Page ${invalidGuideIndex + 1} is invalid.`, currentInstance?.appContext, 7000);
+            showErrorToast(`Page ${(invalidGuideIndex + 1).toString()} is invalid.`, currentInstance?.appContext, 7000);
             // Switch to the invalid page
             currentStudyGuidePage.value = invalidGuideIndex;
             setTimeout(() => form.value?.reportValidity(), 0);

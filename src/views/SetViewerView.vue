@@ -223,7 +223,7 @@ async function loadInitialSet() {
         const setOrError = await importGenericSet(url);
         if ("error" in setOrError) loadingError.value = setOrError.error;
         else {
-            currentSet.value = addAccents(setOrError.set as TermDefinitionSet | StudyGuide) as ViewerPartialSet as ViewerPartialSet;
+            currentSet.value = addAccents(setOrError.set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
             document.title = `${currentSet.value.name} - Vocabustudy`;
             creator.value = setOrError.creator;
         }

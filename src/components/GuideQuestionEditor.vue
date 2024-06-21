@@ -6,18 +6,18 @@
                 class="text-base bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50"
             >
         </div>
-        <div class="flex items-center gap-3 mb-3"  v-for="_, i in questionComputed.answers" :key="i">
+        <div v-for="_, i in questionComputed.answers" :key="i" class="flex items-center gap-3 mb-3">
             <!-- correct checkbox for multiple choice -->
             <input
-                type="checkbox" v-if="questionComputed.type === 0" title="correct" :value="i"
-                v-model.number="questionComputed.correct"
+                v-if="questionComputed.type === 0" v-model.number="questionComputed.correct" type="checkbox" title="correct"
+                :value="i"
                 class="w-4 h-4 text-emerald-600 bg-zinc-100 border-zinc-300 rounded focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-zinc-800 focus:ring-2 dark:bg-zinc-700 dark:border-zinc-600"
-            />
+            >
             <input
                 v-model="questionComputed.answers[i]" type="text" 
                 :placeholder="getInputPlaceholder(i)" required
                 class="text-sm bg-transparent w-full hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 rounded focus:ring-0 focus:border-primary focus:dark:border-primary p-2.5 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:placeholder-zinc-400 dark:border-zinc-800/50 grow"
-            />
+            >
         </div>
 
         <div class="mb-3 flex">
