@@ -191,13 +191,19 @@ async function loadInitialSet() {
     
     // Vocabustudy set
     if (type === "set") {
-        const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
-        if (set) {
-            creator.value = await cacheStore.getProfile(set.uid);
-            currentSet.value = addAccents(set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
-            document.title = `${currentSet.value.name} - Vocabustudy`;
-        } else {
-            loadingError.value = "not-found";
+        await authStore.refreshPromise;
+
+        try {
+            const set = VocabSet.fromSingle(await Firestore.getDocument(VocabSet.collectionKey, id, ["uid", "name", "collections", "description", "terms", "visibility", "creationTime", "likes", "comments"], authStore.currentUser?.token.access));
+            if (set) {
+                creator.value = await cacheStore.getProfile(set.uid);
+                currentSet.value = addAccents(set as TermDefinitionSet | StudyGuide) as ViewerPartialSet;
+                document.title = `${currentSet.value.name} - Vocabustudy`;
+            } else {
+                loadingError.value = "not-found";
+            }
+        } catch (_err) {
+            loadingError.value = "unauthorized";
         }
     }
     // Import from quizlet (the two possible values for params.type are set and quizlet)
@@ -278,7 +284,7 @@ main {
         transform-origin: top left;
     }
 
-    :deep(img) {
+    :deep(img:not(.rounded-full)) {
         @apply shadow;
         max-width: 320px;
         border-radius: 0.375rem;

@@ -75,14 +75,15 @@ export const useAuthStore = defineStore("auth", () => {
 
     void reloadCurrentUser(); // this completes much faster than refreshCurrentUser, so we can use it to get the initial state while we wait for the refresh to complete
     
-    if (navigator.onLine)
-        void refreshCurrentUser(true).then(user => {
-            if (currentUser.value && !user) return withBroadcast()();
-        });
+    const refreshPromise = navigator.onLine ?
+        refreshCurrentUser(true).then(async user => {
+            if (currentUser.value && !user) await withBroadcast()();
+        }) : Promise.resolve();
 
     return {
         currentUser,
         ...functionsWithRefresh,
+        refreshPromise,
         logout
     };
 });

@@ -300,6 +300,8 @@ function handleState(state: (typeof authStore)["$state"]) {
 
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
+    await authStore.refreshPromise;
+    
     // New set and guide
     if (route.params.id === "new") {
         currentSet.value = blankSet;
