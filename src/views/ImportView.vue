@@ -37,8 +37,19 @@
                 </dd>
             </div>
             <div class="flex flex-col pt-3">
-                <dt class="mb-1 font-semibold text-lg">Kahoot:</dt>
-                <dd class="text-zinc-500 dark:text-zinc-400">wip - create and challenges</dd>
+                <dt class="mb-1 font-semibold text-lg">Quizizz:</dt>
+                <dd class="text-zinc-500 dark:text-zinc-400">
+                    We support URLs of these formats:<br>
+                    <kbd class="px-1.5 py-1 text-xs font-semibold text-zinc-800 bg-zinc-100 border border-zinc-200 rounded-lg dark:bg-zinc-600 dark:text-zinc-100 dark:border-zinc-500">https://quiziz.com/admin/quiz/&lt;ID&gt;/</kbd><br>
+                    
+                    <!-- prompt the user to input a url here -->
+                    <form class="max-w-md mx-auto mt-3" id="kahoot-form" @submit.prevent="onQuizizzSubmit">   
+                        <div class="relative">
+                            <input v-model="quizizzUrl" type="url" class="block w-full p-4 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white" placeholder="Quizizz URL" required />
+                            <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-primary hover:bg-primary-alt dark:bg-primary-alt dark:hover:bg-primary focus:ring-4 focus:ring-primary/50 focus:outline-none font-medium rounded-lg text-sm px-4 py-2">Go</button>
+                        </div>
+                    </form>
+                </dd>
             </div>
         </dl>
     </main>
@@ -48,6 +59,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const kahootUrl = ref("");
+const quizizzUrl = ref("");
 const router = useRouter();
 
 function b64URLEncode(data: string) {
@@ -56,5 +68,9 @@ function b64URLEncode(data: string) {
 
 function onKahootSubmit() {
     router.push(`/import/${b64URLEncode(kahootUrl.value)}`)
+}
+
+function onQuizizzSubmit() {
+    router.push(`/import/${b64URLEncode(quizizzUrl.value)}`)
 }
 </script>
