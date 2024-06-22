@@ -151,4 +151,13 @@ export interface VocabustudyDB extends DBSchema {
         key: string;
         value: ViewerPartialSet;
     }
+    "recently-studied": {
+        key: string;
+        value: {
+            url: string;
+            name: string;
+            studiedOn: Date;
+        };
+        indexes: { "by-oldest": Date };
+    }
 }

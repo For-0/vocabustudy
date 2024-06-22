@@ -83,6 +83,8 @@ const quizletSourceValue = ref("");
 // Anything not in ASCII
 const accentsRe = /[^\p{ASCII}]/gu;
 
+let recentlyStudiedTimeout: number;
+
 function parseStarredTerms(rawStarredTerms: string | null) {
     return JSON.parse(rawStarredTerms ?? "{}") as Record<string, number[] | undefined>;
 }
@@ -262,6 +264,31 @@ function updateLike(like: boolean) {
 onMounted(() => {
     void loadInitialSet();
     addEventListener("storage", onStorage);
+
+    // after 30 seconds, add this to recently studied sets
+    recentlyStudiedTimeout = window.setTimeout(async () => {
+        if (!currentSet.value) return;
+
+        const recentlyStudiedItem = {
+            url: route.path,
+            name: currentSet.value.name,
+            studiedOn: new Date()
+        };
+
+        const localDb = await getLocalDb();
+        const transaction = localDb.transaction("recently-studied", "readwrite");
+        const store = transaction.objectStore("recently-studied");
+        // add this item
+        await store.put(recentlyStudiedItem);
+        const numSets = await store.count();
+        if (numSets > 5) {
+            // remove the last item
+            const item = await store.index("by-oldest").openCursor(null, "next");
+            if (item?.primaryKey)
+                await store.delete(item?.primaryKey)
+        }
+        transaction.commit();
+    }, 30 * 1000);
 });
 
 onUnmounted(() => {

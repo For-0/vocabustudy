@@ -15,9 +15,25 @@
             <div class="mb-3">
                 <h3 class="text-xl font-bold leading-7 text-zinc-900 sm:text-2xl sm:tracking-tight dark:text-white">Offline Sets:</h3>
             </div>
-            <div class="flex flex-row gap-5 flex-wrap mb-5" v-bind="$attrs">
+            <div class="flex flex-row gap-5 flex-wrap mb-5">
                 <!-- @vue-skip -->
                 <SetCard v-for="set in offlineSets" :key="set.id" :set="set" :show-edit-controls="false" />
+            </div>
+        </div>
+        <div class="my-3">
+            <div class="mb-3">
+                <h3 class="text-xl font-bold leading-7 text-zinc-900 sm:text-2xl sm:tracking-tight dark:text-white">Recently Studied Sets:</h3>
+            </div>
+            <div class="flex flex-row gap-5 flex-wrap mb-5">
+                <!-- minimal set card -->
+                <div v-for="set in recentlyStudied" class="max-w-sm flex flex-col items-start py-3 px-5 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition duration-300 hover:scale-105">
+                    <router-link :to="set.url" class="max-w-full">
+                        <h3 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h3>
+                    </router-link>
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400" :title="set.studiedOn.toLocaleString()">
+                        Last studied {{ humanizeDate(set.studiedOn) }}
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -27,9 +43,9 @@
 import { ref, getCurrentInstance } from 'vue';
 import { useAuthStore, useCacheStore, usePreferencesStore } from '../store';
 import { VocabSet, QueryBuilder, Firestore } from '../firebase-rest-api/firestore';
-import { showErrorToast, getLocalDb } from '../utils';
+import { showErrorToast, getLocalDb, humanizeDate } from '../utils';
 import SetPagination from '../components/SetPagination.vue';
-import { type UserProfile, type ViewerPartialSet } from '../types';
+import type { VocabustudyDB, UserProfile, ViewerPartialSet } from '../types';
 import SetCard from '../components/SetCard.vue';
 const authStore = useAuthStore();
 const cacheStore = useCacheStore();
@@ -40,9 +56,9 @@ const hasNextPage = ref(true);
 const mostRecentTiming = ref(0);
 const sets = ref<VocabSet[]>([]);
 const offlineSets = ref<(ViewerPartialSet & { id: string; numTerms: number })[]>([]);
+const recentlyStudied = ref<VocabustudyDB["recently-studied"]["value"][]>();
 const creators = ref<UserProfile[]>([]);
 
-// @
 async function loadMoreLikedSets() {
     isLoading.value = true;
     if (authStore.currentUser && hasNextPage.value) {
@@ -86,8 +102,21 @@ async function loadOfflineSets() {
     offlineSets.value = _offlineSets;
 }
 
+async function loadRecentlyStudied() {
+    const db = await getLocalDb();
+    let _recentlyStudied: typeof recentlyStudied.value = [];
+    const tx = db.transaction("recently-studied", "readonly");
+    let cursor = await tx.store.index("by-oldest").openCursor(null, "prev");
+    while (cursor) {
+        _recentlyStudied.push(cursor.value);
+        cursor = await cursor.continue();
+    }
+    recentlyStudied.value = _recentlyStudied;
+}
+
 if (preferencesStore.isOnline)
     void loadMoreLikedSets();
 
 void loadOfflineSets();
+void loadRecentlyStudied();
 </script>

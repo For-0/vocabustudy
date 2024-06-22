@@ -16,6 +16,7 @@ export async function getLocalDb() {
             v1: autosave-backups
             v2: general
             v3: offline-sets
+            v4: recently-studied
             */
 
             if (oldVersion <= 0)
@@ -26,6 +27,11 @@ export async function getLocalDb() {
             
             if (oldVersion <= 2)
                 db.createObjectStore("offline-sets");
+
+            if (oldVersion <= 3) {
+                const store = db.createObjectStore("recently-studied", { keyPath: "url" });
+                store.createIndex("by-oldest", "studiedOn");
+            }
         }
     });
 }
