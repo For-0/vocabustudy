@@ -7,7 +7,7 @@ import type { VocabSet } from "./firebase-rest-api/firestore";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GenericFunction = (...args: any[]) => Promise<any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 type FunctionRequiringRefresh<T extends GenericFunction> = (...args: Parameters<T>) => Promise<Awaited<ReturnType<T>>>;
 
 // TERMINOLOGY:

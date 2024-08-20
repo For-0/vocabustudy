@@ -10,10 +10,10 @@
                 <dd class="text-zinc-500 dark:text-zinc-400">
                     <p>Install the Quizlet converter extension:</p>
                     <a class="inline-block mr-2 mb-1" href="https://chrome.google.com/webstore/detail/eghgpfmnjfjhpfiipnpgmpfiggiejgop/" target="_blank">
-                        <img src="../assets/images/chrome-web-store.png" class="h-16" /> 
+                        <img src="../assets/images/chrome-web-store.png" class="h-16"> 
                     </a>
                     <a class="inline-block mb-1" href="https://go.vocabustudy.org/quizlet-set-converter-firefox" target="_blank">
-                        <img src="../assets/images/firefox-get-addon.svg" class="h-16" />
+                        <img src="../assets/images/firefox-get-addon.svg" class="h-16">
                     </a>
                     <p class="mb-1">Then, go to <kbd class="px-1.5 py-1 text-xs font-semibold text-zinc-800 bg-zinc-100 border border-zinc-200 rounded-lg dark:bg-zinc-600 dark:text-zinc-100 dark:border-zinc-500">https://vocabustudy.org/quizlet/&lt;ID&gt;</kbd>.</p>
                     <p>If you can't install extensions, try the <router-link to="/quizlet/source" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">source import</router-link>.</p>
@@ -28,9 +28,9 @@
                     <kbd class="px-1.5 py-1 text-xs font-semibold text-zinc-800 bg-zinc-100 border border-zinc-200 rounded-lg dark:bg-zinc-600 dark:text-zinc-100 dark:border-zinc-500">https://kahoot.it/challenge/&lt;CODE&gt;?challenge-id=&lt;ID&gt;/</kbd><br>
                     
                     <!-- prompt the user to input a url here -->
-                    <form class="max-w-md mx-auto mt-3" id="kahoot-form" @submit.prevent="onKahootSubmit">   
+                    <form id="kahoot-form" class="max-w-md mx-auto mt-3" @submit.prevent="onKahootSubmit">   
                         <div class="relative">
-                            <input v-model="kahootUrl" type="url" class="block w-full p-4 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white" placeholder="Kahoot URL" required />
+                            <input v-model="kahootUrl" type="url" class="block w-full p-4 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white" placeholder="Kahoot URL" required>
                             <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-primary hover:bg-primary-alt dark:bg-primary-alt dark:hover:bg-primary focus:ring-4 focus:ring-primary/50 focus:outline-none font-medium rounded-lg text-sm px-4 py-2">Go</button>
                         </div>
                     </form>
@@ -43,9 +43,9 @@
                     <kbd class="px-1.5 py-1 text-xs font-semibold text-zinc-800 bg-zinc-100 border border-zinc-200 rounded-lg dark:bg-zinc-600 dark:text-zinc-100 dark:border-zinc-500">https://quiziz.com/admin/quiz/&lt;ID&gt;/</kbd><br>
                     
                     <!-- prompt the user to input a url here -->
-                    <form class="max-w-md mx-auto mt-3" id="kahoot-form" @submit.prevent="onQuizizzSubmit">   
+                    <form id="kahoot-form" class="max-w-md mx-auto mt-3" @submit.prevent="onQuizizzSubmit">   
                         <div class="relative">
-                            <input v-model="quizizzUrl" type="url" class="block w-full p-4 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white" placeholder="Quizizz URL" required />
+                            <input v-model="quizizzUrl" type="url" class="block w-full p-4 text-sm text-zinc-900 border border-zinc-300 rounded-lg bg-zinc-50 focus:ring-primary focus:border-primary dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-zinc-400 dark:text-white" placeholder="Quizizz URL" required>
                             <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-primary hover:bg-primary-alt dark:bg-primary-alt dark:hover:bg-primary focus:ring-4 focus:ring-primary/50 focus:outline-none font-medium rounded-lg text-sm px-4 py-2">Go</button>
                         </div>
                     </form>
@@ -66,11 +66,11 @@ function b64URLEncode(data: string) {
     return window.btoa(data).replaceAll("+", "-").replaceAll("/", "_");
 }
 
-function onKahootSubmit() {
-    router.push(`/import/${b64URLEncode(kahootUrl.value)}`)
+async function onKahootSubmit() {
+    await router.push(`/import/${b64URLEncode(kahootUrl.value)}`)
 }
 
-function onQuizizzSubmit() {
-    router.push(`/import/${b64URLEncode(quizizzUrl.value)}`)
+async function onQuizizzSubmit() {
+    await router.push(`/import/${b64URLEncode(quizizzUrl.value)}`)
 }
 </script>

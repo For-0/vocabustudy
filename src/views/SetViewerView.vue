@@ -206,7 +206,7 @@ async function loadInitialSet() {
             } else {
                 loadingError.value = "not-found";
             }
-        } catch (_err) {
+        } catch {
             loadingError.value = "unauthorized";
         }
     }
@@ -285,7 +285,7 @@ onMounted(() => {
             // remove the last item
             const item = await store.index("by-oldest").openCursor(null, "next");
             if (item?.primaryKey)
-                await store.delete(item?.primaryKey)
+                await store.delete(item.primaryKey)
         }
         transaction.commit();
     }, 30 * 1000);
@@ -293,6 +293,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     removeEventListener("storage", onStorage);
+    clearTimeout(recentlyStudiedTimeout);
 })
 </script>
 <style scoped>

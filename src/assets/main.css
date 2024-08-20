@@ -132,3 +132,10 @@ main {
 .feature-flashcard {
     transform: perspective(1000px) rotateX(calc(1deg * var(--x, 0))) rotateY(calc(1deg * var(--y, 0)));
 }
+
+html > body > [data-gg-privacy-banner-anchor] {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    visibility: hidden !important;
+}

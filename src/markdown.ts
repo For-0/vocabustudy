@@ -88,7 +88,7 @@ const purifyClassesAndIds = (node: Element, data: SanitizeAttributeHookEvent) =>
     if (data.attrName === "class") {
         const classList = data.attrValue.split(" ");
         const sanitzedClassList = classList.filter(
-            className => !disallowedClasses.includes(className) && className.match(allowedClassesRE)
+            className => !disallowedClasses.includes(className) && (allowedClassesRE.exec(className))
         );
         data.attrValue = sanitzedClassList.join(" ");
     } else if (data.attrName === "id") {

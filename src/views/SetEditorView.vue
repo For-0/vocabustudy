@@ -362,9 +362,9 @@ function addTerm() {
 function onImportSubmit() {
     if (currentSet.value && !isStudyGuide(currentSet.value)) {
         const terms = importItemsManualInput.value.split(/\n+/g)
-            .map(line => line.match(importTermLineRe))
+            .map(line => importTermLineRe.exec(line))
             .filter((line): line is RegExpMatchArray => line !== null)
-            .map(([, term, definition]) => ({ term: term.trim(), definition: definition.trim() }));
+            .map(match => ({ term: match[1].trim(), definition: match[2].trim() }));
         currentSet.value.terms.push(...terms);
     }
 

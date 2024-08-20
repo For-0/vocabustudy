@@ -181,7 +181,7 @@ async function deleteCollection() {
 
 async function saveCollection() {
     if (!editingCollection.value || !authStore.currentUser) return;
-    const normalizedSets = editingCollection.value.sets.map(set => set.match(setIdRe)![1]);
+    const normalizedSets = editingCollection.value.sets.map(set => setIdRe.exec(set)![1]);
     const newCollectionData = {
         name: editingCollection.value.name,
         sets: normalizedSets

@@ -157,7 +157,7 @@ const AuthPopup = {
                 tabindex: "-1"
             },
             dontclear: true
-        // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-explicit-any
+         
         }, (iframe: any) => new Promise(async (resolve, reject) => {
             await iframe.restyle({setHideOnLeave: false});
             const networkErrorTimer = setTimeout(() => reject("NETWORK_REQUEST_FAILED"), 5000);

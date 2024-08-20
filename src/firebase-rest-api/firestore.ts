@@ -313,6 +313,7 @@ export class BatchWriter {
     constructor() {
         this.writes = [];
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
     update<T extends FSDocument>(pathParts: string[], fields: Partial<{ [P in keyof T]: FirestoreField }>, fieldTransforms: FieldTransform[] = []) {
         this.writes.push({
             pathParts,

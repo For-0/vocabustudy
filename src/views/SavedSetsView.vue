@@ -26,7 +26,7 @@
             </div>
             <div class="flex flex-row gap-5 flex-wrap mb-5">
                 <!-- minimal set card -->
-                <div v-for="set in recentlyStudied" class="max-w-sm flex flex-col items-start py-3 px-5 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition duration-300 hover:scale-105">
+                <div v-for="set in recentlyStudied" :key="set.url" class="max-w-sm flex flex-col items-start py-3 px-5 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition duration-300 hover:scale-105">
                     <router-link :to="set.url" class="max-w-full">
                         <h3 class="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white truncate" :title="set.name">{{ set.name }}</h3>
                     </router-link>

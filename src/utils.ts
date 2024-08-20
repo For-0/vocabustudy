@@ -129,7 +129,7 @@ export function showToast(props: { icon: Component, iconColor: string, iconSrTex
     const toastContainer = document.getElementById("toast-container");
     const toastRenderEl = toastContainer?.appendChild(document.createElement("div"));
     if (toastRenderEl) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+         
         const vnode = createVNode(BaseToast, { ...props, isHidden: true, closeEarly() {
             clearTimeout(t1);
             clearTimeout(t2);
