@@ -43,7 +43,7 @@
                 </div>
                 <div v-if="testState.tf.length" class="py-3">
                     <h2 class="text-xl font-bold mb-2">{{ pluralizeWord(`${questionTypes.tf} Question`, testState.tf.length) }}</h2>
-                    <TestMultipleChoice v-for="question, i in testState.tf" :key="i" :answers="['True', 'False']" :question="question.question" :correct-index="question.correctAnswer ? 0 : 1" :show-result="showTestResult" @update:correct="correct => question.isCorrect = correct" />
+                    <TestMultipleChoice v-for="question, i in testState.tf" :key="i" :answers="['True', 'False']" :question="question.question" :correct-indices="question.correctAnswer ? 0 : 1" :show-result="showTestResult" @update:correct="correct => question.isCorrect = correct" />
                 </div>
             </div>
         </form>
@@ -92,7 +92,7 @@ const testState = ref<{
         question: string;
         answers: string[];
         // We know the correct answer beforehand
-        correctIndex: number;
+        correctIndices: number;
         isCorrect: boolean;
     }[];
     mt: {
@@ -169,7 +169,7 @@ function restart() {
             return {
                 question: styleAndSanitize(props.currentSet.terms[termsList[i]][questionWith.value]),
                 answers: renderedAnswers,
-                correctIndex,
+                correctIndices: correctIndex,
                 isCorrect: false
             };
         });

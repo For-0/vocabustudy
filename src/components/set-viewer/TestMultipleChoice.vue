@@ -1,8 +1,8 @@
 <template>
     <div class="mb-3">
         <div class="mb-2 flex gap-1 items-center">
-            <CheckIcon v-if="showResult && correctIndices.has(selectedIndex)" class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
-            <XMarkIcon v-else-if="showResult && !correctIndices.has(selectedIndex)" class="w-6 h-6 text-rose-800 dark:text-rose-400 shrink-0" />
+            <CheckIcon v-if="showResult && isCorrect(selectedIndex)" class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
+            <XMarkIcon v-else-if="showResult && !isCorrect(selectedIndex)" class="w-6 h-6 text-rose-800 dark:text-rose-400 shrink-0" />
             <!-- eslint-disable-next-line vue/no-v-html -->
             <p class="font-semibold text-zinc-900 dark:text-white" v-html="question" />
         </div>
@@ -30,7 +30,7 @@ import { CheckIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 const props = defineProps<{
     question: string;
     answers: string[];
-    correctIndices: Set<number>;
+    correctIndices: Set<number> | number;
     showResult: boolean;
 }>();
 
@@ -41,9 +41,17 @@ const emit = defineEmits<{
 const id = crypto.randomUUID();
 const selectedIndex = ref(-1);
 
+function isCorrect(i: number) {
+    if (typeof props.correctIndices === "number") {
+        return i === props.correctIndices;
+    } else {
+        return props.correctIndices.has(i);
+    }
+}
+
 function getRadioContainerClass(i: number) {
     if (props.showResult) {
-        if (props.correctIndices.has(i)) {
+        if (isCorrect(i)) {
             return "text-emerald-800 border-emerald-300 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800";
         } else if (selectedIndex.value === i) {
             return "text-rose-800 border-rose-300 bg-rose-50 dark:bg-rose-950 dark:text-rose-400 dark:border-rose-800";
@@ -58,7 +66,7 @@ function getRadioClass() {
 }
 
 watch(selectedIndex, (value) => {
-    emit("update:correct", props.correctIndices.has(value));
+    emit("update:correct", isCorrect(value));
 });
 
 // Reset selectedIndex when we hide the result
