@@ -269,8 +269,11 @@ onMounted(() => {
     recentlyStudiedTimeout = window.setTimeout(async () => {
         if (!currentSet.value) return;
 
+        // construct url from type/ID
+        const url = `/${route.params.type}/${route.params.id}`;
+
         const recentlyStudiedItem = {
-            url: route.path,
+            url,
             name: currentSet.value.name,
             studiedOn: new Date()
         };
