@@ -7,7 +7,7 @@
                     <p class="mt-1 text-zinc-500 dark:text-zinc-400">{{ authStore.currentUser?.email }}</p>
                 </div>
                 <div class="mt-5 flex lg:ml-4 lg:mt-0">
-                    <button type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700 inline-flex items-center">
+                    <button type="button" class="text-zinc-900 bg-white border border-zinc-300 focus:outline-none hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-zinc-800 dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 dark:hover:border-zinc-600 dark:focus:ring-zinc-700 inline-flex items-center" @click="createCollection()">
                         Create Collection
                         <PlusCircleIcon class="w-4 h-4 ml-1" />
                     </button>
@@ -88,6 +88,48 @@
                         </div>
                     </template>
                 </div>
+
+                <!-- create collection -->
+                <div v-if="editingCollection && editingCollection.id === null" class="max-w-sm flex flex-col items-start p-6 bg-white border border-zinc-200 rounded-lg shadow dark:bg-zinc-800 dark:border-zinc-700 transition-transform duration-300">
+                    <form @submit.prevent="saveCollection">
+                        <input
+                            v-model="editingCollection.name" type="text" required placeholder="Name"
+                            class="block cursor-pointer font-bold tracking-tight bg-transparent text-2xl hover:bg-zinc-100 focus:bg-zinc-100 border-2 border-zinc-100 text-zinc-900 rounded focus:ring-0 focus:border-primary focus:dark:border-primary grow p-2.5 dark:hover:bg-zinc-700 dark:focus:bg-zinc-700 dark:border-zinc-700 dark:placeholder-zinc-400 dark:text-white mb-3"
+                        >
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded dark:bg-blue-800/25 dark:text-blue-300 border border-blue-300 mb-3">
+                            <QueueListIcon class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" />
+                            {{ pluralizeWord("set", editingCollection.sets.length) }}
+                        </span>
+                        <div v-for="_set, j in editingCollection.sets" :key="j" class="relative mb-2">
+                            <input
+                                v-model="editingCollection.sets[j]" type="text" required placeholder="Set ID or URL"
+                                :pattern="setIdRe.source"
+                                class="w-full cursor-pointer bg-transparent hover:bg-zinc-100 focus:bg-zinc-100 border border-zinc-100 text-zinc-900 rounded focus:ring-0 focus:border-primary focus:dark:border-primary grow p-2 dark:hover:bg-zinc-700 dark:focus:bg-zinc-700 dark:border-zinc-700 dark:placeholder-zinc-400 dark:text-white"
+                            >
+                            <button class="text-zinc-400 bg-transparent hover:text-rose-500 absolute right-3 top-1/2 -translate-y-1/2 rounded-lg text-sm inline-flex items-center dark:text-zinc-600 dark:hover:text-rose-500" type="button" @click="editingCollection.sets.splice(j, 1)">
+                                <XCircleIcon class="w-4 h-4" />
+                            </button>
+                        </div>
+                        <div class="flex flex-row flex-wrap gap-2 mt-auto">
+                            <button type="button" class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-primary rounded-lg hover:bg-primary-alt focus:ring-4 focus:outline-none focus:ring-primary/50" @click="editingCollection.sets.push('')">
+                                Add Set
+                                <PlusCircleIcon class="w-3.5 h-3.5 ml-2" />
+                            </button>
+                            <button
+                                type="button"
+                                class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center border text-yellow-800 border-yellow-300 bg-yellow-50 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-800 hover:text-yellow-900 hover:bg-yellow-100 hover:border-yellow-400 dark:hover:bg-yellow-900 dark:hover:border-yellow-700 dark:hover:text-yellow-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-yellow-200 dark:focus:ring-yellow-700" 
+                                @click="editingCollection = null"
+                            >
+                                Cancel
+                                <XCircleIcon class="w-3.5 h-3.5 ml-2" />
+                            </button>
+                            <button class="mt-auto inline-flex items-center px-3 py-2 text-sm font-medium text-center border text-emerald-800 border-emerald-300 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800 hover:text-emerald-900 hover:bg-emerald-100 hover:border-emerald-400 dark:hover:bg-emerald-900 dark:hover:border-emerald-700 dark:hover:text-emerald-300 rounded-lg focus:ring-4 focus:outline-none focus:ring-emerald-200 dark:focus:emerald-red-700">
+                                Save
+                                <CheckCircleIcon class="w-3.5 h-3.5 ml-2" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
             <p v-if="isLoading" class="flex items-center text-zinc-600 dark:text-zinc-300 mb-3 text-lg">
                 <Loader :size="2" class="w-6 h-6 mr-2" />
@@ -141,7 +183,7 @@ const route = useRoute();
 const isLoading = ref(true);
 const currentInstance = getCurrentInstance();
 const collections = ref<PartialCollection[]>([]);
-const editingCollection = ref<{ id: string, sets: string[], name: string } | null>(null);
+const editingCollection = ref<{ id: string | null, sets: string[], name: string } | null>(null);
 const mostRecentTiming = ref(0);
 const setIdRe = /(?:(?:https?:\/\/)?vocabustudy.org\/set\/)?([A-Za-z0-9]{20})(?:(?:\/view)?\/?)?/;
 
@@ -167,6 +209,14 @@ function editCollection(index: number) {
     };
 }
 
+function createCollection() {
+    editingCollection.value = {
+        id: null,
+        name: "",
+        sets: [""]
+    };
+}
+
 async function deleteCollection() {
     if (deletingCollection.value && authStore.currentUser) {
         try {
@@ -187,14 +237,21 @@ async function saveCollection() {
         sets: normalizedSets
     };
     try {
-        await Firestore.updateDocument(
-            CustomCollection.collectionKey, editingCollection.value.id,
-            newCollectionData,
-            authStore.currentUser.token.access,
-            ["name", "sets"]
-        );
-
-        collections.value = collections.value.map(collection => collection.id === editingCollection.value!.id ? new CustomCollection({ ...collection, ...newCollectionData }) : collection);
+        if (editingCollection.value.id === null) {
+            const doc = await Firestore.createDocument(CustomCollection.collectionKey, {
+                ...newCollectionData,
+                uid: authStore.currentUser.uid
+            }, authStore.currentUser.token.access);
+            collections.value = [...collections.value, CustomCollection.fromSingle(doc)!];
+        } else {
+            await Firestore.updateDocument(
+                CustomCollection.collectionKey, editingCollection.value.id,
+                newCollectionData,
+                authStore.currentUser.token.access,
+                ["name", "sets"]
+            );
+            collections.value = collections.value.map(collection => collection.id === editingCollection.value!.id ? new CustomCollection({ ...collection, ...newCollectionData }) : collection);
+        }
         editingCollection.value = null;
     } catch (err) {
         showErrorToast(`An unknown error occurred: ${(err as Error).message}`, currentInstance?.appContext, 7000);
