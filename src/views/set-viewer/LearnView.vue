@@ -355,8 +355,10 @@ function onInputAccent(accent: string) {
     if (frqAnswerInput.value && frqAnswerInput.value === document.activeElement) {
         // If the user is typing in the input, insert the accent at the cursor
         const { selectionStart, selectionEnd } = frqAnswerInput.value;
-        if (selectionStart !== null && selectionEnd !== null)
+        if (selectionStart !== null && selectionEnd !== null) {
             frqAnswerInput.value.setRangeText(accent, selectionStart, selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
+            frqAnswerInput.value.dispatchEvent(new InputEvent("input"));
+        }
     } else {
         // Otherwise, append the accent to the end of the input
         questionState.value.frqAnswer += accent;

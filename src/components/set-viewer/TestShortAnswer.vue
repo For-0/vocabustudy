@@ -53,8 +53,10 @@ function onInputAccent(accent: string) {
     if (input.value) {
         // Insert the accent at the cursor
         const { selectionStart, selectionEnd } = input.value;
-        if (selectionStart !== null && selectionEnd !== null)
+        if (selectionStart !== null && selectionEnd !== null) {
             input.value.setRangeText(accent, selectionStart, selectionEnd, (selectionStart === selectionEnd) ? "end" : "preserve");
+            input.value.dispatchEvent(new InputEvent("change"));
+        }
     }
 }
 </script>
