@@ -1,16 +1,27 @@
 <template>
     <main class="px-6 bg-white dark:bg-zinc-900 grow">
-        <div v-if="loadingError" class="w-full h-full flex flex-col gap-y-3 md:flex-row items-center justify-center dark:text-white text-3xl">
-            <span class="font-bold">Error</span>
-            <span class="mx-2 hidden md:inline">|</span>
-            {{
-                loadingError === "not-found" ? "This set could not be found" :
-                loadingError === "unauthorized" ? "You don't have permission to view this set" :
-                loadingError === "quizlet-not-supported" ? "You need to install the Quizlet converter extension to view Quizlet sets" : // TODO: link to help center
-                loadingError === "offline" ? "You're offline" :
-                loadingError === "server-error" ? "500: Internal Server Error" :
-                "Unknown"
-            }}
+        <div v-if="loadingError" class="w-full h-full flex flex-col gap-y-3 items-center justify-center dark:text-white text-3xl p-3">
+            <div class="flex flex-col md:flex-row gap-y-3 text-center">
+                <span class="font-bold">Error</span>
+                <span class="mx-2 hidden md:inline">|</span>
+                {{
+                    loadingError === "not-found" ? "This set could not be found" :
+                    loadingError === "unauthorized" ? "You don't have permission to view this set" :
+                    loadingError === "quizlet-not-supported" ? "You need to install the Quizlet converter extension to view Quizlet sets" : // TODO: link to help center
+                    loadingError === "offline" ? "You're offline" :
+                    loadingError === "server-error" ? "500: Internal Server Error" :
+                    "Unknown"
+                }}
+            </div>
+
+            <div v-if="loadingError === 'quizlet-not-supported'" class="flex flex-col md:flex-row gap-3 items-center">
+                <a href="https://chromewebstore.google.com/detail/quizlet-to-vocabustudy-se/eghgpfmnjfjhpfiipnpgmpfiggiejgop?authuser=0&hl=en">
+                    <img src="../assets/images/chrome-web-store.png" class="w-48" />
+                </a>
+                <a href="https://go.vocabustudy.org/quizlet-set-converter-firefox">
+                    <img src="../assets/images/firefox-get-addon.svg" class="w-48" />
+                </a>
+            </div>
         </div>
         <template v-else-if="currentSet">
             <router-view v-slot="{ Component }">
