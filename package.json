@@ -35,7 +35,7 @@
     "eslint-plugin-vue": "^9.27.0",
     "globals": "^15.9.0",
     "idb": "^8.0.0",
-    "katex": "^0.16.11",
+    "katex": "^0.16.21",
     "marked": "^14.0.0",
     "pinia": "^2.2.2",
     "postcss": "^8.4.41",
