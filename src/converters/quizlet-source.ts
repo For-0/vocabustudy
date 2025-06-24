@@ -38,7 +38,7 @@ function parseRichTextItem({ marks, text, type }: RichTextItem) {
 function parseRichText({ type, content }: RichText) {
     if (type !== "doc") return "";
     return content.map(({ type, content }) => {
-        if (type !== "paragraph") return "";
+        if (type !== "paragraph" || !content) return "";
         else return content.map(parseRichTextItem).join("");
     }).join("\n");
 }
@@ -75,7 +75,7 @@ export function parseQuizletSource(quizletSource: string): { set: Omit<ViewerPar
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const reduxState = getReduxState(nextData);
     if (!reduxState) return null;
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const { title: name, description, timestamp, lastModified } = reduxState.setPage.set as {
         title: string; description: string; numTerms: number;
