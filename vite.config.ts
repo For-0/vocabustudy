@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import { serviceWorkerPlugin } from "./service-worker-plugin";
-import { defineConfig, loadEnv, splitVendorChunkPlugin } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 function getEmulatorUrl(mode: string, port: number) {
@@ -69,9 +69,10 @@ export default defineConfig(async ({ mode }) => {
                             id.includes("vite:asset") ||
                             id.includes("SetCard.vue") ||
                             id.includes("SetPagination.vue") ||
-                            id.includes("Flashcard.vue"))
-                        {
+                            id.includes("Flashcard.vue")) {
                             return "index";
+                        } else if (id.includes("node_modules")) {
+                            return "vendor";
                         }
                     }
                 }
@@ -79,7 +80,6 @@ export default defineConfig(async ({ mode }) => {
         },
         plugins: [
             vue(),
-            splitVendorChunkPlugin(),
             serviceWorkerPlugin
         ],
         resolve: {
