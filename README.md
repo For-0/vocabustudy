@@ -28,5 +28,15 @@
             <li>Start <a href="https://vitejs.dev/">Vite</a>: <code>npm run dev</code></li>
             <li>Start the Firebase Emulator (Make sure you have Java installed and on your path): <code>npm run emulator</code></li>
         </ol>
+        <h2>Deployment</h2>
+        <p>Most steps of the deployment process are automated:</p>
+        <ol>
+            <li>Bump the version with <code>npm version</code>. This will also create a commit and a tag</li>
+            <li>Push version commit/tag with <code>git push --follow-tags</code></li>
+            <li>Create a new release on the new tag with <code>gh release creator</code> or the UI.</li>
+            <li>Building and deployment to Cloudflare Pages are done automatically once the release is created by GH Actions</li>
+            <li>If you updated the Firestore Rules or Indices, update thos manually with <code>firebase-tools</code></li>
+            <li>The release notes will be pushed to the Discord server</li>
+        </ol>
     </body>
 </html>
