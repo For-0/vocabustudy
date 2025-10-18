@@ -139,3 +139,43 @@ html > body > [data-gg-privacy-banner-anchor] {
     height: 0 !important;
     visibility: hidden !important;
 }
+
+.drag-item {
+    transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
+    
+    * {
+        /* Prevent user from dragging children */
+        pointer-events: none;
+    }
+}
+
+.match {
+    height: 10px;
+    position: absolute;
+    --x: var(--x2) - var(--x1);
+    --y: var(--y2) - var(--y1);
+
+    /* Direction - inverse tangent */
+    --angle: atan2(var(--y), var(--x));
+    /* Subtract half the height from the y so that it's centered */
+    transform: translate(calc(1px * var(--x1)), calc(1px * var(--y1) - 5px)) skewY(var(--angle));
+
+    /* Magnitude - pythagorean theorem */
+    width: calc(1px * (var(--x)));
+
+    transform-origin: top left;
+}
+
+.set-viewer img:not(.rounded-full) {
+    @apply shadow;
+    max-width: 320px;
+    border-radius: 0.375rem;
+
+    @media (max-width: 768px) {
+        max-width: 256px;
+    }
+
+    @media (max-width: 640px) {
+        max-width: 128px;
+    }
+}

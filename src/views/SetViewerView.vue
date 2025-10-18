@@ -1,5 +1,5 @@
 <template>
-    <main class="px-6 bg-white dark:bg-zinc-900 grow">
+    <main class="px-6 bg-white dark:bg-zinc-900 grow set-viewer">
         <div v-if="loadingError" class="w-full h-full flex flex-col gap-y-3 items-center justify-center dark:text-white text-3xl p-3">
             <div class="flex flex-col md:flex-row gap-y-3 text-center">
                 <span class="font-bold">Error</span>
@@ -310,46 +310,3 @@ onUnmounted(() => {
     clearTimeout(recentlyStudiedTimeout);
 })
 </script>
-<style scoped>
-main {
-    :deep(.drag-item) {
-        transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
-        
-        * {
-            /* Prevent user from dragging children */
-            pointer-events: none;
-        }
-    }
-
-    :deep(.match) {
-        height: 10px;
-        position: absolute;
-        --x: var(--x2) - var(--x1);
-        --y: var(--y2) - var(--y1);
-
-        /* Direction - inverse tangent */
-        --angle: atan2(var(--y), var(--x));
-        /* Subtract half the height from the y so that it's centered */
-        transform: translate(calc(1px * var(--x1)), calc(1px * var(--y1) - 5px)) skewY(var(--angle));
-
-        /* Magnitude - pythagorean theorem */
-        width: calc(1px * (var(--x)));
-
-        transform-origin: top left;
-    }
-
-    :deep(img:not(.rounded-full)) {
-        @apply shadow;
-        max-width: 320px;
-        border-radius: 0.375rem;
-
-        @media (max-width: 768px) {
-            max-width: 256px;
-        }
-
-        @media (max-width: 640px) {
-            max-width: 128px;
-        }
-    }
-}
-</style>
