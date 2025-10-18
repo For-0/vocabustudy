@@ -1,6 +1,6 @@
 {
   "name": "vocabustudy",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Study vocab, for free",
   "browserslist": "last 10 Chrome versions, last 10 Firefox versions, last 10 Edge versions, last 5 Safari versions",
   "scripts": {
