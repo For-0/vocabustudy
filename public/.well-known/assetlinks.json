@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "org.vocabustudy.twa",
+        "sha256_cert_fingerprints": ["2C:3E:C3:AF:D6:0D:DB:0F:60:22:55:18:A0:F4:F9:68:E1:57:A4:4D:1D:E8:B5:90:AE:31:15:C5:5C:CE:34:BA", "22:56:5C:4B:99:DE:E2:60:DE:43:A8:F5:8F:6D:57:DB:65:4A:10:00:31:3E:0B:10:01:97:57:B5:17:F9:2D:2C"]
+      }
+    }]
