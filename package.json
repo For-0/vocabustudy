@@ -41,7 +41,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "vite": "^7.1.9",
+    "vite": "^7.1.11",
     "vue": "^3.5.16",
     "vue-router": "^4.5.1"
   },
