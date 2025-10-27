@@ -180,7 +180,12 @@ export default function () {
                         path: 'match/',
                         component: () => import('./views/set-viewer/MatchView.vue?chunkName=set-detail#'),
                         name: "match"
-                    }
+                    },
+                    {
+                        path: 'list/',
+                        component: () => import('./views/set-viewer/ListView.vue?chunkName=set-detail#'),
+                        name: "list"
+                    },
                 ]
             },
             {
