@@ -150,7 +150,7 @@ import ProfileDate from '../../components/ProfileDate.vue';
 import { computed, getCurrentInstance, ref, onMounted } from 'vue';
 import { DocumentTextIcon, HeartIcon as HeartOutlineIcon, Square2StackIcon, StarIcon as StarOutlineIcon, PuzzlePieceIcon } from "@heroicons/vue/24/outline";
 import { HeartIcon as HeartSolidIcon, StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
-import { XMarkIcon, ChatBubbleBottomCenterTextIcon, PencilSquareIcon, CheckIcon, QueueListIcon, ListIcon } from "@heroicons/vue/20/solid";
+import { XMarkIcon, ChatBubbleBottomCenterTextIcon, PencilSquareIcon, CheckIcon, QueueListIcon, NumberedListIcon } from "@heroicons/vue/20/solid";
 import { useAuthStore, useCacheStore } from '../../store';
 import defaultPfp from "../../assets/images/default-pfp.svg";
 import Loader from '../../components/Loader.vue';
@@ -177,7 +177,7 @@ const studyModes = [
     { name: "Learn", routeName: "learn", icon: LearnIcon },
     { name: "Test", routeName: "test", icon: TestIcon },
     { name: "Match", routeName: "match", icon: PuzzlePieceIcon },
-    { name: "List", routeName: "list", icon: ListIcon }
+    { name: "List", routeName: "list", icon: NumberedListIcon }
 ];
 
 const socialDrawerOpen = ref(false);

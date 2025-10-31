@@ -2,7 +2,7 @@
     <div class="fixed inset-0 bg-zinc-100 dark:bg-zinc-900 z-10 flex flex-col text-zinc-800 dark:text-white">
         <!-- Header -->
         <div class="bg-white dark:bg-zinc-800 py-3 px-5 flex items-center shadow z-30 lg:z-auto">
-            <LearnIcon class="w-6 mr-2" />
+            <NumberedListIcon class="w-6 mr-2" />
             <p class="font-semibold text-lg hidden lg:block">List</p>
             <h2 class="text-xl font-bold mb-1 text-center mx-auto">{{ currentSet.name }}</h2>
             <router-link :to="{ name: 'set-detail', params: { id: currentSet.pathParts[currentSet.pathParts.length - 1] } }" class="text-zinc-400 bg-transparent hover:bg-zinc-200 hover:text-zinc-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-zinc-600 dark:hover:text-white">
@@ -20,24 +20,7 @@
                     <p class="opacity-75 mb-4 text-xl">You finished List mode.</p>
                 </template>
                 <template v-else>
-                    <div class="grow relative justify-center pt-3 min-h-0 overflow-y-auto custom-scrollbar is-thumb-only">
-                        <p class="opacity-50 font-bold mb-2">{{ answerWith === "term" ? "Definition" : "Term" }}:</p>
-                        <ImageCarousel :images="questionState.questionImages" :always-vertical="true" class="mb-6 max-w-3xl" />
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <p class="grow break-words text-2xl" v-html="questionState.question" />
-                        <button class="text-yellow-600 bg-transparent hover:bg-yellow-600/10 hover:text-yellow-500 absolute right-0 top-0 p-1 h-7 w-7 rounded-lg text-sm inline-flex items-center" title="Star" type="button" @click.stop="$emit('toggle-star', questionState.currentTerm)" @keyup.stop>
-                            <StarSolidIcon v-if="starredTerms.includes(questionState.currentTerm)" class="w-5 h-5" />
-                            <StarOutlineIcon v-else class="w-5 h-5" />
-                        </button>
-                    </div>
-                    
-                    
-                    <div v-if="questionState.hasAnswered && !questionState.frqCorrect" class="max-h-1/4 flex items-center justify-between p-3.5 mb-3.5 text-sm text-emerald-800 border border-emerald-300 rounded-lg bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <span class="break-words min-w-0 max-h-full overflow-y-auto custom-scrollbar is-thumb-only" v-html="questionState.frqCorrectDisplay" />
-                        <CheckCircleIcon class="w-6 h-6 text-emerald-800 dark:text-emerald-400 shrink-0" />
-                    </div>
-                    <form @submit.prevent="onFrqSubmit">   
+                    <form class="mt-auto" @submit.prevent="onFrqSubmit">
                         <AccentKeyboard v-if="!questionState.hasAnswered && currentSet.accents.length > 0" :accents="currentSet.accents" class="mb-3" @add-accent="onInputAccent" />
                         <div class="relative">
                             <input
@@ -69,29 +52,18 @@
 </template>
 
 <script setup lang="ts">
-import { StarIcon as StarOutlineIcon, XMarkIcon } from "@heroicons/vue/24/outline";
-import { StarIcon as StarSolidIcon } from "@heroicons/vue/24/solid";
+import { XMarkIcon } from "@heroicons/vue/24/outline";
 import type { TermDefinitionSet, ViewerExtraSetProperties } from "../../types";
-import { ref, onMounted, onUnmounted, computed, nextTick, getCurrentInstance } from "vue";
-import { getRandomChoices, checkAnswers, showWarningToast, showSuccessToast } from "../../utils";
+import { ref, computed, nextTick, getCurrentInstance, onMounted } from "vue";
+import { checkAnswers, showWarningToast } from "../../utils";
 import { styleAndSanitizeImages } from "../../markdown";
-import ImageCarousel from "../../components/set-viewer/ImageCarousel.vue";
-import LearnMCButton from "../../components/set-viewer/LearnMCButton.vue";
-import { ArrowRightIcon, CheckCircleIcon, XCircleIcon } from "@heroicons/vue/20/solid";
+import { CheckCircleIcon, XCircleIcon, NumberedListIcon } from "@heroicons/vue/20/solid";
 import AccentKeyboard from "../../components/set-viewer/AccentKeyboard.vue";
 import StudyModeConfiguration from "../../components/set-viewer/StudyModeConfiguration.vue";
-import LearnIcon from "../../components/LearnIcon.vue";
-
-type LearnSection = "mc" | "fr";
 
 const props = defineProps<{
     currentSet: TermDefinitionSet & ViewerExtraSetProperties;
     starredTerms: number[];
-}>();
-
-const emit = defineEmits<{
-    "toggle-star": [term: number];
-    "star-all": [termIndices: number[]];
 }>();
 
 const answerWith = ref<"term" | "definition">("term");
@@ -120,7 +92,6 @@ const currentInstance = getCurrentInstance();
 const percentComplete = computed(() => {
     const total = onlyStarred.value ? props.starredTerms.length : props.currentSet.terms.length;
     
-    // We multiply the total by 2 because we have to go through the set twice (MCQ and FRQ)
     const sectionPercent = (total - upcomingTerms.value.length) / (total);
     return (sectionPercent) * 100;
 
@@ -190,4 +161,8 @@ function onFrqSubmit() {
       questionState.value.frqCorrect = false;
     }
 }
+
+onMounted(() => {
+  restart();
+});
 </script>

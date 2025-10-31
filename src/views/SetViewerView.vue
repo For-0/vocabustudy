@@ -186,7 +186,8 @@ function addAccents(set: TermDefinitionSet | StudyGuide) {
 
 /** Load the inital set from Firestore or Quizlet */
 async function loadInitialSet() {
-    const offlineId = `${route.params.type as string}/${route.params.id as string}`.toLowerCase();
+    const offlineType = (route.params.type as string).toLowerCase();
+    const offlineId = `${offlineType}/${route.params.id as string}`;
     const db = await getLocalDb();
     const offlineSet = await db.get("offline-sets", offlineId);
 
