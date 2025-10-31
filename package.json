@@ -24,6 +24,7 @@
     "@types/dompurify": "^3.0.5",
     "@types/google-one-tap": "^1.2.6",
     "@types/katex": "^0.16.7",
+    "@types/node": "^24.9.2",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "@vitejs/plugin-vue": "^6.0.1",
@@ -45,5 +46,8 @@
     "vue": "^3.5.16",
     "vue-router": "^4.5.1"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "vite-plugin-vue-devtools": "^8.0.3"
+  }
 }

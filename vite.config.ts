@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { serviceWorkerPlugin } from "./service-worker-plugin";
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 function getEmulatorUrl(mode: string, port: number) {
     if (process.env.CODESPACES) return `https://${process.env.CODESPACE_NAME!}-${port.toString()}.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN!}:443`
@@ -80,6 +81,7 @@ export default defineConfig(async ({ mode }) => {
         },
         plugins: [
             vue(),
+            vueDevTools(),
             serviceWorkerPlugin
         ],
         resolve: {
