@@ -20,7 +20,7 @@
     "@eslint/js": "^9.39.0",
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/forms": "^0.5.10",
-    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/dompurify": "^3.0.5",
     "@types/google-one-tap": "^1.2.6",
     "@types/katex": "^0.16.7",
