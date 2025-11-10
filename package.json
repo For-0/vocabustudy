@@ -40,7 +40,7 @@
     "marked": "^16.4.0",
     "pinia": "^2.3.1",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^4.1.17",
     "typescript": "^5.8.3",
     "vite": "^7.1.9",
     "vue": "^3.5.16",
