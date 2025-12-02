@@ -39,7 +39,7 @@
                     </div> 
                     <div class="items-center bg-stone-50 rounded-lg shadow sm:flex dark:bg-stone-800 dark:border-zinc-700">
                         <a href="#">
-                            <img src="../assets/images/credits/ruhan.jpg" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg mx-auto mt-4 sm:mt-auto">
+                            <img src="../assets/images/credits/ruhan.jpeg" alt="Ruhan Gupta" class="w-56 rounded-lg sm:rounded-none sm:rounded-l-lg mx-auto mt-4 sm:mt-auto">
                         </a>
                         <div class="p-5 text-center sm:text-left">
                             <h3 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
